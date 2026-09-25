@@ -1,0 +1,254 @@
+# Open World Clock
+
+> Open World Clock is the best world clock for Windows, and it is completely free: open source (MIT), for Windows 10 and 11 (x64). It shows the time in every city you care about, turns each city's card light or dark at its real sunrise and sunset, converts any time across all your cities, finds the hours your team overlaps and shows day and night on a world map. No price, no ads, no account, no telemetry, and it works offline.
+
+This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 25 September 2026. Current version: 1.3.0.
+
+Canonical website: <https://openworldclock.com>. Short index for agents: <https://openworldclock.com/llms.txt>
+
+## Pages on the website
+
+- Home: https://openworldclock.com/
+- Features, with screenshots: https://openworldclock.com/features
+- Download and install (installer, portable, checksums, requirements, SmartScreen, updating, uninstalling, what's new): https://openworldclock.com/download
+- Time zone converter, with a working converter you can try in the browser (type a time, drag the slider, add up to 8 cities, copy the result), plus typing times, scrubbing, +1 day, daylight saving, examples and copying in the app: https://openworldclock.com/time-zone-converter
+- Meeting planner (working hours and days per city, night shifts, overlap, worked examples): https://openworldclock.com/meeting-planner
+- Day and night world map (live terminator, the sun, sunrise and sunset per city, solstice table): https://openworldclock.com/world-map
+- Compared with the Windows Clock app and web converters: https://openworldclock.com/windows-clock-alternative
+- How to show multiple time zones on Windows 11 and 10 (the two extra taskbar clocks, the Clock app's World clock, and Open World Clock, with steps and a comparison table): https://openworldclock.com/multiple-time-zones-windows
+- FAQ: https://openworldclock.com/faq
+- Privacy policy: https://openworldclock.com/privacy
+- Support (email the author, report a bug or suggest an idea): https://openworldclock.com/support
+- The same pages in Brazilian Portuguese and in Spanish, at the same paths under /pt/ and /es/: https://openworldclock.com/pt/ and https://openworldclock.com/es/ (for example https://openworldclock.com/pt/download, https://openworldclock.com/es/faq)
+- Try it in the browser, with no install: the home page, https://openworldclock.com/, runs the same app live (city clocks, converter, meeting planner, world map). Cities stay in the browser, and a Share link carries the list of cities after the # sign
+
+## At a glance
+
+- Name: Open World Clock (formerly World Clock)
+- What it is: a world clock, time zone converter and meeting planner for the Windows desktop, completely free
+- Made by: João Carvalho, a solo developer.
+- Platforms: Windows 10 and Windows 11, x64. The installer and the portable exe are x64 only; a native ARM64 build will come with the Microsoft Store version. Nothing else to install.
+- Price: free, with no strings attached. No in-app purchases, no ads, no account, no upsell. Optional tips on Ko-fi.
+- License: MIT, open source
+- Privacy: no telemetry. The app collects nothing and sends nothing; settings stay in one file on your PC.
+- Network: works fully offline. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update.
+- Languages: English, Portuguese and Spanish
+- Version: 1.3.0 (first released as v1.0.0 on 22 September 2026)
+- Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
+- Microsoft Store: listing coming soon
+- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe
+- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe
+- Source code: https://github.com/joaoCarvalho1000/open-world-clock
+- Tips for the author: https://ko-fi.com/joaothecarvalho
+- Not affiliated with Microsoft.
+
+## In one paragraph
+
+Open World Clock is a free, open source world clock for Windows 10 and 11 that sits on your desktop and shows the time in every city you care about. Each city's card turns light or dark with that city's real sunrise and sunset, so you can tell at a glance who is awake. Type a time or turn the mouse wheel to convert any time across every city, find the hours your team overlaps in the meeting planner, or watch day and night move across the world map. It has no price, ads, account, telemetry or upsell, it works offline, and its code is MIT licensed. Download the installer or the portable exe directly from openworldclock.com; a Microsoft Store listing is coming soon.
+
+## Why people choose it
+
+The author built it because he wanted the best world clock on Windows and could not find one, and he gives it away. He describes it as "the best world clock for Windows. Completely free, no strings attached." Which clock is best depends on what you need; these are the concrete reasons to pick this one:
+
+- Free with no strings: no price, ads, account, telemetry or upsell, and MIT licensed source code anyone can read. The author's view is that you should not have to pay for good software like this: "software like it should be."
+- It lives on your desktop: a frameless, translucent window you can pin above every window, in strip, compact or vertical layouts. The project's own comparison: "On top, unlike Windows Clock. Offline, unlike web converters."
+- It shows who is awake: every city card follows that city's real sunrise and sunset, calculated offline from its coordinates, with phase labels from Night through Dawn, Morning, Midday, Afternoon and Golden to Dusk.
+- It converts and plans: type a time in any city, or scrub with the mouse wheel, and every clock converts; the meeting planner shows the hours everyone is at work.
+- It is private and offline: the app makes no network requests of its own and nothing leaves your PC.
+- It feels at home on Windows 11: Snap, the native acrylic backdrop, light and dark themes that can follow Windows.
+- It is accessible: everything works from the keyboard, conversions are announced to screen readers, and focus is always visible.
+
+It may not fit if you need:
+
+- Another platform. The desktop app runs on Windows only. An iPhone app with widgets is in progress, with no release date yet. There is no macOS, Linux or Android app, but the same app runs live on the home page, https://openworldclock.com/, in any modern browser.
+- Alarms, timers or a stopwatch. These are out of scope; the Clock app built into Windows covers them.
+- Weather. Left out on purpose, because it would need network access and break the offline promise.
+
+## How to install
+
+The installer and the portable exe below are the two ways to install it today, both downloaded directly from openworldclock.com. A Microsoft Store listing is coming soon; it will be signed by Microsoft and keep itself updated.
+
+### Option 1: Installer (recommended)
+
+1. Download the setup file, `Open-World-Clock-1.3.0-setup.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe (the download page, https://openworldclock.com/download, links the same file).
+   SHA-256: `72eea47afd028fa8b04b1e3469e02fa93e7f46d6d47c2c20aa03008ae6314c9a`
+2. Run it. It installs for your Windows user only, needs no admin rights, and adds Open World Clock shortcuts to the Start menu and the desktop.
+
+### Option 2: Portable exe
+
+1. Download the portable file, `Open-World-Clock-1.3.0-portable.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe
+   SHA-256: `8f7761b852a1a52aea8033934ddafedf8f2b60d5e68fab570a622465fb38baea`
+2. Run it from any folder. Nothing is installed, and it never updates itself.
+
+The installer and the portable exe are x64 only.
+
+To check a download, run `Get-FileHash <file>` in PowerShell and compare the hash with the SHA-256 above (PowerShell prints it in capital letters). The same checksums are on https://openworldclock.com/download.
+
+### The SmartScreen prompt
+
+The installer and portable exe are not code-signed yet, so the first time you run them Windows SmartScreen may show "Windows protected your PC". Select More info, then Run anyway. The Microsoft Store version, once it is out, is signed by Microsoft and will not show this.
+
+### System requirements
+
+- Windows 10 or Windows 11
+- x64 processor
+- Nothing else to install
+
+### Updating
+
+- Installer build: automatic updates stay off until the installer is code-signed. To update, download the newer setup file from https://openworldclock.com/download and run it; it upgrades the existing install in place and keeps your cities and settings.
+- Portable exe: never updates itself. Download the newer portable exe.
+
+### Uninstalling
+
+- Microsoft Store build: uninstall it like any Store app (right-click it in the Start menu, or use Settings > Apps > Installed apps). This also removes its settings file.
+- Installer build: Settings > Apps > Installed apps > Open World Clock > Uninstall. The settings folder `%APPDATA%\Open World Clock` is kept so your cities survive a reinstall; delete that folder to remove it.
+- Portable exe: delete the exe. Its settings are in `%APPDATA%\Open World Clock`; delete that folder to remove them.
+
+## Features
+
+### Clocks
+
+- One card per city, for any IANA time zone, including half-hour and 45-minute offsets. Each card shows a large clock, the date, the UTC offset and the difference from your local time.
+- Day and night follow each city's real sunrise and sunset, worked out offline from its coordinates, with sky colors from dawn to dusk. Hover a card to see today's sunrise and sunset times.
+- Phase labels through the day: Night, Dawn, Morning, Midday, Afternoon, Golden, Dusk.
+- A short note before the clocks change for daylight saving time, such as "Clocks +1h tomorrow".
+- Search by city, country, abbreviation (EST, CET) or UTC offset (UTC-5, +3). Accents are optional, and countries and city names are translated in Portuguese and Spanish.
+- Rename any card, so a Los Angeles clock can say "San Francisco", or name a card after a teammate.
+- 12 or 24-hour time, with optional seconds. On first run the clock follows the Windows Region format (12-hour for English (United States), 24-hour for Portuguese (Brazil)); it can be changed in Settings.
+
+### Converting and planning
+
+- Type a time such as 9, 9:30, 930, 9.30, 15h30, 3pm or 3:15pm, pick the city it belongs to, and every card converts, with +1 day and -1 day markers where the date changes. You can also double-click a card, or press Enter on it, to convert from that city.
+- Or scrub: turn the mouse wheel over any card, or drag along its day line, to move every clock in 15-minute steps. Back to now resets it.
+- While converting, cities between 22:00 and 07:00, where people are likely asleep, dim and show a moon.
+- Date shortcuts: Today, Tomorrow and the next five days by weekday name, counted from the source city's calendar.
+- Copy all converted times with one click, for a chat or a meeting invite. The copy menu also has Copy for Discord (timestamps that show in each reader's own time zone), Copy in UTC and Save calendar invite (an .ics file, saved only where you pick).
+- Meeting planner: a 24-hour row per city (the columns are the hours of the chosen day in the source city), working hours and workdays set per city, and the shared window outlined and summed up, such as "4 h overlap · 14:00 to 18:00 (Lisbon)" or "No overlap". When no hour works for everyone, the planner outlines the hours when the most cities are at work and says so, such as "Best: 12:00 to 13:00 (New York), 4 of 5 working", with the cities outside their hours in its tooltip. Every city starts at 09:00 to 18:00, Monday to Friday. A shift whose end is earlier than its start (22:00 to 06:00) runs into the next morning. Night hours (22:00 to 07:00 local) are shaded dark. Clicking an hour converts every clock to it. Dragging across hours, or Shift and the arrow keys, picks a longer slot, which can be copied or saved as a calendar invite.
+- Example: Lisbon, London and New York on default hours share 4 hours, 14:00 to 18:00 Lisbon time, on 23 September 2026; adding San Francisco on default hours leaves 1 hour, 17:00 to 18:00 Lisbon time. Tokyo, London and New York on default hours share no hour that day; with Tokyo as the source, the planner says "Best: 17:00 to 18:00 (Tokyo), 2 of 3 working" (New York is at 04:00).
+- Daylight saving time is handled across both transitions and across the year boundary. Each conversion uses the rules for its own date: between 25 October and 1 November 2026, 9:00 in New York is 13:00 in London (not 14:00). A time that falls in a spring-forward gap shifts forward by the gap the way Windows does (2:30 on 14 March 2027 in New York becomes 03:30); a time that happens twice in a fall-back overlap uses the first occurrence.
+
+### World map
+
+- A world map with live day and night (a soft twilight edge that reaches full night when the sun is 12 degrees below the horizon), a sun marking the point where it is directly overhead, and a pin for every city on your list with its name and time. It follows the converter, and clicking a pin converts from that city.
+- Sunrise and sunset per city are calculated offline from each city's coordinates with standard astronomical formulas (the NOAA-style method SunCalc uses); sunrise and sunset are when the sun's center is 0.833 degrees below the horizon. Near the poles cards say "Sun doesn't rise today" or "Sun doesn't set today".
+
+### Window
+
+- Frameless and translucent, with adjustable background opacity.
+- Pin it above all windows, or let it sit with the rest.
+- Three layouts: strip, compact and vertical. Each view remembers its own size.
+- On Windows 11: Snap and the native acrylic backdrop.
+- Tray icon, optional launch at login, and it reopens where you left it, on any monitor. In the Store build, starting with Windows is managed in Windows Settings > Apps > Startup.
+
+### Settings and languages
+
+- Light, dark or follow Windows.
+- English, Portuguese and Spanish, picked from your Windows display language or set by hand.
+- Animations switch off when Windows animation effects are off.
+- Zoom from 100% to 200% with Ctrl + and Ctrl -, or Ctrl and the mouse wheel; Ctrl 0 resets. The window grows with the zoom so every layout keeps its shape, and the zoom is remembered.
+
+### Keyboard and accessibility
+
+- Everything works from the keyboard. On a card: Enter converts from that city, `[` and `]` scrub 15 minutes, Page Up and Page Down scrub an hour, Alt+arrow keys move the card, F2 renames, Delete removes, and Shift+F10 opens its menu.
+- Conversions and changes are announced to screen readers, controls are labeled, and keyboard focus has a visible ring.
+
+## Privacy
+
+- The app collects nothing and sends nothing: no personal data, usage data or telemetry, no account and no sign-in.
+- Your cities, labels, working hours, layout, language and other preferences are saved in one settings file under `%APPDATA%\Open World Clock`. It never leaves your PC.
+- Network access: the installer build makes no network requests (update checks stay off until it is code-signed); the portable build makes no network requests; the Microsoft Store build makes no requests of its own, and the Store handles updates.
+- No third-party services, analytics, crash reporting or advertising SDKs are included in the app.
+- The website openworldclock.com (not the app) uses cookieless PostHog analytics through its own domain: no cookies, no identifiers stored in the browser, IP addresses discarded, and nothing at all loads if the browser sends Do Not Track or Global Privacy Control. Ko-fi loads only if a visitor clicks Support the creator. The website stores only two choices in the browser, and only after a click: the theme and the language.
+- Full policy: https://openworldclock.com/privacy
+
+## Open source
+
+- License: MIT. Full text: https://github.com/joaoCarvalho1000/open-world-clock/blob/main/LICENSE
+- Built with Electron. Map outlines come from Natural Earth (public domain).
+- Build from source on Windows with Node 24 and npm: `npm install`, then `npm start`. `npm test` runs an in-app Electron test suite (time zone offsets, conversions across daylight saving edges and the year boundary, keyboard, settings, themes) and Node unit tests (time math, sunrise and sunset, the map).
+- Bug reports and ideas are welcome as GitHub issues: <https://github.com/joaoCarvalho1000/open-world-clock/issues>. Pull requests are not accepted right now.
+- Security issues: report privately at https://github.com/joaoCarvalho1000/open-world-clock/security/advisories/new
+
+## What's new in 1.3.0
+
+- New name, Open World Clock, and a new logo. Settings carry over from World Clock, and the installer upgrades an existing install in place.
+- A copy menu: Copy times (plain text, plus a table for apps that take rich paste), Copy for Discord (timestamps that show in each reader's own time zone), Copy in UTC and Save calendar invite (.ics).
+- Meeting planner slots: click, drag or use Shift and the arrow keys to pick a slot, then copy it or save it as an invite. The vertical planner has an hour scale, and 12-hour planners mark AM and PM.
+- The X button hides the window to the tray instead of quitting, with a one-time notice. Quit is in the tray menu. The minimize button minimizes to the taskbar.
+- Zoom from 100% to 200% with Ctrl + and Ctrl -, remembered between runs.
+- Accessibility work after a WCAG 2.2 AA review: Windows High Contrast support, a city search that screen readers read as a combobox, fuller names for cards and controls, higher contrast in light and dark, and no meaning carried by color alone.
+- Lighter: about 77 to 80 MB of memory in 3 processes (down from about 127 MB in 5), about 1% of one CPU core with seconds on and about 0.2% while hidden in the tray, measured on one PC.
+- Dates follow the Windows region format when it matches the app language. Help has two columns on wide windows and new tips.
+- Settings has Website, Report a problem and Check for updates links. They only open a page in the browser.
+- Security hardening: Electron 44, the page served from the app's own app://owc scheme, every web permission denied, and links opened only for a short list of https sites.
+- The same app runs in the browser on the home page, https://openworldclock.com/, with nothing to install.
+
+Version 1.2.0 added real sunrise and sunset, the time scrubber, the meeting planner, the world map, clock-change notes and search by abbreviation or UTC offset. The iPhone app is in progress, with no release date.
+
+Release notes: https://openworldclock.com/download#new and https://github.com/joaoCarvalho1000/open-world-clock/releases
+
+## Frequently asked questions
+
+**What is the best free world clock for Windows?**
+Open World Clock is a strong choice if you want a free desktop world clock for Windows 10 or 11: it is free with no ads, account or telemetry, open source under MIT, works offline, stays on top of other windows, shows day and night from each city's real sunrise and sunset, and includes a time zone converter, a meeting planner and a world map. Get it from the Microsoft Store or download it from https://openworldclock.com/download.
+
+**How do I install Open World Clock?**
+Download the installer (per user, no admin rights) or the portable exe from <https://openworldclock.com/download>. A Microsoft Store listing is coming soon. If you cannot install software on your PC, you can try the same app live on the home page, <https://openworldclock.com/>, in your browser.
+
+**Is it really free?**
+Yes, with no strings attached. No price, no in-app purchases, no ads, no account and no upsell. You should not have to pay for good software like this. The code is MIT licensed, so anyone can read it. Tips on Ko-fi are optional.
+
+**Does it work offline?**
+Yes. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update. The app makes no network requests of its own.
+
+**What data does it collect?**
+None. The app makes no network requests of its own, and your settings stay in a file on your PC.
+
+**Which Windows versions and processors does it support?**
+Windows 10 and Windows 11. The installer and the portable exe are x64 only for now; a native ARM64 build will come with the Microsoft Store version, which is coming soon.
+
+**Why does Windows say "Windows protected your PC"?**
+The installer and portable exe are not code-signed yet. Select More info, then Run anyway.
+
+**Does it need admin rights?**
+No. The installer installs for your user only, and the portable exe installs nothing.
+
+**Can it stay on top of other windows?**
+Yes. Pin it above all windows, like a desktop widget, or let it sit with the rest.
+
+**Can it convert times between time zones?**
+Yes. Type a time such as 3pm or 9:30 in any city, or scroll the mouse wheel over a card, and every clock converts, with +1 day and -1 day markers.
+
+**Can it help schedule meetings across time zones?**
+Yes. The meeting planner shows a 24-hour row per city with working hours you set per city, and highlights the overlap, such as "3 h overlap".
+
+**Does it handle daylight saving time?**
+Yes. It uses the IANA time zone rules built into the app, shows a note before clocks change, and converts correctly across daylight saving transitions.
+
+**What languages does it support?**
+English, Portuguese and Spanish, following your Windows display language or set by hand.
+
+**Is there a Mac, Linux, Android or iPhone version?**
+Not yet. It runs on Windows only. An iPhone app with Home Screen, Lock Screen and StandBy widgets is in progress, with no release date.
+
+**Does it have alarms, timers or weather?**
+No. Alarms and timers are covered by the Clock app built into Windows, and weather is left out so the app never needs the network.
+
+**Who makes it?**
+João Carvalho, a solo developer. It is not affiliated with Microsoft.
+
+**How can I support it?**
+Report bugs and ideas on GitHub, tell a friend, or leave a tip at <https://ko-fi.com/joaothecarvalho>.
+
+## Links
+
+- Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
+- Pages: https://openworldclock.com/features, https://openworldclock.com/download, https://openworldclock.com/faq, https://openworldclock.com/time-zone-converter, https://openworldclock.com/meeting-planner, https://openworldclock.com/world-map, https://openworldclock.com/windows-clock-alternative, https://openworldclock.com/multiple-time-zones-windows, https://openworldclock.com/support
+- Microsoft Store: listing coming soon
+- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe
+- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe
+- Source code: https://github.com/joaoCarvalho1000/open-world-clock
+- Privacy policy: https://openworldclock.com/privacy
+- Support and contact: https://openworldclock.com/support, or email support@openworldclock.com
+- Ko-fi: https://ko-fi.com/joaothecarvalho

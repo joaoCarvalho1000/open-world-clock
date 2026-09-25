@@ -1,0 +1,60 @@
+/* motion: sky: card background follows the real sun altitude.
+   sky.js puts .sky-on on each card and points --sky-a / --sky-b (current) and --sky-pa / --sky-pb (previous)
+   at one of the six palettes below. Light or dark stops always follow app.js's .is-night class, so the
+   existing --day-fg / --night-fg text colours keep WCAG AA:
+     light theme: day, dawn, golden are light (dark text); night, twilight, dusk are dark (light text).
+     dark theme: every stop stays dark, because the dark theme's --day-fg is also light.
+   Stops are top of card (a, sky) to bottom (b, horizon). */
+
+:root {
+  /* light-family stops: L >= 0.94, so --day-fg-2 (L 0.46) stays above 4.5:1 */
+  --sky-day-a: oklch(0.972 0.02 236 / 0.9);
+  --sky-day-b: oklch(0.993 0.006 220 / 0.9);
+  --sky-dawn-a: oklch(0.962 0.024 242 / 0.9);
+  --sky-dawn-b: oklch(0.958 0.034 58 / 0.9);
+  --sky-golden-a: oklch(0.958 0.038 70 / 0.9);
+  --sky-golden-b: oklch(0.945 0.036 18 / 0.9);
+  /* dark-family stops: L <= 0.34, so --night-fg-2 (L 0.83) stays above 4.5:1 */
+  --sky-twilight-a: oklch(0.27 0.06 270 / 0.96);
+  --sky-twilight-b: oklch(0.33 0.07 296 / 0.96);
+  --sky-dusk-a: oklch(0.29 0.065 282 / 0.96);
+  --sky-dusk-b: oklch(0.34 0.075 322 / 0.96);
+  --sky-night-a: oklch(0.22 0.05 264 / 0.96);
+  --sky-night-b: oklch(0.28 0.055 258 / 0.96);
+}
+
+:root[data-theme="dark"], :root[data-theme="system"].sys-dark {
+  /* dark theme "day" family: light text on it (--day-fg-2 L 0.85), so L <= 0.42 */
+  --sky-day-a: oklch(0.40 0.06 246 / 0.94);
+  --sky-day-b: oklch(0.345 0.05 252 / 0.94);
+  --sky-dawn-a: oklch(0.37 0.04 252 / 0.94);
+  --sky-dawn-b: oklch(0.37 0.03 40 / 0.94);
+  --sky-golden-a: oklch(0.38 0.03 62 / 0.94);
+  --sky-golden-b: oklch(0.35 0.035 20 / 0.94);
+  /* dark theme night family: --night-fg-2 is L 0.75, so L <= 0.30 */
+  --sky-twilight-a: oklch(0.20 0.045 268 / 0.95);
+  --sky-twilight-b: oklch(0.26 0.06 294 / 0.95);
+  --sky-dusk-a: oklch(0.22 0.05 280 / 0.95);
+  --sky-dusk-b: oklch(0.28 0.068 320 / 0.95);
+  --sky-night-a: oklch(0.15 0.035 266 / 0.95);
+  --sky-night-b: oklch(0.20 0.04 260 / 0.95);
+}
+
+/* isolation gives the card its own stacking context, so the z-index:-1 overlay paints above the card's
+   background but below its text. box-shadow (home ring, focus ring) is untouched. */
+.card.sky-on[data-zone] {
+  isolation: isolate;
+  background: linear-gradient(180deg, var(--sky-a, var(--c-bg)), var(--sky-b, var(--c-bg)));
+}
+/* crossfade layer: holds the previous gradient; sky.js fades its opacity 1 -> 0 over --dur-4.
+   ::before is the reorder grip, so the overlay uses ::after. */
+.card.sky-on[data-zone]::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  border-radius: inherit; pointer-events: none;
+  background: linear-gradient(180deg, var(--sky-pa, transparent), var(--sky-pb, transparent));
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card.sky-on[data-zone]::after { display: none; }
+}

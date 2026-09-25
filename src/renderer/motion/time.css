@@ -1,0 +1,42 @@
+/* motion: time */
+
+/* Day/night surface: the .card transition list lives in cards.css (one list, so .card:active maps its durations to
+   the right properties). */
+.card .time, .card .time .hm, .card .time .sec, .card .time .ampm,
+.card .city, .card .phase, .card .more, .card .arc, .card .arc-dot {
+  transition-property: color, background-color, border-color;
+  transition-duration: var(--dur-4);
+  transition-timing-function: var(--ease-standard);
+}
+
+/* Seconds: only a whisper of opacity when shown/hidden, never per tick. */
+.card .time .sec { transition: color var(--dur-4) var(--ease-standard), opacity var(--dur-1) var(--ease-standard); }
+
+/* Digit overlay host */
+.card .time { position: relative; }
+.digit-fx {
+  position: absolute; margin: 0; pointer-events: none; user-select: none;
+  display: inline-flex; white-space: pre; font: inherit; letter-spacing: inherit;
+  font-variant-numeric: tabular-nums; line-height: inherit;
+}
+.digit-fx .dfx-c { position: relative; display: inline-block; }
+.digit-fx .dfx-old { position: absolute; left: 0; top: 0; }
+
+/* Day line: the live dot steps once a minute (about 0.15px), so it jumps without an animation; converted times glide. */
+.card .arc-dot { transition: background-color var(--dur-4) var(--ease-standard); }
+.card.converted .arc-dot {
+  transition: left var(--dur-3) var(--ease-emphasized),
+              background-color var(--dur-4) var(--ease-standard);
+}
+/* Continuous scrubbing (.app.scrub-live, app.js): the dot follows each step without a glide. */
+.app.scrub-live .card.converted .arc-dot { transition: background-color var(--dur-4) var(--ease-standard); }
+.card .arc-work {
+  transition: opacity var(--dur-3) var(--ease-standard),
+              background-color var(--dur-4) var(--ease-standard);
+}
+.card.working .arc-work { opacity: .9; background-color: var(--c-accent); } /* 3:1 on the card */
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card .time, .card .time .hm, .card .time .sec, .card .time .ampm,
+  .card .city, .card .phase, .card .more, .card .arc, .card .arc-dot, .card.converted .arc-dot, .card .arc-work { transition: none; }
+}

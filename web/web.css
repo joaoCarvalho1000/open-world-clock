@@ -1,0 +1,146 @@
+/* Open World Clock in the browser: overrides for the Windows app's styles (src/renderer/style.css and motion/*.css).
+   The page is the live app in the home page's hero (an iframe of /app/), so it fills its frame. Loaded after every
+   other stylesheet. Everything is scoped to html.is-web, which only the web build sets, so the Windows app never sees
+   any of it. Colours come from the app's own tokens, so light and dark follow its theme. */
+
+@font-face {
+  font-family: "Outfit";
+  src: url("../assets/fonts/outfit-var.woff2") format("woff2");
+  font-weight: 150 600; font-style: normal; font-display: swap;
+}
+
+/* ---------- the page: no window, no see-through background ---------- */
+html.is-web {
+  --bg-alpha: 1 !important; /* solid canvas (the Background opacity setting is a window feature) */
+  --web-max: 1640px;
+  --web-gutter: max(16px, calc((100% - var(--web-max)) / 2 + 16px));
+}
+html.is-web, html.is-web body { height: 100%; }
+html.is-web body { display: flex; flex-direction: column; height: 100dvh; background: var(--tint); }
+html.is-web .app {
+  flex: 1 1 auto; width: 100%; max-width: var(--web-max); height: auto; min-height: 0; margin: 0 auto;
+  background: transparent; border-radius: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; cursor: auto;
+}
+html.is-web .panel { border-radius: 0; }
+/* dragging empty space moves the window in the app; here it does nothing, so no grab cursor */
+html.is-web.moving, html.is-web.moving * { cursor: auto !important; }
+/* The hero's frame (site.css --frame-h, 380 to 440px) is taller than the app's 250px strip. Every default city fits
+   one row from 1280px up (five cards, 224px wide at 1280), and the cards take the frame's height up to 1.2x their
+   width, so they sit under the toolbar with about 30px above and below instead of a 60 to 70px band on each side.
+   They still keep a clock-card shape (never a whole row's height when they wrap into rows on a tall screen). */
+html.is-web .app.layout-strip .strip .card { max-height: max(216px, calc(var(--cw) * 1.2)); }
+/* the taller card gives the digits a little more room (the app: 29cqw) */
+html.is-web .app.layout-strip .time { font-size: clamp(44px, min(32cqw, 30cqh), 112px); }
+/* The vertical layout is a column of rows: on a wide screen it stays one, centered, instead of stretching the source
+   city menu across the whole page. */
+html.is-web .app.layout-vertical { max-width: 640px; }
+/* 760 to 900px (tablets): the converter row has no room for the slider; the day line on each card scrubs instead */
+@media (max-width: 900px) { html.is-web #convSlider { display: none; } }
+/* Phones and the vertical layout: the day line comes back under each row, so a finger can drag the time along it
+   (sideways; an up or down swipe still scrolls the list). */
+html.is-web .app.layout-vertical .arc { display: block; grid-column: 1 / -1; grid-row: 3; margin: 10px 0 4px; touch-action: pan-y; }
+/* Phones: Copy (shown while converting) goes up into the bar's top row, just left of the icon buttons, instead of
+   wrapping onto a row of its own under the time and the city. On the web that row holds only the add-city button and
+   four 28px icon buttons (map, planner, help, settings; the window buttons are hidden below), so there is room, and the
+   converter row keeps the city's full name down to 360px. The bar is the positioned box (.bar-stack .bar). */
+html.is-web .app.layout-vertical #btnCopy { position: absolute; top: var(--s3); right: calc(var(--s2) + 4 * 28px + var(--s1)); }
+
+/* ---------- Windows-only controls ---------- */
+html.is-web #btnPin, html.is-web #btnMin, html.is-web #btnClose, html.is-web .grip { display: none !important; }
+html.is-web .panel-group[aria-labelledby="grpWindow"] { display: none; } /* always on top, launch at login */
+html.is-web .panel .row:has(#optOpacity) { display: none; }
+html.is-web #tipText .chip:nth-child(4) { display: none; } /* "drag anywhere else to move" */
+/* zoom keys: the browser's own zoom works, and the app's shortcuts for it are a window feature */
+html.is-web .help-keys .first-zoom, html.is-web .help-keys .first-zoom ~ dt, html.is-web .help-keys .first-zoom ~ dd { display: none; }
+/* no layout choice on the web: the strip, or the vertical layout under 600px (shim.js). The map and the planner stay */
+html.is-web #layoutWrap, html.is-web .panel .row:has(#optLayout) { display: none !important; }
+
+/* ---------- buttons (the shared link banner) and the free and open source line in Help ---------- */
+.web-help-free { margin: 12px 0 0; padding-top: 10px; box-shadow: inset 0 1px 0 var(--hair); font-size: 12px; line-height: 1.4; }
+.web-help-free a { color: var(--accent-ink); text-underline-offset: 2px; }
+/* the touch tip (web.js) only where there is a touch screen */
+html.is-web #tip .web-touch-tip { margin-top: 8px; }
+@media not (any-pointer: coarse) { html.is-web #tip .web-touch-tip { display: none; } }
+.web-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 14px; margin: 0;
+  border: 0; border-radius: var(--r-pill); background: var(--field); box-shadow: inset 0 0 0 1px var(--hair-strong);
+  color: var(--fg); font: 500 13px/1 var(--font); white-space: nowrap; text-decoration: none; cursor: pointer;
+  transition: background-color .15s var(--ease), transform .12s var(--ease);
+}
+.web-btn:hover { background: var(--field-hover); }
+.web-btn:active { transform: scale(.97); }
+.web-primary { background: var(--fill-accent); color: var(--on-fill); box-shadow: none; }
+.web-primary:hover { background: color-mix(in oklch, var(--fill-accent) 88%, black); }
+
+/* ---------- shared link banner (html.is-shared, set by shim.js before the first paint) ---------- */
+.web-shared { display: none; }
+html.is-shared .web-shared {
+  flex: 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+  padding: 8px max(var(--web-gutter), env(safe-area-inset-right)) 8px max(var(--web-gutter), env(safe-area-inset-left));
+  background: var(--accent-soft); box-shadow: inset 0 -1px 0 var(--hair); color: var(--fg); font-size: 13px;
+}
+.web-shared-text { flex: 1 1 260px; margin: 0; line-height: 1.35; }
+.web-shared-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.web-shared .web-btn { height: 32px; }
+
+/* ---------- status toast ---------- */
+.web-toast {
+  position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); z-index: 60; max-width: calc(100vw - 32px);
+  padding: 9px 16px; border-radius: 12px; background: var(--bg-solid); box-shadow: var(--shadow-pop); color: var(--fg);
+  font: 500 13px/1.3 var(--font); text-align: center; pointer-events: none;
+  opacity: 0; transform: translate(-50%, 8px); transition: opacity .2s var(--ease), transform .2s var(--ease);
+}
+.web-toast.on { opacity: 1; transform: translate(-50%, 0); }
+.web-copy-buffer { position: fixed; top: 0; left: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none; }
+.web-noscript { margin: 0; padding: 12px var(--web-gutter); color: var(--fg); font: 14px/1.4 var(--font); }
+.web-noscript a { color: var(--accent-ink); }
+
+/* ---------- first paint (shim.js) ----------
+   The clocks count as painted (largest contentful paint) only once they are drawn with some opacity, and the app's
+   entrance (motion/cards.js) fades each card in from opacity 0 on the compositor, which draws nothing new. On the web
+   the cards keep the entrance's 8px rise but start opaque, so the first paint of the clocks is the one that counts.
+   The cards and every line in them also take their day or night colours at once instead of crossfading into them
+   for 600 ms (a hundred colour transitions redrawn in the frames right after the first paint). Both last only until
+   the entrance has finished. */
+html.is-web.web-entrance .strip > .card[data-zone] { opacity: 1 !important; }
+html.is-web.web-entrance .strip > .card[data-zone], html.is-web.web-entrance .strip > .card[data-zone] * { transition: none !important; }
+
+/* ---------- touch reorder (web.js): touch and hold a card until it lifts, then drag it ---------- */
+html.is-web .card[data-zone] { -webkit-touch-callout: none; }
+/* while a card is lifted: no snapping or smooth scrolling under the auto scroll, and the other cards slide aside */
+html.web-reordering .strip { scroll-snap-type: none !important; scroll-behavior: auto !important; }
+html.web-reordering .card[data-zone] {
+  transition: translate var(--dur-3) var(--ease-emphasized), background var(--dur-4), color var(--dur-4),
+    box-shadow var(--dur-2) var(--ease-standard), opacity var(--dur-2) var(--ease-standard);
+}
+/* the lifted card follows the finger (no slide on translate) */
+html.is-web .card.web-lifted {
+  position: relative; z-index: 4; scale: 1.03; box-shadow: var(--shadow-pop);
+  transition: scale var(--dur-2) var(--ease-standard), box-shadow var(--dur-2) var(--ease-standard);
+}
+@media (prefers-reduced-motion: reduce) { html.is-web .card.web-lifted { scale: none; } }
+/* The cards are see-through by design (the Windows window's backdrop shows through them). The lifted card passes
+   over the others, so it gets the page's own solid colour under its colours. */
+html.is-web .card.web-lifted.sky-on[data-zone] { background-color: var(--tint); }
+html.is-web .card.web-lifted[data-zone]:not(.sky-on) { background: linear-gradient(var(--c-bg), var(--c-bg)) var(--tint); }
+
+/* ---------- touch screens ---------- */
+@media (pointer: coarse) {
+  /* 16px text fields: iOS zooms the page into anything smaller */
+  html.is-web .converter input[type=text], html.is-web #zoneSearch, html.is-web .converter select, html.is-web .panel select,
+  html.is-web .hours-times input, html.is-web input.rename { font-size: 16px; }
+  .web-btn { height: 38px; }
+}
+
+/* ---------- forced colors ---------- */
+@media (forced-colors: active) {
+  .web-btn { border: 1px solid ButtonText; }
+  html.is-shared .web-shared { border-bottom: 1px solid CanvasText; }
+  .web-toast { border: 1px solid CanvasText; }
+  html.is-web .card.web-lifted { outline: 3px solid Highlight; }
+  .web-help-free { border-top: 1px solid CanvasText; box-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .web-btn, .web-toast { transition: none; }
+  .web-btn:active { transform: none; }
+}

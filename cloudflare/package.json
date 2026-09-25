@@ -1,0 +1,24 @@
+{
+  "name": "open-world-clock-cloudflare",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Pages config for openworldclock.com: the static site in ../site plus the /ingest PostHog proxy Function.",
+  "scripts": {
+    "dev": "wrangler pages dev --port 8788",
+    "predeploy": "node asset-versions.mjs && node ../scripts/build-web.mjs --check && node site-chrome.mjs && node check-links.mjs",
+    "deploy": "wrangler pages deploy",
+    "links": "node check-links.mjs",
+    "test": "node --test check-links.test.mjs analytics-gate.test.mjs site-chrome.test.mjs",
+    "csp": "node csp-hashes.mjs",
+    "csp:write": "node csp-hashes.mjs --write",
+    "chrome": "node site-chrome.mjs",
+    "chrome:write": "node site-chrome.mjs --write",
+    "assets:write": "node asset-versions.mjs --write"
+  },
+  "devDependencies": {
+    "wrangler": "4.137.0"
+  },
+  "allowScripts": {
+    "workerd@1.20260921.1": true
+  }
+}

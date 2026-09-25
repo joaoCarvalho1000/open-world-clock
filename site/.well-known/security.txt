@@ -1,0 +1,6 @@
+# Security contact for Open World Clock and https://openworldclock.com (RFC 9116).
+# Please report vulnerabilities privately through a GitHub security advisory.
+Contact: https://github.com/joaoCarvalho1000/open-world-clock/security/advisories/new
+Expires: 2027-09-22T00:00:00.000Z
+Preferred-Languages: en, pt, es
+Canonical: https://openworldclock.com/.well-known/security.txt

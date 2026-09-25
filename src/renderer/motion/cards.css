@@ -1,0 +1,21 @@
+/* motion: cards */
+/* Hover lift, press, focus ring and drag dim. Transform/opacity/box-shadow only. The one .card transition list (the
+   day/night surface colors and the border too): .card:active maps its durations to these properties in this order. */
+.card {
+  transition:
+    background var(--dur-4), color var(--dur-4),
+    transform var(--dur-2) var(--ease-standard),
+    box-shadow var(--dur-2) var(--ease-standard),
+    opacity var(--dur-2) var(--ease-standard),
+    border-color var(--dur-4) var(--ease-standard);
+}
+.card:active { transform: translateY(0) scale(.985); transition-duration: var(--dur-4), var(--dur-4), var(--dur-1), var(--dur-1), var(--dur-2), var(--dur-4); }
+.app.layout-vertical .card:active { transform: scale(.985); }
+.card.dragging { opacity: .5; transform: none; }
+/* Boot: hide until the stagger starts, avoids a one-frame flash. */
+.strip.wc-cards-booting > .card[data-zone] { opacity: 0; }
+.card-ghost { pointer-events: none !important; margin: 0 !important; z-index: 5; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .card:active { transform: none; }
+  .strip.wc-cards-booting > .card[data-zone] { opacity: 1; }
+}

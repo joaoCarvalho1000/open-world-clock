@@ -1,0 +1,39 @@
+# Cloudflare Pages redirects: path based only (https://developers.cloudflare.com/pages/configuration/redirects/).
+#
+# Other domains and www -> https://openworldclock.com cannot live here: Pages does not support domain-level lines
+# such as "freewindowsworldclock.com/* https://openworldclock.com/:splat 301". They are an account Bulk Redirect
+# list instead (cloudflare/bulk-redirects.csv, steps in cloudflare/README.md), which runs before this file:
+#   freewindowsworldclock.com, www.freewindowsworldclock.com  -> https://openworldclock.com (path and query kept)
+#   worldclock.download, www.worldclock.download              -> https://openworldclock.com (path and query kept)
+#   www.openworldclock.com                                    -> https://openworldclock.com (path and query kept)
+#   open-world-clock.pages.dev                                -> https://openworldclock.com (previews untouched)
+#
+# 404: a path with no file gets 404.html with a real 404 status automatically. Do not add a "/*" catch-all.
+# Clean URLs: Pages serves /privacy from privacy.html and 308s /privacy.html to /privacy by itself.
+
+/privacy-policy  /privacy     301
+/downloads       /download    301
+/get             /download    301
+/converter       /time-zone-converter  301
+/planner         /meeting-planner      301
+/map             /world-map            301
+# /download, /faq, /features, /time-zone-converter, /meeting-planner, /world-map and
+# /windows-clock-alternative are real pages, so they must not redirect.
+
+# /app/ is the live app inside the home page's hero (an iframe), so it must not redirect here: a rule would break the
+# frame. Opened on its own, its script sends the visitor to / with the hash (web/shim.js).
+
+# This folder's README is for maintainers, not visitors.
+/README.md       /            301
+
+# RFC 9116 allows the legacy top-level path to redirect to the real file.
+/security.txt    /.well-known/security.txt  301
+
+# The site publishes HTML pages only; old markdown URLs go to their pages.
+/index.md        /            301
+/index.html.md   /            301
+/features.md     /features    301
+/download.md     /download    301
+/faq.md          /faq         301
+/privacy.md      /privacy     301
+/privacy.html.md /privacy     301

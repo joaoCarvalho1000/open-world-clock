@@ -1,0 +1,15 @@
+/* Shared motion tokens. Every motion module uses these; do not hardcode durations or easings elsewhere. */
+:root {
+  --dur-1: 120ms;   /* micro: hover, press, color */
+  --dur-2: 200ms;   /* small: popovers, buttons in/out */
+  --dur-3: 320ms;   /* medium: sheets, cards entering */
+  --dur-4: 600ms;   /* ambient: day/night surface change */
+  --ease-standard: cubic-bezier(.2, .8, .2, 1);
+  --ease-emphasized: cubic-bezier(.32, .72, 0, 1);
+  --ease-exit: cubic-bezier(.4, 0, 1, 1);
+  --stagger: 30ms;
+  --rise: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-1: 0ms; --dur-2: 0ms; --dur-3: 0ms; --dur-4: 0ms; --stagger: 0ms; --rise: 0px; }
+}

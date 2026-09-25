@@ -1,0 +1,31 @@
+# Version updates. Security updates are a separate switch in Settings > Advanced Security (PUBLISHING.md,
+# "Repository settings on day one").
+#
+# cloudflare/ is left out on purpose: its package.json pins the exact workerd version in allowScripts, so a wrangler
+# bump that brings a new workerd also needs a hand edit there, or npm skips workerd's install script. Update it by
+# hand.
+version: 2
+updates:
+  # The workflows pin every action by commit SHA with the version in a comment; Dependabot updates both.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    groups:
+      electron:
+        patterns:
+          - electron
+          - electron-builder
+      other:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - electron
+          - electron-builder

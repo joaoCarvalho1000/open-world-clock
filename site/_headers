@@ -1,0 +1,174 @@
+# Cloudflare Pages response headers (https://developers.cloudflare.com/pages/configuration/headers/).
+# Not applied to /ingest/* (a Pages Function): cloudflare/lib/posthog-proxy.js sets that response's headers itself.
+# Rules add up, and a header set by two rules is joined with a comma, so each Cache-Control below matches
+# a disjoint set of paths. Paths not listed keep the Pages default: public, max-age=0, must-revalidate
+# (HTML, CSS and JS: unhashed file names, so every visit revalidates with a cheap 304 and a deploy shows at once).
+#
+# CSP: scripts only from this origin (the site's own files and the /ingest proxy) plus the inline scripts by
+# SHA-256. After editing any inline <script> in site/*.html run:  node cloudflare/csp-hashes.mjs --write
+# Inline style attributes are used by the markup and demo.js, hence style-src 'unsafe-inline'.
+# Ko-fi (only after a click on Support, see site/assets/kofi.js): its overlay script, its two stylesheets and the
+# panel frame on ko-fi.com; nothing else from Ko-fi (its button image and Google Fonts are turned off in kofi.js).
+# COOP is same-origin-allow-popups so PayPal's checkout popup, opened from inside the Ko-fi panel, keeps its opener.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-aXipaLo5tu30OHOArMFF6w6UQd+fJWvy/aVYmQtwRus=' https://storage.ko-fi.com/cdn/scripts/overlay-widget.js; style-src 'self' 'unsafe-inline' https://storage.ko-fi.com/cdn/scripts/; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'none'; object-src 'none'; frame-src 'self' https://ko-fi.com; worker-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  ! Access-Control-Allow-Origin
+
+# HTML: short, always revalidated. The same pages in Portuguese (/pt/...) and Spanish (/es/...) follow the English ones.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/privacy
+  Cache-Control: public, max-age=0, must-revalidate
+/features
+  Cache-Control: public, max-age=0, must-revalidate
+/download
+  Cache-Control: public, max-age=0, must-revalidate
+/faq
+  Cache-Control: public, max-age=0, must-revalidate
+/time-zone-converter
+  Cache-Control: public, max-age=0, must-revalidate
+/meeting-planner
+  Cache-Control: public, max-age=0, must-revalidate
+/world-map
+  Cache-Control: public, max-age=0, must-revalidate
+/windows-clock-alternative
+  Cache-Control: public, max-age=0, must-revalidate
+/multiple-time-zones-windows
+  Cache-Control: public, max-age=0, must-revalidate
+/support
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/privacy
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/features
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/download
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/faq
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/time-zone-converter
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/meeting-planner
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/world-map
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/windows-clock-alternative
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/multiple-time-zones-windows
+  Cache-Control: public, max-age=0, must-revalidate
+/pt/support
+  Cache-Control: public, max-age=0, must-revalidate
+/es/
+  Cache-Control: public, max-age=0, must-revalidate
+/es/privacy
+  Cache-Control: public, max-age=0, must-revalidate
+/es/features
+  Cache-Control: public, max-age=0, must-revalidate
+/es/download
+  Cache-Control: public, max-age=0, must-revalidate
+/es/faq
+  Cache-Control: public, max-age=0, must-revalidate
+/es/time-zone-converter
+  Cache-Control: public, max-age=0, must-revalidate
+/es/meeting-planner
+  Cache-Control: public, max-age=0, must-revalidate
+/es/world-map
+  Cache-Control: public, max-age=0, must-revalidate
+/es/windows-clock-alternative
+  Cache-Control: public, max-age=0, must-revalidate
+/es/multiple-time-zones-windows
+  Cache-Control: public, max-age=0, must-revalidate
+/es/support
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Scripts and styles keep their names across releases, so browsers must recheck them on every visit (a cheap 304 via
+# ETag). Without this the zone's 4 hour browser cache kept an old config.js that pointed downloads at GitHub.
+/assets/*.js
+  Cache-Control: public, max-age=0, must-revalidate
+/assets/*.css
+  Cache-Control: public, max-age=0, must-revalidate
+/app/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Fonts never change under the same name
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images and icons: a week, then refreshed in the background
+/assets/img/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/og.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/og-pt.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/og-es.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/icon-32.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/icon-180.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/icon-512.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/icon-512-maskable.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/assets/logo-small.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/favicon.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# The live app in the home page's hero (an iframe of /app/, built by scripts/build-web.mjs, see web/README.md). The
+# site-wide frame-ancestors 'none' and X-Frame-Options: DENY would refuse that frame, so this rule detaches both and
+# allows this origin only; frame-src 'self' in the site-wide policy lets the home page frame it. Kept out of search
+# results (the page itself says noindex too, and opened on its own it goes to the home page). No inline scripts or styles.
+/app/*
+  ! Content-Security-Policy
+  ! X-Frame-Options
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'none'; worker-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests
+  X-Frame-Options: SAMEORIGIN
+  X-Robots-Tag: noindex
+
+/site.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+
+# For AI assistants and agents: plain text, readable from any origin, and never noindex/noarchive
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+/api/*
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+/.well-known/security.txt
+  Content-Type: text/plain; charset=utf-8
+/.well-known/gpc.json
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+
+# Keep every hostname but the canonical one out of search results (Bulk Redirects normally answer these first)
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
+https://www.openworldclock.com/*
+  X-Robots-Tag: noindex
+https://freewindowsworldclock.com/*
+  X-Robots-Tag: noindex
+https://www.freewindowsworldclock.com/*
+  X-Robots-Tag: noindex
+https://worldclock.download/*
+  X-Robots-Tag: noindex
+https://www.worldclock.download/*
+  X-Robots-Tag: noindex

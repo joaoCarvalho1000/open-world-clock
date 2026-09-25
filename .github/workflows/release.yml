@@ -1,0 +1,120 @@
+name: Release
+
+# Builds the installer and the portable exe for a version tag and puts them on a draft GitHub release.
+# PUBLISHING.md, "Every release", step 4 has the steps around it: commit the version bump, push the tag vx.y.z,
+# check the draft's four asset names, then publish it. The Store packages (.appx) are still built locally.
+#
+# No signing secrets: the builds are unsigned, like the local ones. The provenance attestation records that these
+# exact files came from this workflow and this commit; anyone can check a download with
+#   gh attestation verify <file> -R joaoCarvalho1000/open-world-clock
+# Attestations are free on public repos; on a private repo on a free plan that step fails.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Keep LF line endings
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      # electron 44 has no postinstall script, so `npm ci` does not download the Electron binary (see unit.yml).
+      # electron-builder fetches its own copy for packaging; this one is for parity with the test job and fails early
+      # if the download is broken.
+      - name: Install the Electron binary
+        shell: bash
+        run: |
+          node node_modules/electron/install.js
+          if [ ! -f node_modules/electron/path.txt ] || [ ! -d node_modules/electron/dist ]; then
+            echo "::error::Electron binary missing after install.js: node_modules/electron/path.txt or dist/ not found."
+            exit 1
+          fi
+
+      # A tag that does not match package.json would publish files named after a different version than the tag, and
+      # the site builds its download links from the tag and the file names together.
+      - name: Tag matches package.json
+        id: version
+        shell: bash
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$REF_TYPE" != "tag" ]; then
+            echo "::error::Run this workflow on a tag (v$version), not on the branch $REF_NAME."
+            exit 1
+          fi
+          if [ "$REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $REF_NAME does not match package.json version $version (expected v$version)."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$REF_NAME" >> "$GITHUB_OUTPUT"
+
+      # Same targets as `npm run dist`. Writes dist/win-unpacked as well, which the smoke test starts.
+      - name: Build the installer and the portable exe
+        run: npx electron-builder --win portable:x64 nsis:x64 --publish never
+
+      - name: Packaged smoke test
+        run: node scripts/smoke-packaged.mjs
+
+      # The four files from PUBLISHING.md, "Every release", step 4. A missing one fails here, before anything is
+      # attested or uploaded.
+      - name: Check the four release files
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          for f in "Open-World-Clock-$VERSION-setup.exe" "Open-World-Clock-$VERSION-setup.exe.blockmap" \
+                   "Open-World-Clock-$VERSION-portable.exe" "latest.yml"; do
+            if [ ! -f "dist/$f" ]; then echo "::error::dist/$f was not built."; exit 1; fi
+            echo "dist/$f"
+          done
+
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            dist/Open-World-Clock-${{ steps.version.outputs.version }}-setup.exe
+            dist/Open-World-Clock-${{ steps.version.outputs.version }}-setup.exe.blockmap
+            dist/Open-World-Clock-${{ steps.version.outputs.version }}-portable.exe
+            dist/latest.yml
+
+      # A draft, so nothing reaches the site or users until the owner checks the asset names and publishes it.
+      - name: Create the draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --verify-tag --title "Open World Clock $VERSION" \
+            --notes "Draft built by the Release workflow. Check the four asset names, then publish." \
+            "dist/Open-World-Clock-$VERSION-setup.exe" \
+            "dist/Open-World-Clock-$VERSION-setup.exe.blockmap" \
+            "dist/Open-World-Clock-$VERSION-portable.exe" \
+            "dist/latest.yml"

@@ -1,0 +1,14 @@
+/* motion: ambient: window fade-in, empty state entrance, tip ghost.
+   Pure-CSS entrances run without JS and end at full opacity, so nothing can stay invisible. */
+@keyframes wc-amb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wc-amb-rise { from { opacity: 0; transform: translateY(var(--rise)); } to { opacity: 1; transform: none; } }
+
+/* backwards, not both: the end state is the element's own opacity 1, and no filled animation keeps a composited layer */
+.app { animation: wc-amb-fade var(--dur-3) var(--ease-standard) backwards; }
+.strip > .empty { animation: wc-amb-rise var(--dur-3) var(--ease-emphasized) 60ms both; }
+
+.tip-ghost { position: fixed; margin: 0 !important; pointer-events: none; z-index: 5; box-sizing: border-box; }
+
+@media (prefers-reduced-motion: reduce) {
+  .app, .strip > .empty { animation: none; }
+}

@@ -1,0 +1,127 @@
+{
+  "_comment": "Budgets for scripts/perf/check.js (npm run perf). Reference machine: the owner's dev laptop (Ryzen 9 7945HX, RTX 5070 Ti, 1.15x display, ~60 Hz). target = what the phase 2 build measured there (interleaved A/B medians, 2026-09-24), so OK means slower than that build; max = the failing threshold, with headroom for a shared, noisy machine. Memory = private working set (Task Manager). CPU = % of one core over the 60 s window. processes max 3: browser, software GPU, renderer (no network service or proxy resolver while updates are off).",
+  "scenarios": {
+    "default": {
+      "memoryMB": {
+        "target": 80,
+        "max": 95
+      },
+      "commitMB": {
+        "target": 105,
+        "max": 130
+      },
+      "processes": {
+        "target": 3,
+        "max": 3
+      },
+      "cpuPct": {
+        "target": 1,
+        "max": 1.5
+      },
+      "bootMs": {
+        "target": 600,
+        "max": 800
+      },
+      "firstFrameMs": {
+        "target": 650,
+        "max": 850
+      },
+      "jsHeapAfterGcMB": {
+        "target": 1.8,
+        "max": 3
+      },
+      "elements": {
+        "target": 490,
+        "max": 600
+      },
+      "listeners": {
+        "target": 190,
+        "max": 250
+      },
+      "layoutPerSec": {
+        "target": 1.1,
+        "max": 1.5
+      },
+      "recalcPerSec": {
+        "target": 9,
+        "max": 12
+      },
+      "idleIpc": {
+        "target": 0,
+        "max": 0
+      },
+      "idleSettingsWrites": {
+        "target": 0,
+        "max": 0
+      }
+    },
+    "seconds-off": {
+      "memoryMB": {
+        "target": 80,
+        "max": 95
+      },
+      "cpuPct": {
+        "target": 0.5,
+        "max": 0.8
+      }
+    },
+    "hidden": {
+      "memoryMB": {
+        "target": 78,
+        "max": 95
+      },
+      "cpuPct": {
+        "target": 0.25,
+        "max": 0.5
+      }
+    },
+    "map": {
+      "memoryMB": {
+        "target": 85,
+        "max": 100
+      },
+      "cpuPct": {
+        "target": 0.85,
+        "max": 1.2
+      }
+    },
+    "scrub": {
+      "memoryMB": {
+        "target": 210,
+        "max": 250
+      },
+      "cpuPct": {
+        "target": 100,
+        "max": 125
+      }
+    },
+    "transparent": {
+      "memoryMB": {
+        "target": 102,
+        "max": 120
+      },
+      "cpuPct": {
+        "target": 1.65,
+        "max": 2.2
+      }
+    }
+  },
+  "size": {
+    "setupMiB": {
+      "target": 90,
+      "max": 98
+    },
+    "portableMiB": {
+      "target": 90,
+      "max": 98
+    },
+    "appxMiB": {
+      "target": 132,
+      "max": 145
+    },
+    "asarMiB": {
+      "target": 0.8,
+      "max": 2.8
+    }
+  }
+}

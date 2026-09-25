@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- Source of site/assets/og.png, the 1200x630 social card. Not deployed (outside pages_build_output_dir).
+     Render it with: node cloudflare/og/render.mjs (headless Chrome or Edge with a throwaway profile; it checks the
+     size, colour type and file size of what comes out). site/README.md has the same command.
+     strip-light.webp is dist/shots/light-strip.png from test/shots.js (the five first-run cities), saved losslessly.
+     The icon disc is 52px, centred at 97.5,83.5, the box scripts/build-icons.mjs (patchOg) repaints when the logo
+     changes, so keep it there. The headline and the line under it must match .h1-big and .h1-sub in the home page of
+     each language word for word: English here (site/index.html -> og.png); ?lang=pt and ?lang=es swap in the words
+     of site/pt/index.html (og-pt.png) and site/es/index.html (og-es.png). render.mjs takes the language as its
+     second argument. -->
+<html lang="en"><head><meta charset="utf-8">
+<title>Open World Clock social card</title>
+<style>
+@font-face { font-family: "Outfit"; src: url("../../site/assets/fonts/outfit-var.woff2") format("woff2"); font-weight: 150 600; }
+html, body { margin: 0; }
+body { width: 1200px; height: 630px; overflow: hidden; position: relative; isolation: isolate;
+  background: linear-gradient(180deg, oklch(0.82 0.075 242) 0%, oklch(0.89 0.05 236) 58%, oklch(0.95 0.025 222) 100%);
+  color: oklch(0.2 0.03 258); -webkit-font-smoothing: antialiased; }
+.sun { position: absolute; z-index: -1; left: 1075px; top: 112px; width: 420px; height: 420px; margin: -210px 0 0 -210px; border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.995 0.02 90) 0 14%, oklch(0.98 0.05 85 / 0.5) 22%, oklch(0.97 0.06 80 / 0.14) 45%, transparent 70%); }
+/* logo-small.svg's viewBox is 920 units around an 840-unit disc, so a 52px disc needs a 56.95px image */
+.mark { position: absolute; left: 69.024px; top: 55.024px; width: 56.952px; height: 56.952px; }
+.name { position: absolute; left: 140px; top: 67px; margin: 0; font: 600 32px/1 "Outfit"; letter-spacing: -0.01em; white-space: nowrap; }
+h1 { position: absolute; left: 68px; top: 128px; width: 1040px; margin: 0; font: 500 66px/1.02 "Outfit"; letter-spacing: -0.035em; text-wrap: balance; }
+p.sub { position: absolute; left: 72px; top: 282px; margin: 0; font: 400 34px/1.22 "Segoe UI Variable Text", "Segoe UI", sans-serif; letter-spacing: -0.01em; color: oklch(0.36 0.03 258); }
+.shot { position: absolute; left: 56px; top: 364px; width: 1330px; border-radius: 22px; overflow: hidden; transform-origin: 0 0; transform: scale(.86);
+  box-shadow: 0 0 0 0.5px oklch(0.3 0.04 255 / 0.16), 0 30px 70px -20px oklch(0.3 0.06 255 / 0.45), 0 2px 6px oklch(0.3 0.05 255 / 0.08); }
+.shot img { display: block; width: 1330px; height: 288px; }
+</style></head>
+<body>
+<div class="sun"></div>
+<img class="mark" src="../../site/assets/logo-small.svg" alt="">
+<p class="name">Open World Clock</p>
+<h1 id="h1">The world clock Windows should have shipped with.</h1>
+<p class="sub" id="sub">Completely free, open source, no strings attached.</p>
+<div class="shot"><img src="strip-light.webp" alt=""></div>
+<script>
+  // the same card in Portuguese and Spanish: the home page's own words in each language
+  var WORDS = {
+    pt: ['pt-BR', 'O relógio mundial que já devia vir no Windows.', 'Grátis de verdade, código aberto, sem pegadinha.'],
+    es: ['es', 'El reloj mundial que le faltaba a Windows.', 'Gratis de verdad, de código abierto y sin letra pequeña.']
+  }[new URLSearchParams(location.search).get('lang')];
+  if (WORDS) { document.documentElement.lang = WORDS[0]; document.getElementById('h1').textContent = WORDS[1]; document.getElementById('sub').textContent = WORDS[2]; }
+</script>
+</body></html>

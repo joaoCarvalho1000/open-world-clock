@@ -1,0 +1,3695 @@
+{
+  "meta": {
+    "Europe/Lisbon": {
+      "city": "Lisbon",
+      "country": "Portugal",
+      "alias": "Porto",
+      "lat": 38.72,
+      "lng": -9.14
+    },
+    "Europe/London": {
+      "city": "London",
+      "country": "United Kingdom",
+      "alias": "UK GMT BST Manchester",
+      "lat": 51.51,
+      "lng": -0.13
+    },
+    "Europe/Dublin": {
+      "city": "Dublin",
+      "country": "Ireland",
+      "lat": 53.35,
+      "lng": -6.26
+    },
+    "Europe/Paris": {
+      "city": "Paris",
+      "country": "France",
+      "alias": "CET",
+      "lat": 48.86,
+      "lng": 2.35
+    },
+    "Europe/Madrid": {
+      "city": "Madrid",
+      "country": "Spain",
+      "alias": "Barcelona",
+      "lat": 40.42,
+      "lng": -3.7
+    },
+    "Europe/Berlin": {
+      "city": "Berlin",
+      "country": "Germany",
+      "alias": "Munich Frankfurt Hamburg",
+      "lat": 52.52,
+      "lng": 13.4
+    },
+    "Europe/Amsterdam": {
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "lat": 52.37,
+      "lng": 4.9
+    },
+    "Europe/Brussels": {
+      "city": "Brussels",
+      "country": "Belgium",
+      "lat": 50.85,
+      "lng": 4.35
+    },
+    "Europe/Zurich": {
+      "city": "Zurich",
+      "country": "Switzerland",
+      "alias": "Geneva Zug",
+      "lat": 47.38,
+      "lng": 8.54
+    },
+    "Europe/Rome": {
+      "city": "Rome",
+      "country": "Italy",
+      "alias": "Milan",
+      "lat": 41.9,
+      "lng": 12.5
+    },
+    "Europe/Vienna": {
+      "city": "Vienna",
+      "country": "Austria",
+      "lat": 48.21,
+      "lng": 16.37
+    },
+    "Europe/Prague": {
+      "city": "Prague",
+      "country": "Czechia",
+      "lat": 50.08,
+      "lng": 14.44
+    },
+    "Europe/Warsaw": {
+      "city": "Warsaw",
+      "country": "Poland",
+      "lat": 52.23,
+      "lng": 21.01
+    },
+    "Europe/Stockholm": {
+      "city": "Stockholm",
+      "country": "Sweden",
+      "lat": 59.33,
+      "lng": 18.07
+    },
+    "Europe/Oslo": {
+      "city": "Oslo",
+      "country": "Norway",
+      "lat": 59.91,
+      "lng": 10.75
+    },
+    "Europe/Copenhagen": {
+      "city": "Copenhagen",
+      "country": "Denmark",
+      "lat": 55.68,
+      "lng": 12.57
+    },
+    "Europe/Helsinki": {
+      "city": "Helsinki",
+      "country": "Finland",
+      "lat": 60.17,
+      "lng": 24.94
+    },
+    "Europe/Athens": {
+      "city": "Athens",
+      "country": "Greece",
+      "lat": 37.98,
+      "lng": 23.73
+    },
+    "Europe/Istanbul": {
+      "city": "Istanbul",
+      "country": "Turkey",
+      "lat": 41.01,
+      "lng": 28.98
+    },
+    "Europe/Kyiv": {
+      "city": "Kyiv",
+      "country": "Ukraine",
+      "alias": "Kiev",
+      "lat": 50.45,
+      "lng": 30.52
+    },
+    "Europe/Moscow": {
+      "city": "Moscow",
+      "country": "Russia",
+      "lat": 55.76,
+      "lng": 37.62
+    },
+    "Europe/Bucharest": {
+      "city": "Bucharest",
+      "country": "Romania",
+      "lat": 44.43,
+      "lng": 26.1
+    },
+    "Africa/Cairo": {
+      "city": "Cairo",
+      "country": "Egypt",
+      "lat": 30.04,
+      "lng": 31.24
+    },
+    "Africa/Lagos": {
+      "city": "Lagos",
+      "country": "Nigeria",
+      "lat": 6.52,
+      "lng": 3.38
+    },
+    "Africa/Nairobi": {
+      "city": "Nairobi",
+      "country": "Kenya",
+      "lat": -1.29,
+      "lng": 36.82
+    },
+    "Africa/Johannesburg": {
+      "city": "Johannesburg",
+      "country": "South Africa",
+      "alias": "Cape Town",
+      "lat": -26.2,
+      "lng": 28.05
+    },
+    "Africa/Casablanca": {
+      "city": "Casablanca",
+      "country": "Morocco",
+      "lat": 33.57,
+      "lng": -7.59
+    },
+    "Asia/Dubai": {
+      "city": "Dubai",
+      "country": "UAE",
+      "alias": "Abu Dhabi GST",
+      "lat": 25.2,
+      "lng": 55.27
+    },
+    "Asia/Riyadh": {
+      "city": "Riyadh",
+      "country": "Saudi Arabia",
+      "lat": 24.71,
+      "lng": 46.68
+    },
+    "Asia/Jerusalem": {
+      "city": "Tel Aviv",
+      "country": "Israel",
+      "alias": "Jerusalem Israel",
+      "lat": 32.09,
+      "lng": 34.78
+    },
+    "Asia/Tehran": {
+      "city": "Tehran",
+      "country": "Iran",
+      "lat": 35.69,
+      "lng": 51.39
+    },
+    "Asia/Karachi": {
+      "city": "Karachi",
+      "country": "Pakistan",
+      "lat": 24.86,
+      "lng": 67.01
+    },
+    "Asia/Kolkata": {
+      "city": "Mumbai",
+      "country": "India",
+      "alias": "Kolkata Delhi Bangalore Bengaluru IST",
+      "lat": 19.08,
+      "lng": 72.88
+    },
+    "Asia/Dhaka": {
+      "city": "Dhaka",
+      "country": "Bangladesh",
+      "lat": 23.81,
+      "lng": 90.41
+    },
+    "Asia/Bangkok": {
+      "city": "Bangkok",
+      "country": "Thailand",
+      "alias": "Hanoi",
+      "lat": 13.76,
+      "lng": 100.5
+    },
+    "Asia/Jakarta": {
+      "city": "Jakarta",
+      "country": "Indonesia",
+      "lat": -6.21,
+      "lng": 106.85
+    },
+    "Asia/Singapore": {
+      "city": "Singapore",
+      "country": "Singapore",
+      "alias": "SGT",
+      "lat": 1.35,
+      "lng": 103.82
+    },
+    "Asia/Kuala_Lumpur": {
+      "city": "Kuala Lumpur",
+      "country": "Malaysia",
+      "lat": 3.14,
+      "lng": 101.69
+    },
+    "Asia/Manila": {
+      "city": "Manila",
+      "country": "Philippines",
+      "lat": 14.6,
+      "lng": 120.98
+    },
+    "Asia/Ho_Chi_Minh": {
+      "city": "Ho Chi Minh City",
+      "country": "Vietnam",
+      "alias": "Saigon",
+      "lat": 10.82,
+      "lng": 106.63
+    },
+    "Asia/Hong_Kong": {
+      "city": "Hong Kong",
+      "country": "Hong Kong",
+      "alias": "HKT",
+      "lat": 22.32,
+      "lng": 114.17
+    },
+    "Asia/Shanghai": {
+      "city": "Shanghai",
+      "country": "China",
+      "alias": "Beijing Shenzhen CST",
+      "lat": 31.23,
+      "lng": 121.47
+    },
+    "Asia/Taipei": {
+      "city": "Taipei",
+      "country": "Taiwan",
+      "lat": 25.03,
+      "lng": 121.57
+    },
+    "Asia/Seoul": {
+      "city": "Seoul",
+      "country": "South Korea",
+      "alias": "KST",
+      "lat": 37.57,
+      "lng": 126.98
+    },
+    "Asia/Tokyo": {
+      "city": "Tokyo",
+      "country": "Japan",
+      "alias": "Osaka JST",
+      "lat": 35.68,
+      "lng": 139.69
+    },
+    "Australia/Perth": {
+      "city": "Perth",
+      "country": "Australia",
+      "lat": -31.95,
+      "lng": 115.86
+    },
+    "Australia/Adelaide": {
+      "city": "Adelaide",
+      "country": "Australia",
+      "lat": -34.93,
+      "lng": 138.6
+    },
+    "Australia/Brisbane": {
+      "city": "Brisbane",
+      "country": "Australia",
+      "lat": -27.47,
+      "lng": 153.03
+    },
+    "Australia/Sydney": {
+      "city": "Sydney",
+      "country": "Australia",
+      "alias": "AEST AEDT Canberra",
+      "lat": -33.87,
+      "lng": 151.21
+    },
+    "Australia/Melbourne": {
+      "city": "Melbourne",
+      "country": "Australia",
+      "lat": -37.81,
+      "lng": 144.96
+    },
+    "Pacific/Auckland": {
+      "city": "Auckland",
+      "country": "New Zealand",
+      "alias": "Wellington NZ",
+      "lat": -36.85,
+      "lng": 174.76
+    },
+    "Pacific/Honolulu": {
+      "city": "Honolulu",
+      "country": "USA",
+      "alias": "Hawaii HST",
+      "lat": 21.31,
+      "lng": -157.86
+    },
+    "America/Anchorage": {
+      "city": "Anchorage",
+      "country": "USA",
+      "alias": "Alaska",
+      "lat": 61.22,
+      "lng": -149.9
+    },
+    "America/Los_Angeles": {
+      "city": "Los Angeles",
+      "country": "USA",
+      "alias": "San Francisco Seattle Pacific PST PDT",
+      "lat": 34.05,
+      "lng": -118.24
+    },
+    "America/Vancouver": {
+      "city": "Vancouver",
+      "country": "Canada",
+      "lat": 49.28,
+      "lng": -123.12
+    },
+    "America/Denver": {
+      "city": "Denver",
+      "country": "USA",
+      "alias": "Mountain MST MDT Salt Lake",
+      "lat": 39.74,
+      "lng": -104.99
+    },
+    "America/Phoenix": {
+      "city": "Phoenix",
+      "country": "USA",
+      "alias": "Arizona",
+      "lat": 33.45,
+      "lng": -112.07
+    },
+    "America/Chicago": {
+      "city": "Chicago",
+      "country": "USA",
+      "alias": "Central CST CDT Dallas Austin Houston",
+      "lat": 41.88,
+      "lng": -87.63
+    },
+    "America/Mexico_City": {
+      "city": "Mexico City",
+      "country": "Mexico",
+      "lat": 19.43,
+      "lng": -99.13
+    },
+    "America/New_York": {
+      "city": "New York",
+      "country": "USA",
+      "alias": "Eastern EST EDT Boston Miami Washington",
+      "lat": 40.71,
+      "lng": -74.01
+    },
+    "America/Toronto": {
+      "city": "Toronto",
+      "country": "Canada",
+      "alias": "Montreal Ottawa",
+      "lat": 43.65,
+      "lng": -79.38
+    },
+    "America/Bogota": {
+      "city": "Bogotá",
+      "country": "Colombia",
+      "alias": "Bogota",
+      "lat": 4.71,
+      "lng": -74.07
+    },
+    "America/Lima": {
+      "city": "Lima",
+      "country": "Peru",
+      "lat": -12.05,
+      "lng": -77.04
+    },
+    "America/Caracas": {
+      "city": "Caracas",
+      "country": "Venezuela",
+      "lat": 10.48,
+      "lng": -66.9
+    },
+    "America/Santiago": {
+      "city": "Santiago",
+      "country": "Chile",
+      "lat": -33.45,
+      "lng": -70.67
+    },
+    "America/Argentina/Buenos_Aires": {
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "lat": -34.6,
+      "lng": -58.38
+    },
+    "America/Sao_Paulo": {
+      "city": "São Paulo",
+      "country": "Brazil",
+      "alias": "Sao Paulo Rio de Janeiro BRT",
+      "lat": -23.55,
+      "lng": -46.63
+    },
+    "America/Halifax": {
+      "city": "Halifax",
+      "country": "Canada",
+      "alias": "Atlantic",
+      "lat": 44.65,
+      "lng": -63.58
+    },
+    "Atlantic/Azores": {
+      "city": "Azores",
+      "country": "Portugal",
+      "alias": "Ponta Delgada",
+      "lat": 37.74,
+      "lng": -25.67
+    },
+    "Atlantic/Reykjavik": {
+      "city": "Reykjavík",
+      "country": "Iceland",
+      "alias": "Reykjavik",
+      "lat": 64.15,
+      "lng": -21.94
+    },
+    "UTC": {
+      "city": "UTC",
+      "country": "Coordinated Universal Time",
+      "alias": "GMT Zulu",
+      "lat": 51.48,
+      "lng": 0
+    }
+  },
+  "coords": {
+    "Africa/Abidjan": [
+      5.36,
+      -4.01
+    ],
+    "Africa/Accra": [
+      5.6,
+      -0.19
+    ],
+    "Africa/Addis_Ababa": [
+      9.03,
+      38.74
+    ],
+    "Africa/Algiers": [
+      36.75,
+      3.06
+    ],
+    "Africa/Asmara": [
+      15.32,
+      38.93
+    ],
+    "Africa/Bamako": [
+      12.64,
+      -8
+    ],
+    "Africa/Bangui": [
+      4.39,
+      18.56
+    ],
+    "Africa/Banjul": [
+      13.45,
+      -16.58
+    ],
+    "Africa/Bissau": [
+      11.86,
+      -15.6
+    ],
+    "Africa/Blantyre": [
+      -15.79,
+      35.01
+    ],
+    "Africa/Brazzaville": [
+      -4.26,
+      15.24
+    ],
+    "Africa/Bujumbura": [
+      -3.38,
+      29.36
+    ],
+    "Africa/Ceuta": [
+      35.89,
+      -5.32
+    ],
+    "Africa/Conakry": [
+      9.64,
+      -13.58
+    ],
+    "Africa/Dakar": [
+      14.72,
+      -17.47
+    ],
+    "Africa/Dar_es_Salaam": [
+      -6.79,
+      39.21
+    ],
+    "Africa/Djibouti": [
+      11.59,
+      43.15
+    ],
+    "Africa/Douala": [
+      4.05,
+      9.77
+    ],
+    "Africa/El_Aaiun": [
+      27.15,
+      -13.2
+    ],
+    "Africa/Freetown": [
+      8.47,
+      -13.23
+    ],
+    "Africa/Gaborone": [
+      -24.63,
+      25.92
+    ],
+    "Africa/Harare": [
+      -17.83,
+      31.05
+    ],
+    "Africa/Juba": [
+      4.86,
+      31.57
+    ],
+    "Africa/Kampala": [
+      0.35,
+      32.58
+    ],
+    "Africa/Khartoum": [
+      15.5,
+      32.56
+    ],
+    "Africa/Kigali": [
+      -1.94,
+      30.06
+    ],
+    "Africa/Kinshasa": [
+      -4.44,
+      15.27
+    ],
+    "Africa/Libreville": [
+      0.42,
+      9.47
+    ],
+    "Africa/Lome": [
+      6.13,
+      1.22
+    ],
+    "Africa/Luanda": [
+      -8.84,
+      13.23
+    ],
+    "Africa/Lubumbashi": [
+      -11.66,
+      27.48
+    ],
+    "Africa/Lusaka": [
+      -15.39,
+      28.32
+    ],
+    "Africa/Malabo": [
+      3.75,
+      8.78
+    ],
+    "Africa/Maputo": [
+      -25.97,
+      32.57
+    ],
+    "Africa/Maseru": [
+      -29.31,
+      27.48
+    ],
+    "Africa/Mbabane": [
+      -26.31,
+      31.14
+    ],
+    "Africa/Mogadishu": [
+      2.05,
+      45.32
+    ],
+    "Africa/Monrovia": [
+      6.3,
+      -10.8
+    ],
+    "Africa/Ndjamena": [
+      12.13,
+      15.06
+    ],
+    "Africa/Niamey": [
+      13.51,
+      2.11
+    ],
+    "Africa/Nouakchott": [
+      18.08,
+      -15.98
+    ],
+    "Africa/Ouagadougou": [
+      12.37,
+      -1.52
+    ],
+    "Africa/Porto-Novo": [
+      6.5,
+      2.6
+    ],
+    "Africa/Sao_Tome": [
+      0.34,
+      6.73
+    ],
+    "Africa/Tripoli": [
+      32.89,
+      13.19
+    ],
+    "Africa/Tunis": [
+      36.81,
+      10.18
+    ],
+    "Africa/Windhoek": [
+      -22.56,
+      17.07
+    ],
+    "Africa/Cairo": [
+      30.04,
+      31.24
+    ],
+    "Africa/Lagos": [
+      6.52,
+      3.38
+    ],
+    "Africa/Nairobi": [
+      -1.29,
+      36.82
+    ],
+    "Africa/Johannesburg": [
+      -26.2,
+      28.05
+    ],
+    "Africa/Casablanca": [
+      33.57,
+      -7.59
+    ],
+    "America/Adak": [
+      51.88,
+      -176.66
+    ],
+    "America/Anchorage": [
+      61.22,
+      -149.9
+    ],
+    "America/Anguilla": [
+      18.22,
+      -63.07
+    ],
+    "America/Antigua": [
+      17.12,
+      -61.85
+    ],
+    "America/Araguaina": [
+      -7.19,
+      -48.21
+    ],
+    "America/Argentina/Buenos_Aires": [
+      -34.6,
+      -58.38
+    ],
+    "America/Argentina/Catamarca": [
+      -28.47,
+      -65.78
+    ],
+    "America/Argentina/Cordoba": [
+      -31.42,
+      -64.18
+    ],
+    "America/Argentina/Jujuy": [
+      -24.19,
+      -65.3
+    ],
+    "America/Argentina/La_Rioja": [
+      -29.41,
+      -66.86
+    ],
+    "America/Argentina/Mendoza": [
+      -32.89,
+      -68.83
+    ],
+    "America/Argentina/Rio_Gallegos": [
+      -51.62,
+      -69.22
+    ],
+    "America/Argentina/Salta": [
+      -24.79,
+      -65.41
+    ],
+    "America/Argentina/San_Juan": [
+      -31.54,
+      -68.54
+    ],
+    "America/Argentina/San_Luis": [
+      -33.3,
+      -66.34
+    ],
+    "America/Argentina/Tucuman": [
+      -26.81,
+      -65.22
+    ],
+    "America/Argentina/Ushuaia": [
+      -54.8,
+      -68.3
+    ],
+    "America/Aruba": [
+      12.52,
+      -70.03
+    ],
+    "America/Asuncion": [
+      -25.26,
+      -57.58
+    ],
+    "America/Atikokan": [
+      48.76,
+      -91.62
+    ],
+    "America/Bahia": [
+      -12.97,
+      -38.5
+    ],
+    "America/Bahia_Banderas": [
+      20.8,
+      -105.25
+    ],
+    "America/Barbados": [
+      13.1,
+      -59.62
+    ],
+    "America/Belem": [
+      -1.46,
+      -48.49
+    ],
+    "America/Belize": [
+      17.5,
+      -88.2
+    ],
+    "America/Blanc-Sablon": [
+      51.43,
+      -57.13
+    ],
+    "America/Boa_Vista": [
+      2.82,
+      -60.67
+    ],
+    "America/Bogota": [
+      4.71,
+      -74.07
+    ],
+    "America/Boise": [
+      43.62,
+      -116.2
+    ],
+    "America/Cambridge_Bay": [
+      69.12,
+      -105.06
+    ],
+    "America/Campo_Grande": [
+      -20.47,
+      -54.62
+    ],
+    "America/Cancun": [
+      21.16,
+      -86.85
+    ],
+    "America/Caracas": [
+      10.48,
+      -66.9
+    ],
+    "America/Cayenne": [
+      4.94,
+      -52.33
+    ],
+    "America/Cayman": [
+      19.29,
+      -81.37
+    ],
+    "America/Chicago": [
+      41.88,
+      -87.63
+    ],
+    "America/Chihuahua": [
+      28.63,
+      -106.07
+    ],
+    "America/Ciudad_Juarez": [
+      31.69,
+      -106.42
+    ],
+    "America/Costa_Rica": [
+      9.93,
+      -84.08
+    ],
+    "America/Cuiaba": [
+      -15.6,
+      -56.1
+    ],
+    "America/Curacao": [
+      12.11,
+      -68.93
+    ],
+    "America/Danmarkshavn": [
+      76.77,
+      -18.67
+    ],
+    "America/Dawson": [
+      64.06,
+      -139.43
+    ],
+    "America/Dawson_Creek": [
+      55.76,
+      -120.24
+    ],
+    "America/Denver": [
+      39.74,
+      -104.99
+    ],
+    "America/Detroit": [
+      42.33,
+      -83.05
+    ],
+    "America/Dominica": [
+      15.3,
+      -61.39
+    ],
+    "America/Edmonton": [
+      53.55,
+      -113.49
+    ],
+    "America/Eirunepe": [
+      -6.66,
+      -69.87
+    ],
+    "America/El_Salvador": [
+      13.69,
+      -89.22
+    ],
+    "America/Fort_Nelson": [
+      58.81,
+      -122.7
+    ],
+    "America/Fortaleza": [
+      -3.73,
+      -38.53
+    ],
+    "America/Glace_Bay": [
+      46.2,
+      -59.96
+    ],
+    "America/Goose_Bay": [
+      53.3,
+      -60.33
+    ],
+    "America/Grand_Turk": [
+      21.47,
+      -71.14
+    ],
+    "America/Grenada": [
+      12.05,
+      -61.75
+    ],
+    "America/Guadeloupe": [
+      16.24,
+      -61.53
+    ],
+    "America/Guatemala": [
+      14.63,
+      -90.51
+    ],
+    "America/Guayaquil": [
+      -2.19,
+      -79.89
+    ],
+    "America/Guyana": [
+      6.8,
+      -58.16
+    ],
+    "America/Halifax": [
+      44.65,
+      -63.58
+    ],
+    "America/Havana": [
+      23.11,
+      -82.37
+    ],
+    "America/Hermosillo": [
+      29.07,
+      -110.96
+    ],
+    "America/Indiana/Indianapolis": [
+      39.77,
+      -86.16
+    ],
+    "America/Indianapolis": [
+      39.77,
+      -86.16
+    ],
+    "America/Inuvik": [
+      68.36,
+      -133.72
+    ],
+    "America/Iqaluit": [
+      63.75,
+      -68.52
+    ],
+    "America/Jamaica": [
+      18,
+      -76.79
+    ],
+    "America/Juneau": [
+      58.3,
+      -134.42
+    ],
+    "America/Kentucky/Louisville": [
+      38.25,
+      -85.76
+    ],
+    "America/Louisville": [
+      38.25,
+      -85.76
+    ],
+    "America/Kralendijk": [
+      12.15,
+      -68.27
+    ],
+    "America/La_Paz": [
+      -16.5,
+      -68.15
+    ],
+    "America/Lima": [
+      -12.05,
+      -77.04
+    ],
+    "America/Los_Angeles": [
+      34.05,
+      -118.24
+    ],
+    "America/Lower_Princes": [
+      18.03,
+      -63.05
+    ],
+    "America/Maceio": [
+      -9.67,
+      -35.74
+    ],
+    "America/Managua": [
+      12.11,
+      -86.24
+    ],
+    "America/Manaus": [
+      -3.12,
+      -60.02
+    ],
+    "America/Marigot": [
+      18.07,
+      -63.08
+    ],
+    "America/Martinique": [
+      14.6,
+      -61.07
+    ],
+    "America/Matamoros": [
+      25.87,
+      -97.5
+    ],
+    "America/Mazatlan": [
+      23.25,
+      -106.41
+    ],
+    "America/Menominee": [
+      45.11,
+      -87.61
+    ],
+    "America/Merida": [
+      20.97,
+      -89.62
+    ],
+    "America/Metlakatla": [
+      55.13,
+      -131.57
+    ],
+    "America/Mexico_City": [
+      19.43,
+      -99.13
+    ],
+    "America/Miquelon": [
+      47.1,
+      -56.38
+    ],
+    "America/Moncton": [
+      46.09,
+      -64.78
+    ],
+    "America/Monterrey": [
+      25.69,
+      -100.32
+    ],
+    "America/Montevideo": [
+      -34.9,
+      -56.16
+    ],
+    "America/Montserrat": [
+      16.71,
+      -62.22
+    ],
+    "America/Nassau": [
+      25.05,
+      -77.35
+    ],
+    "America/New_York": [
+      40.71,
+      -74.01
+    ],
+    "America/Nome": [
+      64.5,
+      -165.41
+    ],
+    "America/Noronha": [
+      -3.85,
+      -32.42
+    ],
+    "America/North_Dakota/Center": [
+      47.12,
+      -101.3
+    ],
+    "America/Nuuk": [
+      64.18,
+      -51.72
+    ],
+    "America/Godthab": [
+      64.18,
+      -51.72
+    ],
+    "America/Ojinaga": [
+      29.56,
+      -104.42
+    ],
+    "America/Panama": [
+      8.98,
+      -79.52
+    ],
+    "America/Paramaribo": [
+      5.85,
+      -55.2
+    ],
+    "America/Phoenix": [
+      33.45,
+      -112.07
+    ],
+    "America/Port-au-Prince": [
+      18.59,
+      -72.31
+    ],
+    "America/Port_of_Spain": [
+      10.66,
+      -61.51
+    ],
+    "America/Porto_Velho": [
+      -8.76,
+      -63.9
+    ],
+    "America/Puerto_Rico": [
+      18.47,
+      -66.11
+    ],
+    "America/Punta_Arenas": [
+      -53.16,
+      -70.91
+    ],
+    "America/Rankin_Inlet": [
+      62.81,
+      -92.09
+    ],
+    "America/Recife": [
+      -8.05,
+      -34.88
+    ],
+    "America/Regina": [
+      50.45,
+      -104.62
+    ],
+    "America/Resolute": [
+      74.7,
+      -94.83
+    ],
+    "America/Rio_Branco": [
+      -9.97,
+      -67.81
+    ],
+    "America/Santarem": [
+      -2.44,
+      -54.71
+    ],
+    "America/Santiago": [
+      -33.45,
+      -70.67
+    ],
+    "America/Santo_Domingo": [
+      18.49,
+      -69.93
+    ],
+    "America/Sao_Paulo": [
+      -23.55,
+      -46.63
+    ],
+    "America/Scoresbysund": [
+      70.49,
+      -21.96
+    ],
+    "America/Sitka": [
+      57.05,
+      -135.33
+    ],
+    "America/St_Barthelemy": [
+      17.9,
+      -62.85
+    ],
+    "America/St_Johns": [
+      47.56,
+      -52.71
+    ],
+    "America/St_Kitts": [
+      17.3,
+      -62.72
+    ],
+    "America/St_Lucia": [
+      14.01,
+      -60.99
+    ],
+    "America/St_Thomas": [
+      18.34,
+      -64.93
+    ],
+    "America/St_Vincent": [
+      13.16,
+      -61.23
+    ],
+    "America/Swift_Current": [
+      50.29,
+      -107.79
+    ],
+    "America/Tegucigalpa": [
+      14.07,
+      -87.19
+    ],
+    "America/Thule": [
+      76.53,
+      -68.7
+    ],
+    "America/Tijuana": [
+      32.51,
+      -117.04
+    ],
+    "America/Toronto": [
+      43.65,
+      -79.38
+    ],
+    "America/Tortola": [
+      18.43,
+      -64.62
+    ],
+    "America/Vancouver": [
+      49.28,
+      -123.12
+    ],
+    "America/Whitehorse": [
+      60.72,
+      -135.06
+    ],
+    "America/Winnipeg": [
+      49.9,
+      -97.14
+    ],
+    "America/Yakutat": [
+      59.55,
+      -139.73
+    ],
+    "America/Montreal": [
+      45.5,
+      -73.57
+    ],
+    "America/Buenos_Aires": [
+      -34.6,
+      -58.38
+    ],
+    "Antarctica/McMurdo": [
+      -77.85,
+      166.67
+    ],
+    "Antarctica/Palmer": [
+      -64.77,
+      -64.05
+    ],
+    "Antarctica/Casey": [
+      -66.28,
+      110.53
+    ],
+    "Antarctica/Davis": [
+      -68.58,
+      77.97
+    ],
+    "Antarctica/Mawson": [
+      -67.6,
+      62.87
+    ],
+    "Antarctica/Rothera": [
+      -67.57,
+      -68.13
+    ],
+    "Antarctica/Syowa": [
+      -69,
+      39.58
+    ],
+    "Antarctica/Troll": [
+      -72.01,
+      2.53
+    ],
+    "Antarctica/Vostok": [
+      -78.46,
+      106.84
+    ],
+    "Antarctica/DumontDUrville": [
+      -66.66,
+      140
+    ],
+    "Antarctica/Macquarie": [
+      -54.5,
+      158.95
+    ],
+    "Arctic/Longyearbyen": [
+      78.22,
+      15.65
+    ],
+    "Asia/Aden": [
+      12.79,
+      45.02
+    ],
+    "Asia/Almaty": [
+      43.24,
+      76.89
+    ],
+    "Asia/Amman": [
+      31.95,
+      35.93
+    ],
+    "Asia/Anadyr": [
+      64.73,
+      177.51
+    ],
+    "Asia/Aqtau": [
+      43.65,
+      51.17
+    ],
+    "Asia/Aqtobe": [
+      50.28,
+      57.17
+    ],
+    "Asia/Ashgabat": [
+      37.96,
+      58.33
+    ],
+    "Asia/Atyrau": [
+      47.1,
+      51.92
+    ],
+    "Asia/Baghdad": [
+      33.31,
+      44.37
+    ],
+    "Asia/Bahrain": [
+      26.23,
+      50.59
+    ],
+    "Asia/Baku": [
+      40.41,
+      49.87
+    ],
+    "Asia/Bangkok": [
+      13.76,
+      100.5
+    ],
+    "Asia/Barnaul": [
+      53.35,
+      83.78
+    ],
+    "Asia/Beirut": [
+      33.89,
+      35.5
+    ],
+    "Asia/Bishkek": [
+      42.87,
+      74.59
+    ],
+    "Asia/Brunei": [
+      4.9,
+      114.94
+    ],
+    "Asia/Calcutta": [
+      22.57,
+      88.36
+    ],
+    "Asia/Chita": [
+      52.03,
+      113.5
+    ],
+    "Asia/Colombo": [
+      6.93,
+      79.86
+    ],
+    "Asia/Damascus": [
+      33.51,
+      36.28
+    ],
+    "Asia/Dhaka": [
+      23.81,
+      90.41
+    ],
+    "Asia/Dili": [
+      -8.56,
+      125.57
+    ],
+    "Asia/Dubai": [
+      25.2,
+      55.27
+    ],
+    "Asia/Dushanbe": [
+      38.56,
+      68.79
+    ],
+    "Asia/Famagusta": [
+      35.12,
+      33.94
+    ],
+    "Asia/Gaza": [
+      31.5,
+      34.47
+    ],
+    "Asia/Hebron": [
+      31.53,
+      35.1
+    ],
+    "Asia/Ho_Chi_Minh": [
+      10.82,
+      106.63
+    ],
+    "Asia/Saigon": [
+      10.82,
+      106.63
+    ],
+    "Asia/Hong_Kong": [
+      22.32,
+      114.17
+    ],
+    "Asia/Hovd": [
+      48.01,
+      91.64
+    ],
+    "Asia/Irkutsk": [
+      52.29,
+      104.28
+    ],
+    "Asia/Jakarta": [
+      -6.21,
+      106.85
+    ],
+    "Asia/Jayapura": [
+      -2.53,
+      140.72
+    ],
+    "Asia/Jerusalem": [
+      31.77,
+      35.21
+    ],
+    "Asia/Kabul": [
+      34.56,
+      69.21
+    ],
+    "Asia/Kamchatka": [
+      53.02,
+      158.65
+    ],
+    "Asia/Karachi": [
+      24.86,
+      67.01
+    ],
+    "Asia/Kathmandu": [
+      27.72,
+      85.32
+    ],
+    "Asia/Katmandu": [
+      27.72,
+      85.32
+    ],
+    "Asia/Khandyga": [
+      62.66,
+      135.55
+    ],
+    "Asia/Kolkata": [
+      19.08,
+      72.88
+    ],
+    "Asia/Krasnoyarsk": [
+      56.01,
+      92.85
+    ],
+    "Asia/Kuala_Lumpur": [
+      3.14,
+      101.69
+    ],
+    "Asia/Kuching": [
+      1.55,
+      110.34
+    ],
+    "Asia/Kuwait": [
+      29.38,
+      47.99
+    ],
+    "Asia/Macau": [
+      22.2,
+      113.54
+    ],
+    "Asia/Magadan": [
+      59.56,
+      150.8
+    ],
+    "Asia/Makassar": [
+      -5.15,
+      119.43
+    ],
+    "Asia/Manila": [
+      14.6,
+      120.98
+    ],
+    "Asia/Muscat": [
+      23.59,
+      58.41
+    ],
+    "Asia/Nicosia": [
+      35.19,
+      33.38
+    ],
+    "Asia/Novokuznetsk": [
+      53.76,
+      87.14
+    ],
+    "Asia/Novosibirsk": [
+      55.01,
+      82.93
+    ],
+    "Asia/Omsk": [
+      54.99,
+      73.37
+    ],
+    "Asia/Oral": [
+      51.23,
+      51.37
+    ],
+    "Asia/Phnom_Penh": [
+      11.56,
+      104.93
+    ],
+    "Asia/Pontianak": [
+      -0.03,
+      109.33
+    ],
+    "Asia/Pyongyang": [
+      39.04,
+      125.76
+    ],
+    "Asia/Qatar": [
+      25.29,
+      51.53
+    ],
+    "Asia/Qostanay": [
+      53.21,
+      63.63
+    ],
+    "Asia/Qyzylorda": [
+      44.85,
+      65.51
+    ],
+    "Asia/Rangoon": [
+      16.87,
+      96.2
+    ],
+    "Asia/Yangon": [
+      16.87,
+      96.2
+    ],
+    "Asia/Riyadh": [
+      24.71,
+      46.68
+    ],
+    "Asia/Sakhalin": [
+      46.96,
+      142.73
+    ],
+    "Asia/Samarkand": [
+      39.65,
+      66.96
+    ],
+    "Asia/Seoul": [
+      37.57,
+      126.98
+    ],
+    "Asia/Shanghai": [
+      31.23,
+      121.47
+    ],
+    "Asia/Singapore": [
+      1.35,
+      103.82
+    ],
+    "Asia/Srednekolymsk": [
+      67.45,
+      153.73
+    ],
+    "Asia/Taipei": [
+      25.03,
+      121.57
+    ],
+    "Asia/Tashkent": [
+      41.3,
+      69.24
+    ],
+    "Asia/Tbilisi": [
+      41.72,
+      44.79
+    ],
+    "Asia/Tehran": [
+      35.69,
+      51.39
+    ],
+    "Asia/Tel_Aviv": [
+      32.09,
+      34.78
+    ],
+    "Asia/Thimphu": [
+      27.47,
+      89.64
+    ],
+    "Asia/Tokyo": [
+      35.68,
+      139.69
+    ],
+    "Asia/Tomsk": [
+      56.5,
+      84.97
+    ],
+    "Asia/Ulaanbaatar": [
+      47.89,
+      106.91
+    ],
+    "Asia/Urumqi": [
+      43.83,
+      87.62
+    ],
+    "Asia/Ust-Nera": [
+      64.57,
+      143.24
+    ],
+    "Asia/Vientiane": [
+      17.98,
+      102.63
+    ],
+    "Asia/Vladivostok": [
+      43.12,
+      131.89
+    ],
+    "Asia/Yakutsk": [
+      62.03,
+      129.73
+    ],
+    "Asia/Yekaterinburg": [
+      56.84,
+      60.61
+    ],
+    "Asia/Yerevan": [
+      40.18,
+      44.51
+    ],
+    "Atlantic/Azores": [
+      37.74,
+      -25.67
+    ],
+    "Atlantic/Bermuda": [
+      32.29,
+      -64.78
+    ],
+    "Atlantic/Canary": [
+      28.12,
+      -15.43
+    ],
+    "Atlantic/Cape_Verde": [
+      14.93,
+      -23.51
+    ],
+    "Atlantic/Faroe": [
+      62.01,
+      -6.77
+    ],
+    "Atlantic/Madeira": [
+      32.65,
+      -16.91
+    ],
+    "Atlantic/Reykjavik": [
+      64.15,
+      -21.94
+    ],
+    "Atlantic/South_Georgia": [
+      -54.28,
+      -36.51
+    ],
+    "Atlantic/St_Helena": [
+      -15.92,
+      -5.72
+    ],
+    "Atlantic/Stanley": [
+      -51.7,
+      -57.85
+    ],
+    "Australia/Adelaide": [
+      -34.93,
+      138.6
+    ],
+    "Australia/Brisbane": [
+      -27.47,
+      153.03
+    ],
+    "Australia/Broken_Hill": [
+      -31.95,
+      141.47
+    ],
+    "Australia/Darwin": [
+      -12.46,
+      130.84
+    ],
+    "Australia/Eucla": [
+      -31.68,
+      128.88
+    ],
+    "Australia/Hobart": [
+      -42.88,
+      147.33
+    ],
+    "Australia/Lindeman": [
+      -20.45,
+      149.04
+    ],
+    "Australia/Lord_Howe": [
+      -31.55,
+      159.08
+    ],
+    "Australia/Melbourne": [
+      -37.81,
+      144.96
+    ],
+    "Australia/Perth": [
+      -31.95,
+      115.86
+    ],
+    "Australia/Sydney": [
+      -33.87,
+      151.21
+    ],
+    "Australia/Canberra": [
+      -35.28,
+      149.13
+    ],
+    "Europe/Amsterdam": [
+      52.37,
+      4.9
+    ],
+    "Europe/Andorra": [
+      42.51,
+      1.52
+    ],
+    "Europe/Astrakhan": [
+      46.35,
+      48.04
+    ],
+    "Europe/Athens": [
+      37.98,
+      23.73
+    ],
+    "Europe/Belgrade": [
+      44.79,
+      20.45
+    ],
+    "Europe/Berlin": [
+      52.52,
+      13.4
+    ],
+    "Europe/Bratislava": [
+      48.15,
+      17.11
+    ],
+    "Europe/Brussels": [
+      50.85,
+      4.35
+    ],
+    "Europe/Bucharest": [
+      44.43,
+      26.1
+    ],
+    "Europe/Budapest": [
+      47.5,
+      19.04
+    ],
+    "Europe/Busingen": [
+      47.7,
+      8.69
+    ],
+    "Europe/Chisinau": [
+      47.01,
+      28.86
+    ],
+    "Europe/Copenhagen": [
+      55.68,
+      12.57
+    ],
+    "Europe/Dublin": [
+      53.35,
+      -6.26
+    ],
+    "Europe/Gibraltar": [
+      36.14,
+      -5.35
+    ],
+    "Europe/Guernsey": [
+      49.45,
+      -2.54
+    ],
+    "Europe/Helsinki": [
+      60.17,
+      24.94
+    ],
+    "Europe/Isle_of_Man": [
+      54.15,
+      -4.48
+    ],
+    "Europe/Istanbul": [
+      41.01,
+      28.98
+    ],
+    "Europe/Jersey": [
+      49.19,
+      -2.11
+    ],
+    "Europe/Kaliningrad": [
+      54.71,
+      20.51
+    ],
+    "Europe/Kiev": [
+      50.45,
+      30.52
+    ],
+    "Europe/Kyiv": [
+      50.45,
+      30.52
+    ],
+    "Europe/Kirov": [
+      58.6,
+      49.66
+    ],
+    "Europe/Lisbon": [
+      38.72,
+      -9.14
+    ],
+    "Europe/Ljubljana": [
+      46.06,
+      14.51
+    ],
+    "Europe/London": [
+      51.51,
+      -0.13
+    ],
+    "Europe/Luxembourg": [
+      49.61,
+      6.13
+    ],
+    "Europe/Madrid": [
+      40.42,
+      -3.7
+    ],
+    "Europe/Malta": [
+      35.9,
+      14.51
+    ],
+    "Europe/Mariehamn": [
+      60.1,
+      19.94
+    ],
+    "Europe/Minsk": [
+      53.9,
+      27.56
+    ],
+    "Europe/Monaco": [
+      43.74,
+      7.42
+    ],
+    "Europe/Moscow": [
+      55.76,
+      37.62
+    ],
+    "Europe/Oslo": [
+      59.91,
+      10.75
+    ],
+    "Europe/Paris": [
+      48.86,
+      2.35
+    ],
+    "Europe/Podgorica": [
+      42.44,
+      19.26
+    ],
+    "Europe/Prague": [
+      50.08,
+      14.44
+    ],
+    "Europe/Riga": [
+      56.95,
+      24.11
+    ],
+    "Europe/Rome": [
+      41.9,
+      12.5
+    ],
+    "Europe/Samara": [
+      53.2,
+      50.15
+    ],
+    "Europe/San_Marino": [
+      43.94,
+      12.45
+    ],
+    "Europe/Sarajevo": [
+      43.86,
+      18.41
+    ],
+    "Europe/Saratov": [
+      51.53,
+      46.03
+    ],
+    "Europe/Simferopol": [
+      44.95,
+      34.1
+    ],
+    "Europe/Skopje": [
+      42,
+      21.43
+    ],
+    "Europe/Sofia": [
+      42.7,
+      23.32
+    ],
+    "Europe/Stockholm": [
+      59.33,
+      18.07
+    ],
+    "Europe/Tallinn": [
+      59.44,
+      24.75
+    ],
+    "Europe/Tirane": [
+      41.33,
+      19.82
+    ],
+    "Europe/Ulyanovsk": [
+      54.32,
+      48.4
+    ],
+    "Europe/Vaduz": [
+      47.14,
+      9.52
+    ],
+    "Europe/Vatican": [
+      41.9,
+      12.45
+    ],
+    "Europe/Vienna": [
+      48.21,
+      16.37
+    ],
+    "Europe/Vilnius": [
+      54.69,
+      25.28
+    ],
+    "Europe/Volgograd": [
+      48.71,
+      44.51
+    ],
+    "Europe/Warsaw": [
+      52.23,
+      21.01
+    ],
+    "Europe/Zagreb": [
+      45.81,
+      15.98
+    ],
+    "Europe/Zurich": [
+      47.38,
+      8.54
+    ],
+    "Indian/Antananarivo": [
+      -18.88,
+      47.51
+    ],
+    "Indian/Chagos": [
+      -7.31,
+      72.41
+    ],
+    "Indian/Christmas": [
+      -10.42,
+      105.68
+    ],
+    "Indian/Cocos": [
+      -12.19,
+      96.83
+    ],
+    "Indian/Comoro": [
+      -11.7,
+      43.26
+    ],
+    "Indian/Kerguelen": [
+      -49.35,
+      70.22
+    ],
+    "Indian/Mahe": [
+      -4.62,
+      55.45
+    ],
+    "Indian/Maldives": [
+      4.18,
+      73.51
+    ],
+    "Indian/Mauritius": [
+      -20.16,
+      57.5
+    ],
+    "Indian/Mayotte": [
+      -12.78,
+      45.23
+    ],
+    "Indian/Reunion": [
+      -20.88,
+      55.45
+    ],
+    "Pacific/Apia": [
+      -13.83,
+      -171.76
+    ],
+    "Pacific/Auckland": [
+      -36.85,
+      174.76
+    ],
+    "Pacific/Bougainville": [
+      -6.23,
+      155.57
+    ],
+    "Pacific/Chatham": [
+      -43.95,
+      -176.55
+    ],
+    "Pacific/Chuuk": [
+      7.45,
+      151.85
+    ],
+    "Pacific/Easter": [
+      -27.15,
+      -109.43
+    ],
+    "Pacific/Efate": [
+      -17.73,
+      168.32
+    ],
+    "Pacific/Fakaofo": [
+      -9.37,
+      -171.23
+    ],
+    "Pacific/Fiji": [
+      -18.14,
+      178.44
+    ],
+    "Pacific/Funafuti": [
+      -8.52,
+      179.2
+    ],
+    "Pacific/Galapagos": [
+      -0.9,
+      -89.6
+    ],
+    "Pacific/Gambier": [
+      -23.13,
+      -134.95
+    ],
+    "Pacific/Guadalcanal": [
+      -9.43,
+      159.95
+    ],
+    "Pacific/Guam": [
+      13.47,
+      144.75
+    ],
+    "Pacific/Honolulu": [
+      21.31,
+      -157.86
+    ],
+    "Pacific/Kanton": [
+      -2.81,
+      -171.67
+    ],
+    "Pacific/Kiritimati": [
+      1.87,
+      -157.4
+    ],
+    "Pacific/Kosrae": [
+      5.32,
+      162.98
+    ],
+    "Pacific/Kwajalein": [
+      9.19,
+      167.42
+    ],
+    "Pacific/Majuro": [
+      7.09,
+      171.38
+    ],
+    "Pacific/Marquesas": [
+      -9,
+      -139.5
+    ],
+    "Pacific/Midway": [
+      28.21,
+      -177.38
+    ],
+    "Pacific/Nauru": [
+      -0.55,
+      166.92
+    ],
+    "Pacific/Niue": [
+      -19.06,
+      -169.92
+    ],
+    "Pacific/Norfolk": [
+      -29.06,
+      167.96
+    ],
+    "Pacific/Noumea": [
+      -22.28,
+      166.46
+    ],
+    "Pacific/Pago_Pago": [
+      -14.28,
+      -170.7
+    ],
+    "Pacific/Palau": [
+      7.34,
+      134.48
+    ],
+    "Pacific/Pitcairn": [
+      -25.07,
+      -130.1
+    ],
+    "Pacific/Pohnpei": [
+      6.96,
+      158.21
+    ],
+    "Pacific/Port_Moresby": [
+      -9.44,
+      147.18
+    ],
+    "Pacific/Rarotonga": [
+      -21.23,
+      -159.78
+    ],
+    "Pacific/Saipan": [
+      15.18,
+      145.75
+    ],
+    "Pacific/Tahiti": [
+      -17.53,
+      -149.57
+    ],
+    "Pacific/Tarawa": [
+      1.45,
+      172.97
+    ],
+    "Pacific/Tongatapu": [
+      -21.14,
+      -175.2
+    ],
+    "Pacific/Wake": [
+      19.28,
+      166.65
+    ],
+    "Pacific/Wallis": [
+      -13.28,
+      -176.17
+    ],
+    "Africa/Asmera": [
+      15.32,
+      38.93
+    ],
+    "America/Catamarca": [
+      -28.47,
+      -65.78
+    ],
+    "America/Coral_Harbour": [
+      48.76,
+      -91.62
+    ],
+    "America/Cordoba": [
+      -31.42,
+      -64.18
+    ],
+    "America/Coyhaique": [
+      -45.57,
+      -72.07
+    ],
+    "America/Creston": [
+      49.1,
+      -116.51
+    ],
+    "America/Indiana/Knox": [
+      41.3,
+      -86.63
+    ],
+    "America/Indiana/Marengo": [
+      38.38,
+      -86.34
+    ],
+    "America/Indiana/Petersburg": [
+      38.49,
+      -87.28
+    ],
+    "America/Indiana/Tell_City": [
+      37.95,
+      -86.76
+    ],
+    "America/Indiana/Vevay": [
+      38.75,
+      -85.07
+    ],
+    "America/Indiana/Vincennes": [
+      38.68,
+      -87.53
+    ],
+    "America/Indiana/Winamac": [
+      41.05,
+      -86.6
+    ],
+    "America/Jujuy": [
+      -24.19,
+      -65.3
+    ],
+    "America/Kentucky/Monticello": [
+      36.83,
+      -84.85
+    ],
+    "America/Mendoza": [
+      -32.89,
+      -68.83
+    ],
+    "America/North_Dakota/Beulah": [
+      47.26,
+      -101.78
+    ],
+    "America/North_Dakota/New_Salem": [
+      46.85,
+      -101.41
+    ],
+    "Atlantic/Faeroe": [
+      62.01,
+      -6.77
+    ],
+    "Pacific/Enderbury": [
+      -2.81,
+      -171.67
+    ],
+    "Pacific/Ponape": [
+      6.96,
+      158.21
+    ],
+    "Pacific/Truk": [
+      7.45,
+      151.85
+    ],
+    "UTC": [
+      51.48,
+      0
+    ]
+  },
+  "abbreviations": {
+    "est": [
+      "America/New_York",
+      "America/Toronto"
+    ],
+    "edt": [
+      "America/New_York",
+      "America/Toronto"
+    ],
+    "et": [
+      "America/New_York"
+    ],
+    "cst": [
+      "America/Chicago",
+      "America/Mexico_City"
+    ],
+    "cdt": [
+      "America/Chicago"
+    ],
+    "ct": [
+      "America/Chicago"
+    ],
+    "mst": [
+      "America/Denver",
+      "America/Phoenix"
+    ],
+    "mdt": [
+      "America/Denver"
+    ],
+    "mt": [
+      "America/Denver"
+    ],
+    "pst": [
+      "America/Los_Angeles",
+      "America/Vancouver"
+    ],
+    "pdt": [
+      "America/Los_Angeles",
+      "America/Vancouver"
+    ],
+    "pt": [
+      "America/Los_Angeles"
+    ],
+    "akst": [
+      "America/Anchorage"
+    ],
+    "akdt": [
+      "America/Anchorage"
+    ],
+    "hst": [
+      "Pacific/Honolulu"
+    ],
+    "ast": [
+      "America/Halifax"
+    ],
+    "adt": [
+      "America/Halifax"
+    ],
+    "nst": [
+      "America/St_Johns"
+    ],
+    "ndt": [
+      "America/St_Johns"
+    ],
+    "brt": [
+      "America/Sao_Paulo"
+    ],
+    "art": [
+      "America/Argentina/Buenos_Aires"
+    ],
+    "clt": [
+      "America/Santiago"
+    ],
+    "cot": [
+      "America/Bogota"
+    ],
+    "pet": [
+      "America/Lima"
+    ],
+    "gmt": [
+      "Europe/London",
+      "Europe/Dublin"
+    ],
+    "bst": [
+      "Europe/London"
+    ],
+    "wet": [
+      "Europe/Lisbon"
+    ],
+    "west": [
+      "Europe/Lisbon"
+    ],
+    "cet": [
+      "Europe/Paris",
+      "Europe/Berlin",
+      "Europe/Madrid",
+      "Europe/Rome"
+    ],
+    "cest": [
+      "Europe/Paris",
+      "Europe/Berlin",
+      "Europe/Madrid",
+      "Europe/Rome"
+    ],
+    "eet": [
+      "Europe/Athens",
+      "Europe/Helsinki",
+      "Africa/Cairo"
+    ],
+    "eest": [
+      "Europe/Athens",
+      "Europe/Helsinki"
+    ],
+    "msk": [
+      "Europe/Moscow"
+    ],
+    "wat": [
+      "Africa/Lagos"
+    ],
+    "cat": [
+      "Africa/Johannesburg"
+    ],
+    "sast": [
+      "Africa/Johannesburg"
+    ],
+    "eat": [
+      "Africa/Nairobi"
+    ],
+    "gst": [
+      "Asia/Dubai"
+    ],
+    "pkt": [
+      "Asia/Karachi"
+    ],
+    "ist": [
+      "Asia/Kolkata",
+      "Europe/Dublin",
+      "Asia/Jerusalem"
+    ],
+    "npt": [
+      "Asia/Kathmandu"
+    ],
+    "ict": [
+      "Asia/Bangkok",
+      "Asia/Ho_Chi_Minh"
+    ],
+    "wib": [
+      "Asia/Jakarta"
+    ],
+    "sgt": [
+      "Asia/Singapore"
+    ],
+    "hkt": [
+      "Asia/Hong_Kong"
+    ],
+    "pht": [
+      "Asia/Manila"
+    ],
+    "jst": [
+      "Asia/Tokyo"
+    ],
+    "kst": [
+      "Asia/Seoul"
+    ],
+    "awst": [
+      "Australia/Perth"
+    ],
+    "acst": [
+      "Australia/Adelaide"
+    ],
+    "acdt": [
+      "Australia/Adelaide"
+    ],
+    "aest": [
+      "Australia/Sydney",
+      "Australia/Brisbane"
+    ],
+    "aedt": [
+      "Australia/Sydney",
+      "Australia/Melbourne"
+    ],
+    "nzst": [
+      "Pacific/Auckland"
+    ],
+    "nzdt": [
+      "Pacific/Auckland"
+    ]
+  },
+  "defaultZones": [
+    "Europe/Lisbon",
+    "America/New_York",
+    "America/Los_Angeles",
+    "Europe/London",
+    "Asia/Singapore"
+  ],
+  "legacy": {
+    "Europe/Kiev": "Europe/Kyiv",
+    "Asia/Calcutta": "Asia/Kolkata",
+    "Asia/Saigon": "Asia/Ho_Chi_Minh",
+    "America/Buenos_Aires": "America/Argentina/Buenos_Aires",
+    "Asia/Rangoon": "Asia/Yangon",
+    "Asia/Katmandu": "Asia/Kathmandu",
+    "Asia/Tel_Aviv": "Asia/Jerusalem"
+  },
+  "countryCodes": {
+    "Africa/Abidjan": "CI",
+    "Africa/Accra": "GH",
+    "Africa/Addis_Ababa": "ET",
+    "Africa/Algiers": "DZ",
+    "Africa/Asmara": "ER",
+    "Africa/Asmera": "ER",
+    "Africa/Bamako": "ML",
+    "Africa/Bangui": "CF",
+    "Africa/Banjul": "GM",
+    "Africa/Bissau": "GW",
+    "Africa/Blantyre": "MW",
+    "Africa/Brazzaville": "CG",
+    "Africa/Bujumbura": "BI",
+    "Africa/Cairo": "EG",
+    "Africa/Casablanca": "MA",
+    "Africa/Ceuta": "ES",
+    "Africa/Conakry": "GN",
+    "Africa/Dakar": "SN",
+    "Africa/Dar_es_Salaam": "TZ",
+    "Africa/Djibouti": "DJ",
+    "Africa/Douala": "CM",
+    "Africa/El_Aaiun": "EH",
+    "Africa/Freetown": "SL",
+    "Africa/Gaborone": "BW",
+    "Africa/Harare": "ZW",
+    "Africa/Johannesburg": "ZA",
+    "Africa/Juba": "SS",
+    "Africa/Kampala": "UG",
+    "Africa/Khartoum": "SD",
+    "Africa/Kigali": "RW",
+    "Africa/Kinshasa": "CD",
+    "Africa/Lagos": "NG",
+    "Africa/Libreville": "GA",
+    "Africa/Lome": "TG",
+    "Africa/Luanda": "AO",
+    "Africa/Lubumbashi": "CD",
+    "Africa/Lusaka": "ZM",
+    "Africa/Malabo": "GQ",
+    "Africa/Maputo": "MZ",
+    "Africa/Maseru": "LS",
+    "Africa/Mbabane": "SZ",
+    "Africa/Mogadishu": "SO",
+    "Africa/Monrovia": "LR",
+    "Africa/Nairobi": "KE",
+    "Africa/Ndjamena": "TD",
+    "Africa/Niamey": "NE",
+    "Africa/Nouakchott": "MR",
+    "Africa/Ouagadougou": "BF",
+    "Africa/Porto-Novo": "BJ",
+    "Africa/Sao_Tome": "ST",
+    "Africa/Tripoli": "LY",
+    "Africa/Tunis": "TN",
+    "Africa/Windhoek": "NA",
+    "America/Adak": "US",
+    "America/Anchorage": "US",
+    "America/Anguilla": "AI",
+    "America/Antigua": "AG",
+    "America/Araguaina": "BR",
+    "America/Argentina/Buenos_Aires": "AR",
+    "America/Argentina/Catamarca": "AR",
+    "America/Argentina/Cordoba": "AR",
+    "America/Argentina/Jujuy": "AR",
+    "America/Argentina/La_Rioja": "AR",
+    "America/Argentina/Mendoza": "AR",
+    "America/Argentina/Rio_Gallegos": "AR",
+    "America/Argentina/Salta": "AR",
+    "America/Argentina/San_Juan": "AR",
+    "America/Argentina/San_Luis": "AR",
+    "America/Argentina/Tucuman": "AR",
+    "America/Argentina/Ushuaia": "AR",
+    "America/Aruba": "AW",
+    "America/Asuncion": "PY",
+    "America/Atikokan": "CA",
+    "America/Bahia": "BR",
+    "America/Bahia_Banderas": "MX",
+    "America/Barbados": "BB",
+    "America/Belem": "BR",
+    "America/Belize": "BZ",
+    "America/Blanc-Sablon": "CA",
+    "America/Boa_Vista": "BR",
+    "America/Bogota": "CO",
+    "America/Boise": "US",
+    "America/Buenos_Aires": "AR",
+    "America/Cambridge_Bay": "CA",
+    "America/Campo_Grande": "BR",
+    "America/Cancun": "MX",
+    "America/Caracas": "VE",
+    "America/Catamarca": "AR",
+    "America/Cayenne": "GF",
+    "America/Cayman": "KY",
+    "America/Chicago": "US",
+    "America/Chihuahua": "MX",
+    "America/Ciudad_Juarez": "MX",
+    "America/Coral_Harbour": "CA",
+    "America/Cordoba": "AR",
+    "America/Costa_Rica": "CR",
+    "America/Coyhaique": "CL",
+    "America/Creston": "CA",
+    "America/Cuiaba": "BR",
+    "America/Curacao": "CW",
+    "America/Danmarkshavn": "GL",
+    "America/Dawson": "CA",
+    "America/Dawson_Creek": "CA",
+    "America/Denver": "US",
+    "America/Detroit": "US",
+    "America/Dominica": "DM",
+    "America/Edmonton": "CA",
+    "America/Eirunepe": "BR",
+    "America/El_Salvador": "SV",
+    "America/Fort_Nelson": "CA",
+    "America/Fortaleza": "BR",
+    "America/Glace_Bay": "CA",
+    "America/Godthab": "GL",
+    "America/Goose_Bay": "CA",
+    "America/Grand_Turk": "TC",
+    "America/Grenada": "GD",
+    "America/Guadeloupe": "GP",
+    "America/Guatemala": "GT",
+    "America/Guayaquil": "EC",
+    "America/Guyana": "GY",
+    "America/Halifax": "CA",
+    "America/Havana": "CU",
+    "America/Hermosillo": "MX",
+    "America/Indiana/Indianapolis": "US",
+    "America/Indiana/Knox": "US",
+    "America/Indiana/Marengo": "US",
+    "America/Indiana/Petersburg": "US",
+    "America/Indiana/Tell_City": "US",
+    "America/Indiana/Vevay": "US",
+    "America/Indiana/Vincennes": "US",
+    "America/Indiana/Winamac": "US",
+    "America/Indianapolis": "US",
+    "America/Inuvik": "CA",
+    "America/Iqaluit": "CA",
+    "America/Jamaica": "JM",
+    "America/Jujuy": "AR",
+    "America/Juneau": "US",
+    "America/Kentucky/Louisville": "US",
+    "America/Kentucky/Monticello": "US",
+    "America/Kralendijk": "BQ",
+    "America/La_Paz": "BO",
+    "America/Lima": "PE",
+    "America/Los_Angeles": "US",
+    "America/Louisville": "US",
+    "America/Lower_Princes": "SX",
+    "America/Maceio": "BR",
+    "America/Managua": "NI",
+    "America/Manaus": "BR",
+    "America/Marigot": "MF",
+    "America/Martinique": "MQ",
+    "America/Matamoros": "MX",
+    "America/Mazatlan": "MX",
+    "America/Mendoza": "AR",
+    "America/Menominee": "US",
+    "America/Merida": "MX",
+    "America/Metlakatla": "US",
+    "America/Mexico_City": "MX",
+    "America/Miquelon": "PM",
+    "America/Moncton": "CA",
+    "America/Monterrey": "MX",
+    "America/Montevideo": "UY",
+    "America/Montreal": "CA",
+    "America/Montserrat": "MS",
+    "America/Nassau": "BS",
+    "America/New_York": "US",
+    "America/Nome": "US",
+    "America/Noronha": "BR",
+    "America/North_Dakota/Beulah": "US",
+    "America/North_Dakota/Center": "US",
+    "America/North_Dakota/New_Salem": "US",
+    "America/Nuuk": "GL",
+    "America/Ojinaga": "MX",
+    "America/Panama": "PA",
+    "America/Paramaribo": "SR",
+    "America/Phoenix": "US",
+    "America/Port-au-Prince": "HT",
+    "America/Port_of_Spain": "TT",
+    "America/Porto_Velho": "BR",
+    "America/Puerto_Rico": "PR",
+    "America/Punta_Arenas": "CL",
+    "America/Rankin_Inlet": "CA",
+    "America/Recife": "BR",
+    "America/Regina": "CA",
+    "America/Resolute": "CA",
+    "America/Rio_Branco": "BR",
+    "America/Santarem": "BR",
+    "America/Santiago": "CL",
+    "America/Santo_Domingo": "DO",
+    "America/Sao_Paulo": "BR",
+    "America/Scoresbysund": "GL",
+    "America/Sitka": "US",
+    "America/St_Barthelemy": "BL",
+    "America/St_Johns": "CA",
+    "America/St_Kitts": "KN",
+    "America/St_Lucia": "LC",
+    "America/St_Thomas": "VI",
+    "America/St_Vincent": "VC",
+    "America/Swift_Current": "CA",
+    "America/Tegucigalpa": "HN",
+    "America/Thule": "GL",
+    "America/Tijuana": "MX",
+    "America/Toronto": "CA",
+    "America/Tortola": "VG",
+    "America/Vancouver": "CA",
+    "America/Whitehorse": "CA",
+    "America/Winnipeg": "CA",
+    "America/Yakutat": "US",
+    "Antarctica/Casey": "AQ",
+    "Antarctica/Davis": "AQ",
+    "Antarctica/DumontDUrville": "AQ",
+    "Antarctica/Macquarie": "AU",
+    "Antarctica/Mawson": "AQ",
+    "Antarctica/McMurdo": "AQ",
+    "Antarctica/Palmer": "AQ",
+    "Antarctica/Rothera": "AQ",
+    "Antarctica/Syowa": "AQ",
+    "Antarctica/Troll": "AQ",
+    "Antarctica/Vostok": "AQ",
+    "Arctic/Longyearbyen": "SJ",
+    "Asia/Aden": "YE",
+    "Asia/Almaty": "KZ",
+    "Asia/Amman": "JO",
+    "Asia/Anadyr": "RU",
+    "Asia/Aqtau": "KZ",
+    "Asia/Aqtobe": "KZ",
+    "Asia/Ashgabat": "TM",
+    "Asia/Atyrau": "KZ",
+    "Asia/Baghdad": "IQ",
+    "Asia/Bahrain": "BH",
+    "Asia/Baku": "AZ",
+    "Asia/Bangkok": "TH",
+    "Asia/Barnaul": "RU",
+    "Asia/Beirut": "LB",
+    "Asia/Bishkek": "KG",
+    "Asia/Brunei": "BN",
+    "Asia/Calcutta": "IN",
+    "Asia/Chita": "RU",
+    "Asia/Colombo": "LK",
+    "Asia/Damascus": "SY",
+    "Asia/Dhaka": "BD",
+    "Asia/Dili": "TL",
+    "Asia/Dubai": "AE",
+    "Asia/Dushanbe": "TJ",
+    "Asia/Famagusta": "CY",
+    "Asia/Gaza": "PS",
+    "Asia/Hebron": "PS",
+    "Asia/Ho_Chi_Minh": "VN",
+    "Asia/Hong_Kong": "HK",
+    "Asia/Hovd": "MN",
+    "Asia/Irkutsk": "RU",
+    "Asia/Jakarta": "ID",
+    "Asia/Jayapura": "ID",
+    "Asia/Jerusalem": "IL",
+    "Asia/Kabul": "AF",
+    "Asia/Kamchatka": "RU",
+    "Asia/Karachi": "PK",
+    "Asia/Kathmandu": "NP",
+    "Asia/Katmandu": "NP",
+    "Asia/Khandyga": "RU",
+    "Asia/Kolkata": "IN",
+    "Asia/Krasnoyarsk": "RU",
+    "Asia/Kuala_Lumpur": "MY",
+    "Asia/Kuching": "MY",
+    "Asia/Kuwait": "KW",
+    "Asia/Macau": "MO",
+    "Asia/Magadan": "RU",
+    "Asia/Makassar": "ID",
+    "Asia/Manila": "PH",
+    "Asia/Muscat": "OM",
+    "Asia/Nicosia": "CY",
+    "Asia/Novokuznetsk": "RU",
+    "Asia/Novosibirsk": "RU",
+    "Asia/Omsk": "RU",
+    "Asia/Oral": "KZ",
+    "Asia/Phnom_Penh": "KH",
+    "Asia/Pontianak": "ID",
+    "Asia/Pyongyang": "KP",
+    "Asia/Qatar": "QA",
+    "Asia/Qostanay": "KZ",
+    "Asia/Qyzylorda": "KZ",
+    "Asia/Rangoon": "MM",
+    "Asia/Riyadh": "SA",
+    "Asia/Saigon": "VN",
+    "Asia/Sakhalin": "RU",
+    "Asia/Samarkand": "UZ",
+    "Asia/Seoul": "KR",
+    "Asia/Shanghai": "CN",
+    "Asia/Singapore": "SG",
+    "Asia/Srednekolymsk": "RU",
+    "Asia/Taipei": "TW",
+    "Asia/Tashkent": "UZ",
+    "Asia/Tbilisi": "GE",
+    "Asia/Tehran": "IR",
+    "Asia/Tel_Aviv": "IL",
+    "Asia/Thimphu": "BT",
+    "Asia/Tokyo": "JP",
+    "Asia/Tomsk": "RU",
+    "Asia/Ulaanbaatar": "MN",
+    "Asia/Urumqi": "CN",
+    "Asia/Ust-Nera": "RU",
+    "Asia/Vientiane": "LA",
+    "Asia/Vladivostok": "RU",
+    "Asia/Yakutsk": "RU",
+    "Asia/Yangon": "MM",
+    "Asia/Yekaterinburg": "RU",
+    "Asia/Yerevan": "AM",
+    "Atlantic/Azores": "PT",
+    "Atlantic/Bermuda": "BM",
+    "Atlantic/Canary": "ES",
+    "Atlantic/Cape_Verde": "CV",
+    "Atlantic/Faeroe": "FO",
+    "Atlantic/Faroe": "FO",
+    "Atlantic/Madeira": "PT",
+    "Atlantic/Reykjavik": "IS",
+    "Atlantic/South_Georgia": "GS",
+    "Atlantic/St_Helena": "SH",
+    "Atlantic/Stanley": "FK",
+    "Australia/Adelaide": "AU",
+    "Australia/Brisbane": "AU",
+    "Australia/Broken_Hill": "AU",
+    "Australia/Canberra": "AU",
+    "Australia/Darwin": "AU",
+    "Australia/Eucla": "AU",
+    "Australia/Hobart": "AU",
+    "Australia/Lindeman": "AU",
+    "Australia/Lord_Howe": "AU",
+    "Australia/Melbourne": "AU",
+    "Australia/Perth": "AU",
+    "Australia/Sydney": "AU",
+    "Europe/Amsterdam": "NL",
+    "Europe/Andorra": "AD",
+    "Europe/Astrakhan": "RU",
+    "Europe/Athens": "GR",
+    "Europe/Belgrade": "RS",
+    "Europe/Berlin": "DE",
+    "Europe/Bratislava": "SK",
+    "Europe/Brussels": "BE",
+    "Europe/Bucharest": "RO",
+    "Europe/Budapest": "HU",
+    "Europe/Busingen": "DE",
+    "Europe/Chisinau": "MD",
+    "Europe/Copenhagen": "DK",
+    "Europe/Dublin": "IE",
+    "Europe/Gibraltar": "GI",
+    "Europe/Guernsey": "GG",
+    "Europe/Helsinki": "FI",
+    "Europe/Isle_of_Man": "IM",
+    "Europe/Istanbul": "TR",
+    "Europe/Jersey": "JE",
+    "Europe/Kaliningrad": "RU",
+    "Europe/Kiev": "UA",
+    "Europe/Kirov": "RU",
+    "Europe/Kyiv": "UA",
+    "Europe/Lisbon": "PT",
+    "Europe/Ljubljana": "SI",
+    "Europe/London": "GB",
+    "Europe/Luxembourg": "LU",
+    "Europe/Madrid": "ES",
+    "Europe/Malta": "MT",
+    "Europe/Mariehamn": "AX",
+    "Europe/Minsk": "BY",
+    "Europe/Monaco": "MC",
+    "Europe/Moscow": "RU",
+    "Europe/Oslo": "NO",
+    "Europe/Paris": "FR",
+    "Europe/Podgorica": "ME",
+    "Europe/Prague": "CZ",
+    "Europe/Riga": "LV",
+    "Europe/Rome": "IT",
+    "Europe/Samara": "RU",
+    "Europe/San_Marino": "SM",
+    "Europe/Sarajevo": "BA",
+    "Europe/Saratov": "RU",
+    "Europe/Skopje": "MK",
+    "Europe/Sofia": "BG",
+    "Europe/Stockholm": "SE",
+    "Europe/Tallinn": "EE",
+    "Europe/Tirane": "AL",
+    "Europe/Ulyanovsk": "RU",
+    "Europe/Vaduz": "LI",
+    "Europe/Vatican": "VA",
+    "Europe/Vienna": "AT",
+    "Europe/Vilnius": "LT",
+    "Europe/Volgograd": "RU",
+    "Europe/Warsaw": "PL",
+    "Europe/Zagreb": "HR",
+    "Europe/Zurich": "CH",
+    "Indian/Antananarivo": "MG",
+    "Indian/Chagos": "IO",
+    "Indian/Christmas": "CX",
+    "Indian/Cocos": "CC",
+    "Indian/Comoro": "KM",
+    "Indian/Kerguelen": "TF",
+    "Indian/Mahe": "SC",
+    "Indian/Maldives": "MV",
+    "Indian/Mauritius": "MU",
+    "Indian/Mayotte": "YT",
+    "Indian/Reunion": "RE",
+    "Pacific/Apia": "WS",
+    "Pacific/Auckland": "NZ",
+    "Pacific/Bougainville": "PG",
+    "Pacific/Chatham": "NZ",
+    "Pacific/Chuuk": "FM",
+    "Pacific/Easter": "CL",
+    "Pacific/Efate": "VU",
+    "Pacific/Enderbury": "KI",
+    "Pacific/Fakaofo": "TK",
+    "Pacific/Fiji": "FJ",
+    "Pacific/Funafuti": "TV",
+    "Pacific/Galapagos": "EC",
+    "Pacific/Gambier": "PF",
+    "Pacific/Guadalcanal": "SB",
+    "Pacific/Guam": "GU",
+    "Pacific/Honolulu": "US",
+    "Pacific/Kanton": "KI",
+    "Pacific/Kiritimati": "KI",
+    "Pacific/Kosrae": "FM",
+    "Pacific/Kwajalein": "MH",
+    "Pacific/Majuro": "MH",
+    "Pacific/Marquesas": "PF",
+    "Pacific/Midway": "UM",
+    "Pacific/Nauru": "NR",
+    "Pacific/Niue": "NU",
+    "Pacific/Norfolk": "NF",
+    "Pacific/Noumea": "NC",
+    "Pacific/Pago_Pago": "AS",
+    "Pacific/Palau": "PW",
+    "Pacific/Pitcairn": "PN",
+    "Pacific/Pohnpei": "FM",
+    "Pacific/Ponape": "FM",
+    "Pacific/Port_Moresby": "PG",
+    "Pacific/Rarotonga": "CK",
+    "Pacific/Saipan": "MP",
+    "Pacific/Tahiti": "PF",
+    "Pacific/Tarawa": "KI",
+    "Pacific/Tongatapu": "TO",
+    "Pacific/Truk": "FM",
+    "Pacific/Wake": "UM",
+    "Pacific/Wallis": "WF"
+  },
+  "cityNames": {
+    "pt": {
+      "Europe/Lisbon": "Lisboa",
+      "Europe/London": "Londres",
+      "Europe/Berlin": "Berlim",
+      "Europe/Amsterdam": "Amsterdã",
+      "Europe/Brussels": "Bruxelas",
+      "Europe/Zurich": "Zurique",
+      "Europe/Rome": "Roma",
+      "Europe/Vienna": "Viena",
+      "Europe/Prague": "Praga",
+      "Europe/Warsaw": "Varsóvia",
+      "Europe/Stockholm": "Estocolmo",
+      "Europe/Copenhagen": "Copenhague",
+      "Europe/Helsinki": "Helsinque",
+      "Europe/Athens": "Atenas",
+      "Europe/Istanbul": "Istambul",
+      "Europe/Kyiv": "Kiev",
+      "Europe/Moscow": "Moscou",
+      "Europe/Bucharest": "Bucareste",
+      "Africa/Johannesburg": "Joanesburgo",
+      "Asia/Riyadh": "Riad",
+      "Asia/Tehran": "Teerã",
+      "Asia/Dhaka": "Daca",
+      "Asia/Jakarta": "Jacarta",
+      "Asia/Singapore": "Singapura",
+      "Asia/Ho_Chi_Minh": "Cidade de Ho Chi Minh",
+      "Asia/Shanghai": "Xangai",
+      "Asia/Seoul": "Seul",
+      "Asia/Tokyo": "Tóquio",
+      "America/Mexico_City": "Cidade do México",
+      "America/New_York": "Nova York",
+      "Atlantic/Azores": "Açores"
+    },
+    "es": {
+      "Europe/Lisbon": "Lisboa",
+      "Europe/London": "Londres",
+      "Europe/Berlin": "Berlín",
+      "Europe/Amsterdam": "Ámsterdam",
+      "Europe/Brussels": "Bruselas",
+      "Europe/Zurich": "Zúrich",
+      "Europe/Rome": "Roma",
+      "Europe/Vienna": "Viena",
+      "Europe/Prague": "Praga",
+      "Europe/Warsaw": "Varsovia",
+      "Europe/Stockholm": "Estocolmo",
+      "Europe/Copenhagen": "Copenhague",
+      "Europe/Athens": "Atenas",
+      "Europe/Istanbul": "Estambul",
+      "Europe/Kyiv": "Kiev",
+      "Europe/Moscow": "Moscú",
+      "Europe/Bucharest": "Bucarest",
+      "Africa/Cairo": "El Cairo",
+      "Africa/Johannesburg": "Johannesburgo",
+      "Asia/Dubai": "Dubái",
+      "Asia/Riyadh": "Riad",
+      "Asia/Tehran": "Teherán",
+      "Asia/Kolkata": "Bombay",
+      "Asia/Dhaka": "Daca",
+      "Asia/Jakarta": "Yakarta",
+      "Asia/Singapore": "Singapur",
+      "Asia/Ho_Chi_Minh": "Ciudad Ho Chi Minh",
+      "Asia/Shanghai": "Shanghái",
+      "Asia/Taipei": "Taipéi",
+      "Asia/Seoul": "Seúl",
+      "Asia/Tokyo": "Tokio",
+      "Australia/Sydney": "Sídney",
+      "America/Mexico_City": "Ciudad de México",
+      "America/New_York": "Nueva York"
+    }
+  },
+  "countryNames": {
+    "en": {
+      "AD": "Andorra",
+      "AE": "United Arab Emirates",
+      "AF": "Afghanistan",
+      "AG": "Antigua & Barbuda",
+      "AI": "Anguilla",
+      "AL": "Albania",
+      "AM": "Armenia",
+      "AO": "Angola",
+      "AQ": "Antarctica",
+      "AR": "Argentina",
+      "AS": "American Samoa",
+      "AT": "Austria",
+      "AU": "Australia",
+      "AW": "Aruba",
+      "AX": "Åland Islands",
+      "AZ": "Azerbaijan",
+      "BA": "Bosnia",
+      "BB": "Barbados",
+      "BD": "Bangladesh",
+      "BE": "Belgium",
+      "BF": "Burkina Faso",
+      "BG": "Bulgaria",
+      "BH": "Bahrain",
+      "BI": "Burundi",
+      "BJ": "Benin",
+      "BL": "St. Barthélemy",
+      "BM": "Bermuda",
+      "BN": "Brunei",
+      "BO": "Bolivia",
+      "BQ": "Caribbean Netherlands",
+      "BR": "Brazil",
+      "BS": "Bahamas",
+      "BT": "Bhutan",
+      "BW": "Botswana",
+      "BY": "Belarus",
+      "BZ": "Belize",
+      "CA": "Canada",
+      "CC": "Cocos Islands",
+      "CD": "Congo - Kinshasa",
+      "CF": "Central African Republic",
+      "CG": "Congo - Brazzaville",
+      "CH": "Switzerland",
+      "CI": "Côte d’Ivoire",
+      "CK": "Cook Islands",
+      "CL": "Chile",
+      "CM": "Cameroon",
+      "CN": "China",
+      "CO": "Colombia",
+      "CR": "Costa Rica",
+      "CU": "Cuba",
+      "CV": "Cape Verde",
+      "CW": "Curaçao",
+      "CX": "Christmas Island",
+      "CY": "Cyprus",
+      "CZ": "Czechia",
+      "DE": "Germany",
+      "DJ": "Djibouti",
+      "DK": "Denmark",
+      "DM": "Dominica",
+      "DO": "Dominican Republic",
+      "DZ": "Algeria",
+      "EC": "Ecuador",
+      "EE": "Estonia",
+      "EG": "Egypt",
+      "EH": "Western Sahara",
+      "ER": "Eritrea",
+      "ES": "Spain",
+      "ET": "Ethiopia",
+      "FI": "Finland",
+      "FJ": "Fiji",
+      "FK": "Falkland Islands",
+      "FM": "Micronesia",
+      "FO": "Faroe Islands",
+      "FR": "France",
+      "GA": "Gabon",
+      "GB": "UK",
+      "GD": "Grenada",
+      "GE": "Georgia",
+      "GF": "French Guiana",
+      "GG": "Guernsey",
+      "GH": "Ghana",
+      "GI": "Gibraltar",
+      "GL": "Greenland",
+      "GM": "Gambia",
+      "GN": "Guinea",
+      "GP": "Guadeloupe",
+      "GQ": "Equatorial Guinea",
+      "GR": "Greece",
+      "GS": "South Georgia & South Sandwich Islands",
+      "GT": "Guatemala",
+      "GU": "Guam",
+      "GW": "Guinea-Bissau",
+      "GY": "Guyana",
+      "HK": "Hong Kong",
+      "HN": "Honduras",
+      "HR": "Croatia",
+      "HT": "Haiti",
+      "HU": "Hungary",
+      "ID": "Indonesia",
+      "IE": "Ireland",
+      "IL": "Israel",
+      "IM": "Isle of Man",
+      "IN": "India",
+      "IO": "British Indian Ocean Territory",
+      "IQ": "Iraq",
+      "IR": "Iran",
+      "IS": "Iceland",
+      "IT": "Italy",
+      "JE": "Jersey",
+      "JM": "Jamaica",
+      "JO": "Jordan",
+      "JP": "Japan",
+      "KE": "Kenya",
+      "KG": "Kyrgyzstan",
+      "KH": "Cambodia",
+      "KI": "Kiribati",
+      "KM": "Comoros",
+      "KN": "St. Kitts & Nevis",
+      "KP": "North Korea",
+      "KR": "South Korea",
+      "KW": "Kuwait",
+      "KY": "Cayman Islands",
+      "KZ": "Kazakhstan",
+      "LA": "Laos",
+      "LB": "Lebanon",
+      "LC": "St. Lucia",
+      "LI": "Liechtenstein",
+      "LK": "Sri Lanka",
+      "LR": "Liberia",
+      "LS": "Lesotho",
+      "LT": "Lithuania",
+      "LU": "Luxembourg",
+      "LV": "Latvia",
+      "LY": "Libya",
+      "MA": "Morocco",
+      "MC": "Monaco",
+      "MD": "Moldova",
+      "ME": "Montenegro",
+      "MF": "St. Martin",
+      "MG": "Madagascar",
+      "MH": "Marshall Islands",
+      "MK": "North Macedonia",
+      "ML": "Mali",
+      "MM": "Myanmar",
+      "MN": "Mongolia",
+      "MO": "Macao",
+      "MP": "Northern Mariana Islands",
+      "MQ": "Martinique",
+      "MR": "Mauritania",
+      "MS": "Montserrat",
+      "MT": "Malta",
+      "MU": "Mauritius",
+      "MV": "Maldives",
+      "MW": "Malawi",
+      "MX": "Mexico",
+      "MY": "Malaysia",
+      "MZ": "Mozambique",
+      "NA": "Namibia",
+      "NC": "New Caledonia",
+      "NE": "Niger",
+      "NF": "Norfolk Island",
+      "NG": "Nigeria",
+      "NI": "Nicaragua",
+      "NL": "Netherlands",
+      "NO": "Norway",
+      "NP": "Nepal",
+      "NR": "Nauru",
+      "NU": "Niue",
+      "NZ": "New Zealand",
+      "OM": "Oman",
+      "PA": "Panama",
+      "PE": "Peru",
+      "PF": "French Polynesia",
+      "PG": "Papua New Guinea",
+      "PH": "Philippines",
+      "PK": "Pakistan",
+      "PL": "Poland",
+      "PM": "St. Pierre & Miquelon",
+      "PN": "Pitcairn",
+      "PR": "Puerto Rico",
+      "PS": "Palestine",
+      "PT": "Portugal",
+      "PW": "Palau",
+      "PY": "Paraguay",
+      "QA": "Qatar",
+      "RE": "Réunion",
+      "RO": "Romania",
+      "RS": "Serbia",
+      "RU": "Russia",
+      "RW": "Rwanda",
+      "SA": "Saudi Arabia",
+      "SB": "Solomon Islands",
+      "SC": "Seychelles",
+      "SD": "Sudan",
+      "SE": "Sweden",
+      "SG": "Singapore",
+      "SH": "St. Helena",
+      "SI": "Slovenia",
+      "SJ": "Svalbard & Jan Mayen",
+      "SK": "Slovakia",
+      "SL": "Sierra Leone",
+      "SM": "San Marino",
+      "SN": "Senegal",
+      "SO": "Somalia",
+      "SR": "Suriname",
+      "SS": "South Sudan",
+      "ST": "São Tomé & Príncipe",
+      "SV": "El Salvador",
+      "SX": "Sint Maarten",
+      "SY": "Syria",
+      "SZ": "Eswatini",
+      "TC": "Turks & Caicos Islands",
+      "TD": "Chad",
+      "TF": "French Southern Territories",
+      "TG": "Togo",
+      "TH": "Thailand",
+      "TJ": "Tajikistan",
+      "TK": "Tokelau",
+      "TL": "Timor-Leste",
+      "TM": "Turkmenistan",
+      "TN": "Tunisia",
+      "TO": "Tonga",
+      "TR": "Türkiye",
+      "TT": "Trinidad & Tobago",
+      "TV": "Tuvalu",
+      "TW": "Taiwan",
+      "TZ": "Tanzania",
+      "UA": "Ukraine",
+      "UG": "Uganda",
+      "UM": "U.S. Outlying Islands",
+      "UY": "Uruguay",
+      "UZ": "Uzbekistan",
+      "VA": "Vatican City",
+      "VC": "St. Vincent & Grenadines",
+      "VE": "Venezuela",
+      "VG": "British Virgin Islands",
+      "VI": "U.S. Virgin Islands",
+      "VN": "Vietnam",
+      "VU": "Vanuatu",
+      "WF": "Wallis & Futuna",
+      "WS": "Samoa",
+      "YE": "Yemen",
+      "YT": "Mayotte",
+      "ZA": "South Africa",
+      "ZM": "Zambia",
+      "ZW": "Zimbabwe"
+    },
+    "pt": {
+      "AD": "Andorra",
+      "AE": "Emirados Árabes Unidos",
+      "AF": "Afeganistão",
+      "AG": "Antígua e Barbuda",
+      "AI": "Anguila",
+      "AL": "Albânia",
+      "AM": "Armênia",
+      "AO": "Angola",
+      "AQ": "Antártida",
+      "AR": "Argentina",
+      "AS": "Samoa Americana",
+      "AT": "Áustria",
+      "AU": "Austrália",
+      "AW": "Aruba",
+      "AX": "Ilhas Aland",
+      "AZ": "Azerbaijão",
+      "BA": "Bósnia e Herzegovina",
+      "BB": "Barbados",
+      "BD": "Bangladesh",
+      "BE": "Bélgica",
+      "BF": "Burquina Faso",
+      "BG": "Bulgária",
+      "BH": "Barein",
+      "BI": "Burundi",
+      "BJ": "Benin",
+      "BL": "São Bartolomeu",
+      "BM": "Bermudas",
+      "BN": "Brunei",
+      "BO": "Bolívia",
+      "BQ": "Países Baixos Caribenhos",
+      "BR": "Brasil",
+      "BS": "Bahamas",
+      "BT": "Butão",
+      "BW": "Botsuana",
+      "BY": "Bielorrússia",
+      "BZ": "Belize",
+      "CA": "Canadá",
+      "CC": "Ilhas Cocos (Keeling)",
+      "CD": "Congo - Kinshasa",
+      "CF": "República Centro-Africana",
+      "CG": "República do Congo",
+      "CH": "Suíça",
+      "CI": "Costa do Marfim",
+      "CK": "Ilhas Cook",
+      "CL": "Chile",
+      "CM": "Camarões",
+      "CN": "China",
+      "CO": "Colômbia",
+      "CR": "Costa Rica",
+      "CU": "Cuba",
+      "CV": "Cabo Verde",
+      "CW": "Curaçao",
+      "CX": "Ilha Christmas",
+      "CY": "Chipre",
+      "CZ": "Tchéquia",
+      "DE": "Alemanha",
+      "DJ": "Djibuti",
+      "DK": "Dinamarca",
+      "DM": "Dominica",
+      "DO": "República Dominicana",
+      "DZ": "Argélia",
+      "EC": "Equador",
+      "EE": "Estônia",
+      "EG": "Egito",
+      "EH": "Saara Ocidental",
+      "ER": "Eritreia",
+      "ES": "Espanha",
+      "ET": "Etiópia",
+      "FI": "Finlândia",
+      "FJ": "Fiji",
+      "FK": "Ilhas Malvinas",
+      "FM": "Micronésia",
+      "FO": "Ilhas Faroé",
+      "FR": "França",
+      "GA": "Gabão",
+      "GB": "Reino Unido",
+      "GD": "Granada",
+      "GE": "Geórgia",
+      "GF": "Guiana Francesa",
+      "GG": "Guernsey",
+      "GH": "Gana",
+      "GI": "Gibraltar",
+      "GL": "Groenlândia",
+      "GM": "Gâmbia",
+      "GN": "Guiné",
+      "GP": "Guadalupe",
+      "GQ": "Guiné Equatorial",
+      "GR": "Grécia",
+      "GS": "Ilhas Geórgia do Sul e Sandwich do Sul",
+      "GT": "Guatemala",
+      "GU": "Guam",
+      "GW": "Guiné-Bissau",
+      "GY": "Guiana",
+      "HK": "Hong Kong",
+      "HN": "Honduras",
+      "HR": "Croácia",
+      "HT": "Haiti",
+      "HU": "Hungria",
+      "ID": "Indonésia",
+      "IE": "Irlanda",
+      "IL": "Israel",
+      "IM": "Ilha de Man",
+      "IN": "Índia",
+      "IO": "Território Britânico do Oceano Índico",
+      "IQ": "Iraque",
+      "IR": "Irã",
+      "IS": "Islândia",
+      "IT": "Itália",
+      "JE": "Jersey",
+      "JM": "Jamaica",
+      "JO": "Jordânia",
+      "JP": "Japão",
+      "KE": "Quênia",
+      "KG": "Quirguistão",
+      "KH": "Camboja",
+      "KI": "Quiribati",
+      "KM": "Comores",
+      "KN": "São Cristóvão e Névis",
+      "KP": "Coreia do Norte",
+      "KR": "Coreia do Sul",
+      "KW": "Kuwait",
+      "KY": "Ilhas Cayman",
+      "KZ": "Cazaquistão",
+      "LA": "Laos",
+      "LB": "Líbano",
+      "LC": "Santa Lúcia",
+      "LI": "Liechtenstein",
+      "LK": "Sri Lanka",
+      "LR": "Libéria",
+      "LS": "Lesoto",
+      "LT": "Lituânia",
+      "LU": "Luxemburgo",
+      "LV": "Letônia",
+      "LY": "Líbia",
+      "MA": "Marrocos",
+      "MC": "Mônaco",
+      "MD": "Moldávia",
+      "ME": "Montenegro",
+      "MF": "São Martinho",
+      "MG": "Madagascar",
+      "MH": "Ilhas Marshall",
+      "MK": "Macedônia do Norte",
+      "ML": "Mali",
+      "MM": "Mianmar (Birmânia)",
+      "MN": "Mongólia",
+      "MO": "Macau",
+      "MP": "Ilhas Marianas do Norte",
+      "MQ": "Martinica",
+      "MR": "Mauritânia",
+      "MS": "Montserrat",
+      "MT": "Malta",
+      "MU": "Maurício",
+      "MV": "Maldivas",
+      "MW": "Malaui",
+      "MX": "México",
+      "MY": "Malásia",
+      "MZ": "Moçambique",
+      "NA": "Namíbia",
+      "NC": "Nova Caledônia",
+      "NE": "Níger",
+      "NF": "Ilha Norfolk",
+      "NG": "Nigéria",
+      "NI": "Nicarágua",
+      "NL": "Países Baixos",
+      "NO": "Noruega",
+      "NP": "Nepal",
+      "NR": "Nauru",
+      "NU": "Niue",
+      "NZ": "Nova Zelândia",
+      "OM": "Omã",
+      "PA": "Panamá",
+      "PE": "Peru",
+      "PF": "Polinésia Francesa",
+      "PG": "Papua-Nova Guiné",
+      "PH": "Filipinas",
+      "PK": "Paquistão",
+      "PL": "Polônia",
+      "PM": "São Pedro e Miquelão",
+      "PN": "Ilhas Pitcairn",
+      "PR": "Porto Rico",
+      "PS": "Palestina",
+      "PT": "Portugal",
+      "PW": "Palau",
+      "PY": "Paraguai",
+      "QA": "Catar",
+      "RE": "Reunião",
+      "RO": "Romênia",
+      "RS": "Sérvia",
+      "RU": "Rússia",
+      "RW": "Ruanda",
+      "SA": "Arábia Saudita",
+      "SB": "Ilhas Salomão",
+      "SC": "Seicheles",
+      "SD": "Sudão",
+      "SE": "Suécia",
+      "SG": "Singapura",
+      "SH": "Santa Helena",
+      "SI": "Eslovênia",
+      "SJ": "Svalbard e Jan Mayen",
+      "SK": "Eslováquia",
+      "SL": "Serra Leoa",
+      "SM": "San Marino",
+      "SN": "Senegal",
+      "SO": "Somália",
+      "SR": "Suriname",
+      "SS": "Sudão do Sul",
+      "ST": "São Tomé e Príncipe",
+      "SV": "El Salvador",
+      "SX": "Sint Maarten",
+      "SY": "Síria",
+      "SZ": "Essuatíni",
+      "TC": "Ilhas Turcas e Caicos",
+      "TD": "Chade",
+      "TF": "Territórios Franceses do Sul",
+      "TG": "Togo",
+      "TH": "Tailândia",
+      "TJ": "Tadjiquistão",
+      "TK": "Tokelau",
+      "TL": "Timor-Leste",
+      "TM": "Turcomenistão",
+      "TN": "Tunísia",
+      "TO": "Tonga",
+      "TR": "Turquia",
+      "TT": "Trinidad e Tobago",
+      "TV": "Tuvalu",
+      "TW": "Taiwan",
+      "TZ": "Tanzânia",
+      "UA": "Ucrânia",
+      "UG": "Uganda",
+      "UM": "Ilhas Menores Distantes dos EUA",
+      "US": "EUA",
+      "UY": "Uruguai",
+      "UZ": "Uzbequistão",
+      "VA": "Cidade do Vaticano",
+      "VC": "São Vicente e Granadinas",
+      "VE": "Venezuela",
+      "VG": "Ilhas Virgens Britânicas",
+      "VI": "Ilhas Virgens Americanas",
+      "VN": "Vietnã",
+      "VU": "Vanuatu",
+      "WF": "Wallis e Futuna",
+      "WS": "Samoa",
+      "YE": "Iêmen",
+      "YT": "Mayotte",
+      "ZA": "África do Sul",
+      "ZM": "Zâmbia",
+      "ZW": "Zimbábue"
+    },
+    "es": {
+      "AD": "Andorra",
+      "AE": "Emiratos Árabes Unidos",
+      "AF": "Afganistán",
+      "AG": "Antigua y Barbuda",
+      "AI": "Anguila",
+      "AL": "Albania",
+      "AM": "Armenia",
+      "AO": "Angola",
+      "AQ": "Antártida",
+      "AR": "Argentina",
+      "AS": "Samoa Americana",
+      "AT": "Austria",
+      "AU": "Australia",
+      "AW": "Aruba",
+      "AX": "Islas Åland",
+      "AZ": "Azerbaiyán",
+      "BA": "Bosnia-Herzegovina",
+      "BB": "Barbados",
+      "BD": "Bangladés",
+      "BE": "Bélgica",
+      "BF": "Burkina Faso",
+      "BG": "Bulgaria",
+      "BH": "Baréin",
+      "BI": "Burundi",
+      "BJ": "Benín",
+      "BL": "San Bartolomé",
+      "BM": "Bermudas",
+      "BN": "Brunéi",
+      "BO": "Bolivia",
+      "BQ": "Caribe neerlandés",
+      "BR": "Brasil",
+      "BS": "Bahamas",
+      "BT": "Bután",
+      "BW": "Botsuana",
+      "BY": "Bielorrusia",
+      "BZ": "Belice",
+      "CA": "Canadá",
+      "CC": "Islas Cocos",
+      "CD": "República Democrática del Congo",
+      "CF": "República Centroafricana",
+      "CG": "República del Congo",
+      "CH": "Suiza",
+      "CI": "Costa de Marfil",
+      "CK": "Islas Cook",
+      "CL": "Chile",
+      "CM": "Camerún",
+      "CN": "China",
+      "CO": "Colombia",
+      "CR": "Costa Rica",
+      "CU": "Cuba",
+      "CV": "Cabo Verde",
+      "CW": "Curazao",
+      "CX": "Isla de Navidad",
+      "CY": "Chipre",
+      "CZ": "Chequia",
+      "DE": "Alemania",
+      "DJ": "Yibuti",
+      "DK": "Dinamarca",
+      "DM": "Dominica",
+      "DO": "República Dominicana",
+      "DZ": "Argelia",
+      "EC": "Ecuador",
+      "EE": "Estonia",
+      "EG": "Egipto",
+      "EH": "Sáhara Occidental",
+      "ER": "Eritrea",
+      "ES": "España",
+      "ET": "Etiopía",
+      "FI": "Finlandia",
+      "FJ": "Fiyi",
+      "FK": "Islas Malvinas",
+      "FM": "Micronesia",
+      "FO": "Islas Feroe",
+      "FR": "Francia",
+      "GA": "Gabón",
+      "GB": "R. U.",
+      "GD": "Granada",
+      "GE": "Georgia",
+      "GF": "Guayana Francesa",
+      "GG": "Guernesey",
+      "GH": "Ghana",
+      "GI": "Gibraltar",
+      "GL": "Groenlandia",
+      "GM": "Gambia",
+      "GN": "Guinea",
+      "GP": "Guadalupe",
+      "GQ": "Guinea Ecuatorial",
+      "GR": "Grecia",
+      "GS": "Islas Georgia del Sur y Sándwich del Sur",
+      "GT": "Guatemala",
+      "GU": "Guam",
+      "GW": "Guinea-Bisáu",
+      "GY": "Guyana",
+      "HK": "Hong Kong",
+      "HN": "Honduras",
+      "HR": "Croacia",
+      "HT": "Haití",
+      "HU": "Hungría",
+      "ID": "Indonesia",
+      "IE": "Irlanda",
+      "IL": "Israel",
+      "IM": "Isla de Man",
+      "IN": "India",
+      "IO": "Territorio Británico del Océano Índico",
+      "IQ": "Irak",
+      "IR": "Irán",
+      "IS": "Islandia",
+      "IT": "Italia",
+      "JE": "Jersey",
+      "JM": "Jamaica",
+      "JO": "Jordania",
+      "JP": "Japón",
+      "KE": "Kenia",
+      "KG": "Kirguistán",
+      "KH": "Camboya",
+      "KI": "Kiribati",
+      "KM": "Comoras",
+      "KN": "San Cristóbal y Nieves",
+      "KP": "Corea del Norte",
+      "KR": "Corea del Sur",
+      "KW": "Kuwait",
+      "KY": "Islas Caimán",
+      "KZ": "Kazajistán",
+      "LA": "Laos",
+      "LB": "Líbano",
+      "LC": "Santa Lucía",
+      "LI": "Liechtenstein",
+      "LK": "Sri Lanka",
+      "LR": "Liberia",
+      "LS": "Lesoto",
+      "LT": "Lituania",
+      "LU": "Luxemburgo",
+      "LV": "Letonia",
+      "LY": "Libia",
+      "MA": "Marruecos",
+      "MC": "Mónaco",
+      "MD": "Moldavia",
+      "ME": "Montenegro",
+      "MF": "San Martín",
+      "MG": "Madagascar",
+      "MH": "Islas Marshall",
+      "MK": "Macedonia del Norte",
+      "ML": "Mali",
+      "MM": "Myanmar (Birmania)",
+      "MN": "Mongolia",
+      "MO": "Macao",
+      "MP": "Islas Marianas del Norte",
+      "MQ": "Martinica",
+      "MR": "Mauritania",
+      "MS": "Montserrat",
+      "MT": "Malta",
+      "MU": "Mauricio",
+      "MV": "Maldivas",
+      "MW": "Malaui",
+      "MX": "México",
+      "MY": "Malasia",
+      "MZ": "Mozambique",
+      "NA": "Namibia",
+      "NC": "Nueva Caledonia",
+      "NE": "Níger",
+      "NF": "Isla Norfolk",
+      "NG": "Nigeria",
+      "NI": "Nicaragua",
+      "NL": "Países Bajos",
+      "NO": "Noruega",
+      "NP": "Nepal",
+      "NR": "Nauru",
+      "NU": "Niue",
+      "NZ": "Nueva Zelanda",
+      "OM": "Omán",
+      "PA": "Panamá",
+      "PE": "Perú",
+      "PF": "Polinesia Francesa",
+      "PG": "Papúa Nueva Guinea",
+      "PH": "Filipinas",
+      "PK": "Pakistán",
+      "PL": "Polonia",
+      "PM": "San Pedro y Miquelón",
+      "PN": "Islas Pitcairn",
+      "PR": "Puerto Rico",
+      "PS": "Palestina",
+      "PT": "Portugal",
+      "PW": "Palaos",
+      "PY": "Paraguay",
+      "QA": "Catar",
+      "RE": "Reunión",
+      "RO": "Rumania",
+      "RS": "Serbia",
+      "RU": "Rusia",
+      "RW": "Ruanda",
+      "SA": "Arabia Saudita",
+      "SB": "Islas Salomón",
+      "SC": "Seychelles",
+      "SD": "Sudán",
+      "SE": "Suecia",
+      "SG": "Singapur",
+      "SH": "Santa Elena",
+      "SI": "Eslovenia",
+      "SJ": "Svalbard y Jan Mayen",
+      "SK": "Eslovaquia",
+      "SL": "Sierra Leona",
+      "SM": "San Marino",
+      "SN": "Senegal",
+      "SO": "Somalia",
+      "SR": "Surinam",
+      "SS": "Sudán del Sur",
+      "ST": "Santo Tomé y Príncipe",
+      "SV": "El Salvador",
+      "SX": "Sint Maarten",
+      "SY": "Siria",
+      "SZ": "Esuatini",
+      "TC": "Islas Turcas y Caicos",
+      "TD": "Chad",
+      "TF": "Territorios Australes Franceses",
+      "TG": "Togo",
+      "TH": "Tailandia",
+      "TJ": "Tayikistán",
+      "TK": "Tokelau",
+      "TL": "Timor Oriental",
+      "TM": "Turkmenistán",
+      "TN": "Túnez",
+      "TO": "Tonga",
+      "TR": "Turquía",
+      "TT": "Trinidad y Tobago",
+      "TV": "Tuvalu",
+      "TW": "Taiwán",
+      "TZ": "Tanzania",
+      "UA": "Ucrania",
+      "UG": "Uganda",
+      "UM": "Islas Ultramarinas de EE.UU.",
+      "US": "EE. UU.",
+      "UY": "Uruguay",
+      "UZ": "Uzbekistán",
+      "VA": "Ciudad del Vaticano",
+      "VC": "San Vicente y las Granadinas",
+      "VE": "Venezuela",
+      "VG": "Islas Vírgenes Británicas",
+      "VI": "Islas Vírgenes de EE. UU.",
+      "VN": "Vietnam",
+      "VU": "Vanuatu",
+      "WF": "Wallis y Futuna",
+      "WS": "Samoa",
+      "YE": "Yemen",
+      "YT": "Mayotte",
+      "ZA": "Sudáfrica",
+      "ZM": "Zambia",
+      "ZW": "Zimbabue"
+    }
+  }
+}

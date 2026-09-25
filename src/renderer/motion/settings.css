@@ -1,0 +1,47 @@
+/* motion: settings */
+
+.panel.wc-sheet-anim, .panel.wc-sheet-anim > * { will-change: transform, opacity; }
+.wc-sheet-clone { pointer-events: none !important; }
+
+/* Rows: subtle hover highlight fade */
+.panel .row { transition: background-color var(--dur-1) var(--ease-standard); }
+.panel .row:has(select):hover { background-color: color-mix(in oklch, var(--fg) 4%, transparent); }
+.panel .row:has(select):active { background-color: color-mix(in oklch, var(--fg) 7%, transparent); }
+
+/* Selects: background + ring fade */
+.panel select { transition: background-color var(--dur-1) var(--ease-standard), box-shadow var(--dur-1) var(--ease-standard); }
+
+/* Close button */
+#panelClose { transition: background-color var(--dur-1) var(--ease-standard), transform var(--dur-1) var(--ease-standard); }
+#panelClose:active { transform: scale(.92); background: var(--field-hover); }
+
+/* iOS switch: flat track color, thumb as a pseudo-element so it can travel */
+.panel input[type=checkbox] {
+  position: relative;
+  background: var(--switch-off);
+  transition: background-color var(--dur-2) var(--ease-emphasized), box-shadow var(--dur-1) var(--ease-standard);
+}
+.panel input[type=checkbox]:checked { background: var(--accent); }
+.panel input[type=checkbox]::after {
+  content: ""; position: absolute; top: 2.5px; left: 2.5px; width: 21px; height: 21px; border-radius: 10.5px;
+  background: #fff; box-shadow: 0 0 0 0.5px oklch(0 0 0 / 0.12), 0 2px 4px oklch(0 0 0 / 0.18);
+  transition: left var(--dur-2) var(--ease-emphasized), width var(--dur-2) var(--ease-emphasized);
+}
+.panel input[type=checkbox]:checked::after { left: calc(100% - 21px - 2.5px); }
+/* press widens the thumb toward its travel direction, like iOS */
+.panel input[type=checkbox]:active::after { width: 26px; }
+.panel input[type=checkbox]:checked:active::after { left: calc(100% - 26px - 2.5px); }
+
+/* Range: thumb scale on hover/active */
+.panel input[type=range]::-webkit-slider-thumb {
+  transition: transform var(--dur-1) var(--ease-standard), box-shadow var(--dur-1) var(--ease-standard);
+}
+.panel input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.08); }
+.panel input[type=range]:active::-webkit-slider-thumb { transform: scale(1.16); }
+#optOpacityValue { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; display: inline-block; min-width: 38px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel input[type=range]:hover::-webkit-slider-thumb,
+  .panel input[type=range]:active::-webkit-slider-thumb,
+  #panelClose:active { transform: none; }
+}

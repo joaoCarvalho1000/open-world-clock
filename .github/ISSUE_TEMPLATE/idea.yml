@@ -1,0 +1,22 @@
+name: Idea
+description: Suggest something that would make Open World Clock more useful.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The app stays free, offline and without an account, so ideas that need a network connection, like weather, are out.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggestion
+      description: How would you like it to work? Rough is fine.
+    validations:
+      required: true

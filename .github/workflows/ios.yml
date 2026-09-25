@@ -1,0 +1,88 @@
+# Runs the WorldClockCore package tests, then builds the app + widget extension twice, both unsigned:
+# Debug for the iOS Simulator and Release for the iOS device slice (arm64), which also covers optimizer and
+# #if DEBUG differences and the App Intents metadata extraction for arm64.
+name: iOS
+
+# Only paths that can change the iPhone build start this job: macOS minutes count 10x on a private repo, and
+# scripts/perf or the packaging scripts never touch apple/ or shared/.
+on:
+  push:
+    branches: [main]
+    paths: ["apple/**", "shared/**", "scripts/export-*.mjs", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["apple/**", "shared/**", "scripts/export-*.mjs", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26 # arm64 image that ships Xcode 26 (macos-15 does not reliably have it)
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode 26
+        run: |
+          set -euo pipefail
+          XCODE="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n 1 || true)"
+          if [ -z "$XCODE" ]; then
+            echo "::error::Xcode 26 not found on this runner"
+            ls /Applications
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+          swift --version
+
+      # Pinned release, verified by SHA-256 (the digest GitHub shows for the release asset), instead of `brew install`.
+      - name: Install XcodeGen 2.46.0
+        env:
+          XCODEGEN_VERSION: "2.46.0"
+          XCODEGEN_SHA256: "4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -fsSL -o xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          echo "${XCODEGEN_SHA256}  xcodegen.zip" | shasum -a 256 -c -
+          unzip -q xcodegen.zip
+          echo "$RUNNER_TEMP/xcodegen/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/xcodegen/bin/xcodegen" --version
+
+      - name: Core tests (swift test)
+        run: swift test --package-path apple/WorldClockCore
+
+      - name: Generate Xcode project
+        working-directory: apple
+        run: xcodegen generate
+
+      - name: Build app + widgets (iOS Simulator, unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project apple/WorldClock.xcodeproj \
+            -scheme WorldClock \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Build app + widgets (iOS device, Release, unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project apple/WorldClock.xcodeproj \
+            -scheme WorldClock \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            build

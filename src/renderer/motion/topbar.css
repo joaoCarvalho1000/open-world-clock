@@ -1,0 +1,44 @@
+/* motion: topbar + converter */
+
+/* Icon buttons and pills: consistent hover fade + press */
+.bar .icon-btn, .bar .pill, .tip .icon-btn {
+  transition: background-color var(--dur-1) var(--ease-standard), color var(--dur-1) var(--ease-standard),
+              transform var(--dur-1) var(--ease-standard);
+}
+.bar .icon-btn:active, .bar .pill:active, .tip .icon-btn:active { transform: scale(.94); }
+.pin-btn svg { transition: transform var(--dur-2) var(--ease-emphasized); }
+
+/* Fields: focus ring fades, border colour transitions, search expands smoothly */
+.converter input[type=text], .converter select, #zoneSearch {
+  transition: background-color var(--dur-1) var(--ease-standard), box-shadow var(--dur-2) var(--ease-standard),
+              width var(--dur-3) var(--ease-emphasized), padding var(--dur-3) var(--ease-emphasized),
+              color var(--dur-2) var(--ease-standard);
+}
+
+/* Slider: value changes are instant (no lag); only thumb chrome animates */
+#convSlider::-webkit-slider-runnable-track { transition: background-color var(--dur-2) var(--ease-standard); }
+#convSlider:hover::-webkit-slider-runnable-track { background-color: color-mix(in oklch, var(--switch-off) 70%, var(--accent)); }
+#convSlider::-webkit-slider-thumb {
+  transition: transform var(--dur-1) var(--ease-standard), box-shadow var(--dur-2) var(--ease-standard);
+}
+#convSlider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 0.5px oklch(0 0 0 / 0.14), 0 2px 6px oklch(0 0 0 / 0.22);
+}
+#convSlider:active::-webkit-slider-thumb {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 6px var(--accent-soft), 0 0 0 1px var(--accent), 0 3px 8px oklch(0 0 0 / 0.24);
+}
+
+/* Converted cards: accent colour / underline ease in and out. No opacity transition: the digit roll (motion/time.js)
+   hides .hm while its overlay plays, and clearing that must bring the digits straight back, not fade them up from 0. */
+.card .time .hm {
+  transition: color var(--dur-2) var(--ease-standard), text-decoration-color var(--dur-2) var(--ease-standard);
+  text-decoration-color: transparent;
+}
+
+/* Hint text */
+#convHint { transition: opacity var(--dur-2) var(--ease-standard); }
+
+/* Copy confirmation overlay (aria-hidden, stacked in the same grid cell) */
+.copy-btn > svg, .copy-btn > .wc-copy-check { grid-area: 1 / 1; }
+.copy-btn > .wc-copy-check { pointer-events: none; color: var(--accent); opacity: 0; }

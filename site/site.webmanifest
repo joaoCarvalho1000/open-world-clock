@@ -1,0 +1,28 @@
+{
+  "name": "Open World Clock",
+  "short_name": "World Clock",
+  "description": "The best world clock for Windows. Completely free, no strings attached. Open source, no telemetry. See who’s awake in every city you add.",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#ecf5fd",
+  "theme_color": "#ecf5fd",
+  "icons": [
+    {
+      "src": "assets/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

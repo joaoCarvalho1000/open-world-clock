@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Every page on the site in its three languages (clean URLs, as Cloudflare Pages serves them): English at /, Brazilian
+     Portuguese under /pt/ and Spanish under /es/, each with its alternates (hreflang en, pt-BR, es and x-default = English,
+     the same set as in each page's <head>, written by cloudflare/site-chrome.mjs). Then the plain-text files for LLMs (see /llms.txt). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://openworldclock.com/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/download</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/download"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/download"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/download"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/download"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/features</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/features"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/features"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/features"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/features"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/time-zone-converter</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/time-zone-converter"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/meeting-planner</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/meeting-planner"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/world-map</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-map"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-map"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-map"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-map"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/windows-clock-alternative</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/windows-clock-alternative"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/multiple-time-zones-windows</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/multiple-time-zones-windows"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/faq</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/faq"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/faq"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/faq"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/privacy</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/privacy"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/privacy"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/support</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/support"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/support"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/support"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/support"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/download</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/download"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/download"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/download"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/download"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/features</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/features"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/features"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/features"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/features"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/time-zone-converter</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/time-zone-converter"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/meeting-planner</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/meeting-planner"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/world-map</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-map"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-map"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-map"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-map"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/windows-clock-alternative</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/windows-clock-alternative"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/multiple-time-zones-windows</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/multiple-time-zones-windows"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/faq</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/faq"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/faq"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/faq"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/privacy</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/privacy"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/privacy"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/support</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/support"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/support"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/support"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/support"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/download</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/download"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/download"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/download"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/download"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/features</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/features"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/features"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/features"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/features"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/time-zone-converter</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/time-zone-converter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/time-zone-converter"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/meeting-planner</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/meeting-planner"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/meeting-planner"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/world-map</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-map"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-map"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-map"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-map"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/windows-clock-alternative</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/windows-clock-alternative"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/windows-clock-alternative"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/multiple-time-zones-windows</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/multiple-time-zones-windows"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/multiple-time-zones-windows"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/faq</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/faq"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/faq"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/faq"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/privacy</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/privacy"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/privacy"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/support</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/support"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/support"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/support"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/support"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/llms.txt</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/llms-full.txt</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

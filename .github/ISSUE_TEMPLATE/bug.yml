@@ -1,0 +1,68 @@
+name: Bug report
+description: Something in the Windows app or the web app doesn't work the way it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Security problems don't belong here: please report them privately (see SECURITY.md).
+  - type: dropdown
+    id: build
+    attributes:
+      label: Build
+      description: Where did you get the app?
+      options:
+        - Microsoft Store
+        - Installer
+        - Portable
+        - Web app (openworldclock.com)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Shown at the bottom of Settings, next to the app name (in the web app too).
+      placeholder: v1.3.0
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version (or browser, for the web app)
+      description: Press Win+R, type winver and press Enter. For the web app, the browser and the device, for example Chrome on Android.
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: input
+    id: scaling
+    attributes:
+      label: Display scaling
+      description: Settings > System > Display > Scale. With more than one monitor, list each one.
+      placeholder: 125%
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add Tokyo
+        2. Switch to the vertical layout
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected vs actual
+      description: What you expected to happen, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag an image here if it helps. Crop out anything personal first.
+    validations:
+      required: false

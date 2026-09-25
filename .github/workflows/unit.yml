@@ -1,0 +1,136 @@
+name: Unit tests and audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unit-${{ github.ref }}
+  cancel-in-progress: true
+
+# What runs here, with Node built-ins only (nothing is installed):
+#   - the Node unit tests in test/unit/
+#   - npm audit on the app's and the website's lockfiles
+#   - the website link-check tests (cloudflare/check-links.test.mjs, fetch is stubbed, no network)
+#   - the website analytics gate tests (cloudflare/analytics-gate.test.mjs): analytics loads only on the production
+#     host and never under Do Not Track or Global Privacy Control
+#   - the CSP check: site/_headers must list the hash of every inline script in site/*.html
+#   - the shared data check: shared/ and apple/Shared/Localizable.xcstrings must match what the exporters produce
+#     from src/ today
+# The in-app Electron suite (test/run.js driving test/deep.js in a real window) runs in the second job, `app`. It is
+# non-blocking (continue-on-error) until it has passed reliably on the runner for a while, so a red `app` job does not
+# fail the workflow: read its deep.txt artifact. Run `npm test` on a Windows PC before a release as well. The live
+# link check (`npm run links` in cloudflare/) needs the network and a published release, so it runs before each
+# deploy instead.
+jobs:
+  unit:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      # The repo is LF and csp-hashes.mjs hashes the inline scripts byte for byte. The Windows runner's git turns
+      # autocrlf on, and a CRLF checkout would report CSP drift that is not there.
+      - name: Keep LF line endings
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      # The unit tests use only Node built-ins, so nothing is installed first.
+      - name: Unit tests
+        run: node --test "test/unit/*.test.js"
+
+      - name: Website tests (link check, analytics gate)
+        run: node --test cloudflare/check-links.test.mjs cloudflare/analytics-gate.test.mjs
+
+      # Exits 1 when site/_headers is out of date: the live site would then block its own inline scripts.
+      # Fix locally with `npm run csp:write` in cloudflare/.
+      - name: CSP hashes match the inline scripts
+        run: node cloudflare/csp-hashes.mjs
+
+      # Regenerates shared/ and the iPhone string catalog and fails if they differ from what is committed. Fix locally
+      # by running the two exporters and committing the result. -I skips the runtime version lines in the golden.json
+      # meta block (node, icu, tz, unicode, cldr), which change with the runner's Node patch release; any other
+      # difference still fails.
+      - name: Shared data is up to date
+        shell: bash
+        run: |
+          node scripts/export-shared.mjs
+          node scripts/export-xcstrings.mjs
+          git diff --exit-code -I '^ *"(node|icu|tz|unicode|cldr)": "[^"]*",?$' -- shared apple/Shared/Localizable.xcstrings
+
+      # npm audit reads the lockfiles; no install needed.
+      - name: Audit app dependencies
+        run: npm audit --audit-level=high
+
+      - name: Audit website dependencies
+        working-directory: cloudflare
+        run: npm audit --audit-level=high
+
+  app:
+    name: In-app suite
+    runs-on: windows-latest
+    timeout-minutes: 20
+    # Non-blocking for now: see the header comment.
+    continue-on-error: true
+    steps:
+      - name: Keep LF line endings
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      # electron 44 has no postinstall script (its package.json only offers an `install-electron` bin, and the lockfile
+      # has no hasInstallScript for it), so `npm ci` never downloads the Electron binary, whatever allowScripts says.
+      # install.js fetches it into node_modules/electron/dist and writes path.txt; it exits at once if both are there.
+      - name: Install the Electron binary
+        shell: bash
+        run: |
+          node node_modules/electron/install.js
+          if [ ! -f node_modules/electron/path.txt ] || [ ! -d node_modules/electron/dist ]; then
+            echo "::error::Electron binary missing after install.js: node_modules/electron/path.txt or dist/ not found."
+            exit 1
+          fi
+          exe="node_modules/electron/dist/$(cat node_modules/electron/path.txt)"
+          if [ ! -f "$exe" ]; then
+            echo "::error::Electron binary missing: $exe not found."
+            exit 1
+          fi
+          echo "Electron binary: $exe"
+
+      # Starts the app with test/deep.js attached, against a throwaway settings folder, and prints the report.
+      - name: Web app (settings match the Windows app; site/app is built from the current sources)
+        run: |
+          node --test test/web/shim.test.mjs
+          node scripts/build-web.mjs --check
+
+      - name: In-app suite
+        run: node test/run.js
+
+      - name: Upload the report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: deep-report
+          path: test/deep.txt
+          if-no-files-found: warn
+          retention-days: 14

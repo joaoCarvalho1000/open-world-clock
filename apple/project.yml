@@ -1,0 +1,144 @@
+# XcodeGen spec for the Open World Clock iOS app + widget extension.
+# Generate the project on a Mac:   brew install xcodegen && cd apple && xcodegen generate
+# The generated WorldClock.xcodeproj is disposable; edit this file instead.
+name: WorldClock
+
+options:
+  bundleIdPrefix: io.joao
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "26.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: false
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    SWIFT_STRICT_CONCURRENCY: complete   # Swift 5 mode, concurrency diagnostics as warnings
+    MARKETING_VERSION: 1.0.0
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""                 # set your 10-character Apple Developer Team ID (or pick it in Xcode > Signing)
+    CODE_SIGN_STYLE: Automatic
+    TARGETED_DEVICE_FAMILY: "1"          # iPhone only
+    SWIFT_EMIT_LOC_STRINGS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+packages:
+  WorldClockCore:
+    path: WorldClockCore
+
+targets:
+  WorldClock:
+    type: application
+    platform: iOS
+    sources:
+      # Info.plist and the .entitlements file are recognized by XcodeGen and kept out of the build phases;
+      # PrivacyInfo.xcprivacy and Assets.xcassets land in Copy Bundle Resources.
+      - path: WorldClock
+      # L10n.swift, SharedFormatting.swift, SharedModel.swift, Color+RGBA.swift and Localizable.xcstrings (resource).
+      - path: Shared
+    info:
+      path: WorldClock/Support/Info.plist
+      properties:
+        CFBundleDisplayName: World Clock   # Home Screen name (the App Store name is set in App Store Connect)
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleLocalizations: [en, pt-BR, es]
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Viewer
+            CFBundleURLName: io.joao.worldclock
+            CFBundleURLSchemes: [worldclock]
+        LSRequiresIPhoneOS: true
+        # Launch screen = the app canvas (pale blue / deep navy, Palette.canvas) so launch blends into the first frame.
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        # iPhone only, portrait only (the card list, converter panel and planner are laid out for portrait).
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIApplicationSupportsIndirectInputEvents: true
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: WorldClock/Support/WorldClock.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.io.joao.worldclock.shared   # keep in sync with SettingsStore.appGroupID
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.joao.worldclock
+        PRODUCT_NAME: WorldClock
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - package: WorldClockCore
+        product: WorldClockCore
+      - target: WorldClockWidgets
+        embed: true
+
+  WorldClockWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      # Widget code, Widgets.xcstrings (widget-only strings), Assets.xcassets (AccentColor, WidgetBackground),
+      # Info.plist and WorldClockWidgets.entitlements (kept out of build phases).
+      - path: WorldClockWidgets
+      - path: Shared
+      # The widget bundle reads the App Group UserDefaults too, so it ships the same privacy manifest.
+      - path: WorldClock/Support/PrivacyInfo.xcprivacy
+        buildPhase: resources
+    info:
+      path: WorldClockWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: World Clock
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleLocalizations: [en, pt-BR, es]
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: WorldClockWidgets/WorldClockWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.io.joao.worldclock.shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.joao.worldclock.widgets
+        PRODUCT_NAME: WorldClockWidgets
+        SKIP_INSTALL: YES
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/Frameworks"
+          - "@executable_path/../../Frameworks"
+    dependencies:
+      - package: WorldClockCore
+        product: WorldClockCore
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+
+schemes:
+  WorldClock:
+    build:
+      targets:
+        WorldClock: all
+        WorldClockWidgets: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
+# Core unit tests (WorldClockCoreTests) run with `swift test --package-path apple/WorldClockCore`;
+# they are intentionally not duplicated as an Xcode test target.

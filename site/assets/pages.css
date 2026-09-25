@@ -1,0 +1,350 @@
+/* Content pages: /features, /download, /faq, /time-zone-converter, /meeting-planner, /world-map,
+   /windows-clock-alternative, /multiple-time-zones-windows. Loaded after site.css, whose tokens, nav, footer, buttons,
+   focus ring, FAQ rows, Ko-fi button and converter widget these pages reuse. Mobile first. Calm on purpose: no scripted
+   motion (the converter on /time-zone-converter moves only when you use it), a soft scroll reveal where the browser
+   supports scroll-driven animation, and nothing moves under prefers-reduced-motion (site.css turns it off). */
+
+:root {
+  --pg-sky: oklch(0.905 0.042 238);   /* top of the page header: the home page's morning sky, faded into the canvas */
+  --pg-sky-2: oklch(0.945 0.03 250);
+  --pg-code: oklch(0.25 0.045 262);
+  --pg-code-fg: oklch(0.96 0.01 250);
+  --pg-mark: oklch(0.5 0.13 160);      /* check marks in fact rows (decorative) */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pg-sky: oklch(0.265 0.06 262);
+    --pg-sky-2: oklch(0.225 0.05 264);
+    --pg-code: oklch(0.14 0.03 265);
+    --pg-mark: oklch(0.8 0.1 160);
+    --pg-ink: var(--accent-ink);
+  }
+}
+:root[data-theme="dark"] {
+  --pg-sky: oklch(0.265 0.06 262);
+  --pg-sky-2: oklch(0.225 0.05 264);
+  --pg-code: oklch(0.14 0.03 265);
+  --pg-mark: oklch(0.8 0.1 160);
+  --pg-ink: var(--accent-ink);
+}
+
+/* ---------- nav (its page links are styled in site.css, shared with the home page) ---------- */
+.pg-body .nav .brand { min-height: 44px; }
+/* 44px targets with a mouse too (site.css raises them only for touch) */
+.pg-body .theme-btn { width: 44px; height: 44px; }
+.pg-body .nav .btn-sm { min-height: 44px; }
+
+/* ---------- page frame ---------- */
+.pg { padding-top: var(--nav-h); }
+.pg-hero { position: relative; isolation: isolate; padding: clamp(28px, 5vw, 72px) 0 0; }
+.pg-hero::before { content: ""; position: absolute; z-index: -1; inset: calc(-1 * var(--nav-h)) 0 auto; height: calc(100% + var(--nav-h) - clamp(80px, 12vw, 200px));
+  background: linear-gradient(180deg, var(--pg-sky) 0%, var(--pg-sky-2) 55%, var(--canvas) 100%); pointer-events: none; }
+
+.crumbs ol { display: flex; flex-wrap: wrap; align-items: center; margin: 0; padding: 0; list-style: none; font-size: .9375rem; color: var(--fg-2); }
+.crumbs li { display: inline-flex; align-items: center; }
+.crumbs li + li::before { content: "/"; margin: 0 10px; color: var(--fg-3); }
+@supports (content: "/" / "") { .crumbs li + li::before { content: "/" / ""; } }
+.crumbs a { display: inline-flex; align-items: center; min-height: 44px; color: var(--fg-2); }
+.crumbs a:hover { color: var(--fg); }
+.crumbs [aria-current] { color: var(--fg); }
+
+.pg-hero h1 { margin-top: var(--s3); max-width: 17ch; font-size: clamp(2.3rem, 1.25rem + 3.9vw, 4.4rem); line-height: 1.02; font-weight: 500; letter-spacing: -0.035em; }
+.pg-lede { margin-top: var(--s5); max-width: 60ch; font-size: var(--fs-lede); line-height: 1.55; color: var(--fg-2); }
+.pg-cta { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s8); }
+.pg-facts { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); margin: var(--s5) 0 0; padding: 0; list-style: none; font-size: .9375rem; color: var(--fg-2); }
+.pg-facts li { display: inline-flex; align-items: center; gap: 6px; }
+.pg-facts .i { width: 16px; height: 16px; stroke-width: 2; color: var(--pg-mark); }
+@media (max-width: 520px) {
+  .pg-cta .btn { flex: 1 1 100%; white-space: normal; text-align: center; }
+}
+
+/* ---------- screenshots: real app captures on the Store backdrop ---------- */
+.shot { margin: clamp(32px, 5vw, 56px) 0 0; }
+.shot img, .shot picture { display: block; width: 100%; }
+.shot img { height: auto; border-radius: clamp(12px, 1.5vw, 20px); box-shadow: var(--shadow-shot); background: var(--canvas-2); }
+.shot figcaption { margin-top: var(--s4); max-width: 72ch; font-size: .9375rem; color: var(--fg-2); }
+.shot-narrow { max-width: 560px; }
+/* a capture under a two-column section's text: in its own full-width row, outside the grid, so the sticky heading
+   stops at the end of the text instead of sliding over the picture */
+.pg-sec.cols > .wrap.shot-row { display: block; }
+.shot-row .shot { margin-top: clamp(40px, 5vw, 64px); }
+/* phones get a tighter crop of the same capture, faded where it was cut, so a shadow box would show its edge */
+@media (max-width: 640px) {
+  .shot.has-phone img { box-shadow: none; background: none; filter: drop-shadow(0 14px 22px oklch(0.25 0.06 258 / .2)); }
+}
+/* wide captures stay readable on phones: they scroll sideways in their own frame instead of shrinking to a sliver */
+.shot-scroll { overflow-x: auto; overscroll-behavior-x: contain; border-radius: clamp(12px, 1.5vw, 20px); box-shadow: var(--shadow-shot); scrollbar-width: thin; }
+.shot-scroll img { min-width: 780px; border-radius: 0; box-shadow: none; }
+.shot-scroll:focus-visible { outline-offset: 4px; }
+@media (min-width: 820px) { .shot-scroll img { min-width: 0; } }
+.scroll-hint { display: block; margin-top: var(--s4); font-size: .875rem; color: var(--fg-2); }
+@media (min-width: 820px) { .scroll-hint { display: none; } }
+
+/* ---------- sections ---------- */
+.pg-sec { padding-top: clamp(64px, 9vw, 120px); }
+/* Long pages: sections skip layout and paint until they come near the screen. Shaping the text of the whole page was
+   most of the first-paint cost on a slow phone. Sections on screen at load render in the first frame, and the browser
+   remembers each section's real height once it has been seen, so nothing on screen moves. */
+.pg-sec, .cta-band { content-visibility: auto; contain-intrinsic-size: auto 760px; }
+.sec-body { margin-top: var(--s8); }
+.sec-body > * + .prose, .sec-body > * + .steps, .sec-body > .tbl-wrap + .tbl-wrap { margin-top: var(--s6); }
+.sec-body > :first-child { margin-top: 0; }
+/* text sections: heading on the left (it stays in view while its section scrolls), content on the right */
+@media (min-width: 1100px) {
+  .pg-sec.cols > .wrap { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 0 var(--s16); align-items: start; }
+  .pg-sec.cols .sec-head { position: sticky; top: calc(var(--nav-h) + var(--s8)); }
+  .pg-sec.cols .sec-body { margin-top: 0; padding-top: 10px; }
+  .pg-sec.cols h2 { font-size: clamp(1.9rem, 1rem + 1.5vw, 2.75rem); }
+  .pg-sec.cols .pg-sub { font-size: 1.0625rem; }
+}
+.nw { white-space: nowrap; }
+.pg-sec h2, .pg-h2 { max-width: 22ch; font-size: var(--fs-h2s); line-height: 1.05; font-weight: 500; letter-spacing: -0.03em; }
+.pg-sub { margin-top: var(--s4); max-width: 62ch; font-size: var(--fs-lede); line-height: 1.55; color: var(--fg-2); }
+.pg-sec h3 { font-size: 1.1875rem; line-height: 1.3; font-weight: 500; letter-spacing: -0.01em; }
+.more { margin-top: var(--s8); }
+.more a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 600; text-decoration: none; }
+.more a:hover { text-decoration: underline; }
+.more .i { width: 16px; height: 16px; transition: transform var(--dur-2) var(--ease); }
+.more a:hover .i { transform: translateX(3px); }
+
+/* feature lists: short heading, one or two lines, a hairline above each */
+.fgrid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s6) var(--s10); margin: var(--s10) 0 0; padding: 0; list-style: none; }
+.fgrid > li { padding-top: var(--s4); border-top: 1px solid var(--hair-strong); }
+.fgrid p { margin-top: 6px; color: var(--fg-2); }
+@media (min-width: 700px) { .fgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1080px) { .fgrid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.split { display: grid; gap: var(--s8); align-items: center; }
+.split .shot { margin: 0; }
+@media (min-width: 960px) {
+  .split { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: var(--s16); }
+  .split.img-first > .shot { order: -1; }
+}
+
+/* long-form text */
+.prose { max-width: 68ch; }
+.prose > * + * { margin-top: var(--s4); }
+.prose p, .prose li { color: var(--fg-2); }
+.prose strong { color: var(--fg); font-weight: 600; }
+.prose h3 { margin-top: var(--s8); color: var(--fg); }
+.prose ul, .prose ol { padding-left: 1.25em; }
+.prose li + li { margin-top: 8px; }
+.prose li::marker { color: var(--accent); }
+code, kbd, .mono { font-family: ui-monospace, "Cascadia Mono", "Cascadia Code", Consolas, "SF Mono", Menlo, monospace; font-size: .92em; }
+p code, li code, td code { padding: 1px 6px; border-radius: 6px; background: var(--field); color: var(--fg); overflow-wrap: anywhere; }
+kbd { display: inline-block; min-width: 1.8em; padding: 1px 7px; border-radius: 6px; background: var(--group); color: var(--fg); text-align: center; box-shadow: inset 0 0 0 1px var(--hair-strong), 0 1px 0 var(--hair-strong); font-size: .85em; }
+
+/* numbered steps */
+.steps { counter-reset: step; margin: var(--s6) 0 0; padding: 0; list-style: none; max-width: 64ch; }
+.steps > li { position: relative; counter-increment: step; padding: 0 0 0 48px; color: var(--fg-2); min-height: 32px; }
+.steps > li + li { margin-top: var(--s4); }
+.steps > li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--accent-soft); color: var(--pg-ink); font: 600 .9375rem/1 var(--display); }
+.steps strong { color: var(--fg); font-weight: 600; }
+/* the SHA-256 of a download, under its steps: small and quiet, lined up with the step text, selectable in one click */
+.sec-body > .steps + .sha { margin-top: var(--s3); }
+.sha { max-width: 64ch; padding-left: 48px; font-size: .8125rem; line-height: 1.5; color: var(--fg-2); }
+.sha code { display: block; padding: 0; background: none; color: inherit; font-size: inherit; overflow-wrap: anywhere; -webkit-user-select: all; user-select: all; }
+.pg-cta + .dl-note { margin-top: var(--s4); }
+.cta-card .pg-cta + .dl-note { margin-top: var(--s5); max-width: 48ch; }
+/* two option cards while the Store and winget cards are hidden (storeLive false) */
+@media (min-width: 1100px) { .opts:has(> .opt[hidden]) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* a command you can select with one click (no script: user-select all) */
+/* The command stays on one line and scrolls inside its box when the box is narrower; the Copy button (theme.js) sits
+   at its end */
+.cmd { display: flex; align-items: center; gap: 12px; margin: var(--s4) 0 0; padding: 6px 6px 6px 18px; border-radius: 14px; background: var(--pg-code); color: var(--pg-code-fg); max-width: 64ch; }
+.cmd code { flex: 1 1 auto; min-width: 0; padding: 8px 0; overflow-x: auto; font-size: .9375rem; line-height: 1.5; white-space: pre; overflow-wrap: normal; -webkit-user-select: all; user-select: all; background: none; color: inherit; scrollbar-width: thin; }
+.cmd::before { content: ">"; flex: none; color: oklch(0.75 0.06 250); font-family: ui-monospace, Consolas, monospace; }
+/* while more of the command is hidden to the right, its end fades (theme.js adds .at-end when it all shows) */
+.cmd code:not(.at-end) { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent); }
+@media (max-width: 520px) { .cmd code { font-size: .875rem; } }
+.copy-cmd { flex: none; min-width: 72px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: oklch(1 0 0 / .12); color: inherit;
+  font: 600 .875rem/1 var(--font); cursor: pointer; transition: background-color var(--dur-1) var(--ease); }
+.copy-cmd:hover { background: oklch(1 0 0 / .2); }
+.copy-cmd:focus-visible { outline: 2px solid oklch(0.86 0.09 245); outline-offset: 2px; }
+pre.out { margin: var(--s5) 0 0; padding: 18px 20px; border-radius: 14px; background: var(--pg-code); color: var(--pg-code-fg); overflow-x: auto; max-width: 64ch;
+  font: .9375rem/1.65 ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace; }
+.note { margin-top: var(--s5); padding: var(--s4) var(--s5); max-width: 64ch; border-radius: var(--r-group); background: var(--accent-soft); color: var(--fg); }
+.note p { color: var(--fg); }
+
+/* tables: examples and comparisons */
+.tbl-wrap { margin-top: var(--s6); overflow-x: auto; border-radius: var(--r-card); background: var(--group); box-shadow: var(--shadow-card); }
+.tbl-wrap:focus-visible { outline-offset: 4px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.tbl caption { padding: 16px 18px 4px; text-align: left; font-weight: 600; color: var(--fg); caption-side: top; }
+.tbl th, .tbl td { padding: 12px 18px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--hair); }
+.tbl thead th { font-size: .875rem; font-weight: 600; color: var(--fg-2); white-space: nowrap; }
+.tbl tbody th { font-weight: 500; color: var(--fg); }
+.tbl td { color: var(--fg-2); }
+.tbl td.t { color: var(--fg); font-weight: 500; white-space: nowrap; }
+.tbl td.sum { color: var(--fg); font-weight: 500; }
+.tbl tbody tr:last-child > * { border-bottom: 0; }
+.tbl .day { display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: var(--r-pill); background: var(--accent-soft); color: var(--pg-ink); font-size: .8125rem; font-weight: 600; white-space: nowrap; }
+.tbl-compare { min-width: 680px; }
+.tbl-compare thead th:nth-child(2), .tbl-compare td:nth-child(2) { background: color-mix(in oklch, var(--accent) 7%, transparent); }
+.tbl-compare thead th:nth-child(2) { color: var(--accent-ink); }
+/* Comparison tables on phones: the row labels stay put while the other columns scroll under them, the right edge
+   fades while there is more to see (theme.js adds .at-end at the end of the scroll), and a one-line hint says to swipe */
+.tbl-compare tbody th, .tbl-compare thead th:first-child { position: sticky; left: 0; z-index: 1; background: var(--group); }
+.tbl-hint { display: none; font-size: .875rem; color: var(--fg-2); }
+.tbl-hint + .tbl-wrap { margin-top: 0; }
+@media (max-width: 700px) {
+  .tbl-hint { display: block; }
+  .tbl-hint + .tbl-wrap { margin-top: var(--s2); }
+  .tbl-compare { min-width: 600px; }
+  .tbl-compare th, .tbl-compare td { padding: 10px 12px; }
+  .tbl-compare tbody th, .tbl-compare thead th:first-child { box-shadow: inset -1px 0 0 var(--hair); }
+  .tbl-wrap:has(.tbl-compare):not(.at-end) { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+}
+/* very narrow phones: the plain tables (the world map's solstice table) fit without scrolling */
+@media (max-width: 400px) {
+  .tbl { font-size: .875rem; }
+  .tbl th, .tbl td { padding: 10px; }
+}
+/* the planner's best-hours line under "No overlap", in the app's blue */
+.tbl .best { display: block; margin-top: 4px; color: var(--accent-ink); font-weight: 500; }
+.tbl-note { margin-top: var(--s3); font-size: .875rem; color: var(--fg-2); max-width: 72ch; }
+.sec-body > .tbl-note + .shot { margin-top: clamp(32px, 4vw, 48px); }
+
+/* download options */
+.opts-h { margin-top: var(--s12); font-size: 1.125rem; font-weight: 500; letter-spacing: -0.01em; color: var(--fg-2); }
+.opts-h + .opts { margin-top: var(--s4); }
+/* one line under the install options for people who cannot install anything: the web app */
+.opts-web { margin-top: var(--s5); font-size: .9375rem; color: var(--fg-2); }
+.opts-web a { font-weight: 600; }
+.opts { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); margin-top: var(--s10); }
+@media (min-width: 700px) { .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .opts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.opt { display: flex; flex-direction: column; gap: var(--s2); padding: var(--s6); border-radius: var(--r-card); background: var(--group); box-shadow: var(--shadow-card); }
+.opt h3 { font-size: 1.1875rem; font-weight: 500; letter-spacing: -0.01em; }
+.opt p { color: var(--fg-2); font-size: .9375rem; }
+.opt .tag { align-self: flex-start; padding: 2px 10px; border-radius: var(--r-pill); background: var(--accent-soft); color: var(--pg-ink); font-size: .8125rem; font-weight: 600; }
+/* in the narrow option cards the command gets the whole width and Copy sits under it */
+.opt .cmd { flex-wrap: wrap; gap: 4px; margin-top: var(--s2); padding: 8px 10px 10px 14px; }
+.opt .cmd::before { display: none; }
+.opt .cmd code { flex: 1 1 100%; padding: 4px 0; font-size: .8125rem; }
+.opt .copy-cmd { min-width: 0; padding: 0 16px; }
+.opt a.go { margin-top: auto; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 600; text-decoration: none; }
+.opt a.go:hover { text-decoration: underline; }
+
+/* FAQ page: every answer open, grouped */
+.qa { max-width: 72ch; }
+.qa-group + .qa-group { margin-top: clamp(48px, 6vw, 72px); }
+.qa-group h2 { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem); max-width: none; }
+.qa-list { margin: var(--s4) 0 0; border-top: 1px solid var(--hair-strong); }
+.qa-item { padding: var(--s6) 0; border-bottom: 1px solid var(--hair-strong); }
+.qa-item h3 { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.01em; line-height: 1.3; color: var(--fg); }
+.qa-item p { margin-top: var(--s2); color: var(--fg-2); }
+.toc { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s8) 0 0; padding: 0; list-style: none; }
+.toc a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: var(--r-pill); background: var(--field); color: var(--fg); text-decoration: none; font-size: .9375rem; font-weight: 500; }
+.toc a:hover { background: var(--field-hover); }
+
+/* keyboard list */
+.keys { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 10px var(--s5); margin: var(--s6) 0 0; max-width: 64ch; align-items: baseline; }
+.keys dt { white-space: nowrap; }
+.keys dd { margin: 0; color: var(--fg-2); }
+
+/* related pages */
+.related { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); margin: var(--s8) 0 0; padding: 0; list-style: none; }
+@media (min-width: 640px) { .related { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .related { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.related a { display: flex; flex-direction: column; gap: 4px; height: 100%; min-height: 44px; padding: var(--s5) var(--s6); border-radius: var(--r-card);
+  background: var(--group); box-shadow: var(--shadow-card); color: var(--fg); text-decoration: none;
+  transition: transform var(--dur-3) var(--ease), box-shadow var(--dur-3) var(--ease); }
+.related a:hover { transform: translate3d(0, -2px, 0); box-shadow: var(--shadow-lift); }
+.related strong { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); font-family: var(--display); font-size: 1.125rem; font-weight: 500; letter-spacing: -0.01em; }
+.related strong .i { width: 18px; height: 18px; color: var(--accent-ink); transition: transform var(--dur-2) var(--ease); }
+.related a:hover strong .i { transform: translateX(3px); }
+.related span { color: var(--fg-2); font-size: .9375rem; }
+
+/* closing call to action: the home page's dusk, as a calm card */
+.cta-band { padding: clamp(72px, 10vw, 128px) 0 clamp(64px, 8vw, 104px); }
+.cta-card { --ring: oklch(0.86 0.09 245); position: relative; isolation: isolate; overflow: hidden; display: grid; justify-items: center; text-align: center;
+  padding: clamp(48px, 7vw, 88px) clamp(20px, 5vw, 64px); border-radius: var(--r-tile); color: var(--band-fg);
+  background: linear-gradient(180deg, oklch(0.42 0.085 285) 0%, oklch(0.31 0.075 272) 55%, oklch(0.24 0.055 264) 100%); }
+.cta-card::before { content: ""; position: absolute; z-index: -1; left: 50%; bottom: 0; width: min(96%, 760px); aspect-ratio: 2 / 1; transform: translate(-50%, 58%); border-radius: 50%;
+  background: radial-gradient(closest-side, oklch(0.86 0.11 70 / .34), oklch(0.72 0.13 48 / .12) 50%, transparent 100%); pointer-events: none; }
+.cta-card img { width: 72px; height: 72px; } /* the bare globe (logo-small.svg), like the nav mark */
+.cta-card h2 { margin-top: var(--s6); max-width: 16ch; font-size: var(--fs-h2s); line-height: 1.02; font-weight: 500; letter-spacing: -0.035em; }
+.cta-card p { margin-top: var(--s3); color: var(--band-fg-2); max-width: 48ch; }
+.cta-card .pg-cta { justify-content: center; margin-top: var(--s8); }
+.cta-card .btn-primary { background: #fff; color: oklch(0.25 0.06 262); box-shadow: 0 14px 32px -14px oklch(0.1 0.05 265 / .7); }
+.cta-card .btn-primary:hover { background: oklch(0.94 0.02 250); }
+.cta-card .btn-quiet { color: var(--band-fg); box-shadow: inset 0 0 0 1px oklch(1 0 0 / .32); }
+.cta-card .btn-quiet:hover { background: oklch(1 0 0 / .08); }
+.cta-card .dl-kofi a { color: var(--band-fg); }
+.cta-card .dl-kofi a:hover { color: var(--band-fg); }
+.cta-card ::selection { background: oklch(0.82 0.09 245 / .38); }
+
+/* ---------- the working converter on /time-zone-converter: the home page's widget (site.css and demo.js), calmer ---------- */
+.pg-body .demo { padding: clamp(56px, 8vw, 104px) 0 0; background: none; }
+.pg-body .demo .big-h { font-size: var(--fs-h2s); }
+.pg-body .demo .stage { margin-top: clamp(24px, 4vw, 48px); }
+/* the slider stays in the bar at every width (the home page drops it from 641 to 760px, where its autoplay scrubs the
+   clocks instead) */
+.pg-body #wcSlider { display: block; }
+/* demo.js fills the widget after the first paint on a fast repeat visit, so the boxes it fills keep their size from the
+   start (CLS 0): the city select its widest width, and the row of cards one card's height (the card min-heights in
+   site.css, 170, 176 and 186px, plus the row's padding) */
+@media (min-width: 641px) { .pg-body #wcZone { width: 190px; } }
+.pg-body .wc-strip { min-height: 190px; }
+@media (min-width: 641px) { .pg-body .wc-strip { min-height: 200px; } }
+@media (min-width: 1101px) { .pg-body .wc-strip { min-height: 210px; } }
+/* from tablets up, the five cities share the widget's width as on the home page, and added cities wrap onto a second
+   row in the same columns instead of hiding past the widget's edge; phones keep the row you swipe through */
+@media (min-width: 641px) {
+  .pg-body .wc-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; }
+  /* the day line's dot rides on a track as wide as the line, moved sideways; clip it to the card so the last column
+     never widens the page (the home page's scrolling row clips it instead) */
+  .pg-body .card { min-width: 0; max-width: none; overflow: hidden; overflow: clip; }
+}
+.wc-add { display: flex; max-width: 1160px; margin: var(--s4) auto 0; } /* lined up with the widget (.wc in site.css) */
+#wcAdd { min-height: 44px; max-width: 100%; padding: 0 14px 0 18px; border: 0; border-radius: var(--r-pill); background: var(--field); color: var(--fg);
+  font-size: .9375rem; font-weight: 500; cursor: pointer; transition: background-color var(--dur-1) var(--ease); }
+#wcAdd:hover { background: var(--field-hover); }
+#wcAdd:disabled { cursor: default; color: var(--fg-2); background: var(--field); }
+#wcAdd option { background: var(--group); color: var(--fg); }
+/* without script there is nothing to convert with */
+:root:not(.js) .pg-body .demo { display: none; }
+
+
+/* ---------- motion: a soft rise as sections scroll in (compositor only; off under reduced motion) ---------- */
+@keyframes pgRise { from { opacity: .001; transform: translate3d(0, 28px, 0); } to { opacity: 1; transform: none; } }
+/* The Ko-fi button stays out of the page header (its Store button and screenshot own the first screen, as the hero does
+   on the home page; kofi.js tucks it while the header reaches the bottom of the screen) and fades in over the first
+   480px of scroll. kofi.js still tucks it over the closing card and the footer, which have their own Ko-fi link, and
+   below 1400px it steps away while you scroll down (.is-away, site.css). Without scroll-driven animation it simply shows. */
+@keyframes pgFabIn { 0%, 55% { opacity: 0; visibility: hidden; transform: translate3d(0, 12px, 0) scale(.94); } 100% { opacity: 1; visibility: visible; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .rv { animation: pgRise linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; }
+  }
+}
+@supports (animation-timeline: scroll()) {
+  .pg-body .kofi-fab.is-ready:not(.is-tucked):not(.is-away):not([aria-expanded="true"]) { animation: pgFabIn linear both; animation-timeline: scroll(root); animation-range: 0 480px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  @supports (animation-timeline: scroll()) {
+    /* site.css removes every animation under reduced motion, so hide it at the top with a plain scroll-free rule instead */
+    .pg-body .kofi-fab.is-ready:not(.is-tucked):not(.is-away):not([aria-expanded="true"]) { animation: pgFabIn steps(1, end) both !important; animation-timeline: scroll(root) !important; animation-range: 0 480px !important; }
+  }
+}
+
+@media (pointer: coarse) {
+  .nav-links a, .toc a { min-height: 44px; }
+}
+@media (forced-colors: active) {
+  .opt, .related a, .tbl-wrap, .cta-card, .shot img { border: 1px solid CanvasText; }
+  .steps > li::before { border: 1px solid CanvasText; }
+  #wcAdd { border: 1px solid ButtonText; }
+  .copy-cmd { border: 1px solid ButtonText; }
+  .tbl-compare tbody th, .tbl-compare thead th:first-child { background: Canvas; }
+}
+@media print {
+  .pg-hero::before, .cta-band, .related, .scroll-hint { display: none !important; }
+  .pg { padding-top: 0; }
+  .shot img { box-shadow: none; }
+  .cmd, pre.out { background: #f3f3f3; color: #111; }
+  .copy-cmd { display: none; }
+}

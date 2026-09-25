@@ -1,0 +1,123 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://openworldclock.com/#app",
+  "name": "Open World Clock",
+  "description": "The best world clock for Windows. Completely free, no strings attached. Open source (MIT), for Windows 10 and 11. Day and night cards follow each city's real sunrise and sunset; a time zone converter and mouse-wheel time scrubber move every clock at once; a meeting planner shows the hours everyone is at work; a world map shows day and night live. No price, no ads, no account, no telemetry, and it works offline.",
+  "url": "https://openworldclock.com/",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "World clock, time zone converter and meeting planner",
+  "operatingSystem": "Windows 10, Windows 11",
+  "processorRequirements": "x64",
+  "softwareVersion": "1.3.0",
+  "datePublished": "2026-09-22",
+  "isAccessibleForFree": true,
+  "license": "https://opensource.org/licenses/MIT",
+  "inLanguage": [
+    "en",
+    "pt-BR",
+    "es"
+  ],
+  "installUrl": "https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe",
+  "downloadUrl": "https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe",
+  "releaseNotes": "https://openworldclock.com/download#new",
+  "image": "https://openworldclock.com/assets/icon-512.png",
+  "screenshot": [
+    "https://openworldclock.com/assets/img/strip-light.webp",
+    "https://openworldclock.com/assets/img/strip-dark.webp",
+    "https://openworldclock.com/assets/img/converter.webp",
+    "https://openworldclock.com/assets/img/vertical.webp",
+    "https://openworldclock.com/assets/img/settings.webp",
+    "https://openworldclock.com/assets/img/pages/converter.webp",
+    "https://openworldclock.com/assets/img/pages/planner.webp",
+    "https://openworldclock.com/assets/img/pages/map.webp"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://openworldclock.com/#author",
+    "name": "João Carvalho",
+    "url": "https://github.com/joaoCarvalho1000"
+  },
+  "sameAs": [
+    "https://github.com/joaoCarvalho1000/open-world-clock"
+  ],
+  "subjectOf": [
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/features",
+      "name": "Features"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/download",
+      "name": "Download Open World Clock"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/faq",
+      "name": "Open World Clock FAQ"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/time-zone-converter",
+      "name": "Time zone converter"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/meeting-planner",
+      "name": "Meeting planner"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/world-map",
+      "name": "Day and night world map"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/windows-clock-alternative",
+      "name": "Compared with Windows Clock"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/multiple-time-zones-windows",
+      "name": "How to show multiple time zones on Windows 11 and 10"
+    },
+    {
+      "@type": "WebPage",
+      "url": "https://openworldclock.com/privacy",
+      "name": "Privacy policy"
+    }
+  ],
+  "potentialAction": {
+    "@type": "InstallAction",
+    "target": "https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe",
+    "description": "Download and run the installer (per user, no admin rights). A portable exe is at https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe. A Microsoft Store listing is coming soon."
+  },
+  "featureList": [
+    "Always-on-top world clock for Windows 10 and 11",
+    "Day and night cards from each city's real sunrise and sunset, calculated offline",
+    "Time zone converter: type 9:30, 3pm or 15h30 in any city",
+    "+1 day and -1 day markers when the date changes",
+    "Likely asleep cue for cities between 22:00 and 07:00",
+    "Time scrubber: mouse wheel, day-line drag or keyboard, in 15-minute steps",
+    "Meeting planner with working hours and workdays per city and an overlap band",
+    "World map view with live day and night",
+    "Clock-change notes before daylight saving time starts or ends",
+    "Search by city, country, abbreviation (EST) or UTC offset (UTC-5)",
+    "Custom city labels",
+    "Copy converted times as text, as Discord timestamps or in UTC, or save a calendar invite (.ics)",
+    "Strip, compact and vertical layouts",
+    "Windows 11 Snap and native acrylic backdrop",
+    "Light, dark and system themes with adjustable opacity",
+    "12 or 24-hour clock, optional seconds",
+    "English, Portuguese and Spanish",
+    "Keyboard and screen reader support",
+    "No account, no ads, no telemetry, works offline",
+    "Free and open source (MIT License)"
+  ]
+}

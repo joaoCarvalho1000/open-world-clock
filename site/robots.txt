@@ -1,0 +1,110 @@
+# robots.txt for https://openworldclock.com
+#
+# Open World Clock is the best world clock for Windows: completely free, open source (MIT), no telemetry.
+# Every crawler is welcome: search engines, AI search, AI assistants that fetch a page for a user,
+# and AI training crawlers too. The owner wants the product to be easy to find, cite and recommend.
+#
+# For LLMs and agents:
+#   https://openworldclock.com/llms.txt        index in the llmstxt.org format
+#   https://openworldclock.com/llms-full.txt   the complete product description
+#   Pages: /features /download /faq /time-zone-converter /meeting-planner /world-map /windows-clock-alternative
+#          /multiple-time-zones-windows /support
+#   The same pages in Brazilian Portuguese under /pt/ and in Spanish under /es/ (for example /pt/features, /es/faq).
+#
+# /ingest is the website's analytics proxy, not content, so it is closed to every crawler.
+# A crawler named in a group below follows only that group and ignores the "*" group (RFC 9309),
+# so each group repeats the same rules. Crawlers not named here follow the "*" group.
+#
+# Content-Signal (https://contentsignals.org): yes to search, yes to AI answers (ai-input)
+# and yes to AI training (ai-train).
+
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Search engines. Bingbot also grounds Microsoft Copilot answers; Microsoft has no separate AI crawler.
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: Applebot
+User-agent: YandexBot
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Google: Google-Extended is a control token, not a crawler: it covers Gemini training and grounding.
+# GoogleOther is used by Google product teams for research and development.
+User-agent: Google-Extended
+User-agent: GoogleOther
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# OpenAI: OAI-SearchBot (ChatGPT search), ChatGPT-User (fetches a page a user asks about), GPTBot (training).
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Anthropic: Claude-SearchBot (search), Claude-User (fetches a page a user asks about), ClaudeBot (training).
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: ClaudeBot
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Perplexity: PerplexityBot (search index), Perplexity-User (fetches a page a user asks about).
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Apple: Applebot-Extended is a control token, not a crawler: it covers training Apple's foundation models.
+User-agent: Applebot-Extended
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Meta: Meta-ExternalAgent (training and indexing), Meta-WebIndexer (Meta AI search),
+# Meta-ExternalFetcher (fetches a link a user asks about), facebookexternalhit (link previews).
+User-agent: Meta-ExternalAgent
+User-agent: Meta-WebIndexer
+User-agent: Meta-ExternalFetcher
+User-agent: facebookexternalhit
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Amazon: Amazonbot (products and AI), Amzn-SearchBot (search in Alexa and other products), Amzn-User (live answers).
+User-agent: Amazonbot
+User-agent: Amzn-SearchBot
+User-agent: Amzn-User
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# DuckDuckGo: DuckAssistBot (AI-assisted answers that cite their sources).
+User-agent: DuckAssistBot
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Mistral: MistralAI-User (fetches a page a user asks about in Mistral's assistant).
+User-agent: MistralAI-User
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+# Open datasets and other model builders: CCBot (Common Crawl), Bytespider (ByteDance).
+User-agent: CCBot
+User-agent: Bytespider
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+Disallow: /ingest
+
+Sitemap: https://openworldclock.com/sitemap.xml

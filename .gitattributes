@@ -1,0 +1,20 @@
+# LF everywhere, in the index and in every checkout, whatever core.autocrlf says. cloudflare/csp-hashes.mjs hashes
+# inline scripts byte for byte, so a CRLF checkout would report CSP drift that is not there.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF in the working tree
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
+# binary files: never touch line endings, never diff as text
+*.png   binary
+*.webp  binary
+*.jpg   binary
+*.ico   binary
+*.icns  binary
+*.pdf   binary
+*.woff2 binary
+*.appx  binary
+*.exe   binary
+*.zip   binary

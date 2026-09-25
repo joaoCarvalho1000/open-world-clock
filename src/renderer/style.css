@@ -1,0 +1,914 @@
+/* Open World Clock: one system, iOS-inspired.
+   Frosted glass canvas, hairlines instead of borders, one accent (system blue).
+   Color meaning: light surface = day in that city, deep navy = night; accent = you + the converter source.
+   Type: Segoe UI Variable (Windows' SF Pro analogue). Spacing on a 4px scale. */
+
+:root {
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px;
+  --r-app: 20px; --r-card: 18px; --r-group: 12px; --r-pill: 999px;
+  --ctl-h: 30px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+
+  --tint: oklch(0.965 0.014 245 / var(--bg-alpha, 0.86));
+  --bg-solid: oklch(0.975 0.01 245);
+  --grouped: oklch(0.955 0.012 245);
+  --group: oklch(1 0 0);
+  --fg: oklch(0.22 0.03 258);
+  --fg-2: oklch(0.47 0.025 255);
+  --fg-3: oklch(0.55 0.02 255);
+  --hair: oklch(0.35 0.04 255 / 0.10);
+  --hair-strong: oklch(0.35 0.04 255 / 0.16);
+  --field: oklch(0.35 0.04 255 / 0.06);
+  --field-hover: oklch(0.35 0.04 255 / 0.10);
+  --switch-off: oklch(0.35 0.03 255 / 0.18);
+
+  --day: oklch(0.995 0.004 240 / 0.88);
+  --day-fg: oklch(0.21 0.03 258); --day-fg-2: oklch(0.46 0.025 255); --day-hair: oklch(0.35 0.04 255 / 0.10);
+  --night: oklch(0.29 0.06 263 / 0.95);
+  --night-fg: oklch(0.985 0.006 250); --night-fg-2: oklch(0.83 0.025 252); --night-hair: oklch(1 0 0 / 0.12);
+
+  --accent: oklch(0.58 0.2 255);
+  --accent-ink: oklch(0.46 0.2 255); /* text on --accent-soft and filled accent surfaces (>= 4.5:1) */
+  --accent-on-night: oklch(0.80 0.11 245);
+  --accent-soft: oklch(0.58 0.2 255 / 0.12);
+  --on-accent: #fff;
+  /* filled accent surfaces with text (pressed date chip, Save, map source pill, selected option) */
+  --fill-accent: var(--accent-ink);
+  --on-fill: #fff;
+  --danger: oklch(0.52 0.2 27);
+  --on-danger: #fff;
+  /* control boundaries (text fields, switch track, slider thumb, selected segment): about 3:1 */
+  --ctl-edge: oklch(0.60 0.03 255);
+
+  --shadow-app: 0 0 0 0.5px oklch(0.3 0.04 255 / 0.14), 0 18px 48px -12px oklch(0.3 0.06 255 / 0.28);
+  --shadow-card: 0 0 0 0.5px oklch(0.3 0.04 255 / 0.07), 0 1px 2px oklch(0.3 0.05 255 / 0.05), 0 6px 18px -8px oklch(0.3 0.06 255 / 0.18);
+  --shadow-lift: 0 0 0 0.5px oklch(0.3 0.04 255 / 0.08), 0 2px 4px oklch(0.3 0.05 255 / 0.06), 0 14px 30px -10px oklch(0.3 0.06 255 / 0.28);
+  --shadow-pop: 0 0 0 0.5px oklch(0.3 0.04 255 / 0.12), 0 12px 36px -8px oklch(0.25 0.06 255 / 0.30);
+
+  --font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --display: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+:root[data-theme="dark"], :root[data-theme="system"].sys-dark {
+  --tint: oklch(0.20 0.04 262 / var(--bg-alpha, 0.86));
+  --bg-solid: oklch(0.23 0.04 262);
+  --grouped: oklch(0.20 0.04 262);
+  --group: oklch(0.26 0.042 260);
+  --fg: oklch(0.97 0.008 250);
+  --fg-2: oklch(0.78 0.025 252);
+  --fg-3: oklch(0.66 0.025 252);
+  --hair: oklch(0.9 0.03 250 / 0.10);
+  --hair-strong: oklch(0.9 0.03 250 / 0.16);
+  --field: oklch(0.9 0.03 250 / 0.08);
+  --field-hover: oklch(0.9 0.03 250 / 0.14);
+  --switch-off: oklch(0.9 0.03 250 / 0.20);
+
+  --day: oklch(0.36 0.05 255 / 0.94);
+  --day-fg: oklch(0.985 0.006 250); --day-fg-2: oklch(0.85 0.022 252); --day-hair: oklch(1 0 0 / 0.10);
+  --night: oklch(0.17 0.04 265 / 0.95);
+  --night-fg: oklch(0.95 0.01 250); --night-fg-2: oklch(0.75 0.028 252); --night-hair: oklch(1 0 0 / 0.08);
+
+  --accent: oklch(0.72 0.14 250);
+  --accent-ink: oklch(0.52 0.18 255);
+  --accent-on-night: oklch(0.76 0.13 248);
+  --accent-soft: oklch(0.72 0.14 250 / 0.18);
+  --fill-accent: var(--accent);
+  --on-fill: oklch(0.2 0.04 262);
+  --danger: oklch(0.66 0.19 25);
+  --on-danger: oklch(0.2 0.04 262);
+  --ctl-edge: oklch(0.58 0.03 252);
+
+  --shadow-app: 0 0 0 0.5px oklch(1 0 0 / 0.10), 0 20px 50px -12px oklch(0.05 0.03 265 / 0.6);
+  --shadow-card: 0 0 0 0.5px oklch(1 0 0 / 0.07), 0 6px 18px -8px oklch(0.05 0.03 265 / 0.5);
+  --shadow-lift: 0 0 0 0.5px oklch(1 0 0 / 0.10), 0 16px 32px -10px oklch(0.05 0.03 265 / 0.7);
+  --shadow-pop: 0 0 0 0.5px oklch(1 0 0 / 0.12), 0 16px 40px -8px oklch(0.02 0.02 265 / 0.7);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; background: transparent; font: 13px/1.35 var(--font); color: var(--fg); overflow: hidden;
+  -webkit-font-smoothing: antialiased; user-select: none; }
+button, input, select { font: inherit; color: inherit; }
+/* two-tone focus ring: the accent outline sits on a halo of the solid background, so it keeps 3:1 on any surface
+   (night cards included). Controls with their own focus shadow override the box-shadow. */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 0 4px var(--bg-solid); }
+.no-drag { -webkit-app-region: no-drag; }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.muted { color: var(--fg-2); }
+
+/* ---------- canvas ---------- */
+.app {
+  height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden;
+  background: var(--tint);
+  border-radius: var(--r-app); box-shadow: var(--shadow-app); cursor: move;
+}
+/* Transparent window (Windows 10, WC_BACKDROP=none): no CSS backdrop blur. Chromium cannot see the desktop behind the
+   window, so a blur here blurs nothing and only costs a composited layer. Paint containment keeps the rest of what it
+   did: popovers (position: fixed) stay inside the rounded window and are clipped by its corners. */
+html:not(.backdrop-native):not(.is-web) .app { contain: paint; }
+html.moving, html.moving * { cursor: grabbing !important; }
+
+/* ---------- top bar ---------- */
+.bar { display: flex; align-items: center; gap: 12px; padding: 12px 12px 8px 16px; min-height: 54px; }
+.grip { display: none; }
+/* 4px of padding (taken back by the negative margin) so the clipped row never cuts off a control's focus ring */
+.converter { display: flex; align-items: center; gap: var(--s2); flex: 1; min-width: 0; overflow: hidden; padding: 4px; margin: -4px; }
+.lbl { color: var(--fg-2); white-space: nowrap; }
+.bar input, .bar select, .bar button { cursor: pointer; }
+.bar input[type=text], .bar input[type=search] { cursor: text; }
+
+.converter input[type=text], .converter select, #zoneSearch {
+  height: var(--ctl-h); border: 0; border-radius: var(--r-pill); background: var(--field); box-shadow: inset 0 0 0 1px var(--ctl-edge);
+  padding: 0 var(--s3); outline: none; transition: background .15s, box-shadow .15s, width .25s var(--ease);
+}
+.converter input[type=text]:hover, .converter select:hover, #zoneSearch:hover { background-color: var(--field-hover); }
+.converter input[type=text]:focus-visible, .converter select:focus-visible, #zoneSearch:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: 0 0 0 3px var(--accent-soft), inset 0 0 0 1px var(--accent); }
+
+#convTime { width: 92px; padding: 0 var(--s2); text-align: center; font-family: var(--display); font-size: 15px; font-weight: 500; letter-spacing: -.2px; font-variant-numeric: tabular-nums; }
+#convTime::placeholder { font: 400 13px var(--font); letter-spacing: 0; color: var(--fg-2); }
+/* the empty focused field shows only the caret (the format hint stays reachable through aria-describedby) */
+#convTime:focus::placeholder { color: transparent; }
+#convTime.invalid { box-shadow: inset 0 0 0 1px var(--danger); }
+/* the source select sizes to the chosen city and keeps that width; the slider and hint give way first */
+#convZone { min-width: 0; max-width: 220px; flex-shrink: 0; field-sizing: content; padding-right: 26px; text-overflow: ellipsis; }
+/* selects: one thin chevron, the same as the date button's (the native arrow comes back in forced colors) */
+.converter select, .panel select { -webkit-appearance: none; appearance: none; padding-right: 26px; background-repeat: no-repeat; background-position: right 10px center; background-size: 10px 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='none' stroke='%235c6778' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M2.5 4l2.5 2.5L7.5 4'/%3E%3C/svg%3E"); }
+:root[data-theme="dark"] .converter select, :root[data-theme="dark"] .panel select, :root[data-theme="system"].sys-dark .converter select, :root[data-theme="system"].sys-dark .panel select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='none' stroke='%23b9c3d3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M2.5 4l2.5 2.5L7.5 4'/%3E%3C/svg%3E"); }
+@media (max-width: 900px) { #convZone { flex-shrink: 1; min-width: 96px; } }
+
+/* slider: hairline track, white thumb with soft shadow */
+#convSlider, .panel input[type=range] { -webkit-appearance: none; appearance: none; height: var(--ctl-h); margin: 0; background: transparent; border: 0; padding: 0; cursor: pointer; }
+#convSlider { width: 150px; min-width: 60px; flex-shrink: 1; }
+#convSlider::-webkit-slider-runnable-track, .panel input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--switch-off); }
+#convSlider::-webkit-slider-thumb, .panel input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%; background: #fff;
+  box-shadow: 0 0 0 1px var(--ctl-edge), 0 2px 6px oklch(0 0 0 / 0.22); transition: transform .15s var(--ease);
+}
+#convSlider:active::-webkit-slider-thumb, .panel input[type=range]:active::-webkit-slider-thumb { transform: scale(1.1); }
+#convSlider:focus-visible, .panel input[type=range]:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: none; }
+#convSlider:focus-visible::-webkit-slider-thumb, .panel input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 1px var(--accent), 0 2px 6px oklch(0 0 0 / 0.22); }
+
+/* pill: iOS tinted button */
+.pill { height: var(--ctl-h); display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap; cursor: pointer;
+  padding: 0 var(--s3); border: 0; border-radius: var(--r-pill); background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; transition: background .15s; }
+:root[data-theme="dark"] .pill, :root[data-theme="system"].sys-dark .pill { color: var(--accent); }
+.pill:hover { background: color-mix(in oklch, var(--accent) 22%, transparent); }
+.pill .ico { margin-left: -2px; }
+.hint { color: var(--fg-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+.bar .search-wrap { flex-shrink: 0; position: relative; }
+#zoneSearch { width: 150px; }
+#zoneSearch::placeholder { color: var(--fg-2); }
+#zoneSearch:focus { width: 200px; }
+#zoneSearch::-webkit-search-cancel-button { display: none; }
+/* collapsed add-city button (narrow windows, stacked bar): a + drawn with a mask so it follows the theme color */
+.search-wrap::before { content: ""; position: absolute; left: 0; top: 0; z-index: 1; display: none; width: var(--ctl-h); height: var(--ctl-h); pointer-events: none;
+  background-color: var(--fg-2);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 2v10M2 7h10' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 2v10M2 7h10' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / 14px 14px no-repeat; }
+.search-wrap:hover::before { background-color: var(--fg); }
+.app.bar-stack .search-wrap:not(:focus-within)::before { display: block; }
+
+.actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; margin-left: var(--s1); }
+#btnMin { margin-left: 8px; }
+.icon-btn { width: var(--ctl-h); height: var(--ctl-h); display: inline-grid; place-items: center; border: 0; border-radius: 50%;
+  background: transparent; color: var(--fg-2); cursor: pointer; font-size: 13px; line-height: 1; padding: 0; transition: background .15s, color .15s; }
+.icon-btn:hover { background: var(--field-hover); color: var(--fg); }
+.icon-btn.danger:hover { background: var(--danger); color: var(--on-danger); }
+/* Close hovers red like a Windows caption button (white on #c42b1c is about 5.9:1); forced colors: Highlight */
+#btnClose:hover { background: #c42b1c; color: #fff; }
+#btnClose:active { background: #c42b1c; color: #fff; opacity: .85; }
+.bar svg, .tip svg, .panel svg, .ico { width: 15px; height: 15px; flex-shrink: 0; display: block; }
+.pin-btn svg { transition: transform .2s var(--ease); }
+.pin-btn[aria-pressed="false"] svg { transform: rotate(45deg); }
+.pin-btn[aria-pressed="true"], .pin-btn[aria-pressed="true"]:hover { background: var(--accent-soft); color: var(--accent-ink); }
+:root[data-theme="dark"] .pin-btn[aria-pressed="true"], :root[data-theme="system"].sys-dark .pin-btn[aria-pressed="true"] { color: var(--accent); }
+.copy-btn { flex-shrink: 0; }
+
+/* ---------- tip: short chips ---------- */
+.tip { display: flex; align-items: center; gap: var(--s2); margin: 0 var(--s4) var(--s2); cursor: default; }
+.tip-text { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.tip .chip { padding: 3px 10px; border-radius: var(--r-pill); background: var(--accent-soft); color: var(--fg); font-size: 12px; white-space: nowrap; }
+#tipClose { width: 28px; height: 28px; flex-shrink: 0; }
+#tipClose svg { width: 12px; height: 12px; }
+
+/* ---------- strip ---------- */
+.strip { --gap: 12px; flex: 1; min-height: 0; display: flex; gap: var(--gap); padding: 8px 16px 16px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; scroll-padding: 16px; justify-content: safe center; align-items: center; container-type: size; }
+.strip::-webkit-scrollbar { height: 0; width: 0; }
+/* The vertical layout and wrapped rows scroll natively with the wheel, so they show a thin vertical scrollbar. The
+   horizontal strip keeps none (height 0): it has the edge fade, and the wheel scrolls it sideways. The strip layout
+   sizes it with or without rows, so wrapping into rows never changes the strip's content box (see the gutter below). */
+.app.layout-vertical .strip::-webkit-scrollbar, .app.layout-strip .strip::-webkit-scrollbar { width: 6px; height: 0; }
+.app.layout-vertical .strip::-webkit-scrollbar-thumb, .app.layout-strip .strip::-webkit-scrollbar-thumb { background: var(--hair-strong); border-radius: 3px; }
+.app.layout-vertical .strip::-webkit-scrollbar-track, .app.layout-strip .strip::-webkit-scrollbar-track { background: transparent; }
+.strip.overflow-end { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); }
+.strip.overflow-start { -webkit-mask-image: linear-gradient(to right, transparent, #000 40px); mask-image: linear-gradient(to right, transparent, #000 40px); }
+.strip.overflow-start.overflow-end { -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 56px), transparent); }
+
+/* ---------- card ---------- */
+.card {
+  --c-bg: var(--day); --c-fg: var(--day-fg); --c-fg-2: var(--day-fg-2); --c-hair: var(--day-hair); --c-accent: var(--accent);
+  /* --cw: this card's share of the strip (100cqw = strip content width; --n = card count, set by app.js) */
+  --cw: clamp(200px, calc((100cqw - (var(--n, 5) - 1) * var(--gap, 14px)) / var(--n, 5)), 380px);
+  flex: 1 1 200px; min-width: 200px; max-width: 380px; scroll-snap-align: start;
+  height: 100%; max-height: max(216px, calc(var(--cw) * 1.15));
+  display: grid; grid-template-rows: auto 1fr auto auto; position: relative; container-type: inline-size;
+  padding: clamp(12px, 4.5cqh, 22px) 16px;
+  background: var(--c-bg); color: var(--c-fg);
+  border-radius: var(--r-card); box-shadow: var(--shadow-card);
+  cursor: grab; outline: none;
+  transition: background .6s, color .6s, transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.card.is-night { --c-bg: var(--night); --c-fg: var(--night-fg); --c-fg-2: var(--night-fg-2); --c-hair: var(--night-hair); --c-accent: var(--accent-on-night); }
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+.card:active { transform: translateY(0) scale(.99); }
+.card.dragging { opacity: .45; }
+.card.drop-before { box-shadow: -3px 0 0 0 var(--accent), var(--shadow-card); }
+.card.drop-after { box-shadow: 3px 0 0 0 var(--accent), var(--shadow-card); }
+/* keyboard focus: a dashed ring outside the card, clearly different from the home card's solid ring */
+.card:focus-visible { outline: 2px dashed var(--accent); outline-offset: 3px; }
+
+/* reorder grip: three dots, top-center, on hover */
+.card::before { content: ""; position: absolute; top: 5px; left: 50%; width: 18px; height: 4px; margin-left: -9px;
+  background: radial-gradient(circle, var(--c-fg-2) 1.3px, transparent 1.7px) 0 0 / 6px 4px repeat-x; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.card:hover::before { opacity: .8; }
+
+/* home: accent ring + filled badge */
+.card.home { box-shadow: 0 0 0 2px var(--accent), var(--shadow-card); }
+.card.home:hover { box-shadow: 0 0 0 2px var(--accent), var(--shadow-lift); }
+
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s2); min-width: 0; }
+.head-text { min-width: 0; }
+.city-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.city { font-family: var(--display); font-size: clamp(15px, calc(9px + 3.6cqw), 19px); font-weight: 500; letter-spacing: -.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pin { flex-shrink: 0; padding: 0 7px; border-radius: var(--r-pill); background: var(--accent-ink); color: var(--on-accent); font-size: 10.5px; font-weight: 600; line-height: 16px; }
+.phase-row { display: flex; align-items: center; gap: 5px; margin-top: 1px; min-width: 0; }
+.phase { font-size: clamp(12.5px, calc(8px + 2.4cqw), 14px); color: var(--c-fg-2); }
+.phase-row .moon { font-size: 11px; line-height: 1; color: var(--c-fg-2); }
+.more { width: 28px; height: 28px; margin: -4px -9px 0 0; color: var(--c-fg-2); opacity: .8; cursor: pointer; } /* 3:1 on the card */
+.card:hover .more, .more:focus-visible, .more[aria-expanded="true"] { opacity: 1; }
+.more:hover { background: var(--c-hair); color: var(--c-fg); }
+
+.display { display: flex; align-items: flex-end; padding-top: var(--s2); }
+.time { display: flex; align-items: flex-start; gap: .06em; font-family: var(--display); font-weight: 300; font-size: clamp(44px, min(29cqw, 30cqh), 112px); line-height: .92; letter-spacing: -2px; font-variant-numeric: tabular-nums; color: var(--c-fg); }
+.time .sec { font-size: max(14px, .29em); font-weight: 500; letter-spacing: 0; color: var(--c-fg-2); margin-top: .09em; }
+.time .ampm { font-size: max(13px, .27em); font-weight: 500; letter-spacing: 0; color: var(--c-fg-2); margin-top: .1em; }
+/* 12-hour clock: the seconds sit above AM/PM, both right of the digits ("3:02 12 PM" read as another time).
+   Without seconds (off, or converting) AM/PM sits at the bottom right. */
+.app.h12 .time { display: grid; grid-template-columns: auto; grid-template-rows: auto 1fr; column-gap: .08em; row-gap: 0; justify-content: start; }
+.app.h12 .time .hm { grid-column: 1; grid-row: 1 / span 2; }
+.app.h12 .time .sec { grid-column: 2; grid-row: 1; }
+.app.h12 .time .ampm { grid-column: 2; grid-row: 2; align-self: end; margin: 0 0 .08em; }
+.sky { display: none; }
+/* converter: only the source city takes the accent; the other converted times get a light accent tint, visible in
+   every layout (the day line and its accent dot are hidden in compact and vertical) */
+.card.converted.source .time .hm { color: var(--c-accent); }
+.app.converting .card.converted:not(.source) .time .hm { color: color-mix(in oklch, var(--c-accent) 35%, var(--c-fg)); }
+.card.converted .arc-dot { box-shadow: 0 0 0 3px color-mix(in oklch, var(--c-accent) 25%, transparent); }
+
+/* day line: hairline 24h track, working-hours band, dot = now */
+.arc { position: relative; height: 2px; margin: var(--s3) 0 var(--s2); background: var(--c-hair); border-radius: 1px; }
+.arc-work { position: absolute; top: 0; bottom: 0; left: 37.5%; width: 37.5%; background: var(--c-fg-2); opacity: .75; border-radius: 1px; } /* 3:1 on the card */
+.arc-fill { display: none; }
+.arc-dot { position: absolute; top: 50%; left: calc(var(--p, 0) * 100%); width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: var(--c-fg); } /* live: no left transition (a minute step is about 0.15px); motion/time.css glides converted times */
+.card.converted .arc-dot { background: var(--c-accent); }
+
+.card-foot { display: grid; min-width: 0; }
+/* the long date stays in the DOM for screen readers and copy; the shift shows as a pill in .meta */
+.date { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.meta { display: flex; align-items: baseline; gap: var(--s2); min-width: 0; white-space: nowrap; font-size: clamp(12px, calc(7.5px + 2.4cqw), 13.5px); color: var(--c-fg-2); font-variant-numeric: tabular-nums; }
+.meta .tzname { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.meta .tzname:empty { display: none; }
+.meta .utc { flex-shrink: 0; }
+.meta .dshift { flex-shrink: 0; margin-left: auto; padding: 0 6px; border-radius: var(--r-pill); font-size: 11px; font-weight: 600; line-height: 16px;
+  color: var(--c-fg); background: color-mix(in oklch, var(--c-fg) 11%, transparent); }
+.meta .rel { flex-shrink: 0; margin-left: auto; font-weight: 600; color: var(--c-fg); }
+.meta .dshift:not([hidden]) + .rel { margin-left: 0; }
+.meta .rel.home { color: var(--c-fg-2); font-weight: 500; }
+
+.card input.rename { width: 100%; min-width: 0; height: 22px; margin: -2px 0 -2px -5px; padding: 0 4px;
+  font-family: var(--display); font-size: 15px; font-weight: 500; color: var(--c-fg); background: var(--c-hair);
+  border: 0; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--c-accent); outline: 2px solid transparent; outline-offset: 2px; cursor: text; user-select: text; }
+
+/* ---------- empty state ---------- */
+.empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s1); padding: var(--s4); text-align: center; color: var(--fg-2); }
+.empty-title { font-family: var(--display); font-size: 17px; font-weight: 500; letter-spacing: -.2px; color: var(--fg); }
+.empty-add { margin-top: var(--s2); padding: 0 var(--s4); }
+
+/* ---------- popovers ---------- */
+.results, .menu { background: var(--bg-solid); border-radius: 16px; box-shadow: var(--shadow-pop); padding: 6px; }
+.menu, .results, #tip.help-pop { max-height: calc(100vh - 16px); overflow-y: auto; }
+.results li.results-empty { display: block; padding: 10px 12px; color: var(--fg-2); cursor: default; }
+.results li.results-empty:hover { background: transparent; }
+.results { position: fixed; width: 260px; overflow-y: auto; margin: 0; list-style: none; z-index: 20; }
+.results li { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+.results li b { font-weight: 600; }
+.results li .z { font-size: 12px; color: var(--fg-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.results li:hover, .results li.sel { background: var(--accent-soft); }
+.menu { position: fixed; z-index: 30; display: flex; flex-direction: column; min-width: 210px; }
+.menu button { text-align: left; padding: 8px 12px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; }
+.menu button:hover { background: var(--accent-soft); }
+.menu button:focus-visible { background: var(--accent-soft); outline: 2px solid transparent; outline-offset: -2px; box-shadow: none; }
+.menu button.danger { color: var(--danger); }
+.menu button:disabled { color: var(--fg-3); cursor: default; background: transparent; }
+.menu button[data-act="remove"] { margin-top: 7px; position: relative; }
+.menu button[data-act="remove"]::before { content: ""; position: absolute; left: 12px; right: 12px; top: -4px; height: 1px; background: var(--hair); }
+/* short windows: two columns so every action fits (app.js adds .menu-grid when the list would not) */
+.menu.menu-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2px; min-width: 420px; max-width: calc(100vw - 12px); }
+.menu.menu-grid button { padding: 6px 12px; line-height: 1.25; }
+.menu.menu-grid [data-act="remove"] { grid-column: 1 / -1; }
+
+select option, select optgroup { background-color: var(--bg-solid); color: var(--fg); }
+select option:checked { background-color: var(--fill-accent); color: var(--on-fill); }
+select option:disabled { color: var(--fg-3); }
+
+/* ---------- settings: iOS inset grouped ---------- */
+.panel { position: absolute; inset: 0; z-index: 25; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
+  padding: var(--s5) 28px 28px; background: var(--grouped); border-radius: var(--r-app); font-size: 15px; cursor: default; }
+.panel::-webkit-scrollbar { width: 0; }
+.panel-head, .panel-group, .about { width: 100%; max-width: 540px; flex-shrink: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; min-height: 36px;
+  font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: -.4px; }
+#panelClose { background: var(--field); }
+#panelClose:hover { background: var(--field-hover); }
+.group-title { margin: var(--s6) 0 var(--s2) 18px; font-size: 12px; font-weight: 500; letter-spacing: .3px; text-transform: uppercase; color: var(--fg-2); }
+.panel-grid { display: flex; flex-direction: column; background: var(--group); border-radius: var(--r-group); overflow: hidden; box-shadow: 0 0 0 0.5px var(--hair); }
+.panel .row { position: relative; display: flex; justify-content: space-between; align-items: center; gap: var(--s4);
+  min-height: 48px; padding: 8px 18px; cursor: pointer; }
+.panel .row + .row::before { content: ""; position: absolute; top: 0; left: 18px; right: 0; height: 1px; transform: scaleY(.5); transform-origin: top; background: var(--hair-strong); }
+.panel .row > span:first-child { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.panel .row > :last-child { flex: 0 0 auto; }
+/* a row label with a note under it (Store build: launch at login is managed in Windows) */
+.panel .row > .row-label { display: flex; flex-direction: column; }
+.panel .row-label > span { overflow: hidden; text-overflow: ellipsis; }
+.panel .row-note { margin-top: 2px; font-size: 12.5px; line-height: 1.3; color: var(--fg-2); white-space: normal; }
+.panel .row:has(input:disabled) { cursor: default; }
+/* a whole row that is a button (Store build: "Open Startup apps") */
+.panel .row-btn { width: 100%; margin: 0; border: 0; background: transparent; font: inherit; text-align: left; justify-content: flex-start;
+  color: var(--accent-ink); }
+:root[data-theme="dark"] .panel .row-btn, :root[data-theme="system"].sys-dark .panel .row-btn { color: var(--accent); }
+.panel .row-btn:hover { background: var(--field-hover); }
+.panel .row-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; border-radius: var(--r-group); }
+
+.panel select { height: 30px; min-width: 120px; max-width: 200px; padding: 0 26px 0 var(--s3); border: 0; border-radius: var(--r-pill);
+  background-color: var(--field); color: var(--fg); font-size: 14px; cursor: pointer; outline: none; box-shadow: inset 0 0 0 1px var(--ctl-edge); }
+.panel select:hover { background-color: var(--field-hover); }
+.panel select:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: 0 0 0 3px var(--accent-soft), inset 0 0 0 1px var(--accent); }
+
+/* iOS switch */
+.panel input[type=checkbox] {
+  -webkit-appearance: none; appearance: none; margin: 0; flex: 0 0 auto; width: 44px; height: 26px; border-radius: 13px; cursor: pointer;
+  background: radial-gradient(circle at 13px 50%, #fff 10.5px, oklch(0 0 0 / 0.12) 11px, transparent 12px) no-repeat, var(--switch-off);
+  transition: background .25s var(--ease);
+}
+.panel input[type=checkbox]:checked {
+  background: radial-gradient(circle at 31px 50%, #fff 10.5px, oklch(0 0 0 / 0.12) 11px, transparent 12px) no-repeat, var(--accent);
+}
+.panel input[type=checkbox]:not(:checked) { box-shadow: inset 0 0 0 1px var(--ctl-edge); } /* off track boundary */
+.panel input[type=checkbox]:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 1px var(--accent); }
+.panel input[type=checkbox]:disabled { opacity: .45; cursor: default; }
+
+.range-wrap { display: flex; align-items: center; gap: var(--s3); }
+.panel .range-wrap input[type=range] { width: 170px; }
+#optOpacityValue { width: 38px; text-align: right; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--fg-2); }
+.about { margin-top: var(--s6); padding: 0 18px; display: flex; flex-wrap: wrap; gap: 4px var(--s3); font-size: 13px; color: var(--fg-2); }
+.about > span:first-child { color: var(--fg); font-weight: 500; }
+/* Website, Report a problem, Check for updates: plain links that open the browser (the app itself makes no request) */
+.about .about-links { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 0 var(--s4); }
+.about .about-links a { display: inline-flex; align-items: center; min-height: 24px; color: var(--accent-ink); text-decoration: none; border-radius: 6px; }
+.about .about-links a:hover { text-decoration: underline; }
+:root[data-theme="dark"] .about .about-links a, :root[data-theme="system"].sys-dark .about .about-links a { color: var(--accent); }
+/* Ko-fi support link (hidden in the Microsoft Store build) */
+.about .kofi-link { flex-basis: 100%; display: inline-flex; align-items: center; gap: 6px; width: max-content; min-height: 24px; margin-top: 2px;
+  color: var(--accent-ink); font-weight: 600; text-decoration: none; border-radius: 6px; cursor: pointer; }
+.about .kofi-link:hover { text-decoration: underline; }
+.about .kofi-link svg { width: 15px; height: 15px; }
+:root[data-theme="dark"] .about .kofi-link, :root[data-theme="system"].sys-dark .about .kofi-link { color: var(--accent); }
+
+/* ---------- narrow windows ---------- */
+/* One row of controls down to 761px (the bar stacks at <= 760, app.js .bar-stack): the slider, the connector words
+   and the add-city field give way first, so the source city, Today, the clear button and Copy keep their room. */
+@media (max-width: 960px) { #convSlider { display: none; } }
+@media (max-width: 1040px) {
+  #zoneSearch { width: var(--ctl-h); padding: 0; color: transparent; }
+  .search-wrap:not(:focus-within)::before { display: block; }
+  #zoneSearch::placeholder { color: transparent; }
+  #zoneSearch:focus { width: 170px; padding: 0 var(--s3); color: var(--fg); background-image: none; }
+  #zoneSearch:focus::placeholder { color: var(--fg-2); }
+}
+@media (max-width: 860px) { .lbl { display: none; } }
+@media (max-width: 700px) {
+  .actions { gap: 0; }
+  .actions .icon-btn { width: 28px; height: 28px; }
+  #convZone { min-width: 96px; }
+}
+
+/* ---------- layout: compact (~150px tall) ---------- */
+.app.layout-compact .bar { min-height: 46px; padding: var(--s2) 14px var(--s1) 18px; }
+.app.layout-compact .strip { --gap: 10px; padding: var(--s1) 18px var(--s3); }
+.app.layout-compact .card { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 1fr; column-gap: var(--s2);
+  padding: var(--s2) 14px var(--s2) 18px; min-width: 170px; border-radius: 16px;
+  height: auto; min-height: min(100%, 84px); max-height: 100%; }
+.app.layout-compact .card-head { grid-column: 1 / -1; }
+.app.layout-compact .card::before { top: 3px; }
+.app.layout-compact .more { margin-top: -5px; }
+.app.layout-compact .arc, .app.layout-compact .tzname, .app.layout-compact .utc, .app.layout-compact .phase-row { display: none; }
+/* home marker shrinks to a dot so long city names keep their room */
+.app.layout-compact .pin { width: 6px; height: 6px; padding: 0; border-radius: 50%; background: var(--accent); font-size: 0; line-height: 0; }
+.app.layout-compact .card.is-night .pin { background: var(--accent-on-night); }
+.app.layout-compact .display { grid-column: 1; padding-top: 2px; }
+.app.layout-compact .time { font-size: clamp(30px, min(16cqw, 34cqh), 56px); font-weight: 400; letter-spacing: -1px; }
+/* 12-hour times carry AM/PM: a smaller scale keeps them clear of the day badge */
+.app.layout-compact.h12 .time { font-size: clamp(26px, min(12.5cqw, 32cqh), 48px); }
+.app.layout-compact .card-foot { grid-column: 2; align-self: end; padding-bottom: 3px; }
+.app.layout-compact .meta { flex-direction: column; align-items: flex-end; gap: 2px; }
+.app.layout-compact .meta .dshift, .app.layout-compact .meta .rel { margin-left: 0; }
+.app.layout-compact .tip { margin-bottom: var(--s1); }
+
+/* ---------- layout: vertical (~300px wide): clean rows ---------- */
+/* Stacked top bar (.bar-stack, set by app.js): the vertical layout, and strip/compact windows <= 760px wide.
+   Row 1: add-city button + actions; row 2: the converter. */
+.app.bar-stack .bar { position: relative; flex-wrap: wrap; gap: var(--s2); row-gap: 10px; padding: var(--s3) var(--s2) var(--s2) var(--s3); }
+.app.bar-stack .search-wrap { order: 1; flex: 0 0 var(--ctl-h); position: relative; }
+.app.bar-stack #zoneSearch { width: var(--ctl-h); padding: 0; color: transparent; }
+.app.bar-stack #zoneSearch::placeholder { color: transparent; }
+/* focused search gets its own full-width row under the converter instead of covering the buttons */
+.app.bar-stack .search-wrap:focus-within { order: 3; flex: 1 1 100%; }
+.app.bar-stack #zoneSearch:focus { width: 100%; padding: 0 var(--s3); color: var(--fg); }
+.app.bar-stack #zoneSearch:focus::placeholder { color: var(--fg-2); }
+.app.bar-stack .actions { order: 1; margin-left: auto; gap: 0; }
+.app.bar-stack .actions .icon-btn { width: 28px; height: 28px; }
+.app.bar-stack #btnMin { margin-left: 0; }
+.app.bar-stack .converter { order: 2; flex: 1 1 100%; flex-wrap: wrap; overflow: visible; row-gap: var(--s2); }
+.app.bar-stack #convSlider, .app.bar-stack .lbl, .app.bar-stack .hint { display: none; }
+.app.bar-stack #convTime { width: 96px; flex-shrink: 0; }
+.app.bar-stack #convZone { flex: 1 1 0; min-width: 80px; max-width: none; }
+/* strip and compact windows 481 to 760 wide: the source select sizes to its city instead of taking the whole row */
+.app.bar-stack:not(.layout-vertical) #convZone { flex: 0 1 auto; max-width: 220px; }
+/* the second bar row costs the cards height: a tighter bar and card padding keep every card line inside its card
+   (strip at 250 tall, compact at 150) */
+.app.bar-stack:not(.layout-vertical) .bar { padding-top: var(--s2); row-gap: 6px; }
+.app.bar-stack.layout-strip .card { padding-block: 10px; }
+.app.bar-stack.layout-compact .bar { padding-bottom: 2px; }
+.app.bar-stack.layout-compact .strip { padding-top: 2px; padding-bottom: 6px; }
+.app.bar-stack.layout-compact .card { padding-top: 5px; padding-bottom: 5px; min-height: 0; }
+.app.bar-stack .converter .pill span { display: none; }
+.app.bar-stack .converter .pill { width: var(--ctl-h); padding: 0; justify-content: center; }
+.app.bar-stack .pill .ico { margin: 0; }
+.app.bar-stack .tip { margin: 0 var(--s3) var(--s2); }
+.app.layout-vertical .strip { --gap: 10px; flex-direction: column; justify-content: flex-start; align-items: center; overflow-x: hidden; overflow-y: auto; scroll-snap-type: y proximity; padding: var(--s1) var(--s3) var(--s3); }
+.app.layout-vertical .strip.overflow-end { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent); }
+.app.layout-vertical .card { flex: 0 0 auto; width: calc(100% - 4px); min-width: 0; max-width: 560px; height: auto; max-height: none; margin: 2px; border-radius: 16px;
+  grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: var(--s3); row-gap: 2px; padding: 12px 18px; }
+.app.layout-vertical .card:hover { transform: none; }
+.app.layout-vertical .card::before { top: 3px; }
+.app.layout-vertical .card { grid-template-columns: minmax(0, 1fr) auto auto; }
+.app.layout-vertical .card-head { display: contents; }
+.app.layout-vertical .head-text { grid-column: 1; grid-row: 1; min-width: 0; }
+/* the options button stays reachable (and in Tab order) in the vertical rows, at the row's right edge */
+.app.layout-vertical .more { grid-column: 3; grid-row: 1 / span 2; align-self: center; margin: 0 -10px 0 -2px; }
+.app.layout-vertical .display { grid-column: 2; grid-row: 1 / span 2; padding-top: 0; align-self: center; justify-content: flex-end; }
+.app.layout-vertical .time { font-size: clamp(32px, 12cqw, 48px); letter-spacing: -1px; }
+.app.layout-vertical .arc, .app.layout-vertical .tzname { display: none; }
+.app.layout-vertical .card-foot { grid-column: 1; grid-row: 2; }
+.app.layout-vertical .meta .rel, .app.layout-vertical .meta .dshift { margin-left: 0; }
+/* narrow rows: the offset and day badge wrap instead of running into the time */
+.app.layout-vertical .meta { flex-wrap: wrap; column-gap: 6px; row-gap: 0; }
+/* a day badge showing: the UTC offset steps aside (it stays in the card's name and tooltip), so every row keeps two lines */
+.app.layout-vertical .meta:has(.dshift:not([hidden])) .utc { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .card:hover, .card:active { transform: none; }
+}
+
+/* Help popover behind the "?" button (replaces the inline tip bar) */
+/* placed next to the ? button by app.js (never over it) */
+#tip.help-pop { position: fixed; top: 56px; right: 12px; z-index: 40; width: 320px; max-width: calc(100vw - 12px); margin: 0; padding: 16px 16px 14px;
+  display: flex; flex-direction: column; align-items: stretch; gap: 10px; border-radius: 16px; border: 0;
+  background: var(--bg-solid); box-shadow: var(--shadow-pop); }
+#tip.help-pop .help-title { padding-right: 28px; }
+.app.layout-compact #tip.help-pop { width: 460px; }
+.app.layout-compact #tip.help-pop .tip-text { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+#tip.help-pop[hidden] { display: none !important; }
+#tip.help-pop .help-title { font-weight: 600; font-size: 13px; color: var(--fg); }
+#tip.help-pop .tip-text { display: flex; flex-direction: column; gap: 8px; }
+#tip.help-pop .chip { display: block; background: none; border: 0; padding: 0 0 0 14px; position: relative; font-size: 12.5px; line-height: 1.4; color: var(--fg-2); white-space: normal; }
+#tip.help-pop .chip::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: .7; }
+#tip.help-pop #tipClose { position: absolute; top: 8px; right: 8px; }
+#tip.help-pop, #tip.help-pop .help-title { text-align: left; }
+
+/* Batch 1: who's awake */
+.card.asleep .time .hm, .card.asleep .time .sec, .card.asleep .time .ampm { opacity: .72; }
+.arc { cursor: ew-resize; touch-action: none; }
+.arc::before { content: ""; position: absolute; left: 0; right: 0; top: -8px; bottom: -8px; }
+.card.scrubbing { cursor: ew-resize; }
+.results li .off { font-variant-numeric: tabular-nums; }
+
+/* ---------- Batch 2: working hours, planner, clock changes, date shortcuts ---------- */
+:root {
+  --plan-off: oklch(0.35 0.04 255 / 0.06);
+  --plan-off-fg: oklch(0.42 0.025 255);
+  --plan-work: oklch(0.58 0.2 255 / 0.20);
+  --plan-work-fg: oklch(0.38 0.17 255);
+  /* light: night hours recede (a faint fill plus a dark stripe), so working hours lead; the stripe keeps night distinct
+     without relying on color */
+  --plan-night: oklch(0.35 0.04 255 / 0.16);
+  --plan-night-fg: oklch(0.40 0.03 255);
+  --plan-stripe: oklch(0.35 0.04 255 / 0.14);
+  --dst: oklch(0.60 0.13 62);
+  --dst-night: oklch(0.82 0.10 70);
+}
+:root[data-theme="dark"], :root[data-theme="system"].sys-dark {
+  --plan-off: oklch(0.9 0.03 250 / 0.07);
+  --plan-off-fg: oklch(0.72 0.025 252);
+  --plan-work: oklch(0.72 0.14 250 / 0.30);
+  --plan-work-fg: oklch(0.93 0.04 250);
+  --plan-night: oklch(0.13 0.035 265 / 0.9);
+  --plan-night-fg: oklch(0.66 0.03 252);
+  --plan-stripe: oklch(1 0 0 / 0.10);
+  --dst: oklch(0.80 0.11 70);
+  --dst-night: oklch(0.80 0.11 70);
+}
+
+/* day line: the band follows the city's hours (--ws / --we are fractions of the day) */
+.arc-work { left: calc(var(--ws, .375) * 100%); width: calc((var(--we, .75) - var(--ws, .375)) * 100%); }
+.arc-work.overnight { left: 0; width: 100%;
+  -webkit-mask-image: linear-gradient(to right, #000 calc(var(--we) * 100%), transparent 0, transparent calc(var(--ws) * 100%), #000 0);
+  mask-image: linear-gradient(to right, #000 calc(var(--we) * 100%), transparent 0, transparent calc(var(--ws) * 100%), #000 0); }
+.card.off-day:not(.working) .arc-work { opacity: .12; }
+.card.editing-hours { box-shadow: 0 0 0 2px var(--accent), var(--shadow-lift); }
+
+/* clock-change note */
+.dst-note { display: flex; align-items: center; gap: 5px; margin-top: 3px; min-width: 0; font-size: 11px; font-weight: 500; line-height: 14px;
+  color: var(--c-fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: help; }
+.dst-note::before { content: ""; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--dst); }
+.card.is-night .dst-note::before { background: var(--dst-night); }
+/* sits under the phase in the card head (short text, never cut off) */
+.head-text .dst-note { margin-top: 2px; }
+.app.layout-compact .dst-note { display: none; }
+.app.layout-vertical .dst-note { margin-top: 1px; }
+
+/* date button in the converter + chip popover */
+.day-btn { height: var(--ctl-h); min-width: 92px; display: inline-flex; align-items: center; justify-content: space-between; gap: 5px; flex-shrink: 0; padding: 0 10px 0 var(--s3);
+  border: 0; border-radius: var(--r-pill); background: var(--field); box-shadow: inset 0 0 0 1px var(--ctl-edge); white-space: nowrap; transition: background .15s, color .15s; }
+.day-btn:hover { background: var(--field-hover); }
+.day-btn .chev { width: 10px; height: 10px; color: var(--fg-2); transition: transform .2s var(--ease); }
+.day-btn.set { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+.day-btn.set .chev { color: currentColor; }
+:root[data-theme="dark"] .day-btn.set, :root[data-theme="system"].sys-dark .day-btn.set { color: var(--accent); }
+.day-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.date-chips { position: fixed; z-index: 30; display: flex; flex-wrap: wrap; gap: 4px; max-width: calc(100vw - 12px); padding: 5px;
+  background: var(--bg-solid); border-radius: 14px; box-shadow: var(--shadow-pop); cursor: default; }
+.date-chip { height: 28px; padding: 0 12px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--fg); cursor: pointer; white-space: nowrap; transition: background .15s; }
+.date-chip:hover { background: var(--field-hover); }
+.date-chip[aria-pressed="true"] { background: var(--fill-accent); color: var(--on-fill); font-weight: 600; }
+.date-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* planner toggle */
+.planner-btn[aria-pressed="true"], .planner-btn[aria-pressed="true"]:hover { background: var(--accent-soft); color: var(--accent-ink); }
+:root[data-theme="dark"] .planner-btn[aria-pressed="true"], :root[data-theme="system"].sys-dark .planner-btn[aria-pressed="true"] { color: var(--accent); }
+
+/* ---------- meeting planner ---------- */
+.app.planner-on .strip { display: none; }
+.planner { --plan-label: clamp(150px, 14vw, 220px); --plan-row: 22px; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  padding: 2px 16px var(--s4); cursor: default; }
+.plan-head { display: flex; align-items: baseline; gap: var(--s3); min-width: 0; white-space: nowrap; padding-left: 6px; }
+.plan-summary { flex-shrink: 0; font-family: var(--display); font-size: 15px; font-weight: 600; letter-spacing: -.2px; color: var(--accent-ink); }
+:root[data-theme="dark"] .plan-summary, :root[data-theme="system"].sys-dark .plan-summary { color: var(--accent); }
+.plan-summary.none, :root[data-theme="dark"] .plan-summary.none, :root[data-theme="system"].sys-dark .plan-summary.none { color: var(--fg-2); }
+.planner.empty .plan-summary, .planner.empty .plan-caption, .planner.empty .plan-legend { display: none; }
+/* best partial hours when nothing overlaps: reads as text, opens the converter at that hour */
+.plan-best-btn { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin: 0; padding: 1px 3px; border: 0; border-radius: 5px;
+  background: transparent; color: var(--accent-ink); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+:root[data-theme="dark"] .plan-best-btn, :root[data-theme="system"].sys-dark .plan-best-btn { color: var(--accent); }
+.plan-best-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* the caption gives up its room first (ellipsis), the best text only when the caption is gone */
+.plan-caption { flex-shrink: 1000; min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: var(--fg-2); }
+.plan-legend { margin-left: auto; display: flex; align-items: center; gap: 5px; flex-shrink: 0; font-size: 11.5px; color: var(--fg-2); }
+.plan-legend .lg { width: 10px; height: 10px; border-radius: 3px; }
+.plan-legend .lg.work { background: var(--plan-work); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.plan-legend .lg.night { margin-left: var(--s2); background: var(--plan-night) repeating-linear-gradient(135deg, transparent 0 3px, var(--plan-stripe) 3px 5px); }
+.plan-body { flex: 0 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; justify-content: flex-start; }
+/* rows past the bottom (or top): a fade says there is more to scroll */
+.planner.more-below .plan-body { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent); }
+.planner.more-above .plan-body { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22px); mask-image: linear-gradient(to bottom, transparent, #000 22px); }
+.planner.more-above.more-below .plan-body { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22px, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(to bottom, transparent, #000 22px, #000 calc(100% - 22px), transparent); }
+.plan-body::-webkit-scrollbar { width: 0; }
+.plan-grid { position: relative; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; padding: 6px 0; }
+.plan-row { display: grid; grid-template-columns: var(--plan-label) minmax(0, 1fr); align-items: center; column-gap: 12px; }
+.plan-label { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); min-width: 0; height: var(--plan-row); min-height: 24px;
+  padding: 0 6px; border: 0; border-radius: 7px; background: transparent; text-align: left; cursor: pointer; transition: background .15s; }
+.plan-label:hover { background: var(--field-hover); }
+.plan-city { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.plan-time { flex-shrink: 0; font-size: 12px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.plan-row.source .plan-city { color: var(--accent-ink); font-weight: 600; }
+:root[data-theme="dark"] .plan-row.source .plan-city, :root[data-theme="system"].sys-dark .plan-row.source .plan-city { color: var(--accent); }
+.plan-cells { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 2px; height: var(--plan-row); }
+.plan-cell { min-width: 0; margin: 0; padding: 0; border: 0; border-radius: 4px; display: grid; place-items: center; overflow: hidden;
+  background: var(--plan-off); color: var(--plan-off-fg); font-size: clamp(10.5px, calc(var(--plan-row) * .36), 13px); font-variant-numeric: tabular-nums; line-height: 1;
+  cursor: pointer; transition: background .2s, box-shadow .15s; }
+.plan-cell:first-child { border-radius: 8px 4px 4px 8px; }
+.plan-cell:last-child { border-radius: 4px 8px 8px 4px; }
+/* working hours are the strongest state: filled and ringed (hover 2.5px and the picked hour 3px stay distinct) */
+.plan-cell.work { background: var(--plan-work); color: var(--plan-work-fg); font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--accent); }
+/* night hours carry a stripe pattern too, so they never depend on color alone */
+.plan-cell.night { background: var(--plan-night); color: var(--plan-night-fg);
+  background-image: repeating-linear-gradient(135deg, transparent 0 3px, var(--plan-stripe) 3px 5px); }
+.plan-cell.midnight span { font-weight: 600; text-transform: capitalize; }
+/* 12-hour clock: AM/PM on the 6, 12 and 18 cells (app.js buildPlanner) */
+.plan-cell .ap { font-size: .8em; opacity: .8; margin-left: 1px; font-weight: 500; }
+.plan-cell:hover { box-shadow: inset 0 0 0 2.5px color-mix(in oklch, var(--accent) 55%, transparent); }
+.plan-cell.sel { box-shadow: inset 0 0 0 3px var(--accent); }
+.plan-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; position: relative; z-index: 2; }
+.plan-layer { position: absolute; top: 0; bottom: 0; left: calc(var(--plan-label) + 12px); right: 0; pointer-events: none; z-index: 1; }
+.plan-overlap { position: absolute; top: 0; bottom: 0; border-radius: 9px;
+  background: color-mix(in oklch, var(--accent) 7%, transparent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+/* best partial hours (no full overlap): dashed, unfilled, so it never reads as the overlap band */
+.plan-best { position: absolute; top: 0; bottom: 0; border-radius: 6px; border: 1.5px dashed var(--accent); /* 3:1 on the planner */
+  background: none; pointer-events: none; }
+/* selected meeting slot (app.js syncPlanSel): filled and ringed, above the overlap and best bands */
+.plan-sel { position: absolute; top: 0; bottom: 0; border-radius: 7px; pointer-events: none;
+  background: color-mix(in oklch, var(--accent) 16%, transparent); box-shadow: inset 0 0 0 2px var(--accent); }
+/* while a slot is selected the head names it and offers Copy slot and Save invite (the caption and Best give way) */
+.plan-selbar { display: inline-flex; align-items: center; gap: 6px; min-width: 0; flex: 0 1 auto; }
+.plan-selbar[hidden] { display: none; }
+.plan-sel-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; font-weight: 600; color: var(--fg); }
+.plan-sel-btn { flex-shrink: 0; height: 24px; padding: 0 10px; font-size: 12px; }
+.planner.has-sel .plan-best-btn, .planner.has-sel .plan-caption { display: none; }
+.plan-now { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; border-radius: 1px; background: var(--fg); opacity: .55; }
+.plan-now::before { content: ""; position: absolute; top: -2px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: inherit; }
+.plan-now.converted { background: var(--accent); opacity: 1; transition: left .3s var(--ease); } /* the live line steps once a minute without an animation */
+.app.scrub-live .plan-now.converted { transition: none; } /* continuous scrubbing: follows each step (app.js markScrub) */
+/* Settings could not be loaded (app.js showBootFailed): one message and a Retry button in the strip */
+.boot-failed { flex: 1; align-self: center; display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s4);
+  text-align: center; color: var(--fg); font-size: 14px; cursor: default; }
+.boot-failed p { margin: 0; max-width: 64ch; text-wrap: balance; }
+/* hour scale (app.js buildPlanner): only where the cells carry no numbers */
+.plan-axis { display: none; }
+.app.layout-vertical .plan-axis, .app.layout-compact .plan-axis { flex-shrink: 0; display: flex; justify-content: space-between; margin-top: 2px;
+  font-size: 11px; line-height: 1.2; color: var(--fg-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.app.layout-compact .plan-axis { margin-left: calc(var(--plan-label) + 12px); }
+.plan-empty { display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: var(--s4); text-align: center; color: var(--fg-2); }
+
+.app.layout-compact .planner { --plan-row: 16px; --plan-label: 140px; gap: 2px; padding-bottom: var(--s2); }
+.app.layout-compact .plan-summary { font-size: 13px; }
+.app.layout-compact .plan-caption { display: none; }
+.app.layout-compact .plan-legend { display: none; }
+.app.layout-compact .plan-grid { gap: 3px; padding: 3px 0; }
+.app.layout-compact .plan-cell span { display: none; }
+.app.layout-compact .plan-city { font-size: 12px; }
+
+/* the vertical planner starts at the top, with 24 px rows (the target size) and the hour scale under them */
+.app.layout-vertical .planner { --plan-row: 24px; justify-content: flex-start; padding: var(--s2) var(--s3) var(--s3); }
+.app.layout-vertical .plan-head { flex-wrap: wrap; row-gap: 0; padding-left: 2px; }
+.app.layout-vertical .plan-caption { flex-basis: 100%; }
+.app.layout-vertical .plan-best-btn { flex-basis: 100%; white-space: normal; text-align: left; padding-left: 0; }
+.app.layout-vertical .plan-selbar { flex-basis: 100%; flex-wrap: wrap; row-gap: 4px; }
+.app.layout-vertical .plan-legend { display: none; }
+.app.layout-vertical .plan-grid { gap: 6px; }
+.app.layout-vertical .plan-row { grid-template-columns: minmax(0, 1fr); row-gap: 3px; }
+.app.layout-vertical .plan-label { height: auto; min-height: 24px; padding: 0 2px; font-size: 12.5px; }
+.app.layout-vertical .plan-cells { gap: 1px; }
+.app.layout-vertical .plan-cell { border-radius: 2px; }
+.app.layout-vertical .plan-cell:first-child { border-radius: 5px 2px 2px 5px; }
+.app.layout-vertical .plan-cell:last-child { border-radius: 2px 5px 5px 2px; }
+.app.layout-vertical .plan-cell span { display: none; }
+.app.layout-vertical .plan-layer { left: 0; }
+.app.layout-vertical .plan-overlap { border-radius: 6px; }
+
+/* ---------- working-hours editor ---------- */
+.hours-pop { position: fixed; z-index: 35; width: 280px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 12px;
+  background: var(--bg-solid); border-radius: 16px; box-shadow: var(--shadow-pop); cursor: default; }
+.hours-head { display: flex; align-items: baseline; gap: 6px; min-width: 0; white-space: nowrap; }
+.hours-title { font-weight: 600; }
+.hours-city { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--fg-2); }
+.hours-city:not(:empty)::before { content: "· "; }
+.hours-times { display: flex; align-items: center; gap: var(--s2); }
+.hours-times input { width: 96px; height: var(--ctl-h); padding: 0 var(--s2); border: 0; border-radius: var(--r-pill); background: var(--field);
+  text-align: center; font-family: var(--display); font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums;
+  outline: none; box-shadow: inset 0 0 0 1px var(--ctl-edge); cursor: text; user-select: text; transition: background .15s, box-shadow .15s; }
+.hours-times input:hover { background: var(--field-hover); }
+.hours-times input:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: 0 0 0 3px var(--accent-soft), inset 0 0 0 1px var(--accent); }
+.hours-times input.invalid { box-shadow: inset 0 0 0 1px var(--danger); }
+.hours-to { color: var(--fg-2); }
+.hours-days { display: flex; gap: 4px; }
+.day-pill { flex: 1 1 0; min-width: 0; height: 28px; padding: 0; border: 0; border-radius: var(--r-pill); background: var(--field); color: var(--fg-2);
+  font-size: 11.5px; font-weight: 500; cursor: pointer; transition: background .15s, color .15s; }
+.day-pill:hover { background: var(--field-hover); color: var(--fg); }
+.day-pill[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+:root[data-theme="dark"] .day-pill[aria-pressed="true"], :root[data-theme="system"].sys-dark .day-pill[aria-pressed="true"] { color: var(--accent); }
+.hours-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
+.hours-note { flex: 1 0 100%; font-size: 11.5px; line-height: 1.3; color: var(--fg-2); }
+.hours-note:empty { display: none; }
+.hours-note.error { color: var(--danger); }
+.text-btn { height: 28px; padding: 0 var(--s3); border: 0; border-radius: var(--r-pill); background: transparent; color: var(--fg-2); cursor: pointer; transition: background .15s, color .15s; }
+.text-btn:hover { background: var(--field-hover); color: var(--fg); }
+.hours-foot .pill { height: 28px; padding: 0 var(--s4); background: var(--fill-accent); color: var(--on-fill); }
+.hours-foot .pill:hover { background: color-mix(in oklch, var(--fill-accent) 88%, black); }
+.pill:disabled { opacity: .45; cursor: default; }
+/* the compact window is ~150px tall: lay the editor out in two rows */
+.app.layout-compact .hours-pop { width: 560px; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px 16px; padding: 10px 12px; }
+.app.layout-compact .hours-head { grid-column: 1; grid-row: 1; }
+.app.layout-compact .hours-times { grid-column: 2; grid-row: 1; justify-self: end; }
+.app.layout-compact .hours-days { grid-column: 1; grid-row: 2; }
+.app.layout-compact .day-pill { width: 36px; flex: 0 0 auto; }
+.app.layout-compact .hours-foot { grid-column: 2; grid-row: 2; }
+.app.layout-vertical .hours-pop { width: calc(100vw - 24px); }
+/* the hint only takes the space left over, so the source select and date button keep their width */
+#convHint { flex: 1 1 0; }
+@media (max-width: 1400px) { #convHint { display: none; } }
+
+/* ---------- layout switch: iOS segmented control in the top bar ---------- */
+.layout-wrap { position: relative; display: inline-flex; align-items: center; margin-right: 8px; }
+.seg { display: inline-flex; align-items: center; gap: 1px; height: var(--ctl-h); padding: 2px; border-radius: var(--r-pill); background: var(--field); }
+.seg button { width: 28px; height: 26px; display: inline-grid; place-items: center; padding: 0; border: 0; border-radius: var(--r-pill);
+  background: transparent; color: var(--fg-2); cursor: pointer; transition: background .15s, color .15s, box-shadow .15s; }
+.seg button:hover { color: var(--fg); }
+.seg button[aria-pressed="true"] { background: var(--group); color: var(--fg);
+  box-shadow: 0 0 0 1px var(--ctl-edge), 0 1px 3px oklch(0.25 0.05 255 / 0.16); }
+:root[data-theme="dark"] .seg button[aria-pressed="true"], :root[data-theme="system"].sys-dark .seg button[aria-pressed="true"] {
+  background: oklch(0.9 0.03 250 / 0.18); box-shadow: 0 0 0 1px var(--ctl-edge), 0 1px 3px oklch(0.05 0.03 265 / 0.35); }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.bar .seg svg { width: 15px; height: 15px; }
+.layout-toggle { display: none; }
+.layout-toggle svg { display: none; }
+.app.layout-strip .layout-toggle .i-strip, .app.layout-compact .layout-toggle .i-compact, .app.layout-vertical .layout-toggle .i-vertical { display: block; }
+.layout-toggle[aria-expanded="true"] { background: var(--field-hover); color: var(--fg); }
+/* narrow windows: one button showing the current layout; the segments open as a small popover under it */
+.app.ls-collapsed .layout-toggle { display: inline-grid; }
+.app.ls-collapsed .layout-wrap { margin-right: 0; }
+.app.ls-collapsed .seg { position: absolute; z-index: 45; top: calc(100% + 6px); left: 50%; margin-left: -49px; height: 38px; padding: 5px; gap: 2px;
+  background: var(--bg-solid); box-shadow: var(--shadow-pop); }
+.app.ls-collapsed .layout-wrap:not(.open) .seg { display: none; }
+.app.ls-collapsed .seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--ctl-edge); }
+:root[data-theme="dark"] .app.ls-collapsed .seg button[aria-pressed="true"], :root[data-theme="system"].sys-dark .app.ls-collapsed .seg button[aria-pressed="true"] { color: var(--accent); }
+
+/* ---------- world map view (content from views/map.js) ---------- */
+.map-btn[aria-pressed="true"], .map-btn[aria-pressed="true"]:hover { background: var(--accent-soft); color: var(--accent-ink); }
+:root[data-theme="dark"] .map-btn[aria-pressed="true"], :root[data-theme="system"].sys-dark .map-btn[aria-pressed="true"] { color: var(--accent); }
+.app.map-on .strip { display: none; }
+.map-view { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; padding: 2px 16px var(--s4); cursor: default; }
+.app.layout-compact .map-view { padding: 0 16px var(--s2); }
+.app.layout-vertical .map-view { padding: 0 var(--s3) var(--s3); }
+
+/* vertical rows keep a compact label scale (the row is wide, so the card-width scale would oversize it) */
+.app.layout-vertical .city { font-size: 16px; }
+.app.layout-vertical .phase { font-size: 12.5px; }
+.app.layout-vertical .meta { font-size: 12px; }
+
+/* Native backdrop (Win11 acrylic): Windows draws corners, border, shadow and real blur; top bar empty space drags natively so Snap works */
+html.backdrop-native .app { border-radius: 0; box-shadow: none; }
+html.backdrop-native .bar { -webkit-app-region: drag; }
+html.backdrop-native .bar .converter, html.backdrop-native .bar .search-wrap, html.backdrop-native .bar .actions,
+html.backdrop-native .bar input, html.backdrop-native .bar select, html.backdrop-native .bar button { -webkit-app-region: no-drag; }
+.panel, .menu, .results, .date-chips, #dateChips, #tip, .hours-pop, #layoutSwitch { -webkit-app-region: no-drag; }
+
+/* ---------- go-live fixes ---------- */
+/* status toast under the time field when the hint line is hidden (narrow windows, stacked bar) */
+.conv-toast { position: fixed; z-index: 45; max-width: calc(100vw - 12px); padding: 5px 10px; border-radius: 10px; pointer-events: none;
+  background: var(--bg-solid); box-shadow: var(--shadow-pop); color: var(--fg); font-size: 12px; line-height: 16px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv-toast.error { color: var(--danger); }
+/* narrower strips: the clear pill becomes an icon so the source city keeps its full name */
+@media (max-width: 1320px) {
+  .converter #convClear span { display: none; }
+  .converter #convClear { width: var(--ctl-h); padding: 0; justify-content: center; }
+  .converter #convClear .ico { margin: 0; }
+}
+/* a picked date shows on every card as its local date */
+.meta .dshift.on-date { font-weight: 500; }
+.meta:has(.dshift.on-date) .tzname { display: none; }
+/* opacity slider: accent fill left of the thumb (--pct from app.js) */
+#optOpacity::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--accent) var(--pct, 50%), var(--switch-off) var(--pct, 50%)); }
+/* tall strip windows wrap the cards into rows (app.js sets .rows, --rows and --n = cards per row) */
+.app.layout-strip .strip.rows { flex-wrap: wrap; align-content: safe center; overflow-x: hidden; overflow-y: auto; scroll-snap-type: y proximity; }
+.app.layout-strip .strip.rows .card { flex: 0 0 calc(var(--cw) - 0.5px); height: calc((100cqh - (var(--rows, 1) - 1) * var(--gap)) / var(--rows, 1)); }
+.app.layout-strip .strip.rows.overflow-end { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent); }
+/* vertical scrolling (vertical layout, wrapped rows): fades top and bottom so cards never meet a hard edge */
+.app.layout-vertical .strip.overflow-start, .app.layout-strip .strip.rows.overflow-start { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32px); mask-image: linear-gradient(to bottom, transparent, #000 32px); }
+/* the scrollbar's 6px are always reserved (no card width jump when it appears, no size change when the strip wraps
+   into rows) and taken from the right padding, so the cards stay centered */
+.app.layout-vertical .strip, .app.layout-strip .strip { scrollbar-gutter: stable; }
+.app.layout-vertical .strip { padding-right: calc(var(--s3) - 6px); }
+.app.layout-strip .strip { padding-right: 10px; }
+.app.layout-vertical .strip.overflow-start.overflow-end, .app.layout-strip .strip.rows.overflow-start.overflow-end { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 40px), transparent); }
+/* vertical rows: the home marker is a dot too (the home card also has the ring and "Local"), so the city keeps its room */
+.app.layout-vertical .pin { width: 6px; height: 6px; padding: 0; border-radius: 50%; background: var(--accent); font-size: 0; line-height: 0; }
+.app.layout-vertical .card.is-night .pin { background: var(--accent-on-night); }
+/* stacked bar: the date button takes only what it needs so it shares the row with the time and source */
+.app.bar-stack .day-btn { min-width: 0; }
+
+/* ---------- accessibility (WCAG 2.2 AA audit) ---------- */
+/* converter source card: a visible "Source" label, not only the accent color */
+.src-badge { flex-shrink: 0; padding: 0 6px; border-radius: var(--r-pill); font-size: 10.5px; font-weight: 600; line-height: 14px;
+  color: var(--c-fg); box-shadow: inset 0 0 0 1.5px var(--c-accent); }
+.app.layout-compact .src-badge, .app.layout-vertical .src-badge { font-size: 10px; line-height: 13px; padding: 0 5px; }
+/* compact cards hide the phase line: a sun or moon glyph keeps day and night readable without the card color */
+.app.layout-compact .city-row::before { content: "\2600\FE0E" / ""; flex-shrink: 0; font-size: 11px; line-height: 1; color: var(--c-fg-2); }
+.app.layout-compact .card.is-night .city-row::before { content: "\263E\FE0E" / ""; }
+/* Help popover: keyboard shortcuts */
+#tip.help-pop .help-sub { font-weight: 600; font-size: 12.5px; color: var(--fg); margin-top: 2px; }
+.help-keys { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: baseline; gap: 5px 10px; margin: 0; font-size: 12px; line-height: 1.35; }
+.help-keys .help-note { grid-column: 1 / -1; color: var(--fg-2); }
+.help-keys dt { margin: 0; white-space: nowrap; }
+.help-keys dd { margin: 0; color: var(--fg-2); }
+.help-keys .first-zoom, .help-keys .first-zoom + dd { margin-top: 6px; }
+.help-keys kbd { display: inline-block; padding: 1px 6px; border-radius: 5px; font: 500 11.5px/1.4 var(--font); color: var(--fg); white-space: nowrap;
+  background: var(--field); box-shadow: inset 0 0 0 1px var(--hair-strong); }
+.app.layout-compact .help-keys { grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr); }
+.app.layout-compact .help-keys .first-zoom, .app.layout-compact .help-keys .first-zoom + dd { margin-top: 0; }
+/* Wide strip and compact windows: the tips on the left, the two shortcut groups side by side on the right (app.js
+   renderTip gives every entry its group class and grid row), so the popover fits the default 250 px tall strip window
+   without scrolling. Narrower windows and the vertical layout keep the single column. */
+@media (min-width: 761px) {
+  .app.layout-strip #tip.help-pop, .app.layout-compact #tip.help-pop { width: min(900px, calc(100vw - 16px)); display: grid;
+    grid-template-columns: minmax(0, 30fr) minmax(0, 70fr); align-items: start; gap: 6px 22px; padding: 12px 16px; }
+  .app.layout-strip #tip.help-pop .help-title, .app.layout-compact #tip.help-pop .help-title { grid-area: 1 / 1; padding-right: 0; }
+  .app.layout-strip #tip.help-pop .tip-text, .app.layout-compact #tip.help-pop .tip-text { grid-area: 2 / 1; display: flex; flex-direction: column; gap: 5px; }
+  .app.layout-strip #tip.help-pop .chip, .app.layout-compact #tip.help-pop .chip { font-size: 12px; line-height: 1.35; }
+  .app.layout-strip #tip.help-pop .help-sub, .app.layout-compact #tip.help-pop .help-sub { grid-area: 1 / 2; margin: 0; padding-right: 30px; }
+  .app.layout-strip .help-keys, .app.layout-compact .help-keys { grid-area: 2 / 2; grid-template-columns: max-content minmax(0, 1.3fr) max-content minmax(0, 1fr);
+    gap: 3px 10px; line-height: 1.3; }
+  .app.layout-strip .help-keys > *, .app.layout-compact .help-keys > * { grid-row: var(--hr, auto); }
+  .app.layout-strip .help-keys dt.g1, .app.layout-compact .help-keys dt.g1 { grid-column: 1; }
+  .app.layout-strip .help-keys dd.g1, .app.layout-compact .help-keys dd.g1 { grid-column: 2; }
+  .app.layout-strip .help-keys dt.g2, .app.layout-compact .help-keys dt.g2 { grid-column: 3; }
+  .app.layout-strip .help-keys dd.g2, .app.layout-compact .help-keys dd.g2 { grid-column: 4; }
+  .app.layout-strip .help-keys .help-note.g1, .app.layout-compact .help-keys .help-note.g1 { grid-column: 1 / 3; }
+  .app.layout-strip .help-keys .help-note.g2, .app.layout-compact .help-keys .help-note.g2 { grid-column: 3 / 5; }
+  .app.layout-strip .help-keys .first-zoom, .app.layout-compact .help-keys .first-zoom { margin-top: 0; }
+  .app.layout-strip .help-keys kbd, .app.layout-compact .help-keys kbd { padding: 0 5px; line-height: 1.35; }
+}
+
+/* ---------- Windows High Contrast (forced colors) ---------- */
+@media (forced-colors: active) {
+  /* on/off state: pressed and checked controls are filled with the system highlight */
+  [aria-pressed="true"], [aria-checked="true"] { forced-color-adjust: none; background: Highlight !important; color: HighlightText !important; outline: 2px solid Highlight; }
+  .day-btn.set { outline: 2px solid Highlight; }
+  /* focus: always a system-colored outline (the box-shadow rings are dropped in forced colors) */
+  :focus-visible { outline: 2px solid Highlight !important; outline-offset: 3px; }
+  .results li.sel, .menu button:focus-visible { outline: 2px solid Highlight !important; outline-offset: -2px; }
+  .results li.sel { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .results li.sel .muted, .results li.sel .z { color: HighlightText; }
+  /* switches (:root raises specificity over motion/settings.css, which loads later) */
+  :root .panel input[type=checkbox] { forced-color-adjust: none; background: Canvas; box-shadow: inset 0 0 0 1px CanvasText; }
+  :root .panel input[type=checkbox]::after { background: CanvasText; box-shadow: none; }
+  :root .panel input[type=checkbox]:checked { background: Highlight; box-shadow: inset 0 0 0 1px Highlight; }
+  :root .panel input[type=checkbox]:checked::after { background: HighlightText; }
+  /* sliders */
+  #convSlider, .panel input[type=range] { forced-color-adjust: none; }
+  #convSlider::-webkit-slider-runnable-track, .panel input[type=range]::-webkit-slider-runnable-track, #optOpacity::-webkit-slider-runnable-track { background: CanvasText; }
+  #convSlider::-webkit-slider-thumb, .panel input[type=range]::-webkit-slider-thumb { background: Canvas; box-shadow: 0 0 0 2px CanvasText; }
+  #convSlider:focus-visible::-webkit-slider-thumb, .panel input[type=range]:focus-visible::-webkit-slider-thumb { background: Highlight; box-shadow: 0 0 0 2px CanvasText; }
+  /* collapsed "+ Add city" button: the masked icon needs a real color, and the hidden field text must stay hidden */
+  .search-wrap::before { forced-color-adjust: none; background-color: ButtonText; }
+  .app.bar-stack #zoneSearch:not(:focus), .app.bar-stack #zoneSearch:not(:focus)::placeholder { forced-color-adjust: none; color: transparent; }
+  /* control and surface boundaries (shadows are removed in forced colors) */
+  .converter input[type=text], .converter select, #zoneSearch, .panel select, .hours-times input, .day-btn, .date-chip, .day-pill, .seg { border: 1px solid ButtonText; }
+  /* selects get the native arrow back (the drawn chevron is a background image, which forced colors drop) */
+  .converter select, .panel select { -webkit-appearance: auto; appearance: auto; background-image: none; }
+  .card, .results, .menu, .date-chips, .hours-pop, #tip.help-pop, .conv-toast, .panel-grid, .app.ls-collapsed .seg { border: 1px solid CanvasText; }
+  .card.home { border-width: 3px; }
+  .menu button[data-act="remove"]::before, .panel .row + .row::before { forced-color-adjust: none; background: GrayText; }
+  #tip.help-pop .chip::before { forced-color-adjust: none; background: CanvasText; }
+  .help-keys kbd { border: 1px solid CanvasText; }
+  .meta .dshift { border: 1px solid CanvasText; }
+  /* card markers */
+  .pin { forced-color-adjust: none; background: CanvasText; color: Canvas; }
+  .app.layout-compact .pin, .app.layout-vertical .pin, .app.layout-compact .card.is-night .pin, .app.layout-vertical .card.is-night .pin { background: CanvasText; }
+  .src-badge { forced-color-adjust: none; background: Canvas; color: CanvasText; box-shadow: inset 0 0 0 2px Highlight; }
+  .card.converted.source .time .hm { forced-color-adjust: none; color: Highlight; }
+  .arc { forced-color-adjust: none; background: GrayText; }
+  .arc-work { forced-color-adjust: none; background: CanvasText; }
+  .arc-dot { forced-color-adjust: none; background: CanvasText; }
+  .card.converted .arc-dot { background: Highlight; box-shadow: none; }
+  .dst-note::before, .card.is-night .dst-note::before { forced-color-adjust: none; background: CanvasText; }
+  /* planner: work hours outlined, night hours filled */
+  .plan-cell { forced-color-adjust: none; background: Canvas; color: CanvasText; box-shadow: inset 0 0 0 1px GrayText; }
+  .plan-cell.work { background: Canvas; border: 2px solid Highlight; font-weight: 700; box-shadow: none; }
+  .plan-cell.night { background: CanvasText; color: Canvas; }
+  /* hover after .work (which drops the accent ring), so working hours still react to the pointer; .sel stays last */
+  .plan-cell:hover { box-shadow: inset 0 0 0 2px Highlight; }
+  .plan-cell.sel { box-shadow: inset 0 0 0 3px Highlight; }
+  .plan-overlap { forced-color-adjust: none; background: transparent; border: 2px solid Highlight; }
+  .plan-best { forced-color-adjust: none; border-color: Highlight; }
+  .plan-sel { forced-color-adjust: none; background: transparent; border: 3px solid Highlight; box-shadow: none; }
+  .plan-best-btn { color: LinkText; }
+  .plan-now { forced-color-adjust: none; background: CanvasText; opacity: 1; }
+  .plan-now.converted { background: Highlight; }
+  .plan-legend .lg { forced-color-adjust: none; }
+  .plan-legend .lg.work { background: Canvas; border: 2px solid Highlight; box-shadow: none; }
+  /* scrolling lists keep the system scrollbar and its colors (the thin custom one is not forced) */
+  .app.layout-vertical .strip, .app.layout-strip .strip.rows { scrollbar-width: thin; }
+  .plan-legend .lg.night { background: CanvasText; }
+  /* map: see views/map.css */
+  #btnClose:hover, #btnClose:active { forced-color-adjust: none; background: Highlight; color: HighlightText; opacity: 1; }
+}
+@media (forced-colors: active) and (max-width: 1040px) {
+  #zoneSearch:not(:focus), #zoneSearch:not(:focus)::placeholder { forced-color-adjust: none; color: transparent; }
+}

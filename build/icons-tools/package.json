@@ -1,0 +1,8 @@
+{
+  "name": "icons-tools",
+  "private": true,
+  "description": "Install location for @resvg/resvg-js, used by scripts/build-icons.mjs to render the icons from build/logo/.",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}

@@ -1,0 +1,14 @@
+# Cloudflare Pages project: the static site in ../site plus the Pages Function in ./functions (the /ingest proxy).
+# Deploy from this folder:  npm run deploy        (runs check-links.mjs, then wrangler pages deploy; see README.md)
+name = "open-world-clock"
+pages_build_output_dir = "../site"
+compatibility_date = "2026-09-01"
+
+# Non-secret settings for the /ingest proxy (functions/ingest/[[path]].js -> lib/posthog-proxy.js).
+# Must match the region of your PostHog project: "us" (us.posthog.com) or "eu" (eu.posthog.com).
+[vars]
+POSTHOG_REGION = "us"
+# Project key whose remote config (/ingest/array/<key>/config) the proxy serves; must match site/assets/config.js.
+POSTHOG_KEY = "phc_qngHqsrdSs4wZChMLmqrpqN2HJj84i6vmnczAASJ4V5i"
+# POSTHOG_HOST = "eu.i.posthog.com"         # optional: explicit API host, overrides POSTHOG_REGION
+# POSTHOG_ASSET_HOST = "eu-assets.i.posthog.com"

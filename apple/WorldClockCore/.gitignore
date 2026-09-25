@@ -1,0 +1,8 @@
+.build/
+.swiftpm/
+# SwiftPM on Windows sometimes drops the resource-bundle Info.plist here when it cannot create the .build/debug symlink
+/Info.plist
+# ...and copies of the .copy() resources, for the same reason
+/zones.json
+/world-land.json
+/golden.json

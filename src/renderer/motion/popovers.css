@@ -1,0 +1,11 @@
+/* motion: popovers (search results + card menu) */
+.results li, .menu button {
+  transition: background-color var(--dur-1) var(--ease-standard), transform var(--dur-1) var(--ease-standard);
+}
+.menu button:not(:disabled):active { transform: scale(.98); }
+.results li:active { transform: scale(.99); }
+.wc-menu-ghost { pointer-events: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .results li, .menu button { transition: none; }
+  .menu button:active, .results li:active { transform: none; }
+}

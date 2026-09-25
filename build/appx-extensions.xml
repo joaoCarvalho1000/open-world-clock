@@ -1,0 +1,4 @@
+
+        <desktop:Extension Category="windows.startupTask" Executable="app\Open World Clock.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="WorldClockStartup" Enabled="false" DisplayName="Open World Clock" />
+        </desktop:Extension>

@@ -1,0 +1,17 @@
+# OPTIONAL alternative to the Pages Function: a standalone Worker on the /ingest/* route.
+# Use it only if the site is NOT on Cloudflare Pages (or you removed ../functions). Never run both on one hostname.
+# Deploy from this folder:  npx wrangler deploy
+name = "open-world-clock-ingest"
+main = "index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+routes = [
+  { pattern = "openworldclock.com/ingest/*", zone_name = "openworldclock.com" },
+]
+
+[vars]
+POSTHOG_REGION = "us"
+# Project key whose remote config (/ingest/array/<key>/config) the proxy serves; must match site/assets/config.js.
+POSTHOG_KEY = "phc_qngHqsrdSs4wZChMLmqrpqN2HJj84i6vmnczAASJ4V5i"
+PROXY_PREFIX = "/ingest"

@@ -1,0 +1,122 @@
+{
+  "name": "world-clock-widget",
+  "productName": "Open World Clock",
+  "version": "1.3.0",
+  "description": "The best world clock for Windows. Completely free, no strings attached.",
+  "main": "src/main.js",
+  "author": "João Carvalho",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable:x64 nsis:x64",
+    "postdist": "node scripts/smoke-packaged.mjs",
+    "dist:store": "electron-builder --win appx:x64 appx:arm64",
+    "dist:all": "electron-builder --win portable:x64 nsis:x64 appx:x64 appx:arm64",
+    "test": "node test/run.js && node --test \"test/unit/*.test.js\"",
+    "shots": "node test/run.js --shots",
+    "perf": "node scripts/perf/check.js",
+    "icons": "node scripts/build-icons.mjs"
+  },
+  "devDependencies": {
+    "@electron/fuses": "^2.1.3",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.16.1",
+    "electron-updater": "^6.8.9"
+  },
+  "build": {
+    "appId": "io.joao.worldclock",
+    "productName": "Open World Clock",
+    "copyright": "Copyright © 2026 João Carvalho",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "build/icon.png",
+      "build/icon.ico",
+      "!**/.smoke/**",
+      "!test/**"
+    ],
+    "afterPack": "scripts/after-pack.js",
+    "win": {
+      "icon": "build/icon.ico",
+      "artifactName": "Open-World-Clock-${version}-${arch}.${ext}",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "appx",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "Open-World-Clock-${version}-portable.exe"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "Open World Clock",
+      "artifactName": "Open-World-Clock-${version}-setup.exe",
+      "license": "LICENSE"
+    },
+    "appx": {
+      "identityName": "JoaosApps.OpenWorldClock",
+      "publisher": "CN=CD6B4157-0217-4AC9-B7AD-1261B3EC1302",
+      "publisherDisplayName": "Joao's Apps",
+      "applicationId": "WorldClock",
+      "displayName": "Open World Clock",
+      "backgroundColor": "#16192A",
+      "languages": [
+        "en-US",
+        "pt-BR",
+        "es-ES"
+      ],
+      "showNameOnTiles": true,
+      "artifactName": "Open-World-Clock-${version}-${arch}.appx",
+      "minVersion": "10.0.17763.0",
+      "addAutoLaunchExtension": false,
+      "customExtensionsPath": "build/appx-extensions.xml"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "joaoCarvalho1000",
+        "repo": "open-world-clock"
+      }
+    ],
+    "electronLanguages": [
+      "en-US",
+      "pt-BR",
+      "es"
+    ],
+    "extraMetadata": {
+      "wcUpdates": false
+    }
+  },
+  "allowScripts": {},
+  "homepage": "https://openworldclock.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joaoCarvalho1000/open-world-clock.git"
+  }
+}

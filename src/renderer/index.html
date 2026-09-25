@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none';" />
+<title data-i18n="app.title">Open World Clock</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="motion/tokens.css" />
+<link rel="stylesheet" href="motion/cards.css" />
+<link rel="stylesheet" href="motion/time.css" />
+<link rel="stylesheet" href="motion/topbar.css" />
+<link rel="stylesheet" href="motion/popovers.css" />
+<link rel="stylesheet" href="motion/settings.css" />
+<link rel="stylesheet" href="motion/ambient.css" />
+<link rel="stylesheet" href="motion/sky.css" />
+<link rel="stylesheet" href="views/map.css" />
+</head>
+<body>
+<div id="app" class="app layout-strip">
+  <header class="bar">
+    <div class="grip" title="Drag to move" data-i18n-title="bar.grip"></div>
+    <div class="converter no-drag">
+      <span class="lbl" data-i18n="conv.ifIts">If it&rsquo;s</span>
+      <input id="convTime" type="text" aria-keyshortcuts="Control+T" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="9:30 or 3pm" aria-label="Time to convert" aria-describedby="convFormat" data-i18n-placeholder="conv.placeholder" data-i18n-aria="conv.timeAria" />
+      <input id="convSlider" type="range" min="0" max="1425" step="15" value="540" aria-label="Time slider" data-i18n-aria="conv.sliderAria" />
+      <input id="convDate" type="date" hidden aria-hidden="true" />
+      <span class="lbl" data-i18n="conv.in">in</span>
+      <select id="convZone" aria-label="Source time zone" data-i18n-aria="conv.zoneAria"></select>
+      <button id="btnDay" class="day-btn" type="button" aria-expanded="false" aria-controls="dateChips" title="Date to convert" data-i18n-title="dates.aria"><span id="btnDayText" data-i18n="day.today">Today</span><svg class="chev" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M2.5 4l2.5 2.5L7.5 4"/></svg></button>
+      <button id="convClear" class="pill" title="Stop converting and show the current time" data-i18n-title="conv.clearTitle" hidden><svg class="ico" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 4l8 8M12 4l-8 8"/></svg><span data-i18n="conv.clear">Back to now</span></button>
+      <button id="btnCopy" class="icon-btn copy-btn" title="Copy or save the times" aria-label="Copy or save the times" data-i18n-title="copy.menu" data-i18n-aria="copy.menu" aria-haspopup="menu" aria-expanded="false" aria-controls="copyMenu" hidden><svg class="ico" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M10.5 3.5V3A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5"/></svg></button>
+      <span id="convHint" class="hint"></span>
+    </div>
+    <div id="convToast" class="conv-toast" role="status" hidden></div>
+    <span id="convFormat" class="sr-only" data-i18n="hint.invalid">Type a time like 9, 9:30, 930 or 3pm</span>
+    <div class="search-wrap no-drag">
+      <input id="zoneSearch" type="search" aria-keyshortcuts="Control+F" role="combobox" aria-autocomplete="list" aria-controls="zoneResults" aria-expanded="false" placeholder="Add city" autocomplete="off" spellcheck="false" aria-label="Add a city" data-i18n-placeholder="search.placeholder" data-i18n-aria="search.aria" />
+      <ul id="zoneResults" class="results" role="listbox" aria-label="Cities" data-i18n-aria="search.results" hidden></ul>
+    </div>
+    <div class="actions no-drag">
+      <span id="layoutWrap" class="layout-wrap">
+        <button id="btnLayout" class="icon-btn layout-toggle" type="button" title="Layout" aria-label="Layout" aria-haspopup="true" aria-expanded="false" aria-controls="layoutSwitch"><svg class="i-strip" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="1.75" y="3.75" width="12.5" height="8.5" rx="2"/><path d="M6 3.75v8.5M10 3.75v8.5"/></g></svg><svg class="i-compact" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="1.75" y="5.25" width="12.5" height="5.5" rx="1.75"/><path d="M6 5.25v5.5M10 5.25v5.5"/></g></svg><svg class="i-vertical" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="4.25" y="1.75" width="7.5" height="12.5" rx="2"/><path d="M4.25 6h7.5M4.25 10h7.5"/></g></svg></button>
+        <span id="layoutSwitch" class="seg" role="toolbar" aria-label="Layout" data-i18n-aria="opt.layout"><button type="button" data-layout="strip" aria-pressed="true" tabindex="0" title="Strip layout" aria-label="Strip layout" data-i18n-title="layout.strip" data-i18n-aria="layout.strip"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="1.75" y="3.75" width="12.5" height="8.5" rx="2"/><path d="M6 3.75v8.5M10 3.75v8.5"/></g></svg></button><button type="button" data-layout="compact" aria-pressed="false" tabindex="-1" title="Compact layout" aria-label="Compact layout" data-i18n-title="layout.compact" data-i18n-aria="layout.compact"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="1.75" y="5.25" width="12.5" height="5.5" rx="1.75"/><path d="M6 5.25v5.5M10 5.25v5.5"/></g></svg></button><button type="button" data-layout="vertical" aria-pressed="false" tabindex="-1" title="Vertical layout" aria-label="Vertical layout" data-i18n-title="layout.vertical" data-i18n-aria="layout.vertical"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="4.25" y="1.75" width="7.5" height="12.5" rx="2"/><path d="M4.25 6h7.5M4.25 10h7.5"/></g></svg></button></span>
+      </span>
+      <button id="btnMap" class="icon-btn map-btn" aria-keyshortcuts="Control+M" title="World map" aria-label="World map" data-i18n-title="btn.map" data-i18n-aria="btn.map" aria-pressed="false" aria-controls="mapView"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6.25"/><path d="M1.9 8h12.2M8 1.75c-1.9 1.8-2.8 3.9-2.8 6.25S6.1 12.45 8 14.25M8 1.75c1.9 1.8 2.8 3.9 2.8 6.25S9.9 12.45 8 14.25"/></g></svg></button>
+      <button id="btnPlanner" class="icon-btn planner-btn" aria-keyshortcuts="Control+P" title="Meeting planner" aria-label="Meeting planner" data-i18n-title="btn.planner" data-i18n-aria="btn.planner" aria-pressed="false" aria-controls="planner"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="6.25" y="2.25" width="3.5" height="11.5" fill="currentColor" opacity=".45"/><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="1.75" y="2.25" width="12.5" height="11.5" rx="2"/><path d="M1.75 6.1h12.5M1.75 9.9h12.5"/></g></svg></button>
+      <button id="btnHelp" class="icon-btn" title="Help and shortcuts" aria-label="Help and shortcuts" data-i18n-title="btn.help" data-i18n-aria="btn.help" aria-haspopup="dialog" aria-expanded="false"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.5.2-.8.6-.8 1.1v.3"/><circle cx="8" cy="11.4" r=".8" fill="currentColor"/></svg></button>
+      <button id="btnPin" class="icon-btn pin-btn" title="Pin above all windows" aria-label="Pin above all windows" data-i18n-aria="btn.pin" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" d="M9.5 2.5l4 4-2 .8-2.3 2.3.4 2.9-1 .5-5.6-5.6.5-1 2.9.4 2.3-2.3zM5.2 10.8L2.5 13.5"/></svg></button>
+      <button id="btnSettings" class="icon-btn" aria-keyshortcuts="Control+Comma" title="Settings" aria-label="Settings" data-i18n-title="btn.settings" data-i18n-aria="btn.settings" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsPanel"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M6.9 1.75h2.2l.35 1.7 1.2.7 1.65-.55 1.1 1.9-1.3 1.15v1.4l1.3 1.15-1.1 1.9-1.65-.55-1.2.7-.35 1.7H6.9l-.35-1.7-1.2-.7-1.65.55-1.1-1.9 1.3-1.15v-1.4L2.6 5.5l1.1-1.9 1.65.55 1.2-.7z"/></svg></button>
+      <button id="btnMin" class="icon-btn" title="Minimize" aria-label="Minimize" data-i18n-title="btn.minimize" data-i18n-aria="btn.minimize"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M3.5 8h9"/></svg></button>
+      <button id="btnClose" class="icon-btn" title="Close to tray. Quit from the tray menu." aria-label="Close to tray" data-i18n-title="btn.closeTitle" data-i18n-aria="btn.close"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
+  </header>
+
+  <div id="tip" class="tip help-pop no-drag" role="dialog" aria-labelledby="helpTitle" hidden>
+    <div id="helpTitle" class="help-title" data-i18n="help.title">Tips</div>
+    <span id="tipText" class="tip-text"></span>
+    <div id="keysTitle" class="help-sub" data-i18n="help.keys">Keyboard shortcuts</div>
+    <dl id="helpKeys" class="help-keys" aria-labelledby="keysTitle"></dl>
+    <button id="tipClose" class="icon-btn" title="Dismiss tip" aria-label="Dismiss tip" data-i18n-title="tip.close" data-i18n-aria="tip.close"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 4l8 8M12 4l-8 8"/></svg></button>
+  </div>
+
+  <main id="strip" class="strip no-drag">
+    <div id="addCard" hidden></div>
+  </main>
+
+  <section id="planner" class="planner no-drag" aria-label="Meeting planner" data-i18n-aria="plan.aria" hidden>
+    <div class="plan-head">
+      <span id="plannerSummary" class="plan-summary"></span>
+      <button id="plannerBest" class="plan-best-btn" type="button" hidden></button>
+      <span id="plannerCaption" class="plan-caption"></span>
+      <span id="planSelBar" class="plan-selbar" hidden><span id="planSel" class="plan-sel-text" aria-live="polite"></span><button id="planCopy" class="pill plan-sel-btn" type="button" data-i18n="plan.copy">Copy slot</button><button id="planIcs" class="pill plan-sel-btn" type="button" data-i18n="plan.ics">Save invite</button></span>
+      <span class="plan-legend" aria-hidden="true"><i class="lg work"></i><span data-i18n="plan.legend.work">Working</span><i class="lg night"></i><span data-i18n="plan.legend.night">Night</span></span>
+    </div>
+    <div id="planBody" class="plan-body"></div>
+  </section>
+
+  <section id="mapView" class="map-view no-drag" aria-label="World map" data-i18n-aria="map.aria" hidden></section>
+
+  <div id="dateChips" class="date-chips no-drag" role="group" aria-label="Date to convert" data-i18n-aria="dates.aria" hidden></div>
+
+  <div id="cardMenu" class="menu no-drag" role="menu" aria-label="City options" data-i18n-aria="menu.aria" hidden>
+    <button role="menuitem" tabindex="-1" data-act="source" data-i18n="menu.source">Use as converter source</button>
+    <button role="menuitem" tabindex="-1" data-act="rename" data-i18n="menu.rename">Rename&hellip;</button>
+    <button role="menuitem" tabindex="-1" data-act="hours" data-i18n="menu.hours">Working hours&hellip;</button>
+    <button role="menuitem" tabindex="-1" data-act="copy" data-i18n="menu.copy">Copy time</button>
+    <button role="menuitem" tabindex="-1" data-act="left" data-i18n="menu.left">Move left</button>
+    <button role="menuitem" tabindex="-1" data-act="right" data-i18n="menu.right">Move right</button>
+    <button role="menuitem" tabindex="-1" data-act="remove" class="danger" data-i18n="menu.remove">Remove</button>
+  </div>
+
+  <div id="copyMenu" class="menu no-drag" role="menu" aria-label="Copy or save the times" data-i18n-aria="copy.menu" hidden>
+    <button role="menuitem" tabindex="-1" data-copy="text" data-i18n="conv.copyTimes">Copy times</button>
+    <button role="menuitem" tabindex="-1" data-copy="discord" data-i18n="copy.discord">Copy for Discord</button>
+    <button role="menuitem" tabindex="-1" data-copy="utc" data-i18n="copy.utc">Copy in UTC</button>
+    <button role="menuitem" tabindex="-1" data-copy="ics" data-i18n="copy.ics">Save calendar invite</button>
+  </div>
+  <div id="hoursEditor" class="hours-pop no-drag" role="dialog" aria-labelledby="hoursTitle hoursCity" hidden>
+    <div class="hours-head"><span id="hoursTitle" class="hours-title" data-i18n="hours.title">Working hours</span><span id="hoursCity" class="hours-city"></span></div>
+    <div class="hours-times">
+      <input id="hoursStart" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-label="Start time" data-i18n-aria="hours.start" />
+      <span class="hours-to" data-i18n="hours.to">to</span>
+      <input id="hoursEnd" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-label="End time" data-i18n-aria="hours.end" />
+    </div>
+    <div id="hoursDays" class="hours-days" role="group" aria-label="Working days" data-i18n-aria="hours.days"></div>
+    <div class="hours-foot">
+      <span id="hoursNote" class="hours-note" aria-live="polite"></span>
+      <button id="hoursReset" type="button" class="text-btn" data-i18n="hours.reset">Reset</button>
+      <button id="hoursSave" type="button" class="pill" data-i18n="hours.save">Save</button>
+    </div>
+  </div>
+
+  <aside id="settingsPanel" class="panel no-drag" role="dialog" aria-modal="true" aria-labelledby="panelTitle" hidden>
+    <div class="panel-head">
+      <span id="panelTitle" data-i18n="panel.title">Settings</span>
+      <button id="panelClose" class="icon-btn" aria-label="Close settings" data-i18n-aria="panel.close"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
+    <section class="panel-group" aria-labelledby="grpDisplay">
+      <h3 id="grpDisplay" class="group-title" data-i18n="panel.display">Display</h3>
+      <div class="panel-grid">
+        <label class="row"><span data-i18n="opt.hour24">24-hour clock</span><input id="optHour24" type="checkbox" /></label>
+        <label class="row"><span data-i18n="opt.seconds">Show seconds</span><input id="optSeconds" type="checkbox" /></label>
+        <label class="row"><span data-i18n="opt.theme">Theme</span>
+          <select id="optTheme"><option value="system" data-i18n="opt.theme.system">System</option><option value="light" data-i18n="opt.theme.light">Light</option><option value="dark" data-i18n="opt.theme.dark">Dark</option></select>
+        </label>
+        <label class="row"><span data-i18n="opt.layout">Layout</span>
+          <select id="optLayout"><option value="strip" data-i18n="opt.layout.strip">Strip</option><option value="compact" data-i18n="opt.layout.compact">Compact</option><option value="vertical" data-i18n="opt.layout.vertical">Vertical</option></select>
+        </label>
+        <label class="row"><span data-i18n="opt.language">Language</span>
+          <select id="optLanguage"><option value="auto" data-i18n="opt.language.auto">Auto</option><option value="en" lang="en">English</option><option value="pt" lang="pt-BR">Português</option><option value="es" lang="es">Español</option></select>
+        </label>
+        <label class="row"><span data-i18n="opt.opacity">Background opacity</span><span class="range-wrap"><input id="optOpacity" type="range" min="0.6" max="1" step="0.02" /><output id="optOpacityValue" for="optOpacity">85%</output></span></label>
+      </div>
+    </section>
+    <section class="panel-group" aria-labelledby="grpWindow">
+      <h3 id="grpWindow" class="group-title" data-i18n="panel.window">Window</h3>
+      <div class="panel-grid">
+        <label class="row"><span data-i18n="opt.top">Always on top</span><input id="optTop" type="checkbox" /></label>
+        <label class="row"><span class="row-label"><span id="optLoginLabel" data-i18n="opt.login">Launch at login</span><small id="optLoginNote" class="row-note" data-i18n="opt.login.store" hidden>Managed by Windows Startup apps</small></span><input id="optLogin" type="checkbox" aria-labelledby="optLoginLabel" /></label>
+        <button id="optLoginOpen" class="row row-btn" type="button" hidden data-i18n="opt.login.open">Open Startup apps</button>
+      </div>
+    </section>
+    <div class="about">
+      <span><span data-i18n="app.title">Open World Clock</span> <span id="ver"></span></span>
+      <span class="muted" data-i18n="about.text">Free, open source, no telemetry.</span>
+      <span class="about-links">
+        <a id="siteLink" href="https://openworldclock.com/" target="_blank" rel="noopener noreferrer" data-i18n="about.website">Website</a>
+        <a id="reportLink" href="https://github.com/joaoCarvalho1000/open-world-clock/issues/new?template=bug.yml" target="_blank" rel="noopener noreferrer" data-i18n="about.report">Report a problem</a>
+        <a id="updatesLink" href="https://openworldclock.com/download#new" target="_blank" rel="noopener noreferrer" data-i18n="about.updates" hidden>Check for updates</a>
+      </span>
+      <a id="kofiLink" class="kofi-link" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener noreferrer" hidden><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M2.5 5.5h8.5v4a3.5 3.5 0 0 1-3.5 3.5h-1.5A3.5 3.5 0 0 1 2.5 9.5zM11 6.5h1a2 2 0 0 1 0 4h-1.2"/></svg><span data-i18n="about.kofi">Support on Ko-fi</span></a>
+    </div>
+  </aside>
+
+  <div id="announce" class="sr-only" aria-live="polite"></div>
+</div>
+<script src="zones.js"></script>
+<script src="time.js"></script>
+<script src="sun.js"></script>
+<script src="i18n.js"></script>
+<script src="motion/_shared.js"></script>
+<script src="motion/cards.js"></script>
+<script src="motion/time.js"></script>
+<script src="motion/topbar.js"></script>
+<script src="motion/popovers.js"></script>
+<script src="motion/settings.js"></script>
+<script src="motion/ambient.js"></script>
+<script src="motion/sky.js"></script>
+<script src="views/world-land.js"></script>
+<script src="views/map.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
