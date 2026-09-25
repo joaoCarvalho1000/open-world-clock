@@ -66,7 +66,7 @@ struct PlannerGrid: View {
         }
         .accessibilityRotor(L10n.tr("plan.legend.overlap")) {
             ForEach(rotorRuns, id: \.self) { run in
-                AccessibilityRotorEntry(rotorLabel(run), id: run.start, in: rotorNamespace)
+                AccessibilityRotorEntry(Text(rotorLabel(run)), id: run.start, in: rotorNamespace)
             }
         }
     }
