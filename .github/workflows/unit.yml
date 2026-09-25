@@ -41,9 +41,12 @@ jobs:
         with:
           persist-credentials: false
 
+      # Pinned to the Node that produced shared/golden.json: its time zone data (tz 2026b) is part of the golden values,
+      # and a newer Node patch can ship newer tz rules (24.21.0 moved Morocco's end-of-2026 offset). Bump this together
+      # with a re-export of shared/.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 24
+          node-version: 24.19.0
           package-manager-cache: false
 
       # after-pack.test.js packs real app.asar files with @electron/asar (a dev dependency), so install first. No
