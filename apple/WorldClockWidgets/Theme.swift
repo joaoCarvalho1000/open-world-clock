@@ -106,7 +106,7 @@ extension WidgetStrings {
     func spoken(_ text: String, shifted: Bool = false) -> Text {
         let full = shifted && !shiftPrefix.isEmpty ? "\(shiftPrefix) \(text)" : text
         var attributed = AttributedString(full)
-        attributed.accessibilitySpeechLanguage = speechLanguage
+        attributed.languageIdentifier = speechLanguage
         return Text(attributed)
     }
 
