@@ -50,3 +50,11 @@ desktop.ini
 
 # Brand kit working files (local only)
 brand/
+
+# internal working docs, kept local only: release runbook, roadmap, launch drafts, store submission kits, logo brief
+PUBLISHING.md
+ROADMAP.md
+docs/launch/
+store/
+apple/appstore/
+build/logo/SPEC.md

@@ -24,8 +24,8 @@
 <br>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/widget-dark.png">
-  <img src="docs/readme/widget-light.png" width="100%" alt="Open World Clock showing six city cards: Lisbon, London and New York in daylight, San Francisco at dawn, Tokyo and Sydney at night">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/app-dark.png">
+  <img src="docs/readme/app-light.png" width="100%" alt="Open World Clock showing six city cards: Lisbon, London and New York in daylight, San Francisco at dawn, Tokyo and Sydney at night">
 </picture>
 
 <table>
@@ -161,9 +161,9 @@ The setup and portable exes are x64 only; the Store packages cover x64 and ARM64
 
 After packaging, `node scripts/smoke-packaged.mjs` starts a copy of `dist/win-unpacked` with a throwaway profile and checks that the window really loaded. `npm test` runs the unpackaged app, so it cannot catch a problem that only exists in a packaged build.
 
-Releases can also be built by [.github/workflows/release.yml](.github/workflows/release.yml) when a version tag is pushed: it builds the installer and portable exe, runs the same smoke test and attaches them to a draft release with a provenance attestation ([PUBLISHING.md](PUBLISHING.md#every-release), step 4).
+Releases can also be built by [.github/workflows/release.yml](.github/workflows/release.yml) when a version tag is pushed: it builds the installer and portable exe, runs the same smoke test and attaches them to a draft release with a provenance attestation.
 
-The app has update code for the installer build, but it is off. Installer builds do not contain `electron-updater` (it is a devDependency, and the app skips the check when the module is missing), and `build.extraMetadata.wcUpdates` is `false` in `package.json`. Turning updates on means code-signing the builds, setting `wcUpdates` to `true` and moving `electron-updater` back to `dependencies`; the steps are in [PUBLISHING.md](PUBLISHING.md). Until then, updating means downloading the new version.
+The app has update code for the installer build, but it is off. Installer builds do not contain `electron-updater` (it is a devDependency, and the app skips the check when the module is missing), and `build.extraMetadata.wcUpdates` is `false` in `package.json`. Turning updates on means code-signing the builds, setting `wcUpdates` to `true` and moving `electron-updater` back to `dependencies`. Until then, updating means downloading the new version.
 
 ## Project layout
 
@@ -177,10 +177,9 @@ apple/        iPhone app and widgets, in progress
 shared/       data exported from the JavaScript for the iPhone app, including the reference test vectors
 scripts/      packaging hook (Electron fuses), packaged-build smoke test, web app and icon builds, shared data exporters, performance tools (scripts/perf)
 build/        logo masters (build/logo) and the app icons and Store tiles that scripts/build-icons.mjs makes from them
-store/        Microsoft Store submission kit: listings, certification notes and screenshots in English, Portuguese and Spanish
 ```
 
-[CONTRACT.md](CONTRACT.md) documents the settings, the IPC bridge and the DOM hooks the tests rely on. [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md) cover what changed and what might come next.
+[CONTRACT.md](CONTRACT.md) documents the settings, the IPC bridge and the DOM hooks the tests rely on. [CHANGELOG.md](CHANGELOG.md) covers what changed in each version.
 
 ## iPhone
 

@@ -1,6 +1,6 @@
 # scripts/perf: resource benchmarks for Open World Clock
 
-Tools to measure what the widget costs in memory, CPU, startup time and download size, and to find out why.
+Tools to measure what the app costs in memory, CPU, startup time and download size, and to find out why.
 Windows only (they sample processes through PowerShell/CIM). No extra dependencies. Nothing here runs in the
 shipped app: the hooks load through `WC_SMOKE`, which `src/main.js` honors only in unpacked/dev runs, the same way
 `test/deep.js` is loaded.
@@ -76,7 +76,7 @@ What the columns mean:
   user time between the two samples) is in the counters table.
 - **cold start**: ms after `spawn()`. `main ready` = the hook ran (main.js evaluated, app ready, window and tray
   created). `wc:boot` = app.js finished its first render. `first frame after boot` = the next frame after it (the
-  widget is usable). FCP comes from paint timing and is late because the page fades in from opacity 0.
+  app is usable). FCP comes from paint timing and is late because the page fades in from opacity 0.
 - **CDP**: `Performance.getMetrics` deltas (style recalcs, layouts, script and task time per second), JS heap
   before and after a forced GC, DOM nodes (including detached ones not yet collected), elements in the document,
   JS event listeners, composited layers (`LayerTree`), animations present and running.

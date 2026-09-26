@@ -323,8 +323,8 @@ function page() {
     // Open Graph cards (og.png, og-pt.png, og-es.png) are drawn by cloudflare/og/render.mjs, not here.
     // README: the strip crops of the Store images (same crop as before), and the converter, planner and map
     const widget = (s) => crop(s.c, s.rect.x - 40, s.rect.y - 27, 1800, 380, 1600, 338);
-    await put('docs/readme/widget-light.png', widget(s1));
-    await put('docs/readme/widget-dark.png', widget(s2));
+    await put('docs/readme/app-light.png', widget(s1));
+    await put('docs/readme/app-dark.png', widget(s2));
     for (const th of ['light', 'dark']) {
       for (const [n, w, h] of [['converter', 1200, 260], ['planner', 1200, 271], ['map', 1200, 373]]) {
         const im = IMG[`en/readme-${n}-${th}`];
