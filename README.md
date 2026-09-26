@@ -62,13 +62,13 @@ It is completely free, with no strings attached. You should not have to pay for 
 
 ## Download
 
+- **Microsoft Store (recommended):** [Open World Clock on the Microsoft Store](https://apps.microsoft.com/detail/9N88FR8M81BM?cid=github-readme). One click to install, signed by Microsoft, runs natively on x64 and ARM64, and keeps itself updated.
+- **winget:** `winget install 9N88FR8M81BM -s msstore`, the same Store build from the command line.
 - **Installer:** [Open-World-Clock-1.3.0-setup.exe](https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe), per user, no admin rights.
 - **Portable exe:** [Open-World-Clock-1.3.0-portable.exe](https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe), runs from any folder and never updates itself.
-- **Microsoft Store:** coming soon, once Microsoft finishes certification. The Store will keep it updated.
-
-Both files come straight from openworldclock.com; their SHA-256 checksums are on the [download page](https://openworldclock.com/download).
 - **In your browser:** the same app runs right on the home page, [openworldclock.com](https://openworldclock.com/), with nothing to install; see [Web app](#web-app) below.
-- **Website:** [openworldclock.com](https://openworldclock.com)
+
+The installer and the portable exe come straight from openworldclock.com; their SHA-256 checksums are on the [download page](https://openworldclock.com/download).
 
 The installer and portable exe are not code-signed yet, so SmartScreen may show "Windows protected your PC" the first time. Click More info, then Run anyway.
 

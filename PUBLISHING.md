@@ -129,7 +129,7 @@ privacy pages (with the matching `lastmod` in site/sitemap.xml, which `cloudflar
 
    The Store switch: while the Microsoft Store listing is not approved, `storeLive` is `false` in
    `site/assets/config.js` and the site offers only the installer and the portable exe (no Store buttons, no winget
-   steps; the Store is "coming soon"). When the listing goes live, set it to `true`, run
+   steps; the Store is "coming soon"). The listing went live on 26 September 2026 and `storeLive` is now `true`. The steps were: set it to `true`, run
    `node cloudflare/site-chrome.mjs --write` and do the text steps under "The Store switch" in
    [site/README.md](site/README.md).
 
