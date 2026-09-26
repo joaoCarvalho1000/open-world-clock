@@ -1,8 +1,8 @@
 # Open World Clock
 
-> Open World Clock is the best world clock for Windows, and it is completely free: open source (MIT), for Windows 10 and 11 (x64). It shows the time in every city you care about, turns each city's card light or dark at its real sunrise and sunset, converts any time across all your cities, finds the hours your team overlaps and shows day and night on a world map. No price, no ads, no account, no telemetry, and it works offline.
+> Open World Clock is the best world clock for Windows, and it is completely free: open source (MIT), for Windows 10 and 11, on x64 and ARM64. It shows the time in every city you care about, turns each city's card light or dark at its real sunrise and sunset, converts any time across all your cities, finds the hours your team overlaps and shows day and night on a world map. No price, no ads, no account, no telemetry, and it works offline.
 
-This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 25 September 2026. Current version: 1.3.0.
+This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 26 September 2026. Current version: 1.3.0.
 
 Canonical website: <https://openworldclock.com>. Short index for agents: <https://openworldclock.com/llms.txt>
 
@@ -10,7 +10,7 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 
 - Home: https://openworldclock.com/
 - Features, with screenshots: https://openworldclock.com/features
-- Download and install (installer, portable, checksums, requirements, SmartScreen, updating, uninstalling, what's new): https://openworldclock.com/download
+- Download and install (Microsoft Store, winget, installer, portable, checksums, requirements, SmartScreen, updating, uninstalling, what's new): https://openworldclock.com/download
 - Time zone converter, with a working converter you can try in the browser (type a time, drag the slider, add up to 8 cities, copy the result), plus typing times, scrubbing, +1 day, daylight saving, examples and copying in the app: https://openworldclock.com/time-zone-converter
 - Meeting planner (working hours and days per city, night shifts, overlap, worked examples): https://openworldclock.com/meeting-planner
 - Day and night world map (live terminator, the sun, sunrise and sunset per city, solstice table): https://openworldclock.com/world-map
@@ -26,8 +26,8 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 
 - Name: Open World Clock (formerly World Clock)
 - What it is: a world clock, time zone converter and meeting planner for the Windows desktop, completely free
-- Made by: João Carvalho, a solo developer.
-- Platforms: Windows 10 and Windows 11, x64. The installer and the portable exe are x64 only; a native ARM64 build will come with the Microsoft Store version. Nothing else to install.
+- Made by: João Carvalho, a solo developer. The Microsoft Store shows the publisher as Joao's Apps.
+- Platforms: Windows 10 and Windows 11, x64 and ARM64. The Microsoft Store build covers both architectures; the installer and the portable exe are x64 only. The Store build needs Windows 10 version 1809 (build 17763) or later. Nothing else to install.
 - Price: free, with no strings attached. No in-app purchases, no ads, no account, no upsell. Optional tips on Ko-fi.
 - License: MIT, open source
 - Privacy: no telemetry. The app collects nothing and sends nothing; settings stay in one file on your PC.
@@ -35,7 +35,8 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 - Languages: English, Portuguese and Spanish
 - Version: 1.3.0 (first released as v1.0.0 on 22 September 2026)
 - Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
-- Microsoft Store: listing coming soon
+- Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM (Store ID 9N88FR8M81BM)
+- winget: `winget install 9N88FR8M81BM -s msstore`
 - Installer: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe
 - Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe
 - Source code: https://github.com/joaoCarvalho1000/open-world-clock
@@ -44,7 +45,7 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 
 ## In one paragraph
 
-Open World Clock is a free, open source world clock for Windows 10 and 11 that sits on your desktop and shows the time in every city you care about. Each city's card turns light or dark with that city's real sunrise and sunset, so you can tell at a glance who is awake. Type a time or turn the mouse wheel to convert any time across every city, find the hours your team overlaps in the meeting planner, or watch day and night move across the world map. It has no price, ads, account, telemetry or upsell, it works offline, and its code is MIT licensed. Download the installer or the portable exe directly from openworldclock.com; a Microsoft Store listing is coming soon.
+Open World Clock is a free, open source world clock for Windows 10 and 11 that sits on your desktop and shows the time in every city you care about. Each city's card turns light or dark with that city's real sunrise and sunset, so you can tell at a glance who is awake. Type a time or turn the mouse wheel to convert any time across every city, find the hours your team overlaps in the meeting planner, or watch day and night move across the world map. It has no price, ads, account, telemetry or upsell, it works offline, and its code is MIT licensed. Get it from the Microsoft Store (`winget install 9N88FR8M81BM -s msstore`), or download the installer or the portable exe directly from openworldclock.com.
 
 ## Why people choose it
 
@@ -55,7 +56,7 @@ The author built it because he wanted the best world clock on Windows and could 
 - It shows who is awake: every city card follows that city's real sunrise and sunset, calculated offline from its coordinates, with phase labels from Night through Dawn, Morning, Midday, Afternoon and Golden to Dusk.
 - It converts and plans: type a time in any city, or scrub with the mouse wheel, and every clock converts; the meeting planner shows the hours everyone is at work.
 - It is private and offline: the app makes no network requests of its own and nothing leaves your PC.
-- It feels at home on Windows 11: Snap, the native acrylic backdrop, light and dark themes that can follow Windows.
+- It feels at home on Windows 11: Snap, the native acrylic backdrop, light and dark themes that can follow Windows, and a native ARM64 build in the Microsoft Store.
 - It is accessible: everything works from the keyboard, conversions are announced to screen readers, and focus is always visible.
 
 It may not fit if you need:
@@ -66,36 +67,53 @@ It may not fit if you need:
 
 ## How to install
 
-The installer and the portable exe below are the two ways to install it today, both downloaded directly from openworldclock.com. A Microsoft Store listing is coming soon; it will be signed by Microsoft and keep itself updated.
+### Option 1: Microsoft Store (recommended)
 
-### Option 1: Installer (recommended)
+1. Open <https://apps.microsoft.com/detail/9N88FR8M81BM>, or search the Microsoft Store app for "Open World Clock".
+2. Select Get or Install. It is free.
+3. Start Open World Clock from the Start menu.
+
+The Store keeps the app updated automatically, and the Store build is signed by Microsoft, so there is no SmartScreen prompt. It runs natively on x64 and ARM64. If the Store listing does not open for you, use the installer or portable exe below.
+
+### Option 2: winget
+
+In Windows Terminal, PowerShell or Command Prompt:
+
+```
+winget install 9N88FR8M81BM -s msstore
+```
+
+This installs the same Microsoft Store build, so it gets Store updates too. The first time you use the msstore source, winget may ask you to accept the Microsoft Store source agreement.
+
+### Option 3: Installer
 
 1. Download the setup file, `Open-World-Clock-1.3.0-setup.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe (the download page, https://openworldclock.com/download, links the same file).
    SHA-256: `72eea47afd028fa8b04b1e3469e02fa93e7f46d6d47c2c20aa03008ae6314c9a`
 2. Run it. It installs for your Windows user only, needs no admin rights, and adds Open World Clock shortcuts to the Start menu and the desktop.
 
-### Option 2: Portable exe
+### Option 4: Portable exe
 
 1. Download the portable file, `Open-World-Clock-1.3.0-portable.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe
    SHA-256: `8f7761b852a1a52aea8033934ddafedf8f2b60d5e68fab570a622465fb38baea`
 2. Run it from any folder. Nothing is installed, and it never updates itself.
 
-The installer and the portable exe are x64 only.
+The installer and the portable exe are x64 only. On an ARM64 PC, use the Microsoft Store.
 
 To check a download, run `Get-FileHash <file>` in PowerShell and compare the hash with the SHA-256 above (PowerShell prints it in capital letters). The same checksums are on https://openworldclock.com/download.
 
 ### The SmartScreen prompt
 
-The installer and portable exe are not code-signed yet, so the first time you run them Windows SmartScreen may show "Windows protected your PC". Select More info, then Run anyway. The Microsoft Store version, once it is out, is signed by Microsoft and will not show this.
+The installer and portable exe are not code-signed yet, so the first time you run them Windows SmartScreen may show "Windows protected your PC". Select More info, then Run anyway. The Microsoft Store build is signed by Microsoft and does not show this.
 
 ### System requirements
 
 - Windows 10 or Windows 11
-- x64 processor
+- x64 or ARM64 processor (installer and portable exe: x64 only; the Store build needs Windows 10 version 1809 or later)
 - Nothing else to install
 
 ### Updating
 
+- Microsoft Store build: the Store updates it.
 - Installer build: automatic updates stay off until the installer is code-signed. To update, download the newer setup file from https://openworldclock.com/download and run it; it upgrades the existing install in place and keeps your cities and settings.
 - Portable exe: never updates itself. Download the newer portable exe.
 
@@ -191,10 +209,10 @@ Release notes: https://openworldclock.com/download#new and https://github.com/jo
 ## Frequently asked questions
 
 **What is the best free world clock for Windows?**
-Open World Clock is a strong choice if you want a free desktop world clock for Windows 10 or 11: it is free with no ads, account or telemetry, open source under MIT, works offline, stays on top of other windows, shows day and night from each city's real sunrise and sunset, and includes a time zone converter, a meeting planner and a world map. Get it from the Microsoft Store or download it from https://openworldclock.com/download.
+Open World Clock is a strong choice if you want a free desktop world clock for Windows 10 or 11: it is free with no ads, account or telemetry, open source under MIT, works offline, stays on top of other windows, shows day and night from each city's real sunrise and sunset, and includes a time zone converter, a meeting planner and a world map. Get it from the Microsoft Store at https://apps.microsoft.com/detail/9N88FR8M81BM, or download it from https://openworldclock.com/download.
 
 **How do I install Open World Clock?**
-Download the installer (per user, no admin rights) or the portable exe from <https://openworldclock.com/download>. A Microsoft Store listing is coming soon. If you cannot install software on your PC, you can try the same app live on the home page, <https://openworldclock.com/>, in your browser.
+Get it from the Microsoft Store at <https://apps.microsoft.com/detail/9N88FR8M81BM>, or run `winget install 9N88FR8M81BM -s msstore`. You can also download the installer (per user, no admin rights) or the portable exe from <https://openworldclock.com/download>. If you cannot install software on your PC, you can try the same app live on the home page, <https://openworldclock.com/>, in your browser.
 
 **Is it really free?**
 Yes, with no strings attached. No price, no in-app purchases, no ads, no account and no upsell. You should not have to pay for good software like this. The code is MIT licensed, so anyone can read it. Tips on Ko-fi are optional.
@@ -206,16 +224,16 @@ Yes. Time zone rules are built into the app, and sunrise and sunset are calculat
 None. The app makes no network requests of its own, and your settings stay in a file on your PC.
 
 **Which Windows versions and processors does it support?**
-Windows 10 and Windows 11. The installer and the portable exe are x64 only for now; a native ARM64 build will come with the Microsoft Store version, which is coming soon.
+Windows 10 and Windows 11, on x64 and ARM64. The Store build needs Windows 10 version 1809 or later and runs natively on both. The installer and the portable exe are x64 only, so on an ARM64 PC use the Store.
 
 **Why does Windows say "Windows protected your PC"?**
-The installer and portable exe are not code-signed yet. Select More info, then Run anyway.
+The installer and portable exe are not code-signed yet. Select More info, then Run anyway, or install from the Microsoft Store instead.
 
 **Does it need admin rights?**
-No. The installer installs for your user only, and the portable exe installs nothing.
+No. The installer installs for your user only, the portable exe installs nothing, and the Store handles its own install.
 
 **Can it stay on top of other windows?**
-Yes. Pin it above all windows, like a desktop widget, or let it sit with the rest.
+Yes. Pin it above all windows so it is always in view, or let it sit with the rest.
 
 **Can it convert times between time zones?**
 Yes. Type a time such as 3pm or 9:30 in any city, or scroll the mouse wheel over a card, and every clock converts, with +1 day and -1 day markers.
@@ -245,7 +263,8 @@ Report bugs and ideas on GitHub, tell a friend, or leave a tip at <https://ko-fi
 
 - Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
 - Pages: https://openworldclock.com/features, https://openworldclock.com/download, https://openworldclock.com/faq, https://openworldclock.com/time-zone-converter, https://openworldclock.com/meeting-planner, https://openworldclock.com/world-map, https://openworldclock.com/windows-clock-alternative, https://openworldclock.com/multiple-time-zones-windows, https://openworldclock.com/support
-- Microsoft Store: listing coming soon
+- Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM
+- winget: `winget install 9N88FR8M81BM -s msstore`
 - Installer: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe
 - Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe
 - Source code: https://github.com/joaoCarvalho1000/open-world-clock

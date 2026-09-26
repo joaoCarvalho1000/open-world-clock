@@ -25,7 +25,7 @@
 window.SITE = {
   name: 'Open World Clock',
   version: '1.3.0',           // the release the Installer and Portable buttons download; keep in step with package.json
-  storeLive: false,          // the Store listing is not approved yet: Store buttons hidden, direct downloads shown
+  storeLive: true,          // the Store listing is live (approved 2026-09-26): Store buttons shown, direct downloads as the alternative
   storeUrl: 'https://apps.microsoft.com/detail/9N88FR8M81BM',      // Microsoft Store listing, without ?cid (added per link)
   downloadBase: 'https://download.openworldclock.com', // the R2 bucket that serves the installer and portable exe
   githubRepo: 'joaoCarvalho1000/open-world-clock',  // "owner/repo": source, license, issues, release notes

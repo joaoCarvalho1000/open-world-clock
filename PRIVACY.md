@@ -80,7 +80,8 @@ parts of the page are useful. It is set up to be anonymous:
   PostHog project is set to discard IP addresses instead of storing them (a PostHog project setting, "Discard client
   IP data").
 - **What is recorded:** the pages you view, how far you scroll, which sections come into view, and clicks on a few
-  controls (the download buttons, the converter demo, FAQ questions, the theme button and Support). Never what you
+  controls (the download buttons, the converter demo, FAQ questions, the theme button, the language picker, links to
+  GitHub and Support). Never what you
   type, no session recordings, no time zone, and web addresses are trimmed to the page itself, apart from any
   `utm_` campaign tags in the link you followed.
 - **Do Not Track and Global Privacy Control:** if your browser sends either signal, the analytics script does not
@@ -94,8 +95,9 @@ was clicked, as described above.
 
 **The web app.** The web app runs right on the home page, openworldclock.com. It is the Windows app running in your
 browser. Your cities and settings are kept in your browser's local storage and never sent anywhere; clearing this
-site's data in your browser removes them. The app loads no analytics of its own: the visit to the home page is
-counted as described above, and nothing you type or choose inside the app is recorded. A link made with Share carries its cities and time after the # sign, a part of the address that browsers
+site's data in your browser removes them. The app loads no analytics of its own. The home page counts the visit as
+described above, and which parts of the app you try (adding a city, the converter, the planner, the map, settings,
+Share and so on), once each. Nothing you type or choose is recorded: no cities, times or settings. A link made with Share carries its cities and time after the # sign, a part of the address that browsers
 never send to a server, and the analytics drop it too.
 
 Nothing else is loaded from other servers. The live demo reads your time zone inside your browser and never sends it

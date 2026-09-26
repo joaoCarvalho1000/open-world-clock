@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" href="/assets/icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/assets/fonts/outfit-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css?v=10512d301c">
+<link rel="stylesheet" href="/assets/site.css?v=9b3a01d04b">
 <link rel="stylesheet" href="/assets/pages.css?v=6ba6b3bf18">
 <script>(function(){var d=document.documentElement,n=navigator,p='system';try{p=localStorage.getItem('wc-theme')||'system'}catch(e){}d.setAttribute('data-theme-pref',p);if(p==='light'||p==='dark')d.setAttribute('data-theme',p);d.classList.add('js');if((n.userAgentData&&n.userAgentData.mobile)||/Android|iPhone|iPod/.test(n.userAgent||''))d.classList.add('not-windows')})();</script>
 <script type="application/ld+json">
@@ -74,7 +74,7 @@
     "@id": "https://openworldclock.com/#author"
    },
    "datePublished": "2026-09-23",
-   "dateModified": "2026-09-25",
+   "dateModified": "2026-09-26",
    "mainEntity": [
     {
      "@type": "Question",
@@ -113,7 +113,7 @@
      "name": "Which Windows versions and processors does it support?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Windows 10 and Windows 11. The installer and the portable exe are x64 only for now; a native ARM64 build will come with the Microsoft Store version, which is coming soon."
+      "text": "Windows 10 and Windows 11, on x64 and ARM64. The Store build needs Windows 10 version 1809 or later and runs natively on both. The installer and the portable exe are x64 only, so on an ARM64 PC use the Store."
      }
     },
     {
@@ -121,7 +121,7 @@
      "name": "How do I install it?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Download the installer or the portable exe straight from this site; the download page walks through each one. The Microsoft Store listing is coming soon. Can’t install software on your PC? You can try it right on the home page, in your browser."
+      "text": "Get it from the Microsoft Store, or run winget install 9N88FR8M81BM -s msstore. You can also download an installer or a portable exe straight from this site. The download page walks through each one. Can’t install software on your PC? You can try it right on the home page, in your browser."
      }
     },
     {
@@ -129,7 +129,7 @@
      "name": "Why does Windows say “Windows protected your PC”?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "The installer and the portable exe aren’t code-signed yet, so SmartScreen warns the first time you run them. Select More info, then Run anyway. The Microsoft Store version, coming soon, is signed by Microsoft and won’t show it."
+      "text": "The installer and the portable exe aren’t code-signed yet, so SmartScreen warns the first time you run them. Select More info, then Run anyway. The Microsoft Store build doesn’t show this."
      }
     },
     {
@@ -137,7 +137,7 @@
      "name": "Does it need admin rights?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "No. The installer installs for your Windows user only, and the portable exe installs nothing."
+      "text": "No. The installer installs for your Windows user only, the portable exe installs nothing, and the Store handles its own install."
      }
     },
     {
@@ -145,7 +145,7 @@
      "name": "Can it stay on top of other windows?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Yes. Pin it above all windows, like a desktop widget, or let it sit with the rest. It’s frameless and translucent, with three layouts: strip, compact and vertical."
+      "text": "Yes. Pin it above all windows so it is always in view, or let it sit with the rest. It’s frameless and translucent, with three layouts: strip, compact and vertical."
      }
     },
     {
@@ -263,12 +263,12 @@
     <h1 id="h1">Open World Clock FAQ</h1>
     <p class="pg-lede">Short, factual answers to what people ask most. If yours isn’t here, <a href="https://github.com/joaoCarvalho1000/open-world-clock/issues">open an issue on GitHub</a> and I’ll answer it there.</p>
     <div class="pg-cta">
-      <a class="btn btn-primary" data-store hidden data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Get it from Microsoft Store</span></a>
-      <a class="btn btn-quiet" data-store hidden href="/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Other downloads</span></a>
-      <a class="btn btn-primary" data-store-off data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Download installer</span></a>
-      <a class="btn btn-quiet" data-store-off data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Portable exe</span></a>
+      <a class="btn btn-primary" data-store data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Get it from Microsoft Store</span></a>
+      <a class="btn btn-quiet" data-store href="/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Other downloads</span></a>
+      <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Download installer</span></a>
+      <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Portable exe</span></a>
     </div>
-    <p class="dl-note" data-store-off>Free for Windows 10 and 11, x64, about 90 MB. It isn’t code-signed yet, so SmartScreen may warn you the first time (<a href="/download#smartscreen">what to do</a>).</p>
+    <p class="dl-note" data-store-off hidden>Free for Windows 10 and 11, x64, about 90 MB. It isn’t code-signed yet, so SmartScreen may warn you the first time (<a href="/download#smartscreen">what to do</a>).</p>
     <ul class="pg-facts"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Updated 25 September 2026</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Version 1.3.0</li></ul>
     <ul class="toc"><li><a href="#basics">The basics</a></li><li><a href="#installing">Installing</a></li><li><a href="#using">Using it</a></li><li><a href="#limits">Limits, and who makes it</a></li></ul>
     
@@ -283,13 +283,13 @@
 <section class="pg-sec cols" id="installing" aria-labelledby="installing-h">
   <div class="wrap">
     <div class="sec-head"><h2 id="installing-h">Installing</h2></div>
-    <div class="sec-body"><div class="qa-list"><div class="qa-item"><h3>Which Windows versions and processors does it support?</h3><p data-store hidden>Windows 10 and Windows 11, on x64 and ARM64. The Store build needs Windows 10 version 1809 or later and runs natively on both. The installer and the portable exe are x64 only, so on an ARM64 PC use the Store.</p><p data-store-off>Windows 10 and Windows 11. The installer and the portable exe are x64 only for now; a native ARM64 build will come with the Microsoft Store version, which is coming soon.</p></div><div class="qa-item"><h3>How do I install it?</h3><p data-store hidden>Get it from the Microsoft Store, or run <code>winget install 9N88FR8M81BM -s msstore</code>. You can also download an installer or a portable exe straight from this site. The <a href="/download">download page</a> walks through each one. Can’t install software on your PC? You can try it right on the <a href="/">home page</a>, in your browser.</p><p data-store-off>Download the installer or the portable exe straight from this site; the <a href="/download">download page</a> walks through each one. The Microsoft Store listing is coming soon. Can’t install software on your PC? You can try it right on the <a href="/">home page</a>, in your browser.</p></div><div class="qa-item"><h3>Why does Windows say “Windows protected your PC”?</h3><p data-store hidden>The installer and the portable exe aren’t code-signed yet, so SmartScreen warns the first time you run them. Select More info, then Run anyway. The Microsoft Store build doesn’t show this.</p><p data-store-off>The installer and the portable exe aren’t code-signed yet, so SmartScreen warns the first time you run them. Select More info, then Run anyway. The Microsoft Store version, coming soon, is signed by Microsoft and won’t show it.</p></div><div class="qa-item"><h3>Does it need admin rights?</h3><p data-store hidden>No. The installer installs for your Windows user only, the portable exe installs nothing, and the Store handles its own install.</p><p data-store-off>No. The installer installs for your Windows user only, and the portable exe installs nothing.</p></div></div></div>
+    <div class="sec-body"><div class="qa-list"><div class="qa-item"><h3>Which Windows versions and processors does it support?</h3><p data-store>Windows 10 and Windows 11, on x64 and ARM64. The Store build needs Windows 10 version 1809 or later and runs natively on both. The installer and the portable exe are x64 only, so on an ARM64 PC use the Store.</p><p data-store-off hidden>Windows 10 and Windows 11. The installer and the portable exe are x64 only for now; a native ARM64 build will come with the Microsoft Store version, which is coming soon.</p></div><div class="qa-item"><h3>How do I install it?</h3><p data-store>Get it from the Microsoft Store, or run <code>winget install 9N88FR8M81BM -s msstore</code>. You can also download an installer or a portable exe straight from this site. The <a href="/download">download page</a> walks through each one. Can’t install software on your PC? You can try it right on the <a href="/">home page</a>, in your browser.</p><p data-store-off hidden>Download the installer or the portable exe straight from this site; the <a href="/download">download page</a> walks through each one. The Microsoft Store listing is coming soon. Can’t install software on your PC? You can try it right on the <a href="/">home page</a>, in your browser.</p></div><div class="qa-item"><h3>Why does Windows say “Windows protected your PC”?</h3><p data-store>The installer and the portable exe aren’t code-signed yet, so SmartScreen warns the first time you run them. Select More info, then Run anyway. The Microsoft Store build doesn’t show this.</p><p data-store-off hidden>The installer and the portable exe aren’t code-signed yet, so SmartScreen warns the first time you run them. Select More info, then Run anyway. The Microsoft Store version, coming soon, is signed by Microsoft and won’t show it.</p></div><div class="qa-item"><h3>Does it need admin rights?</h3><p data-store>No. The installer installs for your Windows user only, the portable exe installs nothing, and the Store handles its own install.</p><p data-store-off hidden>No. The installer installs for your Windows user only, and the portable exe installs nothing.</p></div></div></div>
   </div>
 </section>
 <section class="pg-sec cols" id="using" aria-labelledby="using-h">
   <div class="wrap">
     <div class="sec-head"><h2 id="using-h">Using it</h2></div>
-    <div class="sec-body"><div class="qa-list"><div class="qa-item"><h3>Can it stay on top of other windows?</h3><p>Yes. Pin it above all windows, like a desktop widget, or let it sit with the rest. It’s frameless and translucent, with three layouts: strip, compact and vertical.</p></div><div class="qa-item"><h3>How do I convert a time between time zones?</h3><p>Type a time like 3pm, 9:30 or 15h30, pick the city it belongs to, and every card shows the matching time, with +1 day or -1 day where the date changes. Or turn the mouse wheel over any card to move every clock in 15-minute steps. More on the <a href="/time-zone-converter">time zone converter</a> page.</p></div><div class="qa-item"><h3>Does it handle daylight saving time?</h3><p>Yes. Each conversion uses the rules for its own date, the card shows a note in the week before clocks change, and a time that falls in the spring-forward gap moves forward the way Windows does.</p></div><div class="qa-item"><h3>Can it help schedule meetings across time zones?</h3><p>Yes. The <a href="/meeting-planner">meeting planner</a> shows a 24-hour row per city, with working hours and days you set per city, night shifts included, and labels the shared window, for example “<span class="nw">3 h overlap</span>”.</p></div></div></div>
+    <div class="sec-body"><div class="qa-list"><div class="qa-item"><h3>Can it stay on top of other windows?</h3><p>Yes. Pin it above all windows so it is always in view, or let it sit with the rest. It’s frameless and translucent, with three layouts: strip, compact and vertical.</p></div><div class="qa-item"><h3>How do I convert a time between time zones?</h3><p>Type a time like 3pm, 9:30 or 15h30, pick the city it belongs to, and every card shows the matching time, with +1 day or -1 day where the date changes. Or turn the mouse wheel over any card to move every clock in 15-minute steps. More on the <a href="/time-zone-converter">time zone converter</a> page.</p></div><div class="qa-item"><h3>Does it handle daylight saving time?</h3><p>Yes. Each conversion uses the rules for its own date, the card shows a note in the week before clocks change, and a time that falls in the spring-forward gap moves forward the way Windows does.</p></div><div class="qa-item"><h3>Can it help schedule meetings across time zones?</h3><p>Yes. The <a href="/meeting-planner">meeting planner</a> shows a 24-hour row per city, with working hours and days you set per city, night shifts included, and labels the shared window, for example “<span class="nw">3 h overlap</span>”.</p></div></div></div>
   </div>
 </section>
 <section class="pg-sec cols" id="limits" aria-labelledby="limits-h">
@@ -302,7 +302,7 @@
   <div class="wrap">
     <h2 id="more-h">More about Open World Clock</h2>
     <ul class="related">
-      <li><a href="/download"><strong>Download<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span><span data-store hidden>Microsoft Store, winget, the installer or the portable exe.</span><span data-store-off>The installer or the portable exe, with SmartScreen help.</span></span></a></li>
+      <li><a href="/download"><strong>Download<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span><span data-store>Microsoft Store, winget, the installer or the portable exe.</span><span data-store-off hidden>The installer or the portable exe, with SmartScreen help.</span></span></a></li>
       <li><a href="/features"><strong>All features<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Everything in version 1.3.0, grouped, with screenshots.</span></a></li>
       <li><a href="/time-zone-converter"><strong>Time zone converter<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Type a time in any city, or scroll the clocks.</span></a></li>
     </ul>
@@ -315,12 +315,12 @@
       <h2 id="cta-h">Put the world on your desktop</h2>
       <p>Completely free for Windows 10 and 11. Open source, no account, no ads, no telemetry.</p>
       <div class="pg-cta">
-        <a class="btn btn-primary" data-store hidden data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Get it from Microsoft Store</span></a>
-        <a class="btn btn-quiet" data-store hidden href="/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Other downloads</span></a>
-        <a class="btn btn-primary" data-store-off data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Download installer</span></a>
-        <a class="btn btn-quiet" data-store-off data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Portable exe</span></a>
+        <a class="btn btn-primary" data-store data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Get it from Microsoft Store</span></a>
+        <a class="btn btn-quiet" data-store href="/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Other downloads</span></a>
+        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Download installer</span></a>
+        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Portable exe</span></a>
       </div>
-      <p class="dl-note" data-store-off>Free for Windows 10 and 11, x64, about 90 MB. It isn’t code-signed yet, so SmartScreen may warn you the first time (<a href="/download#smartscreen">what to do</a>).</p>
+      <p class="dl-note" data-store-off hidden>Free for Windows 10 and 11, x64, about 90 MB. It isn’t code-signed yet, so SmartScreen may warn you the first time (<a href="/download#smartscreen">what to do</a>).</p>
       <p class="dl-kofi"><a href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="download"><svg class="i" aria-hidden="true"><use href="#i-cup"/></svg>Support the creator on Ko-fi</a></p>
     </div>
   </div>
@@ -351,10 +351,10 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Support the creator on Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Support the creator</span></a>
-<script src="/assets/config.js?v=ee70566ed6"></script>
+<script src="/assets/config.js?v=65b3fa7d24"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
-<script src="/assets/analytics.js?v=fdb66b36ed" defer></script>
+<script src="/assets/analytics.js?v=ec35845c3e" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
 </body>
 </html>

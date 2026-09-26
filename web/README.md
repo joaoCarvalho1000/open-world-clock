@@ -4,7 +4,7 @@ The web version of Open World Clock, live in the hero of the home page, **https:
 
 The build writes it to `site/app/`, and the home page shows it in a same-origin frame (`#heroApp`). `/app/` is not a page of its own: it says `noindex` (meta and `X-Robots-Tag`), has no canonical, Open Graph, manifest or service worker, and opened on its own it goes to `/` with its hash (`/app/#c=...` becomes `/#c=...`), so older links still open their cities, in the hero.
 
-Free, open source, no telemetry, no account. Cities and settings stay in the browser (`localStorage`, shared with the home page, same origin); the frame makes no requests of its own besides loading its files. The home page already counts the visit, so the frame loads no analytics.
+Free, open source, no telemetry, no account. Cities and settings stay in the browser (`localStorage`, shared with the home page, same origin); the frame makes no requests of its own besides loading its files. The frame loads no analytics: the home page counts the visit, and its `site/assets/analytics.js` listens on the frame's document (same origin) for which parts of the app a visitor tries (`hero_app_used {action}`, real input only, never what is typed or picked; see Analytics in `site/README.md`). Opened on its own, `/app/` sends nothing.
 
 ## Rebuild
 
@@ -118,3 +118,4 @@ Checked with `wrangler pages dev`. Do not add a `/app` redirect to `site/_redire
 - A new `window.wc` call in `src/preload.js` needs a browser version (or a no-op) in `shim.js`.
 - A new Windows-only control is hidden in `web.css` under `html.is-web`.
 - New renderer scripts and styles only need to be in `src/renderer/index.html`; the build picks them up in order.
+- `site/assets/analytics.js` (`HERO_ACTIONS` and `hookHero`) reads the app's element ids (`#btnMap`, `#convTime`, `#zoneResults`, `#copyMenu`, `.card`, `.arc` and the like) to count `hero_app_used`. Renaming one only stops that action from being counted; update it there too.

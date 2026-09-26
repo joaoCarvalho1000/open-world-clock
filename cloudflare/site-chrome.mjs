@@ -214,7 +214,8 @@ export function applyChrome(html, lang, slug) {
 // The Store switch (storeLive in site/assets/config.js), read with the URLs it swaps between.
 export function readStore(siteDir = SITE_DIR) {
   const src = readFileSync(join(siteDir, 'assets', 'config.js'), 'utf8');
-  const live = (src.match(/\bstoreLive\s*:\s*(true|false)\b/) || [])[1];
+  // the property line itself, not the header comment (which also says "storeLive: false"); the last one wins, as in JS
+  const live = ([...src.matchAll(/^\s*storeLive\s*:\s*(true|false)\b/gm)].pop() || [])[1];
   if (!live) throw new Error('site/assets/config.js: no storeLive: true or false');
   const pick = (k) => (src.match(new RegExp('\\b' + k + "\\s*:\\s*'([^']+)'")) || [])[1];
   return { live: live === 'true', storeUrl: pick('storeUrl'), setupUrl: pick('downloadBase') + '/Open-World-Clock-' + pick('version') + '-setup.exe' };

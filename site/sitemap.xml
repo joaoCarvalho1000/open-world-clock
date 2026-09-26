@@ -15,7 +15,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/download</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/download"/>
@@ -85,7 +85,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/faq</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/faq"/>
@@ -125,7 +125,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/download</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/download"/>
@@ -195,7 +195,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/faq</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/faq"/>
@@ -235,7 +235,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/download</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/download"/>
@@ -305,7 +305,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/faq</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/faq"/>
@@ -335,13 +335,13 @@
   </url>
   <url>
     <loc>https://openworldclock.com/llms.txt</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://openworldclock.com/llms-full.txt</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

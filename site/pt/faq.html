@@ -40,7 +40,7 @@
 <link rel="apple-touch-icon" href="/assets/icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/assets/fonts/outfit-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css?v=10512d301c">
+<link rel="stylesheet" href="/assets/site.css?v=9b3a01d04b">
 <link rel="stylesheet" href="/assets/pages.css?v=6ba6b3bf18">
 <script>(function(){var d=document.documentElement,n=navigator,p='system';try{p=localStorage.getItem('wc-theme')||'system'}catch(e){}d.setAttribute('data-theme-pref',p);if(p==='light'||p==='dark')d.setAttribute('data-theme',p);d.classList.add('js');if((n.userAgentData&&n.userAgentData.mobile)||/Android|iPhone|iPod/.test(n.userAgent||''))d.classList.add('not-windows')})();</script>
 <script type="application/ld+json">
@@ -74,7 +74,7 @@
     "@id": "https://openworldclock.com/#author"
    },
    "datePublished": "2026-09-25",
-   "dateModified": "2026-09-25",
+   "dateModified": "2026-09-26",
    "mainEntity": [
     {
      "@type": "Question",
@@ -113,7 +113,7 @@
      "name": "Em quais versões do Windows e processadores ele funciona?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Windows 10 e Windows 11. Por enquanto, o instalador e o executável portátil são só x64; a versão nativa para ARM64 vem junto com a da Microsoft Store, que chega em breve."
+      "text": "Windows 10 e Windows 11, em x64 e ARM64. A versão da Store pede o Windows 10 versão 1809 ou mais recente e roda nativamente nos dois. O instalador e o executável portátil são só x64, então num PC ARM64 use a Store."
      }
     },
     {
@@ -121,7 +121,7 @@
      "name": "Como eu instalo?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Baixe o instalador ou o executável portátil direto deste site; a página de download explica cada opção. A versão da Microsoft Store chega em breve. Não pode instalar programas no seu PC? Dá para testar direto na página inicial, no navegador."
+      "text": "Pela Microsoft Store, ou rodando winget install 9N88FR8M81BM -s msstore. Também dá para baixar um instalador ou um executável portátil direto deste site. A página de download explica cada opção. Não pode instalar programas no seu PC? Dá para testar direto na página inicial, no navegador."
      }
     },
     {
@@ -129,7 +129,7 @@
      "name": "Por que aparece “O Windows protegeu o computador”?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "O instalador e o executável portátil ainda não têm assinatura digital, então o SmartScreen avisa na primeira vez que você abre. Clique em Mais informações e depois em Executar assim mesmo. A versão da Microsoft Store, que chega em breve, é assinada pela Microsoft e não mostra esse aviso."
+      "text": "O instalador e o executável portátil ainda não têm assinatura digital, então o SmartScreen avisa na primeira vez que você abre. Clique em Mais informações e depois em Executar assim mesmo. A versão da Microsoft Store não mostra esse aviso."
      }
     },
     {
@@ -137,7 +137,7 @@
      "name": "Precisa de permissão de administrador?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Não. O instalador instala só para o seu usuário do Windows, e o executável portátil não instala nada."
+      "text": "Não. O instalador instala só para o seu usuário do Windows, o executável portátil não instala nada e a Store cuida da própria instalação."
      }
     },
     {
@@ -263,12 +263,12 @@
     <h1 id="h1">Perguntas frequentes</h1>
     <p class="pg-lede">Respostas curtas e diretas para o que o pessoal mais pergunta. Não achou a sua? <a href="https://github.com/joaoCarvalho1000/open-world-clock/issues">Pergunte no GitHub</a> que eu respondo por lá.</p>
     <div class="pg-cta">
-      <a class="btn btn-primary" data-store hidden data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Baixe na Microsoft Store</span></a>
-      <a class="btn btn-quiet" data-store hidden href="/pt/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Outros downloads</span></a>
-      <a class="btn btn-primary" data-store-off data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Baixar instalador</span></a>
-      <a class="btn btn-quiet" data-store-off data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
+      <a class="btn btn-primary" data-store data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Baixe na Microsoft Store</span></a>
+      <a class="btn btn-quiet" data-store href="/pt/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Outros downloads</span></a>
+      <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Baixar instalador</span></a>
+      <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
     </div>
-    <p class="dl-note" data-store-off>Grátis para Windows 10 e 11, x64, cerca de 90 MB. Ainda não tem assinatura de código, então o SmartScreen pode avisar na primeira vez (<a href="/pt/download#smartscreen">veja o que fazer</a>).</p>
+    <p class="dl-note" data-store-off hidden>Grátis para Windows 10 e 11, x64, cerca de 90 MB. Ainda não tem assinatura de código, então o SmartScreen pode avisar na primeira vez (<a href="/pt/download#smartscreen">veja o que fazer</a>).</p>
     <ul class="pg-facts"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Atualizado em 25 de setembro de 2026</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Versão 1.3.0</li></ul>
     <ul class="toc"><li><a href="#basics">O básico</a></li><li><a href="#installing">Instalação</a></li><li><a href="#using">No dia a dia</a></li><li><a href="#limits">Limites e quem faz</a></li></ul>
     
@@ -283,7 +283,7 @@
 <section class="pg-sec cols" id="installing" aria-labelledby="installing-h">
   <div class="wrap">
     <div class="sec-head"><h2 id="installing-h">Instalação</h2></div>
-    <div class="sec-body"><div class="qa-list"><div class="qa-item"><h3>Em quais versões do Windows e processadores ele funciona?</h3><p data-store hidden>Windows 10 e Windows 11, em x64 e ARM64. A versão da Store pede o Windows 10 versão 1809 ou mais recente e roda nativamente nos dois. O instalador e o executável portátil são só x64, então num PC ARM64 use a Store.</p><p data-store-off>Windows 10 e Windows 11. Por enquanto, o instalador e o executável portátil são só x64; a versão nativa para ARM64 vem junto com a da Microsoft Store, que chega em breve.</p></div><div class="qa-item"><h3>Como eu instalo?</h3><p data-store hidden>Pela Microsoft Store, ou rodando <code>winget install 9N88FR8M81BM -s msstore</code>. Também dá para baixar um instalador ou um executável portátil direto deste site. A <a href="/pt/download">página de download</a> explica cada opção. Não pode instalar programas no seu PC? Dá para testar direto na <a href="/pt/">página inicial</a>, no navegador.</p><p data-store-off>Baixe o instalador ou o executável portátil direto deste site; a <a href="/pt/download">página de download</a> explica cada opção. A versão da Microsoft Store chega em breve. Não pode instalar programas no seu PC? Dá para testar direto na <a href="/pt/">página inicial</a>, no navegador.</p></div><div class="qa-item"><h3>Por que aparece “O Windows protegeu o computador”?</h3><p data-store hidden>O instalador e o executável portátil ainda não têm assinatura digital, então o SmartScreen avisa na primeira vez que você abre. Clique em Mais informações e depois em Executar assim mesmo. A versão da Microsoft Store não mostra esse aviso.</p><p data-store-off>O instalador e o executável portátil ainda não têm assinatura digital, então o SmartScreen avisa na primeira vez que você abre. Clique em Mais informações e depois em Executar assim mesmo. A versão da Microsoft Store, que chega em breve, é assinada pela Microsoft e não mostra esse aviso.</p></div><div class="qa-item"><h3>Precisa de permissão de administrador?</h3><p data-store hidden>Não. O instalador instala só para o seu usuário do Windows, o executável portátil não instala nada e a Store cuida da própria instalação.</p><p data-store-off>Não. O instalador instala só para o seu usuário do Windows, e o executável portátil não instala nada.</p></div></div></div>
+    <div class="sec-body"><div class="qa-list"><div class="qa-item"><h3>Em quais versões do Windows e processadores ele funciona?</h3><p data-store>Windows 10 e Windows 11, em x64 e ARM64. A versão da Store pede o Windows 10 versão 1809 ou mais recente e roda nativamente nos dois. O instalador e o executável portátil são só x64, então num PC ARM64 use a Store.</p><p data-store-off hidden>Windows 10 e Windows 11. Por enquanto, o instalador e o executável portátil são só x64; a versão nativa para ARM64 vem junto com a da Microsoft Store, que chega em breve.</p></div><div class="qa-item"><h3>Como eu instalo?</h3><p data-store>Pela Microsoft Store, ou rodando <code>winget install 9N88FR8M81BM -s msstore</code>. Também dá para baixar um instalador ou um executável portátil direto deste site. A <a href="/pt/download">página de download</a> explica cada opção. Não pode instalar programas no seu PC? Dá para testar direto na <a href="/pt/">página inicial</a>, no navegador.</p><p data-store-off hidden>Baixe o instalador ou o executável portátil direto deste site; a <a href="/pt/download">página de download</a> explica cada opção. A versão da Microsoft Store chega em breve. Não pode instalar programas no seu PC? Dá para testar direto na <a href="/pt/">página inicial</a>, no navegador.</p></div><div class="qa-item"><h3>Por que aparece “O Windows protegeu o computador”?</h3><p data-store>O instalador e o executável portátil ainda não têm assinatura digital, então o SmartScreen avisa na primeira vez que você abre. Clique em Mais informações e depois em Executar assim mesmo. A versão da Microsoft Store não mostra esse aviso.</p><p data-store-off hidden>O instalador e o executável portátil ainda não têm assinatura digital, então o SmartScreen avisa na primeira vez que você abre. Clique em Mais informações e depois em Executar assim mesmo. A versão da Microsoft Store, que chega em breve, é assinada pela Microsoft e não mostra esse aviso.</p></div><div class="qa-item"><h3>Precisa de permissão de administrador?</h3><p data-store>Não. O instalador instala só para o seu usuário do Windows, o executável portátil não instala nada e a Store cuida da própria instalação.</p><p data-store-off hidden>Não. O instalador instala só para o seu usuário do Windows, e o executável portátil não instala nada.</p></div></div></div>
   </div>
 </section>
 <section class="pg-sec cols" id="using" aria-labelledby="using-h">
@@ -302,7 +302,7 @@
   <div class="wrap">
     <h2 id="more-h">Mais sobre o Open World Clock</h2>
     <ul class="related">
-      <li><a href="/pt/download"><strong>Baixar<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span><span data-store hidden>Microsoft Store, winget, o instalador ou o executável portátil.</span><span data-store-off>O instalador ou o executável portátil, com ajuda para o SmartScreen.</span></span></a></li>
+      <li><a href="/pt/download"><strong>Baixar<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span><span data-store>Microsoft Store, winget, o instalador ou o executável portátil.</span><span data-store-off hidden>O instalador ou o executável portátil, com ajuda para o SmartScreen.</span></span></a></li>
       <li><a href="/pt/features"><strong>Todos os recursos<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Tudo o que tem na versão 1.3.0, organizado e com capturas de tela.</span></a></li>
       <li><a href="/pt/time-zone-converter"><strong>Conversor de fuso horário<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Digite um horário em qualquer cidade ou mova os relógios com a roda do mouse.</span></a></li>
     </ul>
@@ -315,12 +315,12 @@
       <h2 id="cta-h">O mundo inteiro na sua área de trabalho</h2>
       <p>Totalmente grátis para Windows 10 e 11. Código aberto, sem cadastro, sem anúncios, sem telemetria.</p>
       <div class="pg-cta">
-        <a class="btn btn-primary" data-store hidden data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Baixe na Microsoft Store</span></a>
-        <a class="btn btn-quiet" data-store hidden href="/pt/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Outros downloads</span></a>
-        <a class="btn btn-primary" data-store-off data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Baixar instalador</span></a>
-        <a class="btn btn-quiet" data-store-off data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
+        <a class="btn btn-primary" data-store data-link="store" data-cid="site-faq" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-faq"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Baixe na Microsoft Store</span></a>
+        <a class="btn btn-quiet" data-store href="/pt/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Outros downloads</span></a>
+        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Baixar instalador</span></a>
+        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
       </div>
-      <p class="dl-note" data-store-off>Grátis para Windows 10 e 11, x64, cerca de 90 MB. Ainda não tem assinatura de código, então o SmartScreen pode avisar na primeira vez (<a href="/pt/download#smartscreen">veja o que fazer</a>).</p>
+      <p class="dl-note" data-store-off hidden>Grátis para Windows 10 e 11, x64, cerca de 90 MB. Ainda não tem assinatura de código, então o SmartScreen pode avisar na primeira vez (<a href="/pt/download#smartscreen">veja o que fazer</a>).</p>
       <p class="dl-kofi"><a href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="download"><svg class="i" aria-hidden="true"><use href="#i-cup"/></svg>Apoie o criador no Ko-fi</a></p>
     </div>
   </div>
@@ -351,10 +351,10 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Apoie o criador no Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Apoie o criador</span></a>
-<script src="/assets/config.js?v=ee70566ed6"></script>
+<script src="/assets/config.js?v=65b3fa7d24"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
-<script src="/assets/analytics.js?v=fdb66b36ed" defer></script>
+<script src="/assets/analytics.js?v=ec35845c3e" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
 </body>
 </html>

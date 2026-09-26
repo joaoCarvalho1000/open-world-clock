@@ -8,7 +8,7 @@
   "applicationCategory": "UtilitiesApplication",
   "applicationSubCategory": "World clock, time zone converter and meeting planner",
   "operatingSystem": "Windows 10, Windows 11",
-  "processorRequirements": "x64",
+  "processorRequirements": "x64 or ARM64",
   "softwareVersion": "1.3.0",
   "datePublished": "2026-09-22",
   "isAccessibleForFree": true,
@@ -18,7 +18,7 @@
     "pt-BR",
     "es"
   ],
-  "installUrl": "https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe",
+  "installUrl": "https://apps.microsoft.com/detail/9N88FR8M81BM",
   "downloadUrl": "https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe",
   "releaseNotes": "https://openworldclock.com/download#new",
   "image": "https://openworldclock.com/assets/icon-512.png",
@@ -44,6 +44,7 @@
     "url": "https://github.com/joaoCarvalho1000"
   },
   "sameAs": [
+    "https://apps.microsoft.com/detail/9N88FR8M81BM",
     "https://github.com/joaoCarvalho1000/open-world-clock"
   ],
   "subjectOf": [
@@ -95,8 +96,8 @@
   ],
   "potentialAction": {
     "@type": "InstallAction",
-    "target": "https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe",
-    "description": "Download and run the installer (per user, no admin rights). A portable exe is at https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe. A Microsoft Store listing is coming soon."
+    "target": "https://apps.microsoft.com/detail/9N88FR8M81BM",
+    "description": "Install from the Microsoft Store (x64 and ARM64, updates itself), or run: winget install 9N88FR8M81BM -s msstore. The x64 installer (per user, no admin rights) and portable exe are at https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe and https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe."
   },
   "featureList": [
     "Always-on-top world clock for Windows 10 and 11",

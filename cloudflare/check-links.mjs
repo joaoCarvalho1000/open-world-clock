@@ -49,7 +49,8 @@ export function readConfig(siteDir = SITE_DIR) {
   };
   // version and downloadBase are optional here so a config without them is reported as a problem (rules 8 and 5)
   // instead of crashing the check
-  const live = src.match(/\bstoreLive\s*:\s*(true|false)\b/);
+  // the property line itself, not the header comment (which also says "storeLive: false"); the last one wins, as in JS
+  const live = [...src.matchAll(/^\s*storeLive\s*:\s*(true|false)\b/gm)].pop();
   return { storeUrl: pick('storeUrl'), storeLive: live ? live[1] === 'true' : true, githubRepo: pick('githubRepo'), downloadBase: pick('downloadBase', true), version: pick('version', true) };
 }
 

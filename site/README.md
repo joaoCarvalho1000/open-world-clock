@@ -70,7 +70,7 @@ All set in `assets/config.js`, which rewrites the links at load:
 | Setting | Value |
 | --- | --- |
 | `version` | `1.3.0`: the release the Installer and Portable buttons download. Must equal `version` in the root `package.json` (the launch gate in `../cloudflare/check-links.mjs` fails the deploy otherwise) |
-| `storeLive` | `false` until the Microsoft Store listing is approved. See The Store switch below |
+| `storeLive` | `true` since the Microsoft Store listing was approved (September 2026); `false` hides every Store link. See The Store switch below |
 | `storeUrl` | `https://apps.microsoft.com/detail/9N88FR8M81BM` (no query: each Store link adds its own `?cid=`, see below) |
 | `downloadBase` | `https://download.openworldclock.com`: the Cloudflare R2 bucket `owc-downloads` on its own domain, which serves the installer and the portable exe |
 | `githubRepo` | `joaoCarvalho1000/open-world-clock` (source, license, issues and release notes; the exe files are not on GitHub) |
@@ -83,9 +83,9 @@ The download page (`download.html`, in all three languages) prints the SHA-256 o
 
 ### The Store switch
 
-`storeLive` in `assets/config.js` decides whether the site offers the Microsoft Store. While it is `false` (today: the listing is not approved yet):
+`storeLive` in `assets/config.js` decides whether the site offers the Microsoft Store. While it is `false` (as it was until the listing was approved in September 2026):
 
-- every Store button, the Store and winget option cards and sections, the "Which one should I pick?" table and each Store sentence carry `data-store` and are hidden; their twins carry `data-store-off` and show instead: "Download installer" (primary) and "Portable exe" (secondary), with a short line under them (Windows 10 and 11, x64, about 90 MB, free, and the SmartScreen note). The buttons keep `data-track="installer_click"` and `"portable_click"`, so analytics records them with their `placement`
+- every Store button, the Store and winget option cards and sections, the "Which one should I pick?" table and each Store sentence carry `data-store` and are hidden; their twins carry `data-store-off` and show instead: "Download installer" (primary) and "Portable exe" (secondary), with a short line under them (Windows 10 and 11, x64, about 90 MB, free, and the SmartScreen note). The buttons keep `data-track="installer_click"` and `"portable_click"`, so analytics records them with their `placement` and the `version` they download
 - the JSON-LD `installUrl` is the installer, `sameAs` leaves out the Store, and `processorRequirements` is `x64` (ARM64 comes with the Store build)
 - the launch gate (`../cloudflare/check-links.mjs`) requests no Store URL
 - `llms.txt`, `llms-full.txt` and `api/app.json` say the Store listing is coming soon and must not link it or winget (`site-chrome.mjs` fails if they do)
@@ -147,12 +147,15 @@ Events (plus PostHog's own `$pageview`, one per page load). Every event, `$pagev
 | `scroll_depth` | `depth`: 25, 50, 75, 100 | Each milestone, once per page view |
 | `section_view` | `section`: `hero`, `demo`, `awake`, `features`, `compare`, `privacy`, `faq`, `download`, `footer` | Half of the section is on screen, or it fills half the screen (tall scenes), once each |
 | `store_click` | `placement`: `hero` or `download` | Microsoft Store button (`data-track="store_click"`; hidden while `storeLive` is false) |
-| `installer_click` | `placement` | Installer button (`data-track="installer_click"`) |
-| `portable_click` | `placement` | Portable button (`data-track="portable_click"`) |
+| `installer_click` | `placement`; `version`: the app version the button downloads (from its file name, `Open-World-Clock-1.3.0-setup.exe`, else `version` in `assets/config.js`) | Installer button (`data-track="installer_click"`) |
+| `portable_click` | `placement`; `version` (as for `installer_click`) | Portable button (`data-track="portable_click"`) |
 | `converter_used` | `via`: `type`, `slider`, `city`, `copy`, `back_to_now`, `clocks` | First real interaction with the converter demo (never the autoplay, never the typed value) |
 | `faq_open` | `question` | A FAQ item is opened |
 | `theme_toggle` | `theme`: the new choice, `light`, `dark` or `system` | Theme button |
 | `kofi_click` | `location`: `nav`, `floating`, `footer` or `download` | The nav's Support the creator button, the floating button or a Support the creator on Ko-fi link (`data-kofi="..."`) |
+| `language_switch` | `from` and `to`: `en`, `pt` or `es`; `via`: `picker` (the globe in the nav), `menu` (the Menu's language links), `footer` or `suggestion` (the English home page's "Ver em português") | A link to another language (`a[data-lang]`); the page's own language is not counted |
+| `github_click` | `placement` (`app` for links inside the hero's app); `link`: `repo`, `issues`, `releases`, `license`, `profile` or `other` | Any link to github.com (the kind of link, never the address) |
+| `hero_app_used` | `action`: `add_city`, `convert`, `scrub`, `copy`, `planner`, `map`, `settings`, `theme`, `edit_city`, `help` or `share` | The live app in the home page's hero, once per action per page view. Only real presses, keys, wheel turns and edits (`isTrusted`): never the app's startup, a shared link or anything scripted, and never what was typed or picked (no city, time or setting value). `analytics.js` listens on the frame's document (same origin); the app itself loads no analytics. What counts for each action is in `HERO_ACTIONS` in `assets/analytics.js` |
 
 To track another link, give it `data-track="event_name"`. Link clicks are sent with `sendBeacon`, so they survive the navigation (once the SDK has loaded, about a second after the page).
 
