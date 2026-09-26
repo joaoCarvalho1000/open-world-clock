@@ -19,25 +19,25 @@ const LANGS = (process.env.MKT_LANGS || 'en,pt,es').split(',').filter((l) => ['e
 // Headlines and the line under them, per screenshot (store/README.md lists the scenes). Plain voice, no dashes.
 const COPY = {
   en: [
-    ['The world clock Windows should have shipped with.', 'See who’s awake anywhere, at a glance. Completely free, open source, no strings attached.'],
+    ['The world clock Windows should have shipped with.', 'Working with people in other time zones? See everyone’s time at a glance. Completely free, open source, no strings attached.'],
     ['Easy on the eyes after dark', 'Light, dark or follow Windows. Free and open source, with no ads, no account and no telemetry.'],
-    ['Convert any time in one step', 'Type 16:30 in New York and every clock follows, with +1 day and a moon where people are asleep.'],
+    ['Convert any time in one step', 'Type 16:30 in New York and every clock follows, with +1 day wherever the date changes.'],
     ['Find the hours that work for everyone', 'Working hours for each city, with the hours everyone shares highlighted.'],
     ['The whole world, live', 'Day and night on a world map, as it happens, with every city on your list.'],
     ['Fits any corner of your screen', 'Strip, compact or vertical. Pin it above your other windows, or snap it into place on Windows 11.'],
   ],
   pt: [
-    ['O relógio mundial que já devia vir no Windows.', 'Bata o olho e veja quem está acordado em qualquer canto do mundo. Grátis de verdade, código aberto, sem pegadinha.'],
+    ['O relógio mundial que já devia vir no Windows.', 'Trabalha com gente em outros fusos? Veja o horário de todo mundo num piscar de olhos. Grátis de verdade, código aberto, sem pegadinha.'],
     ['Não cansa a vista à noite', 'Tema claro, escuro ou igual ao do Windows. Grátis e de código aberto, sem anúncios, sem cadastro e sem telemetria.'],
-    ['Converta qualquer horário num instante', 'Digite 16:30 em Nova York e todos os relógios acompanham, com +1 dia e uma lua onde o pessoal está dormindo.'],
+    ['Converta qualquer horário num instante', 'Digite 16:30 em Nova York e todos os relógios acompanham, com +1 dia onde a data já virou.'],
     ['Encontre o horário que serve para todos', 'O expediente de cada cidade, com as horas em comum em destaque.'],
     ['O mundo inteiro, ao vivo', 'O dia e a noite num mapa-múndi, em tempo real, com todas as cidades da sua lista.'],
     ['Cabe em qualquer canto da tela', 'Em faixa, compacto ou vertical. Fixe por cima das outras janelas ou encaixe com os layouts de ajuste do Windows 11.'],
   ],
   es: [
-    ['El reloj mundial que le faltaba a Windows.', 'Mira de un vistazo quién está despierto en cualquier parte del mundo. Gratis de verdad, de código abierto y sin letra pequeña.'],
+    ['El reloj mundial que le faltaba a Windows.', '¿Trabajas con gente en otras zonas horarias? Mira la hora de todos de un vistazo. Gratis de verdad, de código abierto y sin letra pequeña.'],
     ['Cómodo para la vista de noche', 'Tema claro, oscuro o el de Windows. Gratis y de código abierto, sin anuncios, sin cuenta y sin telemetría.'],
-    ['Convierte cualquier hora al instante', 'Escribe 16:30 en Nueva York y todos los relojes se ajustan, con +1 día y una luna donde probablemente están durmiendo.'],
+    ['Convierte cualquier hora al instante', 'Escribe 16:30 en Nueva York y todos los relojes se ajustan, con +1 día donde ya cambió la fecha.'],
     ['Encuentra la hora ideal para todos', 'El horario laboral de cada ciudad, con las horas en común resaltadas.'],
     ['El mundo entero, en vivo', 'El día y la noche en un mapa mundial, en tiempo real, con todas las ciudades de tu lista.'],
     ['Cabe en cualquier rincón de la pantalla', 'Franja, compacto o vertical. Fíjalo encima de todo o acomódalo con los diseños de ajuste de Windows 11.'],
