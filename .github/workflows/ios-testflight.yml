@@ -1,0 +1,338 @@
+# Builds the iPhone app + widget extension, signs it for the App Store and uploads it to TestFlight.
+# Nothing here needs a Mac. One-time Apple setup: a paid Apple Developer Program membership, the App IDs
+# io.joao.worldclock and io.joao.worldclock.widgets with the App Group group.io.joao.worldclock.shared, the app
+# record in App Store Connect, and an App Store Connect team API key with the Admin role.
+#
+# How signing works (no certificates or profiles are stored in the repo or in secrets):
+#   1. `xcodebuild archive` runs UNSIGNED, exactly like the Release build in ios.yml. Automatic signing at archive
+#      time would ask for an Apple Development certificate and a development profile, which needs a registered
+#      device and mints a new development certificate on every fresh runner until the account hits Apple's cap.
+#   2. Entitlements are carried by the code signature, so an unsigned archive has none and the App Group would be
+#      lost at export. The app and the widget extension are therefore ad hoc signed ("-") with their own
+#      .entitlements files before export.
+#   3. `xcodebuild -exportArchive` signs with the team's cloud-managed Apple Distribution certificate, creating the
+#      App Store profiles on the fly (-allowProvisioningUpdates + the App Store Connect API key). The first export
+#      writes an .ipa so the entitlements can be checked; the second one uploads the same archive to App Store Connect.
+#
+# Secrets (Settings > Secrets and variables > Actions > Repository secrets):
+#   APP_STORE_CONNECT_KEY_ID      Key ID of the App Store Connect team API key (10 characters)
+#   APP_STORE_CONNECT_ISSUER_ID   Issuer ID shown above the key list (a UUID)
+#   APP_STORE_CONNECT_KEY_P8      the downloaded AuthKey_XXXXXXXXXX.p8, pasted as is (base64 of it also works)
+#   APPLE_TEAM_ID                 10-character Team ID from developer.apple.com > Account > Membership details
+# The API key needs the Admin role: cloud-managed distribution certificates refuse App Manager and Developer keys.
+name: iOS TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      marketing_version:
+        description: "Version shown in TestFlight, e.g. 1.0.1 (empty = MARKETING_VERSION from apple/project.yml)"
+        required: false
+        default: ""
+        type: string
+  push:
+    tags: ["ios-v*"] # ios-v1.0.1 uploads version 1.0.1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false # never cancel a run halfway through an upload
+
+jobs:
+  testflight:
+    runs-on: macos-26 # same image as ios.yml: arm64 with Xcode 26
+    timeout-minutes: 60
+    steps:
+      # First, so a missing secret fails in seconds instead of after a 15-minute build.
+      - name: Check secrets
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_P8: ${{ secrets.APP_STORE_CONNECT_KEY_P8 }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          missing=""
+          for name in APP_STORE_CONNECT_KEY_ID APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_KEY_P8 APPLE_TEAM_ID; do
+            [ -n "${!name:-}" ] || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secret(s):$missing. Add them under Settings > Secrets and variables > Actions > Repository secrets."
+            exit 1
+          fi
+          bad=0
+          if ! [[ "$APPLE_TEAM_ID" =~ ^[A-Z0-9]{10}$ ]]; then
+            echo "::error::APPLE_TEAM_ID must be the 10-character Team ID (capital letters and digits), from developer.apple.com > Account > Membership details."
+            bad=1
+          fi
+          if ! [[ "$APP_STORE_CONNECT_KEY_ID" =~ ^[A-Z0-9]{10}$ ]]; then
+            echo "::error::APP_STORE_CONNECT_KEY_ID must be the 10-character Key ID of the API key (the XXXXXXXXXX in AuthKey_XXXXXXXXXX.p8)."
+            bad=1
+          fi
+          if ! [[ "$APP_STORE_CONNECT_ISSUER_ID" =~ ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$ ]]; then
+            echo "::error::APP_STORE_CONNECT_ISSUER_ID must be the Issuer ID (a UUID like 57246542-96fe-1a63-e053-0824d011072a) shown above the API key list."
+            bad=1
+          fi
+          exit "$bad"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Pick version and build number
+        env:
+          INPUT_VERSION: ${{ inputs.marketing_version }}
+        run: |
+          set -euo pipefail
+          version=""
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            version="${GITHUB_REF_NAME#ios-v}"
+          elif [ -n "${INPUT_VERSION:-}" ]; then
+            version="$INPUT_VERSION"
+          fi
+          if [ -n "$version" ] && ! [[ "$version" =~ ^[0-9]+(\.[0-9]+){0,2}$ ]]; then
+            echo "::error::Version '$version' is not like 1.0.1 (up to three numbers separated by dots)."
+            exit 1
+          fi
+          # The build number must be unique for each upload of a version: the run number grows with every run of
+          # this workflow, and a re-run gets the attempt appended (12, then 12.2).
+          build="$GITHUB_RUN_NUMBER"
+          if [ "${GITHUB_RUN_ATTEMPT:-1}" != "1" ]; then build="$build.$GITHUB_RUN_ATTEMPT"; fi
+          version_args=""
+          [ -z "$version" ] || version_args="MARKETING_VERSION=$version"
+          echo "BUILD_NUMBER=$build" >> "$GITHUB_ENV"
+          echo "ARCHIVE=$RUNNER_TEMP/WorldClock.xcarchive" >> "$GITHUB_ENV"
+          echo "VERSION_ARGS=$version_args" >> "$GITHUB_ENV"
+          {
+            echo "## TestFlight upload"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Version: ${version:-from apple/project.yml}"
+            echo "- Build: $build"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Select Xcode 26
+        run: |
+          set -euo pipefail
+          XCODE="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n 1 || true)"
+          if [ -z "$XCODE" ]; then
+            echo "::error::Xcode 26 not found on this runner"
+            ls /Applications
+            exit 1
+          fi
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      # Same pinned, checksum-verified release as ios.yml.
+      - name: Install XcodeGen 2.46.0
+        env:
+          XCODEGEN_VERSION: "2.46.0"
+          XCODEGEN_SHA256: "4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -fsSL -o xcodegen.zip "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          echo "${XCODEGEN_SHA256}  xcodegen.zip" | shasum -a 256 -c -
+          unzip -q xcodegen.zip
+          echo "$RUNNER_TEMP/xcodegen/bin" >> "$GITHUB_PATH"
+
+      - name: Generate Xcode project
+        working-directory: apple
+        run: xcodegen generate
+
+      - name: Write App Store Connect API key
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_KEY_P8: ${{ secrets.APP_STORE_CONNECT_KEY_P8 }}
+        run: |
+          set -euo pipefail
+          umask 077
+          dir="$RUNNER_TEMP/asc"
+          mkdir -p "$dir"
+          key="$dir/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          # The .p8 pasted as is (PEM text) or base64 of the whole file; CRs from a Windows paste are dropped.
+          case "$APP_STORE_CONNECT_KEY_P8" in
+            *"-----BEGIN"*) printf '%s\n' "$APP_STORE_CONNECT_KEY_P8" | tr -d '\r' > "$key" ;;
+            *) printf '%s' "$APP_STORE_CONNECT_KEY_P8" | tr -d '\r\n ' | base64 --decode 2>/dev/null | tr -d '\r' > "$key" || true ;;
+          esac
+          if ! grep -q -- "-----BEGIN PRIVATE KEY-----" "$key"; then
+            echo "::error::APP_STORE_CONNECT_KEY_P8 is not a .p8 private key. Open AuthKey_XXXXXXXXXX.p8 in Notepad and paste all of it, including the BEGIN and END lines."
+            exit 1
+          fi
+          echo "ASC_KEY_PATH=$key" >> "$GITHUB_ENV"
+
+      - name: Archive (Release, unsigned)
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          # VERSION_ARGS is empty or a single MARKETING_VERSION=x.y.z, so it is left unquoted on purpose.
+          # shellcheck disable=SC2086
+          xcodebuild \
+            -project apple/WorldClock.xcodeproj \
+            -scheme WorldClock \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            -archivePath "$ARCHIVE" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            $VERSION_ARGS \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            archive
+
+      # Informational for now: the script has not run on a real build yet (see apple/README.md, CI).
+      - name: Check bundle contents
+        continue-on-error: true
+        run: bash apple/ci/check-bundle.sh "$ARCHIVE/Products/Applications"
+
+      - name: Ad hoc sign with entitlements
+        run: |
+          set -euo pipefail
+          app="$ARCHIVE/Products/Applications/WorldClock.app"
+          appex="$app/PlugIns/WorldClockWidgets.appex"
+          app_ent="apple/WorldClock/Support/WorldClock.entitlements"
+          appex_ent="apple/WorldClockWidgets/WorldClockWidgets.entitlements"
+          for path in "$app" "$appex" "$app_ent" "$appex_ent"; do
+            [ -e "$path" ] || { echo "::error::$path not found"; exit 1; }
+          done
+          # Inside out: nested code first (normally none, WorldClockCore links statically), then the extension,
+          # then the app, whose seal covers the signed extension.
+          sign_nested() {
+            find "$1" -path "$1/PlugIns" -prune -o \( -name '*.framework' -o -name '*.dylib' \) -print |
+              while IFS= read -r code; do
+                codesign --force --sign - --timestamp=none "$code"
+              done
+          }
+          sign_nested "$appex"
+          codesign --force --sign - --timestamp=none --generate-entitlement-der --entitlements "$appex_ent" "$appex"
+          sign_nested "$app"
+          codesign --force --sign - --timestamp=none --generate-entitlement-der --entitlements "$app_ent" "$app"
+          codesign --verify --deep --strict "$app" || echo "::warning::codesign --verify complained about the ad hoc signature; the export below signs again"
+          for bundle in "$appex" "$app"; do
+            ent="$RUNNER_TEMP/$(basename "$bundle").adhoc-entitlements.plist"
+            codesign -d --entitlements - --xml "$bundle" > "$ent" 2>/dev/null || true
+            echo "Entitlements of $(basename "$bundle"):"
+            plutil -p "$ent" || cat "$ent"
+          done
+
+      - name: Write export options
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          for destination in export upload; do
+            cat > "$RUNNER_TEMP/ExportOptions-$destination.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>destination</key>
+            <string>$destination</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>signingCertificate</key>
+            <string>Apple Distribution</string>
+            <key>teamID</key>
+            <string>$APPLE_TEAM_ID</string>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>manageAppVersionAndBuildNumber</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+            plutil -lint "$RUNNER_TEMP/ExportOptions-$destination.plist"
+          done
+
+      - name: Export signed .ipa
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-export.plist" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
+
+      # Stops before the upload if distribution signing dropped the App Group (the widgets would silently show
+      # default settings) or produced something App Store Connect would not accept.
+      - name: Check signed entitlements
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          ipa="$(find "$RUNNER_TEMP/export" -maxdepth 1 -name '*.ipa' -print -quit)"
+          [ -n "$ipa" ] || { echo "::error::No .ipa in $RUNNER_TEMP/export"; ls -la "$RUNNER_TEMP/export"; exit 1; }
+          rm -rf "$RUNNER_TEMP/ipa" && mkdir -p "$RUNNER_TEMP/ipa"
+          unzip -q "$ipa" -d "$RUNNER_TEMP/ipa"
+          app="$RUNNER_TEMP/ipa/Payload/WorldClock.app"
+          group="$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.application-groups:0' apple/WorldClock/Support/WorldClock.entitlements)"
+          failures=0
+          for bundle in "$app" "$app/PlugIns/WorldClockWidgets.appex"; do
+            name="$(basename "$bundle")"
+            ent="$RUNNER_TEMP/ipa/$name.entitlements.plist"
+            codesign -d --entitlements - --xml "$bundle" > "$ent" 2>/dev/null
+            id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$bundle/Info.plist")"
+            got_app_id="$(/usr/libexec/PlistBuddy -c 'Print :application-identifier' "$ent" 2>/dev/null || true)"
+            got_group="$(/usr/libexec/PlistBuddy -c 'Print :com.apple.security.application-groups:0' "$ent" 2>/dev/null || true)"
+            got_debug="$(/usr/libexec/PlistBuddy -c 'Print :get-task-allow' "$ent" 2>/dev/null || echo false)"
+            echo "$name: application-identifier=$got_app_id app-group=$got_group get-task-allow=$got_debug"
+            if [ "$got_app_id" != "$APPLE_TEAM_ID.$id" ]; then
+              echo "::error::$name: application-identifier is '$got_app_id', expected <team>.$id"
+              failures=$((failures + 1))
+            fi
+            if [ "$got_group" != "$group" ]; then
+              echo "::error::$name: App Group '$group' missing from the signed entitlements. Check that the App ID $id has the App Groups capability with $group selected (developer.apple.com > Identifiers)."
+              failures=$((failures + 1))
+            fi
+            if [ "$got_debug" != "false" ]; then
+              echo "::error::$name: get-task-allow is $got_debug; App Store builds must not be debuggable"
+              failures=$((failures + 1))
+            fi
+          done
+          exit "$failures"
+
+      - name: Upload to TestFlight
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions-upload.plist" \
+            -exportPath "$RUNNER_TEMP/upload" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
+          {
+            echo ""
+            echo "Uploaded. App Store Connect processes the build in about 5 to 30 minutes and emails when it is ready;"
+            echo "internal testers then get it in the TestFlight app."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # xcodebuild only says "exportArchive failed"; the reason is in the distribution logs it leaves in TMPDIR.
+      - name: Show distribution log errors
+        if: failure()
+        run: |
+          find "${TMPDIR:-/tmp}" -maxdepth 2 -name '*.xcdistributionlogs' -print 2>/dev/null |
+            while IFS= read -r logs; do
+              echo "== $logs"
+              find "$logs" -name 'IDEDistribution*.log' -print0 | xargs -0 grep -hiE "error|fail|denied|not found|no profile|entitlement" | tail -n 80 || true
+            done
+
+      - name: Remove API key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/asc"
