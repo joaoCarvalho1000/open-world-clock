@@ -5,7 +5,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://openworldclock.com/</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/"/>
@@ -25,7 +25,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/features</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/features"/>
@@ -35,7 +35,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/time-zone-converter</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/time-zone-converter"/>
@@ -45,7 +45,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/meeting-planner</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner"/>
@@ -65,7 +65,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/windows-clock-alternative</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/windows-clock-alternative"/>
@@ -75,13 +75,23 @@
   </url>
   <url>
     <loc>https://openworldclock.com/multiple-time-zones-windows</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/multiple-time-zones-windows"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/world-time-buddy-alternative</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-time-buddy-alternative"/>
   </url>
   <url>
     <loc>https://openworldclock.com/faq</loc>
@@ -115,7 +125,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/"/>
@@ -135,7 +145,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/features</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/features"/>
@@ -145,7 +155,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/time-zone-converter</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/time-zone-converter"/>
@@ -155,7 +165,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/meeting-planner</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner"/>
@@ -175,7 +185,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/windows-clock-alternative</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/windows-clock-alternative"/>
@@ -185,13 +195,23 @@
   </url>
   <url>
     <loc>https://openworldclock.com/pt/multiple-time-zones-windows</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/multiple-time-zones-windows"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/world-time-buddy-alternative</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-time-buddy-alternative"/>
   </url>
   <url>
     <loc>https://openworldclock.com/pt/faq</loc>
@@ -225,7 +245,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/"/>
@@ -245,7 +265,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/features</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/features"/>
@@ -255,7 +275,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/time-zone-converter</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/time-zone-converter"/>
@@ -265,7 +285,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/meeting-planner</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner"/>
@@ -285,7 +305,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/windows-clock-alternative</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/windows-clock-alternative"/>
@@ -295,13 +315,23 @@
   </url>
   <url>
     <loc>https://openworldclock.com/es/multiple-time-zones-windows</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/multiple-time-zones-windows"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/multiple-time-zones-windows"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/world-time-buddy-alternative</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-time-buddy-alternative"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-time-buddy-alternative"/>
   </url>
   <url>
     <loc>https://openworldclock.com/es/faq</loc>

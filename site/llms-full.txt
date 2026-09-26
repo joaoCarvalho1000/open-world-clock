@@ -15,7 +15,8 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 - Meeting planner (working hours and days per city, night shifts, overlap, worked examples): https://openworldclock.com/meeting-planner
 - Day and night world map (live terminator, the sun, sunrise and sunset per city, solstice table): https://openworldclock.com/world-map
 - Compared with the Windows Clock app and web converters: https://openworldclock.com/windows-clock-alternative
-- How to show multiple time zones on Windows 11 and 10 (the two extra taskbar clocks, the Clock app's World clock, and Open World Clock, with steps and a comparison table): https://openworldclock.com/multiple-time-zones-windows
+- How to show multiple time zones on Windows 11 and 10 (the two extra taskbar clocks, the Clock app's World clock, and Open World Clock, with steps, a comparison table and why Windows stops at two extra clocks): https://openworldclock.com/multiple-time-zones-windows
+- Compared with World Time Buddy (the same hour-grid idea as a free, offline Windows app, and when the website is the better choice): https://openworldclock.com/world-time-buddy-alternative
 - FAQ: https://openworldclock.com/faq
 - Privacy policy: https://openworldclock.com/privacy
 - Support (email the author, report a bug or suggest an idea): https://openworldclock.com/support
@@ -262,7 +263,7 @@ Report bugs and ideas on GitHub, tell a friend, or leave a tip at <https://ko-fi
 ## Links
 
 - Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
-- Pages: https://openworldclock.com/features, https://openworldclock.com/download, https://openworldclock.com/faq, https://openworldclock.com/time-zone-converter, https://openworldclock.com/meeting-planner, https://openworldclock.com/world-map, https://openworldclock.com/windows-clock-alternative, https://openworldclock.com/multiple-time-zones-windows, https://openworldclock.com/support
+- Pages: https://openworldclock.com/features, https://openworldclock.com/download, https://openworldclock.com/faq, https://openworldclock.com/time-zone-converter, https://openworldclock.com/meeting-planner, https://openworldclock.com/world-map, https://openworldclock.com/windows-clock-alternative, https://openworldclock.com/multiple-time-zones-windows, https://openworldclock.com/world-time-buddy-alternative, https://openworldclock.com/support
 - Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM
 - winget: `winget install 9N88FR8M81BM -s msstore`
 - Installer: https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe

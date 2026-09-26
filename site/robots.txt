@@ -8,7 +8,7 @@
 #   https://openworldclock.com/llms.txt        index in the llmstxt.org format
 #   https://openworldclock.com/llms-full.txt   the complete product description
 #   Pages: /features /download /faq /time-zone-converter /meeting-planner /world-map /windows-clock-alternative
-#          /multiple-time-zones-windows /support
+#          /multiple-time-zones-windows /world-time-buddy-alternative /support
 #   The same pages in Brazilian Portuguese under /pt/ and in Spanish under /es/ (for example /pt/features, /es/faq).
 #
 # /ingest is the website's analytics proxy, not content, so it is closed to every crawler.

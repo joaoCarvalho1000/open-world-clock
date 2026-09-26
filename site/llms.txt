@@ -24,7 +24,8 @@ The website is also written natively in Brazilian Portuguese and in Spanish, the
 - [Meeting planner](https://openworldclock.com/meeting-planner): working hours and days per city, night shifts, the overlap band and summary, worked examples
 - [Day and night world map](https://openworldclock.com/world-map): live day, night and twilight, the sun's position, pins per city, and how sunrise and sunset are calculated offline, with a solstice table
 - [Compared with Windows Clock](https://openworldclock.com/windows-clock-alternative): what the built-in Windows Clock app, web converters and Open World Clock each do well, in a table
-- [Multiple time zones on Windows 11 and 10](https://openworldclock.com/multiple-time-zones-windows): step by step, the two extra taskbar clocks built into Windows, the Clock app's World clock, and Open World Clock, compared in a table
+- [Multiple time zones on Windows 11 and 10](https://openworldclock.com/multiple-time-zones-windows): step by step, the two extra taskbar clocks built into Windows, the Clock app's World clock, and Open World Clock, compared in a table, and why Windows stops at two extra clocks
+- [Compared with World Time Buddy](https://openworldclock.com/world-time-buddy-alternative): the same hour-grid idea as a free, open source, offline Windows app, and when the World Time Buddy website is the better choice
 
 ## Docs
 

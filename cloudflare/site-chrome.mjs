@@ -36,7 +36,7 @@ const NAME = { en: 'English', pt: 'Português', es: 'Español' };
 const CODE = { en: 'EN', pt: 'PT', es: 'ES' };
 // every public page, by slug ('' is the home page); 404 has no canonical and no hreflang (noindex)
 export const PAGES = ['', 'features', 'download', 'faq', 'time-zone-converter', 'meeting-planner', 'world-map',
-  'windows-clock-alternative', 'multiple-time-zones-windows', 'support', 'privacy', '404'];
+  'windows-clock-alternative', 'multiple-time-zones-windows', 'world-time-buddy-alternative', 'support', 'privacy', '404'];
 
 // the nav and footer words, in the app's own terms for each language (src/renderer/i18n.js)
 const W = {
@@ -44,7 +44,7 @@ const W = {
     skip: 'Skip to content', main: 'Main', footer: 'Footer', language: 'Language', menu: 'Menu', theme: 'Theme',
     home: 'Open World Clock home', top: 'Open World Clock, back to top',
     features: 'Features', converter: 'Converter', planner: 'Planner', map: 'World map', faq: 'FAQ',
-    alt: 'Windows Clock alternative', multi: 'Multiple time zones', download: 'Download', privacy: 'Privacy',
+    alt: 'Windows Clock alternative', wtb: 'World Time Buddy alternative', multi: 'Multiple time zones', download: 'Download', privacy: 'Privacy',
     fFaq: 'FAQ', fConverter: 'Time zone converter', fPlanner: 'Meeting planner', fMulti: 'Multiple time zones on Windows',
     help: 'Support', source: 'Source on GitHub', kofi: 'Support the creator on Ko-fi',
     support: 'Support the creator', supportName: 'Support the creator on Ko-fi', fab: 'Support the creator', fabName: 'Support the creator on Ko-fi',
@@ -54,7 +54,7 @@ const W = {
     skip: 'Pular para o conteúdo', main: 'Principal', footer: 'Rodapé', language: 'Idioma', menu: 'Menu', theme: 'Tema',
     home: 'Open World Clock, página inicial', top: 'Open World Clock, voltar ao topo',
     features: 'Recursos', converter: 'Conversor', planner: 'Planejador', map: 'Mapa-múndi', faq: 'Dúvidas',
-    alt: 'Alternativa ao Relógio do Windows', multi: 'Vários fusos horários', download: 'Baixar', privacy: 'Privacidade',
+    alt: 'Alternativa ao Relógio do Windows', wtb: 'Alternativa ao World Time Buddy', multi: 'Vários fusos horários', download: 'Baixar', privacy: 'Privacidade',
     fFaq: 'Perguntas frequentes', fConverter: 'Conversor de fuso horário', fPlanner: 'Planejador de reuniões', fMulti: 'Vários fusos horários no Windows',
     help: 'Ajuda', source: 'Código-fonte no GitHub', kofi: 'Apoie o criador no Ko-fi',
     support: 'Apoie o criador', supportName: 'Apoie o criador no Ko-fi', fab: 'Apoie o criador', fabName: 'Apoie o criador no Ko-fi',
@@ -64,7 +64,7 @@ const W = {
     skip: 'Saltar al contenido', main: 'Principal', footer: 'Pie de página', language: 'Idioma', menu: 'Menú', theme: 'Tema',
     home: 'Open World Clock, inicio', top: 'Open World Clock, volver arriba',
     features: 'Funciones', converter: 'Convertidor', planner: 'Planificador', map: 'Mapa mundial', faq: 'Preguntas',
-    alt: 'Alternativa al Reloj de Windows', multi: 'Varias zonas horarias', download: 'Descargar', privacy: 'Privacidad',
+    alt: 'Alternativa al Reloj de Windows', wtb: 'Alternativa a World Time Buddy', multi: 'Varias zonas horarias', download: 'Descargar', privacy: 'Privacidad',
     fFaq: 'Preguntas frecuentes', fConverter: 'Convertidor de zona horaria', fPlanner: 'Planificador de reuniones', fMulti: 'Varias zonas horarias en Windows',
     help: 'Ayuda', source: 'Código fuente en GitHub', kofi: 'Apoya al creador en Ko-fi',
     support: 'Apoya al creador', supportName: 'Apoya al creador en Ko-fi', fab: 'Apoya al creador', fabName: 'Apoya al creador en Ko-fi',
@@ -133,7 +133,7 @@ export function footerHtml(lang, slug, mark = true) {
       <ul class="footer-pages">
 ${[li('features', w.features), li('download', w.download), li('faq', w.fFaq), li('time-zone-converter', w.fConverter),
   li('meeting-planner', w.fPlanner), li('world-map', w.map), li('windows-clock-alternative', w.alt),
-  li('multiple-time-zones-windows', w.fMulti), li('privacy', w.privacy), li('support', w.help)].join('\n')}
+  li('multiple-time-zones-windows', w.fMulti), li('world-time-buddy-alternative', w.wtb), li('privacy', w.privacy), li('support', w.help)].join('\n')}
       <li><a data-link="repo" href="${REPO}">${w.source}</a></li>
       <li><a href="${KOFI}" target="_blank" rel="noopener" data-kofi="footer">${w.kofi}</a></li>
       </ul>
@@ -229,7 +229,9 @@ export function applyStore(html, { live, storeUrl, setupUrl }) {
   html = html.replace(/("installUrl":\s*")[^"]*"/g, `$1${live ? storeUrl : setupUrl}"`);
   html = html.replace(/("processorRequirements":\s*")[^"]*"/g, `$1${live ? 'x64 or ARM64' : 'x64'}"`);
   const esc = storeUrl.replace(/[.?*+^$()[\]{}|\\/]/g, '\\$&');
-  if (live) html = html.replace(/("sameAs":\s*\[)(?!\s*"https:\/\/apps\.microsoft)(\s*)/g, `$1$2"${storeUrl}",$2`);
+  // only the app's sameAs: a Person's list starts with a GitHub profile (github.com/name, no repo), and the Store
+  // listing is the app, not its author
+  if (live) html = html.replace(/("sameAs":\s*\[)(?!\s*"https:\/\/apps\.microsoft)(?!\s*"https:\/\/github\.com\/[^/"]+")(\s*)/g, `$1$2"${storeUrl}",$2`);
   else html = html.replace(new RegExp(`("sameAs":\\s*\\[[^\\]]*?)"${esc}",\\s*`, 'g'), '$1');
   return html;
 }

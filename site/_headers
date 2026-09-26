@@ -42,6 +42,8 @@
   Cache-Control: public, max-age=0, must-revalidate
 /multiple-time-zones-windows
   Cache-Control: public, max-age=0, must-revalidate
+/world-time-buddy-alternative
+  Cache-Control: public, max-age=0, must-revalidate
 /support
   Cache-Control: public, max-age=0, must-revalidate
 /pt/
@@ -64,6 +66,8 @@
   Cache-Control: public, max-age=0, must-revalidate
 /pt/multiple-time-zones-windows
   Cache-Control: public, max-age=0, must-revalidate
+/pt/world-time-buddy-alternative
+  Cache-Control: public, max-age=0, must-revalidate
 /pt/support
   Cache-Control: public, max-age=0, must-revalidate
 /es/
@@ -85,6 +89,8 @@
 /es/windows-clock-alternative
   Cache-Control: public, max-age=0, must-revalidate
 /es/multiple-time-zones-windows
+  Cache-Control: public, max-age=0, must-revalidate
+/es/world-time-buddy-alternative
   Cache-Control: public, max-age=0, must-revalidate
 /es/support
   Cache-Control: public, max-age=0, must-revalidate
