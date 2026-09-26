@@ -1,0 +1,59 @@
+{
+  "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+  "version": "v1.1.0",
+  "entity": {
+    "type": "individual",
+    "role": "owner",
+    "name": "João Carvalho",
+    "email": "support@openworldclock.com",
+    "description": "Independent developer in São Paulo, Brazil. I build and maintain Open World Clock on my own, and keep it free, open source and free of ads and telemetry.",
+    "webpageUrl": { "url": "https://openworldclock.com" }
+  },
+  "projects": [
+    {
+      "guid": "open-world-clock",
+      "name": "Open World Clock",
+      "description": "A free, open source world clock for Windows 10 and 11, made for working with people in other time zones. Your cities side by side, type a time or scroll any clock and every city converts, a meeting planner that finds the hours when everyone is working, and a live day and night map. English, Portuguese and Spanish, keyboard and screen reader support. No ads, no account, no telemetry, works offline. A web version runs on openworldclock.com and a native iPhone app is in progress. Funding goes to maintenance, code signing, the iPhone app and accessibility work.",
+      "webpageUrl": { "url": "https://openworldclock.com" },
+      "repositoryUrl": {
+        "url": "https://github.com/joaoCarvalho1000/open-world-clock",
+        "wellKnown": "https://github.com/joaoCarvalho1000/open-world-clock/blob/main/.well-known/funding-manifest-urls"
+      },
+      "licenses": ["spdx:MIT"],
+      "tags": ["windows", "desktop-app", "productivity", "time-zones", "remote-work", "privacy", "accessibility", "electron"]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "guid": "ko-fi",
+        "type": "payment-provider",
+        "address": "https://ko-fi.com/joaothecarvalho",
+        "description": "One-time or monthly support through Ko-fi."
+      }
+    ],
+    "plans": [
+      {
+        "guid": "supporter",
+        "status": "active",
+        "name": "Supporter",
+        "description": "Buy the maintainer a coffee, once or every month.",
+        "amount": 5,
+        "currency": "USD",
+        "frequency": "one-time",
+        "channels": ["ko-fi"]
+      },
+      {
+        "guid": "maintenance",
+        "status": "active",
+        "name": "Maintenance",
+        "description": "Covers code signing, the Apple developer fee, hosting and ongoing maintenance for a year.",
+        "amount": 1200,
+        "currency": "USD",
+        "frequency": "yearly",
+        "channels": ["ko-fi"]
+      }
+    ],
+    "history": []
+  }
+}

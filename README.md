@@ -187,7 +187,7 @@ An iPhone version is in progress under [apple/](apple/): a native SwiftUI app wi
 
 ## Contributing
 
-Bug reports and ideas are welcome as [issues](https://github.com/joaoCarvalho1000/open-world-clock/issues). I'm not accepting pull requests right now. For security issues, see [SECURITY.md](SECURITY.md).
+Bug reports, ideas and translation fixes are welcome as [issues](https://github.com/joaoCarvalho1000/open-world-clock/issues); see [CONTRIBUTING.md](CONTRIBUTING.md). For security issues, see [SECURITY.md](SECURITY.md).
 
 ## Support
 
