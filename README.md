@@ -127,7 +127,7 @@ The installer and portable exe are not code-signed yet, so SmartScreen may show 
 
 The same app runs right on the home page, [openworldclock.com](https://openworldclock.com/): the cards, converter, planner, map, search, keyboard shortcuts, themes and languages. It is not a separate version. [scripts/build-web.mjs](scripts/build-web.mjs) builds it into `site/app/` from the Windows app's own renderer (`src/renderer/`) plus a thin browser layer in [web/](web/), so a change to the app reaches the web on the next build. `site/app/` is what the home page shows in its frame; it is not a page of its own.
 
-Cities and settings stay in your browser's local storage. Window features such as pinning, the tray, launch at login and background opacity are left out. Share copies a link to your cities and the time you are converting; everything is in the part of the link after `#`, which browsers never send to a server. Details, tests and how it is adapted: [web/README.md](web/README.md).
+Cities and settings stay in your browser's local storage. Window features such as pinning, the tray, launch at login and background opacity are left out. Share copies a link to your cities and the time you are converting; everything is in the part of the link after `#`, which browsers never send to a server.
 
 ## Privacy
 
@@ -147,7 +147,7 @@ npm start
 1. `test/deep.js` inside the real Electron window: boot state, half-hour and 45-minute offsets, conversions across both DST edges and the year boundary, menus, search, keyboard, hostile settings values, themes, persistence and the security hardening. It uses a throwaway settings folder and its own single-instance lock, so your own settings are never touched and `npm test` and `npm run shots` can run while the installed app is open. If the test app fails to start, its stderr is kept in `test/deep-stderr.log`.
 2. Node's test runner over `test/unit/`: time math, sunrise and sunset, the map, color contrast, launch at login, the first-run 12 or 24 hour choice, the backoff that reloads a crashed window, the check that only the app's own page can use the IPC bridge, and the website's analytics proxy.
 
-The web app has its own tests in `test/web/` (see [web/README.md](web/README.md#tests)). Two checks catch generated files that fell behind their sources: `node scripts/build-web.mjs --check` for `site/app/`, and `node scripts/build-icons.mjs --check` for every icon, tile and logo image made from the masters in `build/logo/` (it needs `npm install` in `build/icons-tools` once).
+The web app has its own tests in `test/web/`. Two checks catch generated files that fell behind their sources: `node scripts/build-web.mjs --check` for `site/app/`, and `node scripts/build-icons.mjs --check` for every icon, tile and logo image made from the masters in `build/logo/` (it needs `npm install` in `build/icons-tools` once).
 
 Packaging writes to `dist/`:
 
@@ -179,11 +179,11 @@ scripts/      packaging hook (Electron fuses), packaged-build smoke test, web ap
 build/        logo masters (build/logo) and the app icons and Store tiles that scripts/build-icons.mjs makes from them
 ```
 
-[CONTRACT.md](CONTRACT.md) documents the settings, the IPC bridge and the DOM hooks the tests rely on. [CHANGELOG.md](CHANGELOG.md) covers what changed in each version.
+[CHANGELOG.md](CHANGELOG.md) covers what changed in each version.
 
 ## iPhone
 
-An iPhone version is in progress under [apple/](apple/): a native SwiftUI app with Home Screen, Lock Screen and StandBy widgets. The core logic is a Swift package tested against the same reference data (`shared/golden.json`) that is generated from the Windows app's own code, so both apps compute the same times, sunsets and overlaps. Building the app needs a Mac with Xcode. See [apple/README.md](apple/README.md).
+An iPhone version is in progress under [apple/](apple/): a native SwiftUI app with Home Screen, Lock Screen and StandBy widgets. The core logic is a Swift package tested against the same reference data (`shared/golden.json`) that is generated from the Windows app's own code, so both apps compute the same times, sunsets and overlaps. Building the app needs a Mac with Xcode.
 
 ## Contributing
 

@@ -184,7 +184,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             archive
 
-      # Informational for now: the script has not run on a real build yet (see apple/README.md, CI).
+      # Informational for now: the script has not run on a real build yet.
       - name: Check bundle contents
         continue-on-error: true
         run: bash apple/ci/check-bundle.sh "$ARCHIVE/Products/Applications"

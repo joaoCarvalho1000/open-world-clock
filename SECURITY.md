@@ -28,8 +28,7 @@ fine.
 ## Scope
 
 - The Windows app: the installer, the portable exe and the Microsoft Store build.
-- The web app on the home page, https://openworldclock.com/, built from the Windows app's renderer by `scripts/build-web.mjs`
-  ([web/README.md](web/README.md)).
+- The web app on the home page, https://openworldclock.com/, built from the Windows app's renderer by `scripts/build-web.mjs`.
 - The iPhone app and its widgets, which are still in development.
 - The website, openworldclock.com, and its `/ingest` analytics proxy (the Cloudflare Pages Function in
   [cloudflare/](cloudflare/)).

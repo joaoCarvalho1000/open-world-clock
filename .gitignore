@@ -59,3 +59,17 @@ store/
 apple/appstore/
 build/logo/SPEC.md
 marketing-video/
+
+# Internal notes and maintainer docs (kept locally, not published)
+cloudflare/SEARCH-STATUS.md
+docs/SEO-LOCATION-PLAN.md
+docs/SEO-LANDING-HANDOFF.md
+docs/OUTREACH-DRAFTS.md
+CONTRACT.md
+apple/CORE_API.md
+apple/README.md
+scripts/perf/README.md
+web/README.md
+cloudflare/README.md
+site/README.md
+build/logo/README.md
