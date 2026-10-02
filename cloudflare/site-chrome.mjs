@@ -22,6 +22,7 @@
 // check (npm test). Slugs stay English in every language (/pt/features), so a page's three addresses differ only in
 // the prefix.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { extraSlugs } from './seo-content.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -36,7 +37,7 @@ const NAME = { en: 'English', pt: 'Português', es: 'Español' };
 const CODE = { en: 'EN', pt: 'PT', es: 'ES' };
 // every public page, by slug ('' is the home page); 404 has no canonical and no hreflang (noindex)
 export const PAGES = ['', 'features', 'download', 'faq', 'time-zone-converter', 'meeting-planner', 'world-map',
-  'windows-clock-alternative', 'multiple-time-zones-windows', 'world-time-buddy-alternative', 'support', 'privacy', '404'];
+  'windows-clock-alternative', 'multiple-time-zones-windows', 'world-time-buddy-alternative', 'support', 'privacy', ...extraSlugs, '404'];
 
 // the nav and footer words, in the app's own terms for each language (src/renderer/i18n.js)
 const W = {
@@ -122,6 +123,11 @@ export function navHtml(lang, slug, headerAttrs) {
 }
 
 export function footerHtml(lang, slug, mark = true) {
+  const searchLabels = {
+    en: ['Daylight saving & meetings', 'Always-on-top clock', 'Press'],
+    pt: ['Horário de verão e reuniões', 'Relógio sempre visível', 'Imprensa'],
+    es: ['Horario de verano y reuniones', 'Reloj siempre visible', 'Prensa']
+  }[lang];
   const w = W[lang], home = slug === '', a = lang === 'en' && home ? '' : '/';
   const cur = (s) => (s === slug ? ' aria-current="page"' : '');
   const li = (s, text) => `      <li><a href="${path(lang, s)}"${cur(s)}>${text}</a></li>`;
@@ -133,7 +139,9 @@ export function footerHtml(lang, slug, mark = true) {
       <ul class="footer-pages">
 ${[li('features', w.features), li('download', w.download), li('faq', w.fFaq), li('time-zone-converter', w.fConverter),
   li('meeting-planner', w.fPlanner), li('world-map', w.map), li('windows-clock-alternative', w.alt),
-  li('multiple-time-zones-windows', w.fMulti), li('world-time-buddy-alternative', w.wtb), li('privacy', w.privacy), li('support', w.help)].join('\n')}
+  li('multiple-time-zones-windows', w.fMulti), li('world-time-buddy-alternative', w.wtb),
+  li('daylight-saving-meetings', searchLabels[0]), li('always-on-top-world-clock', searchLabels[1]),
+  li('press', searchLabels[2]), li('privacy', w.privacy), li('support', w.help)].join('\n')}
       <li><a data-link="repo" href="${REPO}">${w.source}</a></li>
       <li><a href="${KOFI}" target="_blank" rel="noopener" data-kofi="footer">${w.kofi}</a></li>
       </ul>
@@ -152,6 +160,8 @@ export function headLinks(lang, slug) {
 
 // the page with its shared parts rewritten; throws when a part it expects is missing
 export function applyChrome(html, lang, slug) {
+  // Windows editors can introduce CRLF; normalize before replacing line-based metadata.
+  html = html.replace(/\r/g, '');
   const w = W[lang], problems = [];
   const need = (re, what) => { if (!re.test(html)) problems.push('no ' + what); };
   need(/<header class="nav[^"]*"[^>]*>[\s\S]*?<\/header>/, 'nav <header>');

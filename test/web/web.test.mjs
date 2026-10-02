@@ -78,6 +78,8 @@ const todayIn = (zone) => new Intl.DateTimeFormat('en-CA', { timeZone: zone, yea
 // ---------- runner ----------
 const results = [];
 async function check(name, fn) {
+  const filter = argVal('--filter', '');
+  if (filter && !new RegExp(filter).test(name)) return;
   const t0 = Date.now();
   try {
     await fn();
@@ -192,7 +194,7 @@ await check('the home page hero runs the app, with the default cities and live t
     const f = document.getElementById('heroApp'), r = f.getBoundingClientRect();
     return { h1: document.querySelector('.hero h1').textContent, src: f.getAttribute('src'), title: f.title, top: r.top, height: r.height, store: !!document.querySelector('.hero [data-link="store"]') };
   });
-  assert(hero.h1.startsWith('Who’s awake, anywhere.'), hero.h1);
+  assert(hero.h1.startsWith('The world clock Windows should have shipped with.'), hero.h1);
   eq(hero.src, '/app/#lang=en', 'frame source (the page tells the app its language)');
   assert(/Open World Clock/.test(hero.title), 'the frame has a title for screen readers');
   assert(hero.store, 'the Store button stays in the hero');
@@ -464,7 +466,7 @@ await check('switches the language to Portuguese, then Spanish, and back', async
   await F.waitForFunction(() => document.documentElement.lang === 'pt-BR');
   eq(await F.$eval('#panelTitle', (n) => n.textContent), 'Configurações', 'panel title');
   eq(await F.$eval('#webSave', (n) => n.textContent), 'Salvar estas cidades', 'banner button');
-  eq(await F.$eval('.web-help-free a', (n) => n.textContent), 'Grátis e de código aberto. Sem conta, sem anúncios.', 'free and open source line');
+  eq(await F.$eval('.web-help-free a', (n) => n.textContent), 'Grátis e de código aberto. Sem cadastro, sem anúncios.', 'free and open source line');
   eq((await saved(A)).language, 'pt', 'saved language');
   await F.select('#optLanguage', 'es');
   await F.waitForFunction(() => /^es/.test(document.documentElement.lang));
@@ -621,7 +623,7 @@ await check('page language from the hash: #lang=pt at load and #lang=es later se
   await PF.waitForFunction(() => document.documentElement.lang === 'pt-BR');
   eq(await PF.evaluate(() => location.hash), '#lang=pt', 'frame hash');
   eq(await PF.$eval('#btnDayText', (n) => n.textContent), 'Hoje', 'converter day in Portuguese');
-  eq(await PF.$eval('.web-help-free a', (n) => n.textContent), 'Grátis e de código aberto. Sem conta, sem anúncios.', 'web string in Portuguese');
+  eq(await PF.$eval('.web-help-free a', (n) => n.textContent), 'Grátis e de código aberto. Sem cadastro, sem anúncios.', 'web string in Portuguese');
   eq(await PF.evaluate(() => window.wc.getSettings().then((s) => s.language)), 'auto', 'the saved language stays auto');
   // a new hash on the frame (the page switched language without a reload): Spanish at once
   await PF.evaluate(() => { location.hash = 'lang=es'; });
@@ -863,7 +865,7 @@ await browser.close();
 try { await srv.close(); } catch { /* already closed */ }
 
 // ======================= report =======================
-fs.writeFileSync(path.join(SHOTS, 'metrics.json'), JSON.stringify({ metrics, results }, null, 2) + '\n');
+fs.writeFileSync(path.join(SHOTS, argVal('--filter', '') ? 'metrics-filtered.json' : 'metrics.json'), JSON.stringify({ metrics, results }, null, 2) + '\n');
 console.log('\nmetrics:');
 for (const [k, v] of Object.entries(metrics)) console.log(`  ${k}: ${JSON.stringify(v)}`);
 console.log(`screenshots: ${shots.length} in ${SHOTS}`);

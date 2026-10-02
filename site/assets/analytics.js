@@ -216,7 +216,8 @@
   function heroUse(action) {
     if (!HERO_ACTIONS[action] || heroUsed[action]) return;
     heroUsed[action] = 1;
-    track('hero_app_used', { action: action });
+    var tool = document.querySelector('#heroApp[data-tool]');
+    track(tool ? 'tool_used' : 'hero_app_used', tool ? { action: action, tool: tool.dataset.tool } : { action: action });
   }
   var heroFrame = document.querySelector('#heroApp'), hookedDoc = null;
   function hookHero() {

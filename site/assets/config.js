@@ -24,7 +24,7 @@
      any other host send nothing. */
 window.SITE = {
   name: 'Open World Clock',
-  version: '1.3.0',           // the release the Installer and Portable buttons download; keep in step with package.json
+  version: '1.3.1',           // the release the Installer and Portable buttons download; keep in step with package.json
   storeLive: true,          // the Store listing is live (approved 2026-09-26): Store buttons shown, direct downloads as the alternative
   storeUrl: 'https://apps.microsoft.com/detail/9N88FR8M81BM',      // Microsoft Store listing, without ?cid (added per link)
   downloadBase: 'https://download.openworldclock.com', // the R2 bucket that serves the installer and portable exe

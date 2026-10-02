@@ -64,8 +64,8 @@ It is completely free, with no strings attached. You should not have to pay for 
 
 - **Microsoft Store (recommended):** [Open World Clock on the Microsoft Store](https://apps.microsoft.com/detail/9N88FR8M81BM?cid=github-readme). One click to install, signed by Microsoft, runs natively on x64 and ARM64, and keeps itself updated.
 - **winget:** `winget install 9N88FR8M81BM -s msstore`, the same Store build from the command line.
-- **Installer:** [Open-World-Clock-1.3.0-setup.exe](https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe), per user, no admin rights.
-- **Portable exe:** [Open-World-Clock-1.3.0-portable.exe](https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe), runs from any folder and never updates itself.
+- **Installer:** [Open-World-Clock-1.3.1-setup.exe](https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe), per user, no admin rights.
+- **Portable exe:** [Open-World-Clock-1.3.1-portable.exe](https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe), runs from any folder and never updates itself.
 - **In your browser:** the same app runs right on the home page, [openworldclock.com](https://openworldclock.com/), with nothing to install; see [Web app](#web-app) below.
 
 The installer and the portable exe come straight from openworldclock.com; their SHA-256 checksums are on the [download page](https://openworldclock.com/download).
@@ -156,6 +156,7 @@ Packaging writes to `dist/`:
 | `npm run dist` | `Open-World-Clock-x.y.z-setup.exe` and `Open-World-Clock-x.y.z-portable.exe` |
 | `npm run dist:store` | `Open-World-Clock-x.y.z-x64.appx` and `Open-World-Clock-x.y.z-arm64.appx` for the Microsoft Store (unsigned; the Store signs them) |
 | `npm run dist:all` | All four files in one run |
+| `npm run dist:release` | The same two files as `npm run dist`, code-signed when the signing variables described in `scripts/signing.js` are set, and unsigned otherwise |
 
 The setup and portable exes are x64 only; the Store packages cover x64 and ARM64.
 
@@ -163,7 +164,7 @@ After packaging, `node scripts/smoke-packaged.mjs` starts a copy of `dist/win-un
 
 Releases can also be built by [.github/workflows/release.yml](.github/workflows/release.yml) when a version tag is pushed: it builds the installer and portable exe, runs the same smoke test and attaches them to a draft release with a provenance attestation.
 
-The app has update code for the installer build, but it is off. Installer builds do not contain `electron-updater` (it is a devDependency, and the app skips the check when the module is missing), and `build.extraMetadata.wcUpdates` is `false` in `package.json`. Turning updates on means code-signing the builds, setting `wcUpdates` to `true` and moving `electron-updater` back to `dependencies`. Until then, updating means downloading the new version.
+The app has update code for the installer build, but it is off: the builds are not code-signed yet, and `build.extraMetadata.wcUpdates` is `false` in `package.json`. Builds include `electron-updater` but never load it while updates are off. Only a signed build turns them on: `npm run dist:release` (also run by the release workflow) signs with Azure Artifact Signing or a certificate from the Windows certificate store when the signing variables are set, and only then sets `wcUpdates`. A signed install then checks `https://download.openworldclock.com/latest.yml` and accepts only an installer signed by the same publisher. The portable exe and the Store build never update themselves. Until the first signed release, updating means downloading the new version.
 
 ## Project layout
 

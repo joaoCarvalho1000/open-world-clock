@@ -171,6 +171,22 @@ On Windows, if the build fails with "Unexpected import in JSON" pointing at a `p
 
 ## Maintenance
 
+### Search publishing
+
+- Run `npm run prepare:site` to regenerate the curated pages, language links, sitemap, asset hashes and CSP. `npm run seo` is the read-only search gate; it also runs before deployment.
+- `npm run deploy` now runs an IndexNow postdeploy hook. It verifies the public key file before notifying `https://api.indexnow.org/indexnow`. The key is public proof of site ownership, not a credential. `indexnow-key.txt` and its matching file in `site/` must stay in sync.
+- `npm run indexnow` is a dry run. `node indexnow.mjs --submit` retries notification after a successful deployment. The local manifest is `.wrangler/seo-indexnow-state.json`; preserve it between deploys to send only changed and deleted URLs. The first run submits the full canonical sitemap. An unsuccessful notification leaves the manifest unchanged, and does not undo a deployment. Receipt is not a promise of indexing.
+- Google does not use IndexNow. Verify a Search Console domain property for `openworldclock.com`, using the exact DNS token Google supplies; then submit `https://openworldclock.com/sitemap.xml`. Inspect `/`, `/time-zone-converter`, `/meeting-planner`, `/london-to-new-york-time`, `/pt/` and `/es/`. Check Google-selected canonicals and indexing exclusions. No verification token is fabricated in the repository.
+- In Bing Webmaster Tools, import the verified Google property or use Bing's own verification method. Submit the same sitemap and inspect the same priority pages. Check Cloudflare's verified-bot logs before changing any bot rules.
+
+### Weekly search review
+
+Track Google and Bing separately: non-brand clicks and impressions, priority-page indexing, query/page CTR, and country/device/language. Compare each page's organic visits with trusted `tool_used` / `hero_app_used`, then Store or installer clicks. A Store click is not an install; confirmed installs require Microsoft's acquisition reports. Cookieless analytics with opt-outs are directional, not a complete census.
+
+Use the existing events to create: (1) an organic landing-page trend, (2) a landing-page to tool-action to download-click funnel, (3) a language/device breakdown. Search Console and Bing provide the search-query side; keep personal city selections out of analytics. Real-user LCP/INP/CLS should be reviewed in Search Console/PageSpeed when traffic is sufficient, alongside the local browser metrics.
+
+The first content pilot is ten city pairs in three languages. Review indexing and useful interactions before adding more routes. `/press` supplies facts, screenshots, logo files and the contact link for editorial coverage; contact publishers individually only when outreach is authorized. No automated outreach is performed by deployment.
+
 - Before a release: `npm run links` (the deploy runs it anyway). After changing `check-links.mjs`, `npm test`.
 - Edited a nav or footer label, or added a page? Edit the table in `site-chrome.mjs` and run `node cloudflare/site-chrome.mjs --write` (or `npm run chrome:write` here), then `npm test`.
 - Edited an inline `<script>` in `site/*.html` (or the Portuguese and Spanish pages)? Run `node cloudflare/csp-hashes.mjs --write` (or `npm run csp:write` here) before deploying; `npm run csp` checks without writing.

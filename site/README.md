@@ -1,5 +1,17 @@
 # Open World Clock website
 
+## Search tools (October 2026)
+
+The converter, planner and day/night map now contain the real app at their own URLs in all three languages. `assets/tool-page.js` handles startup, initial view, failure/retry, sharing and preserving cities when switching tools. `assets/tools.css` extends the existing visual system. `/app/` remains noindex; all descriptive content and navigation live in the parent HTML. The converter's older standalone demo is no longer loaded on its landing page.
+
+`cloudflare/seo-content.mjs` owns a curated set of ten city pairs and localized editorial copy. `scripts/build-seo-pages.mjs` generates those comparison pages plus daylight-saving, always-on-top and press pages (39 new pages across three languages). Conversion tables use `src/renderer/time.js` and explicitly dated examples. Change the review date only when reviewing the content; never give unchanged pages a daily lastmod. Hand-edit the existing tool guides; edit the generator/data for generated pages.
+
+Run `npm run prepare:site --prefix cloudflare` after editorial changes. It rebuilds these pages, shared chrome, the HTML-only sitemap, asset versions and CSP hashes. `npm run seo --prefix cloudflare` validates the 75 public HTML pages. Ordinary hash-based shared configurations are not separate indexable pages.
+
+Dedicated pages emit `tool_used` with `tool` (converter, planner, map) and `action`, once per trusted action per page view. The homepage retains `hero_app_used`. No city, time, setting or shared hash is added to events. The existing opt-out and local-preview gates still apply.
+
+`test/web/seo.test.mjs` verifies the tool routes, languages, share round trips, DST, native date picker, recovery and mobile/desktop themes. It writes review screenshots and local lab measurements under `dist/seo-shots/`. Supply `PUPPETEER_CORE` as described in `web/README.md`. These lab measurements are not field Core Web Vitals.
+
 Static marketing site for Open World Clock, the free world clock for Windows, served at **https://openworldclock.com** (canonical) from Cloudflare Pages, in the app's three languages: English at `/`, Brazilian Portuguese at `/pt/` and Spanish at `/es/` (see Languages below). No build step, no frameworks, and no third-party requests from the browser: the only analytics (PostHog, cookieless) go through our own `/ingest` path, and Ko-fi loads only when a visitor clicks Support. It still works from `file://` (analytics simply stay off there).
 
 ## Files

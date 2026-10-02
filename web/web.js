@@ -93,6 +93,36 @@
   new MutationObserver(applyStrings).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   applyStrings();
 
+  // The seven quick dates remain; a native picker also handles meetings months ahead.
+  // Reuse the renderer's conversion input so DST and repeated/skipped hours stay identical.
+  {
+    const chips = $('dateChips');
+    const labelText = () => ({ en: 'Choose another date', pt: 'Escolher outra data', es: 'Elegir otra fecha' }[lang()]);
+    const addCalendar = () => {
+      if (!chips || chips.hidden || chips.querySelector('.web-calendar')) return;
+      const label = document.createElement('label'); label.className = 'web-calendar';
+      const text = document.createElement('span'); text.textContent = labelText();
+      const input = document.createElement('input'); input.type = 'date'; input.id = 'webCalendar';
+      input.min = '1900-01-01'; input.max = '2100-12-31';
+      const zone = $('convZone').value;
+      input.value = $('convDate').value || todayIn(zone);
+      input.addEventListener('keydown', e => { if (e.key !== 'Escape') e.stopPropagation(); });
+      input.addEventListener('change', () => {
+        if (!input.value || !input.validity.valid) return;
+        const field = $('convTime');
+        if (!window.WCTime.parseTime(field.value)) {
+          const now = window.WCTime.parts($('convZone').value, new Date(), { hourCycle:'h23', hour:'2-digit', minute:'2-digit' });
+          field.value = `${now.hour}:${now.minute}`;
+        }
+        $('convDate').value = input.value; delete $('convDate').dataset.auto;
+        $('convDate').dispatchEvent(new Event('input', { bubbles:true }));
+        if (!chips.hidden) $('btnDay').click();
+      });
+      label.append(text, input); chips.append(label);
+    };
+    if (chips) new MutationObserver(addCalendar).observe(chips, { childList:true, attributes:true, attributeFilter:['hidden'] });
+  }
+
   // ---------- status toast (role=status, so screen readers hear it) ----------
   const toastEl = $('webToast');
   let toastTimer = 0;
@@ -427,13 +457,13 @@
     }, { capture: true, passive: true });
   }
 
-  // ---------- the hero's frame fits the planner on phones ----------
+  // ---------- the hero's frame fits the planner ----------
   // The home page gives the frame a fixed height before anything loads (site.css --frame-h, so the page never moves).
-  // On phones (the vertical layout) the planner's rows and hour scale end well before that and left the bottom of the
-  // frame empty. While the planner is open there, the frame takes the planner's natural height (the body's
-  // scrollHeight, so another city or a new head line grows it again), never more than --frame-h: the inline height
-  // is min(var(--frame-h), Npx), resolved by the home page. Closing the planner or leaving the vertical layout gives
-  // the frame its CSS height back. The change follows a press, so it is no layout shift against the page.
+  // The planner's rows and hour scale end well before that (a few cities need about 300px on desktop, less on a
+  // phone) and left the bottom of the frame empty. While the planner is open, the frame takes the planner's natural
+  // height (the body's scrollHeight, so another city or a new head line grows it again), never more than --frame-h:
+  // the inline height is min(var(--frame-h), Npx), resolved by the home page. Closing the planner gives the frame its
+  // CSS height back. The change follows a press, so it is no layout shift against the page.
   {
     const app = $('app'), planner = $('planner'), body = $('planBody');
     let host = null;
@@ -441,7 +471,7 @@
     let queued = false;
     const fit = () => {
       queued = false;
-      const on = app.classList.contains('planner-on') && app.classList.contains('layout-vertical') && !planner.hidden;
+      const on = app.classList.contains('planner-on') && !planner.hidden;
       let want = '';
       if (on) {
         const pad = parseFloat(getComputedStyle(planner).paddingBottom) || 0;

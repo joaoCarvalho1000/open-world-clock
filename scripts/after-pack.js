@@ -1,19 +1,19 @@
 // electron-builder afterPack hook: flips Electron fuses in the packaged binary before it is signed or wrapped in an
 // installer (NSIS, portable, appx all build from this unpacked folder). Fuses are compiled-in switches that turn off
-// features an installed widget never needs, so they cannot be re-enabled by command-line flags or environment variables.
+// features an installed desktop app never needs, so they cannot be re-enabled by command-line flags or environment variables.
 // https://www.electronjs.org/docs/latest/tutorial/fuses
 const fs = require('fs');
 const path = require('path');
 
-// Chromium files a clock widget never loads: the WebGPU shader compilers (DXC) and the SwiftShader Vulkan software
+// Chromium files the app never loads: the WebGPU shader compilers (DXC) and the SwiftShader Vulkan software
 // renderer with its loader. The page draws with DOM, CSS and a 2D canvas (no WebGL or WebGPU), which use ANGLE on
 // D3D11 (d3dcompiler_47.dll, kept) or Skia's software path when the GPU is off. About 33 MB less on disk.
 const UNUSED_WIN_FILES = ['dxcompiler.dll', 'dxil.dll', 'vk_swiftshader.dll', 'vk_swiftshader_icd.json', 'vulkan-1.dll'];
 
-// Auto-update needs electron-updater inside the app, but it is a devDependency (electron-builder packs only
-// dependencies), so a build that turns updates on (build.extraMetadata.wcUpdates: true) without moving it to
-// dependencies would ship an app that never updates. Fail that build here instead. Reads the package.json and the
-// module list the app actually ships (app.asar, or the app folder when asar is off). Returns what it found.
+// Auto-update needs electron-updater inside the app. electron-builder packs only dependencies, so if it ever moves
+// back to devDependencies, a build that turns updates on (build.extraMetadata.wcUpdates: true) would ship an app that
+// never updates. Fail that build here instead. Reads the package.json and the module list the app actually ships
+// (app.asar, or the app folder when asar is off). Returns what it found.
 function checkUpdater(resourcesDir) {
   const asarPath = path.join(resourcesDir, 'app.asar');
   let pkg, hasUpdater;
@@ -34,6 +34,25 @@ function checkUpdater(resourcesDir) {
   return { updates, hasUpdater };
 }
 
+// Updates may only be on in a signed website build: an unsigned app must never download and run installers, and the
+// Store build is updated by the Store. scripts/dist-release.js turns wcUpdates on together with the signing options;
+// this stops any other route to wcUpdates: true (package.json edited by hand, -c.extraMetadata.wcUpdates=true, or
+// `npm run dist:all` with updates on). `winOptions` is the merged win config, `targets` the target names being built.
+function checkUpdateBuild({ updates, targets = [], winOptions = {}, env = {} }) {
+  if (!updates) return;
+  if (targets.some((t) => /^appx$/i.test(t))) {
+    throw new Error('wcUpdates is true in a build with a Store package (appx). The Store updates the Store build; build the '
+      + 'Store packages with `npm run dist:store`, which keeps updates off.');
+  }
+  const sign = winOptions.signtoolOptions || {};
+  const signed = !!(winOptions.azureSignOptions || sign.certificateSha1 || sign.certificateSubjectName || sign.certificateFile
+    || sign.sign || env.CSC_LINK || env.WIN_CSC_LINK);
+  if (!signed) {
+    throw new Error('wcUpdates is true but this build is not code-signed. Updates stay off in unsigned builds; build with '
+      + 'signing configured (scripts/dist-release.js and the variables in scripts/signing.js).');
+  }
+}
+
 module.exports = async function afterPack(context) {
   const { flipFuses, FuseVersion, FuseV1Options } = await import('@electron/fuses');
   const platform = context.electronPlatformName;
@@ -44,7 +63,15 @@ module.exports = async function afterPack(context) {
 
   const resourcesDir = platform === 'darwin' ? path.join(exe, 'Contents', 'Resources') : path.join(context.appOutDir, 'resources');
   const upd = checkUpdater(resourcesDir);
-  console.log(`  • auto-update  ${upd.updates ? 'on (electron-updater packaged)' : 'off'}`);
+  if (platform === 'win32') {
+    checkUpdateBuild({
+      updates: upd.updates,
+      targets: (context.targets || []).map((t) => t.name),
+      winOptions: context.packager.platformSpecificBuildOptions || {},
+      env: process.env,
+    });
+  }
+  console.log(`  • auto-update  ${upd.updates ? 'on (electron-updater packaged, signed build)' : 'off'}`);
 
   if (platform === 'win32') {
     for (const f of UNUSED_WIN_FILES) fs.rmSync(path.join(context.appOutDir, f), { force: true });
@@ -67,3 +94,4 @@ module.exports = async function afterPack(context) {
   console.log(`  • electron fuses flipped  file=${path.basename(exe)}`);
 };
 module.exports.checkUpdater = checkUpdater;
+module.exports.checkUpdateBuild = checkUpdateBuild;

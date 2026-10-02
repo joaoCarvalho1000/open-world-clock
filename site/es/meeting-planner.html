@@ -3,13 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Planificador de reuniones por zona horaria | Open World Clock</title>
-<meta name="description" content="Compara el horario laboral de cada ciudad y ve las horas en que todos coinciden. Horarios y días por ciudad, turnos de noche incluidos. Gratis y sin conexión.">
+<title>Planificador de Reuniones entre Zonas Horarias | Open World Clock</title>
+<meta name="description" content="Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.">
 <link rel="canonical" href="https://openworldclock.com/es/meeting-planner">
 <link rel="alternate" hreflang="en" href="https://openworldclock.com/meeting-planner">
 <link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/meeting-planner">
 <link rel="alternate" hreflang="es" href="https://openworldclock.com/es/meeting-planner">
 <link rel="alternate" hreflang="x-default" href="https://openworldclock.com/meeting-planner">
+
+
+
+
 <meta name="theme-color" content="#ecf5fd" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a1326" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">
@@ -18,8 +22,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Open World Clock">
-<meta property="og:title" content="El horario que les sirve a todos: un planificador de reuniones para Windows">
-<meta property="og:description" content="Horario laboral y días por ciudad, turnos de noche incluidos, y las horas en común bien marcadas. Gratis y sin conexión.">
+<meta property="og:title" content="Planificador de Reuniones entre Zonas Horarias">
+<meta property="og:description" content="Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.">
 <meta property="og:url" content="https://openworldclock.com/es/meeting-planner">
 <meta property="og:image" content="https://openworldclock.com/assets/og-es.png">
 <meta property="og:image:width" content="1200">
@@ -29,9 +33,11 @@
 <meta property="og:locale" content="es_419">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="pt_BR">
+
+
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="El horario que les sirve a todos: un planificador de reuniones para Windows">
-<meta name="twitter:description" content="Horario laboral y días por ciudad, turnos de noche incluidos, y las horas en común bien marcadas. Gratis y sin conexión.">
+<meta name="twitter:title" content="Planificador de Reuniones entre Zonas Horarias">
+<meta name="twitter:description" content="Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.">
 <meta name="twitter:image" content="https://openworldclock.com/assets/og-es.png">
 <meta name="twitter:image:alt" content="Open World Clock: una franja de relojes de ciudades, con tarjetas claras para el día y azul marino para la noche, bajo la frase “El reloj mundial que le faltaba a Windows.”">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -45,110 +51,125 @@
 <script>(function(){var d=document.documentElement,n=navigator,p='system';try{p=localStorage.getItem('wc-theme')||'system'}catch(e){}d.setAttribute('data-theme-pref',p);if(p==='light'||p==='dark')d.setAttribute('data-theme',p);d.classList.add('js');if((n.userAgentData&&n.userAgentData.mobile)||/Android|iPhone|iPod/.test(n.userAgent||''))d.classList.add('not-windows')})();</script>
 <script type="application/ld+json">
 {
- "@context": "https://schema.org",
- "@graph": [
-  {
-   "@type": "WebSite",
-   "@id": "https://openworldclock.com/es/#website",
-   "url": "https://openworldclock.com/es/",
-   "name": "Open World Clock",
-   "inLanguage": "es-419"
-  },
-  {
-   "@type": "WebPage",
-   "@id": "https://openworldclock.com/es/meeting-planner#webpage",
-   "url": "https://openworldclock.com/es/meeting-planner",
-   "name": "Planificador de reuniones por zona horaria | Open World Clock",
-   "description": "Compara el horario laboral de cada ciudad y ve las horas en que todos coinciden. Horarios y días por ciudad, turnos de noche incluidos. Gratis y sin conexión.",
-   "inLanguage": "es-419",
-   "isPartOf": {
-    "@id": "https://openworldclock.com/es/#website"
-   },
-   "about": {
-    "@id": "https://openworldclock.com/#app"
-   },
-   "breadcrumb": {
-    "@id": "https://openworldclock.com/es/meeting-planner#breadcrumb"
-   },
-   "author": {
-    "@id": "https://openworldclock.com/#author"
-   },
-   "datePublished": "2026-09-25",
-   "dateModified": "2026-09-26",
-   "primaryImageOfPage": {
-    "@type": "ImageObject",
-    "url": "https://openworldclock.com/assets/img/pages/planner.webp"
-   }
-  },
-  {
-   "@type": "BreadcrumbList",
-   "@id": "https://openworldclock.com/es/meeting-planner#breadcrumb",
-   "itemListElement": [
+  "@context": "https://schema.org",
+  "@graph": [
     {
-     "@type": "ListItem",
-     "position": 1,
-     "name": "Inicio",
-     "item": "https://openworldclock.com/es/"
+      "@type": "WebSite",
+      "@id": "https://openworldclock.com/es/#website",
+      "url": "https://openworldclock.com/es/",
+      "name": "Open World Clock",
+      "inLanguage": "es-419"
     },
     {
-     "@type": "ListItem",
-     "position": 2,
-     "name": "Planificador de reuniones",
-     "item": "https://openworldclock.com/es/meeting-planner"
+      "@type": "WebPage",
+      "@id": "https://openworldclock.com/es/meeting-planner#webpage",
+      "url": "https://openworldclock.com/es/meeting-planner",
+      "name": "Planificador de Reuniones entre Zonas Horarias",
+      "description": "Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.",
+      "inLanguage": "es-419",
+      "isPartOf": {
+        "@id": "https://openworldclock.com/es/#website"
+      },
+      "about": {
+        "@id": "https://openworldclock.com/#app"
+      },
+      "breadcrumb": {
+        "@id": "https://openworldclock.com/es/meeting-planner#breadcrumb"
+      },
+      "author": {
+        "@id": "https://openworldclock.com/#author"
+      },
+      "datePublished": "2026-09-25",
+      "dateModified": "2026-10-01",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://openworldclock.com/assets/img/pages/planner.webp"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://openworldclock.com/es/meeting-planner#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://openworldclock.com/es/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Planificador de reuniones",
+          "item": "https://openworldclock.com/es/meeting-planner"
+        }
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://openworldclock.com/#author",
+      "name": "João Carvalho",
+      "url": "https://github.com/joaoCarvalho1000"
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://openworldclock.com/es/meeting-planner#howto",
+      "name": "Cómo encontrar una hora de reunión entre zonas horarias con Open World Clock",
+      "description": "Compara el horario laboral de varias ciudades y elige una hora en la que todos estén trabajando.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Agrega las ciudades",
+          "text": "Escribe cada una en el cuadro Agregar ciudad. Puedes buscar por nombre, país, abreviatura o diferencia con UTC.",
+          "url": "https://openworldclock.com/es/meeting-planner"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Abre el planificador",
+          "text": "Haz clic en el botón del planificador, en la barra superior. Cada ciudad tiene su propia fila de 24 horas.",
+          "url": "https://openworldclock.com/es/meeting-planner"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Define el horario de cada ciudad",
+          "text": "Haz clic en el nombre de una ciudad para definir su horario laboral y sus días. Todas empiezan con el horario de 09:00 a 18:00, de lunes a viernes.",
+          "url": "https://openworldclock.com/es/meeting-planner"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Elige una hora",
+          "text": "Haz clic en una hora dentro del recuadro de horas en común. Todos los relojes se convierten a esa hora, y Copiar horas lleva el resultado al portapapeles.",
+          "url": "https://openworldclock.com/es/meeting-planner"
+        }
+      ],
+      "inLanguage": "es-419",
+      "about": {
+        "@id": "https://openworldclock.com/#app"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://openworldclock.com/es/meeting-planner#tool",
+      "name": "Planificador de Reuniones entre Zonas Horarias",
+      "url": "https://openworldclock.com/es/meeting-planner",
+      "operatingSystem": "Web browser",
+      "applicationCategory": "UtilitiesApplication",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
     }
-   ]
-  },
-  {
-   "@type": "Person",
-   "@id": "https://openworldclock.com/#author",
-   "name": "João Carvalho",
-   "url": "https://github.com/joaoCarvalho1000"
-  },
-  {
-   "@type": "HowTo",
-   "@id": "https://openworldclock.com/es/meeting-planner#howto",
-   "name": "Cómo encontrar una hora de reunión entre zonas horarias con Open World Clock",
-   "description": "Compara el horario laboral de varias ciudades y elige una hora en la que todos estén trabajando.",
-   "step": [
-    {
-     "@type": "HowToStep",
-     "position": 1,
-     "name": "Agrega las ciudades",
-     "text": "Escribe cada una en el cuadro Agregar ciudad. Puedes buscar por nombre, país, abreviatura o diferencia con UTC.",
-     "url": "https://openworldclock.com/es/meeting-planner"
-    },
-    {
-     "@type": "HowToStep",
-     "position": 2,
-     "name": "Abre el planificador",
-     "text": "Haz clic en el botón del planificador, en la barra superior. Cada ciudad tiene su propia fila de 24 horas.",
-     "url": "https://openworldclock.com/es/meeting-planner"
-    },
-    {
-     "@type": "HowToStep",
-     "position": 3,
-     "name": "Define el horario de cada ciudad",
-     "text": "Haz clic en el nombre de una ciudad para definir su horario laboral y sus días. Todas empiezan con el horario de 09:00 a 18:00, de lunes a viernes.",
-     "url": "https://openworldclock.com/es/meeting-planner"
-    },
-    {
-     "@type": "HowToStep",
-     "position": 4,
-     "name": "Elige una hora",
-     "text": "Haz clic en una hora dentro del recuadro de horas en común. Todos los relojes se convierten a esa hora, y Copiar horas lleva el resultado al portapapeles.",
-     "url": "https://openworldclock.com/es/meeting-planner"
-    }
-   ],
-   "inLanguage": "es-419",
-   "about": {
-    "@id": "https://openworldclock.com/#app"
-   }
-  }
- ]
+  ]
 }
 </script>
+<link rel="stylesheet" href="/assets/tools.css?v=2715ed7b78">
 </head>
-<body class="pg-body">
+<body class="pg-body tool-page">
 <a class="skip" href="#main">Saltar al contenido</a>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
@@ -179,23 +200,10 @@
   </div>
 </header>
 <main id="main" class="pg">
-<section class="pg-hero" id="hero" aria-labelledby="h1">
-  <div class="wrap">
-    <nav class="crumbs" aria-label="Ruta de navegación"><ol><li><a href="/es/">Inicio</a></li><li><span aria-current="page">Planificador de reuniones</span></li></ol></nav>
-    <h1 id="h1">Encuentra el horario que les sirve a todos</h1>
-    <p class="pg-lede">El planificador de reuniones le da a cada ciudad una fila de 24 horas, sombrea su horario laboral y su noche, y enmarca las horas en que todos están trabajando. Viene con Open World Clock y lo tienes a un clic en tu escritorio.</p>
-    <div class="pg-cta">
-      <a class="btn btn-primary" data-store data-link="store" data-cid="site-meeting-planner" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-meeting-planner"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Descargar desde Microsoft Store</span></a>
-      <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
-      <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
-      <a class="btn btn-quiet" href="/es/features"><span>Ver todas las funciones</span><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-    </div>
-    <p class="dl-note" data-store-off hidden>Gratis para Windows 10 y 11, x64, unos 90 MB. Todavía no tiene firma de código, así que SmartScreen puede mostrar un aviso la primera vez (<a href="/es/download#smartscreen">qué hacer</a>).</p>
-    <ul class="pg-facts"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Horarios y días por ciudad</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Turnos de noche</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Resumen de horas en común</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Funciona sin conexión</li></ul>
-    
-    <figure class="shot"><div class="shot-scroll" tabindex="0" role="region" aria-label="Captura de pantalla; en pantallas pequeñas se desplaza hacia los lados"><img src="/assets/img/pages/planner.webp" srcset="/assets/img/pages/planner-half.webp 900w, /assets/img/pages/planner.webp 1800w" sizes="(min-width: 1400px) 1240px, 94vw" width="1800" height="439" alt="El planificador de reuniones con Lisboa, Londres, Nueva York y San Francisco el miércoles 23 de septiembre: una fila de 24 horas por ciudad y un recuadro en las dos horas laborales que comparten, de 16:00 a 18:00 en Lisboa." fetchpriority="high" decoding="async"></div><span class="scroll-hint">Desliza hacia los lados para ver el día completo.</span><figcaption>“<span class="nw">2 h en común</span> · 16:00 a 18:00 (Lisboa)”. Aquí el día de San Francisco empieza a las 08:00; si empezara a las 09:00, tendrían una sola hora en común.</figcaption></figure>
-  </div>
-</section>
+<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Inicio"><ol><li><a href="/es/">Inicio</a></li><li><span aria-current="page">Planificador de reuniones</span></li></ol></nav><h1 id="h1">Encuentra una hora que les venga bien a todos.</h1><p class="pg-lede">Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.</p><nav class="tool-nav" aria-label="Sigue explorando"><a href="/es/time-zone-converter">Convertidor de zona horaria</a><a href="/es/meeting-planner" aria-current="page">Planificador de reuniones</a><a href="/es/world-map">Mapa de día y noche</a></nav>
+<div class="tool-window is-loading"><div class="app-win-bar"><span class="tool-status" id="toolStatus" role="status">Cargando los relojes…</span><button class="app-win-share tool-retry" id="toolRetry" type="button" hidden>Volver a intentar</button><button class="app-win-share" id="heroShare" type="button" disabled>Compartir</button></div>
+<iframe class="app-frame" id="heroApp" data-tool="planner" data-cities="" title="Planificador de reuniones" allow="clipboard-write"></iframe><input class="tool-share-link" id="toolShareLink" readonly hidden aria-label="Compartir"></div>
+<noscript><p class="pg-sub">Activa JavaScript para usar la herramienta. Los ejemplos de abajo funcionan sin él.</p></noscript><div class="tool-after"><p>Gratis y sin cuenta. Tus ciudades guardadas siguen siendo tuyas.</p><a href="/es/download">Tenlo en tu escritorio Windows</a></div></div></section>
 <section class="pg-sec cols" id="steps" aria-labelledby="steps-h">
   <div class="wrap">
     <div class="sec-head"><h2 id="steps-h">Una hora para tu reunión, en cuatro pasos</h2></div>
@@ -242,6 +250,8 @@
     </ul>
   </div>
 </section>
+
+<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Guías útiles</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/es/daylight-saving-meetings">Horario de Verano en EE. UU. y Europa: Reuniones de 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/always-on-top-world-clock">Reloj Mundial Siempre Visible para Windows 11 y 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/time-zone-converter">Convertidor de zona horaria<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
 <section class="cta-band" id="download" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="cta-card rv">
@@ -251,8 +261,8 @@
       <div class="pg-cta">
         <a class="btn btn-primary" data-store data-link="store" data-cid="site-meeting-planner" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-meeting-planner"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Descargar desde Microsoft Store</span></a>
         <a class="btn btn-quiet" data-store href="/es/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Otras descargas</span></a>
-        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
-        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
+        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
+        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
       </div>
       <p class="dl-note" data-store-off hidden>Gratis para Windows 10 y 11, x64, unos 90 MB. Todavía no tiene firma de código, así que SmartScreen puede mostrar un aviso la primera vez (<a href="/es/download#smartscreen">qué hacer</a>).</p>
       <p class="dl-kofi"><a href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="download"><svg class="i" aria-hidden="true"><use href="#i-cup"/></svg>Apoya al creador en Ko-fi</a></p>
@@ -274,6 +284,9 @@
       <li><a href="/es/windows-clock-alternative">Alternativa al Reloj de Windows</a></li>
       <li><a href="/es/multiple-time-zones-windows">Varias zonas horarias en Windows</a></li>
       <li><a href="/es/world-time-buddy-alternative">Alternativa a World Time Buddy</a></li>
+      <li><a href="/es/daylight-saving-meetings">Horario de verano y reuniones</a></li>
+      <li><a href="/es/always-on-top-world-clock">Reloj siempre visible</a></li>
+      <li><a href="/es/press">Prensa</a></li>
       <li><a href="/es/privacy">Privacidad</a></li>
       <li><a href="/es/support">Ayuda</a></li>
       <li><a data-link="repo" href="https://github.com/joaoCarvalho1000/open-world-clock">Código fuente en GitHub</a></li>
@@ -286,10 +299,11 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Apoya al creador en Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Apoya al creador</span></a>
-<script src="/assets/config.js?v=65b3fa7d24"></script>
+<script src="/assets/config.js?v=53bcecc7ff"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
-<script src="/assets/analytics.js?v=ec35845c3e" defer></script>
+<script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
+<script src="/assets/tool-page.js?v=a076815e08" defer></script>
 </body>
 </html>

@@ -576,7 +576,9 @@ select option:disabled { color: var(--fg-3); }
 
 /* ---------- meeting planner ---------- */
 .app.planner-on .strip { display: none; }
-.planner { --plan-label: clamp(150px, 14vw, 220px); --plan-row: 22px; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px;
+/* Top-aligned at its natural size: main sizes the window to the content (app.js fitWindow), and a taller window, made
+   by the user, leaves its extra room below the grid. */
+.planner { --plan-label: clamp(150px, 14vw, 220px); --plan-row: 24px; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 6px;
   padding: 2px 16px var(--s4); cursor: default; }
 .plan-head { display: flex; align-items: baseline; gap: var(--s3); min-width: 0; white-space: nowrap; padding-left: 6px; }
 .plan-summary { flex-shrink: 0; font-family: var(--display); font-size: 15px; font-weight: 600; letter-spacing: -.2px; color: var(--accent-ink); }
@@ -656,7 +658,7 @@ select option:disabled { color: var(--fg-3); }
 .app.layout-compact .plan-axis { margin-left: calc(var(--plan-label) + 12px); }
 .plan-empty { display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: var(--s4); text-align: center; color: var(--fg-2); }
 
-.app.layout-compact .planner { --plan-row: 16px; --plan-label: 140px; gap: 2px; padding-bottom: var(--s2); }
+.app.layout-compact .planner { --plan-label: 140px; gap: 2px; padding-bottom: var(--s2); }
 .app.layout-compact .plan-summary { font-size: 13px; }
 .app.layout-compact .plan-caption { display: none; }
 .app.layout-compact .plan-legend { display: none; }

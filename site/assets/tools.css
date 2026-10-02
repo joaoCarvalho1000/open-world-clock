@@ -1,0 +1,44 @@
+/* Tool pages inherit Outfit, the sky palette, focus rings and controls from site.css. */
+.tool-page .pg-hero { padding-top: clamp(20px, 3vw, 40px); }
+.tool-page .pg-hero h1 { max-width: 24ch; font-size: clamp(2rem, 1.3rem + 2.8vw, 3.65rem); }
+.tool-page .pg-lede { max-width: 62ch; margin-top: var(--s4); font-size: clamp(1.05rem, 1rem + .25vw, 1.25rem); }
+.tool-nav { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 24px 0 16px; }
+.tool-nav a { display: inline-flex; min-height: 44px; align-items: center; color: var(--fg-2); text-decoration: none; border-bottom: 2px solid transparent; }
+.tool-nav a:hover, .tool-nav a[aria-current] { color: var(--accent-ink); border-bottom-color: currentColor; }
+.tool-window { position: relative; background: var(--canvas); border-radius: 16px; box-shadow: var(--shadow-shot); overflow: hidden; }
+:root:not(.js) .tool-window { display: none; }
+.tool-window .app-win-bar { padding: 8px 16px; min-height: 56px; }
+.tool-window .app-win-share { min-height: 40px; padding-inline: 16px; font-size: .875rem; }
+.tool-window .app-win-share:disabled { opacity: .55; cursor: wait; }
+.tool-window .app-frame { --frame-h: 380px; display: block; width: 100%; height: var(--frame-h); border: 0; background: var(--canvas); }
+.tool-window [data-tool="planner"] { --frame-h: 440px; }
+.tool-window [data-tool="map"] { --frame-h: 500px; }
+.tool-status { flex: 1; color: var(--fg-2); font-size: .875rem; }
+.tool-retry { min-height: 40px; }
+.tool-window.is-loading::after { content: ""; position: absolute; inset: 56px 0 0; pointer-events: none; background: var(--canvas); }
+.tool-window.has-error .app-frame { visibility: hidden; }
+.tool-share-link { width: calc(100% - 32px); margin: 12px 16px; padding: 12px; color: var(--fg); background: var(--field); border: 1px solid var(--hair); border-radius: 8px; }
+.tool-after { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; margin-top: 20px; color: var(--fg-2); font-size: .9375rem; line-height: 1.6; }
+.tool-after p { max-width: 65ch; }
+.tool-after a { display: inline-flex; align-items: center; min-height: 44px; }
+.route-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; padding: 0; list-style: none; margin-top: 24px; }
+.route-list li { border-top: 1px solid var(--hair); }
+.route-list a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; padding: 12px 0; text-decoration: none; }
+.route-list a:hover { text-decoration: underline; }
+.route-list svg { width: 16px; height: 16px; flex: none; }
+.seo-table { font-variant-numeric: tabular-nums; }
+.seo-date { color: var(--fg-2); margin-top: 16px; font-size: .9375rem; }
+.tool-page .pg-sec { padding-top: clamp(48px, 7vw, 88px); }
+@media (max-width: 700px) {
+  .tool-nav { gap: 4px 18px; }
+  .tool-nav a { font-size: .9375rem; }
+  .tool-window .app-win-bar { padding-inline: 12px; }
+  .tool-window .app-frame { --frame-h: 550px; }
+  .tool-window [data-tool="planner"] { --frame-h: 540px; }
+  .tool-window [data-tool="map"] { --frame-h: 520px; }
+  .route-list { grid-template-columns: 1fr; }
+  .tool-after { gap: 4px; }
+}
+@media print {
+  .tool-window, .tool-nav { display: none; }
+}

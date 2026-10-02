@@ -38,14 +38,21 @@ function serveApp(req) {
   return net.fetch(pathToFileURL(file).href);
 }
 const APP_ID = 'io.joao.worldclock';
-// Auto-update is OFF unless the build explicitly opts in (package.json "build.extraMetadata.wcUpdates": true, set only
-// for signed builds with a real publish config). Unsigned builds must never download and run updates.
+// Auto-update is OFF unless the build explicitly opts in (package.json "build.extraMetadata.wcUpdates": true). Only a
+// signed website build sets it (scripts/dist-release.js with signing configured, scripts/signing.js); after-pack.js
+// fails any unsigned or Store build that has it. Unsigned builds must never download and run updates.
 const UPDATES_ENABLED = (() => { try { return require('../package.json').wcUpdates === true; } catch { return false; } })();
+// The updater runs only in the installed (NSIS) copy of such a build: never in the portable exe, which the signed
+// release also builds from the same app files, never in the Store build, and never unpackaged.
+function updatesActive() {
+  return UPDATES_ENABLED && app.isPackaged && !process.windowsStore && !process.env.PORTABLE_EXECUTABLE_FILE;
+}
 // Offline first: the page is a local file and links open in the browser, so without the updater nothing here uses the
 // network. Skipping proxy detection drops the WPAD lookups and Chromium's proxy resolver process, and running the
 // network service inside the browser process drops one more helper process (about 7 MB). Keep a single
 // enable-features switch: a second appendSwitch with the same name replaces the first, so add features as a comma list.
-if (!UPDATES_ENABLED) {
+// The updater needs the system proxy (the user's network may require one), so only the updating install skips this.
+if (!updatesActive()) {
   app.commandLine.appendSwitch('no-proxy-server');
   app.commandLine.appendSwitch('enable-features', 'NetworkServiceInProcess2');
 }
@@ -63,6 +70,9 @@ const MAX_DIM = 16384;
 // The vertical layout keeps its own overlay sizes (mapVertical, plannerVertical): a tall narrow planner or map there,
 // a wide one in the strip and compact layouts.
 const VIEW_KEYS = [...Object.keys(LAYOUT_SIZES), 'map', 'planner', 'mapVertical', 'plannerVertical'];
+// The planner is never given a remembered size: it opens at the size its content needs (the renderer measures it, see
+// window:fitView), so a size left over from a bigger window or fewer cities cannot bring back empty space.
+const PLANNER_KEYS = ['planner', 'plannerVertical'];
 // Settings only main writes (never accepted from a settings:set patch).
 const MAIN_OWNED = new Set(['viewSizes']);
 const LANGUAGES = new Set(['auto', 'en', 'pt', 'es']);
@@ -188,6 +198,7 @@ const VALIDATE = {
     if (!isPlainObject(v)) return undefined;
     const out = {};
     for (const k of VIEW_KEYS) {
+      if (PLANNER_KEYS.includes(k)) continue; // sizes saved by older versions are dropped
       const s = v[k];
       if (!isPlainObject(s) || !Number.isInteger(s.width) || !Number.isInteger(s.height)) continue;
       out[k] = { width: Math.min(MAX_DIM, Math.max(MIN_W, s.width)), height: Math.min(MAX_DIM, Math.max(MIN_H, s.height)) };
@@ -221,11 +232,14 @@ const PANEL_MIN_W = 600, PANEL_MAX_W = 640, PANEL_MIN_H = 640;
 // restore: last free resting bounds (position + baseSize); persisted while the window is snapped or maximized.
 // loop: an OS move/size loop (user dragging the frame or a drag region) in progress, and whether it began snapped.
 // wasArranged/fixSize: the window just left a snapped/maximized state; re-apply baseSize once it settles.
+// fit: the planner's measured content size { key, width, height, keepWidth } in CSS px (window:fitView); keepWidth
+// means width is only a minimum (the vertical planner keeps a wider window).
 // overlay: 'map' | 'planner' | null, the overlay view shown over the layout. key: the view key baseSize belongs to
 // (overlay if any, else the layout); switching key stores baseSize in settings.viewSizes[key] and applies the new one.
 const geo = {
   baseSize: null,
   overlay: null,
+  fit: null,
   key: null,
   panelOpen: false,
   panelSaved: null,
@@ -403,7 +417,7 @@ const viewKey = () => (geo.overlay ? geo.overlay + (settings.layout === 'vertica
 
 // Record `size` (window DIP) as the last size of view `key` (persisted with the other settings, at 100% zoom).
 function rememberSize(key, size) {
-  if (!VIEW_KEYS.includes(key) || !size) return;
+  if (!VIEW_KEYS.includes(key) || PLANNER_KEYS.includes(key) || !size) return;
   const s = {
     width: Math.min(MAX_DIM, Math.max(MIN_W, Math.round(size.width / zf()))),
     height: Math.min(MAX_DIM, Math.max(MIN_H, Math.round(size.height / zf()))),
@@ -423,20 +437,23 @@ function defaultSize(key, cur) {
   if (key === 'map') return { width: Math.max(c.width, at(1160)), height: Math.max(c.height, at(360)) };
   // vertical map: same column, at least the default vertical height (the world scrolls sideways)
   if (key === 'mapVertical') return { width: c.width, height: Math.max(c.height, at(LAYOUT_SIZES.vertical.height)) };
-  // vertical planner: fitted to its rows and hour scale, up to 760 (then the rows scroll). Measured at 300 wide (en, pt,
-  // es): 250 = the top bar while converting (128: a click on a cell converts, and Back to now and Copy wrap onto a
-  // third row), the planner's padding (8 + 12), a three-line head ("No overlap", the best hours on two lines, the
-  // caption: 73), the 6px gap, the hour scale with the grid's own padding (22) and 1px for fractional scaling;
-  // 57 per city = a 24px name row, 3px, 24px cells and the 6px gap. Before the first click the bar is 38px shorter.
+  // The planner sizes are only a first guess until the renderer sends the measured content size (plannerSize).
+  // vertical: 250 = top bar, padding and a three-line head, plus 57 per city (name row, hour cells, gaps).
   if (key === 'plannerVertical') return { width: c.width, height: at(Math.min(760, 250 + rows * 57)) };
-  // planner: header, caption, summary and legend (~112px) plus ~30px per zone row, never taller than 520 unless the
-  // window already is. The rows get about 25px each, so the labels keep their 24px target size.
-  return { width: c.width, height: Math.max(c.height, at(Math.min(520, 112 + rows * 30))) };
+  return { width: c.width, height: at(Math.min(520, 112 + rows * 30)) };
+}
+
+// Window size (DIP) of a planner view: the measured content size once the renderer has sent it, else the guess.
+function plannerSize(key, cur) {
+  const f = geo.fit;
+  if (!f || f.key !== key) return defaultSize(key, cur);
+  const c = cur || scaled(LAYOUT_SIZES[settings.layout]), w = Math.round(f.width * zf());
+  return { width: f.keepWidth ? Math.max(c.width, w) : w, height: Math.round(f.height * zf()) };
 }
 
 // Compact never opens taller than COMPACT_MAX_H (a taller compact window only adds empty space around the cards).
 const capView = (key, s) => (key === 'compact' && s ? { ...s, height: Math.min(s.height, Math.round(COMPACT_MAX_H * zf())) } : s);
-const sizeFor = (key, cur) => capView(key, settings.viewSizes[key] ? scaled(settings.viewSizes[key]) : defaultSize(key, cur));
+const sizeFor = (key, cur) => capView(key, PLANNER_KEYS.includes(key) ? plannerSize(key, cur) : settings.viewSizes[key] ? scaled(settings.viewSizes[key]) : defaultSize(key, cur));
 
 // The view key changed (layout switch, map or planner opened/closed): keep the size of the view being left and give
 // the window the new view's size, anchored at its top-left. resizeTo defers it while the panel is open or the
@@ -448,6 +465,7 @@ function applyView() {
   // here. Re-storing baseSize every time would save work-area clamped sizes (e.g. a big view at 200% zoom).
   if (geo.key && geo.baseSize && !settings.viewSizes[geo.key]) rememberSize(geo.key, geo.baseSize);
   geo.key = key;
+  geo.fit = null; // a planner is measured again each time it opens
   resizeTo(sizeFor(key, geo.baseSize));
 }
 
@@ -486,7 +504,8 @@ function setPanelBounds(nb) {
 function initialBounds() {
   // Start at the stored size of the starting view: the saved bounds may carry another view's size (e.g. the map was
   // open at quit; the map is not restored on launch).
-  const size = capView(viewKey(), scaled(settings.viewSizes[viewKey()]));
+  const k = viewKey();
+  const size = capView(k, PLANNER_KEYS.includes(k) ? defaultSize(k, scaled(settings.viewSizes[settings.layout] || LAYOUT_SIZES[settings.layout])) : scaled(settings.viewSizes[k]));
   if (boundsVisible(settings.bounds)) return clampToWorkArea({ ...settings.bounds, ...size });
   const a = screen.getPrimaryDisplay().workArea;
   return clampToWorkArea({ x: a.x + 60, y: a.y + 60, ...(size || scaled(LAYOUT_SIZES[settings.layout])) });
@@ -1064,6 +1083,17 @@ ipcMain.on('window:view', (e, view) => {
   geo.overlay = view;
   applyView();
 });
+// The open planner's content size in CSS px, measured by the renderer { width, height, keepWidth }. A user resize in
+// progress is left alone (the renderer sends again whenever the content changes).
+ipcMain.on('window:fitView', (e, size) => {
+  if (!trusted(e) || !win || win.isDestroyed() || geo.overlay !== 'planner' || !size || typeof size !== 'object') return;
+  const w = Number(size.width), h = Number(size.height);
+  if (!Number.isFinite(w) || !Number.isFinite(h)) return;
+  const key = viewKey();
+  geo.fit = { key, width: Math.min(MAX_DIM, Math.max(MIN_W, Math.round(w))), height: Math.min(MAX_DIM, Math.max(MIN_H, Math.round(h))), keepWidth: size.keepWidth === true };
+  if (geo.key !== key || geo.loop) return;
+  resizeTo(sizeFor(key, geo.baseSize));
+});
 // Store build only: launch at login lives in Windows Settings > Apps > Startup. A fixed URI, never one from the page.
 ipcMain.on('window:startupSettings', (e) => {
   if (!trusted(e) || !process.windowsStore) return;
@@ -1071,11 +1101,12 @@ ipcMain.on('window:startupSettings', (e) => {
 });
 
 // Website installer (NSIS) only: the Store updates the Store build, and the portable build never updates itself.
-// Off by default (UPDATES_ENABLED): only a signed build with a real publish config opts in. electron-updater is loaded
-// only then, never in the default build (it is a devDependency and not packaged; scripts/after-pack.js fails a build
-// that turns updates on without it).
+// Off by default (updatesActive): only a signed website build opts in. electron-updater is required only then, never
+// in the default build, which packs it but never loads it (scripts/after-pack.js fails a build that turns updates on
+// without it). The feed is build.publish in package.json: latest.yml on https://download.openworldclock.com, and
+// app-update.yml carries the certificate's publisher name, so an installer signed by anyone else is refused.
 function startAutoUpdate() {
-  if (!UPDATES_ENABLED || !app.isPackaged || process.windowsStore || process.env.PORTABLE_EXECUTABLE_FILE) return;
+  if (!updatesActive()) return;
   let autoUpdater;
   try { ({ autoUpdater } = require('electron-updater')); } catch (err) {
     console.error('auto-update is on (wcUpdates) but electron-updater could not be loaded; this build will not update:', err && err.message);

@@ -5,7 +5,7 @@
   "description": "Cloudflare Pages config for openworldclock.com: the static site in ../site plus the /ingest PostHog proxy Function.",
   "scripts": {
     "dev": "wrangler pages dev --port 8788",
-    "predeploy": "node asset-versions.mjs && node ../scripts/build-web.mjs --check && node site-chrome.mjs && node check-links.mjs",
+    "predeploy": "node seo-check.mjs && node csp-hashes.mjs && node asset-versions.mjs && node ../scripts/build-web.mjs --check && node site-chrome.mjs && node check-links.mjs",
     "deploy": "wrangler pages deploy",
     "links": "node check-links.mjs",
     "test": "node --test check-links.test.mjs analytics-gate.test.mjs site-chrome.test.mjs",
@@ -13,7 +13,11 @@
     "csp:write": "node csp-hashes.mjs --write",
     "chrome": "node site-chrome.mjs",
     "chrome:write": "node site-chrome.mjs --write",
-    "assets:write": "node asset-versions.mjs --write"
+    "assets:write": "node asset-versions.mjs --write",
+    "prepare:site": "node ../scripts/build-seo-pages.mjs && node site-chrome.mjs --write && node seo-check.mjs --write-sitemap && node asset-versions.mjs --write && node csp-hashes.mjs --write",
+    "postdeploy": "node indexnow.mjs --submit",
+    "seo": "node seo-check.mjs",
+    "indexnow": "node indexnow.mjs"
   },
   "devDependencies": {
     "wrangler": "4.137.0"

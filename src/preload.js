@@ -20,6 +20,10 @@ contextBridge.exposeInMainWorld('wc', {
   panel: (open) => ipcRenderer.send('window:panel', !!open),
   // Overlay view on screen: 'map' | 'planner' | null (main gives each view its own remembered window size).
   setView: (view) => ipcRenderer.send('window:view', view === 'map' || view === 'planner' ? view : null),
+  // Natural size of the open planner in CSS px { width, height, keepWidth }: main sizes the window to it (zoom applied there).
+  fitView: (size) => {
+    if (size && Number.isFinite(size.width) && Number.isFinite(size.height)) ipcRenderer.send('window:fitView', { width: size.width, height: size.height, keepWidth: size.keepWidth === true });
+  },
   // Close keeps the app running in the tray; quitting is done from the tray menu.
   hide: () => ipcRenderer.send('window:hide'),
   minimize: () => ipcRenderer.send('window:minimize'),

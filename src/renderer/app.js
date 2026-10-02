@@ -1562,7 +1562,7 @@
     el.app.classList.toggle('planner-on', on);
     if (el.planner.hidden === on) el.planner.hidden = !on;
     if (el.btnPlanner.getAttribute('aria-pressed') !== String(on)) el.btnPlanner.setAttribute('aria-pressed', String(on));
-    if (!on) { planKey = null; return; }
+    if (!on) { planKey = null; planFitSent = null; return; }
     if (!convert && planSel) { planSel = null; planSelAnchor = null; } // back to now: the slot goes too
     const src = plannerSource();
     const ymd = el.convDate.value || todayIn(src);
@@ -1571,23 +1571,52 @@
     if (key !== planKey) { planKey = key; planYmd = ymd; buildPlanner(src, ymd, zones); fitPlanner(); }
     updatePlanner(date);
   }
-  // Rows share the available height (24-40px each: 24px is the labels' target size) so a typical list fits without
-  // scrolling; past that the body scrolls and a bottom fade shows there is more. The body is only as tall as its rows
-  // (the block is centered), so the space is measured on the planner itself.
+  // Rows are always 24px (the labels' target size), so the planner has one natural size: the window is made that size
+  // (fitWindow) and a taller one only leaves room below the grid. When the work area caps the window, the body
+  // scrolls and a bottom fade shows there is more.
   function fitPlanner() {
     if (!plannerOn()) return;
-    const n = el.planBody.querySelectorAll('.plan-row').length;
-    if (!n || layout() === 'vertical') { el.planner.style.removeProperty('--plan-row'); updatePlanFade(); return; }
-    const gap = layout() === 'compact' ? 3 : 6;
-    const cs = getComputedStyle(el.planner);
-    const head = el.planner.querySelector('.plan-head');
-    const headH = head && head.offsetParent ? head.offsetHeight + (parseFloat(cs.rowGap) || 0) : 0;
-    const axis = el.planBody.querySelector('.plan-axis');
-    const axisH = axis && axis.offsetParent ? axis.offsetHeight + (parseFloat(getComputedStyle(axis).marginTop) || 0) : 0;
-    const avail = el.planner.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0) - headH - axisH - 2 * gap;
-    const row = Math.max(24, Math.min(40, Math.floor((avail - gap * (n - 1)) / n)));
-    el.planner.style.setProperty('--plan-row', row + 'px');
     updatePlanFade();
+    fitWindow();
+  }
+  // The planner's natural size in CSS px, read from the real elements: everything above it (bar, tip), its padding, the
+  // head, the grid with its hour scale (the body's scrollHeight, even while the body is scrolling). Width: the label
+  // column (the minimum of --plan-label) and 24 cells at a readable minimum; the vertical planner has no label column
+  // and only asks for a minimum width (a wider window stays as it is).
+  const PLAN_CELL_MIN = { strip: 34, compact: 22, vertical: 14 };
+  function measurePlanner() {
+    const p = el.planner, cs = getComputedStyle(p), px = (v) => parseFloat(v) || 0;
+    const head = p.querySelector('.plan-head'), lay = layout();
+    const headH = head && head.offsetParent ? head.offsetHeight + px(cs.rowGap) : 0;
+    const height = Math.ceil(p.offsetTop + px(cs.paddingTop) + headH + el.planBody.scrollHeight + px(cs.paddingBottom)) + 1;
+    const label = lay === 'vertical' ? 0 : (lay === 'compact' ? 140 : 150) + 12;
+    const width = Math.ceil(px(cs.paddingLeft) + px(cs.paddingRight) + label + 24 * PLAN_CELL_MIN[lay] + 23 * (lay === 'vertical' ? 1 : 2));
+    return { width, height, keepWidth: lay === 'vertical' };
+  }
+  // Tell main the size when it changed by more than 2px. The first one goes out at once, later ones after the layout
+  // settles (a head line that wraps, the bar stacking at the new width). main ignores them while the user drags the frame.
+  let planFitSent = null, planFitTimer = 0;
+  function sendPlanFit() {
+    planFitTimer = 0;
+    if (!plannerOn() || !window.wc.fitView || !el.planner.offsetParent) return;
+    const m = measurePlanner(), s = planFitSent;
+    if (s && Math.abs(m.width - s.width) <= 2 && Math.abs(m.height - s.height) <= 2) return;
+    planFitSent = m;
+    window.wc.fitView(m);
+  }
+  function fitWindow() {
+    if (!planFitSent) { clearTimeout(planFitTimer); sendPlanFit(); return; }
+    if (!planFitTimer) planFitTimer = setTimeout(sendPlanFit, 80);
+  }
+  if (typeof ResizeObserver === 'function') {
+    // Anything that changes the natural height: the bar and tip above, the head, the rows and the hour scale.
+    const ro = new ResizeObserver(() => { if (settings && plannerOn()) fitWindow(); });
+    const watch = () => {
+      ro.disconnect();
+      for (const n of [document.querySelector('.bar'), $('tip'), el.planner.querySelector('.plan-head'), el.planBody, ...el.planBody.children]) if (n) ro.observe(n);
+    };
+    watch();
+    new MutationObserver(() => { watch(); if (plannerOn()) fitWindow(); }).observe(el.planBody, { childList: true });
   }
   function updatePlanFade() {
     const b = el.planBody;

@@ -3,13 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mapa mundial del día y la noche | Open World Clock</title>
-<meta name="description" content="Mapa mundial en vivo con el día, la noche y el crepúsculo, la posición del sol y un marcador por ciudad. Amanecer y atardecer reales, calculados sin conexión.">
+<title>Mapa Mundial de Día y Noche en Vivo | Open World Clock</title>
+<meta name="description" content="Sigue el día y la noche por el planeta. Elige una hora para ver el mundo en ese momento.">
 <link rel="canonical" href="https://openworldclock.com/es/world-map">
 <link rel="alternate" hreflang="en" href="https://openworldclock.com/world-map">
 <link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-map">
 <link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-map">
 <link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-map">
+
+
+
+
 <meta name="theme-color" content="#ecf5fd" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a1326" media="(prefers-color-scheme: dark)">
 <meta name="color-scheme" content="light dark">
@@ -18,8 +22,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Open World Clock">
-<meta property="og:title" content="El día y la noche en vivo, en un mapa mundial en tu escritorio de Windows">
-<meta property="og:description" content="El día, la noche y el crepúsculo en vivo, la posición del sol y un marcador por ciudad. Amanecer y atardecer reales, calculados sin conexión. Gratis.">
+<meta property="og:title" content="Mapa Mundial de Día y Noche en Vivo">
+<meta property="og:description" content="Sigue el día y la noche por el planeta. Elige una hora para ver el mundo en ese momento.">
 <meta property="og:url" content="https://openworldclock.com/es/world-map">
 <meta property="og:image" content="https://openworldclock.com/assets/og-es.png">
 <meta property="og:image:width" content="1200">
@@ -29,9 +33,11 @@
 <meta property="og:locale" content="es_419">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:locale:alternate" content="pt_BR">
+
+
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="El día y la noche en vivo, en un mapa mundial en tu escritorio de Windows">
-<meta name="twitter:description" content="El día, la noche y el crepúsculo en vivo, la posición del sol y un marcador por ciudad. Amanecer y atardecer reales, calculados sin conexión. Gratis.">
+<meta name="twitter:title" content="Mapa Mundial de Día y Noche en Vivo">
+<meta name="twitter:description" content="Sigue el día y la noche por el planeta. Elige una hora para ver el mundo en ese momento.">
 <meta name="twitter:image" content="https://openworldclock.com/assets/og-es.png">
 <meta name="twitter:image:alt" content="Open World Clock: una franja de relojes de ciudades, con tarjetas claras para el día y azul marino para la noche, bajo la frase “El reloj mundial que le faltaba a Windows.”">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -45,70 +51,85 @@
 <script>(function(){var d=document.documentElement,n=navigator,p='system';try{p=localStorage.getItem('wc-theme')||'system'}catch(e){}d.setAttribute('data-theme-pref',p);if(p==='light'||p==='dark')d.setAttribute('data-theme',p);d.classList.add('js');if((n.userAgentData&&n.userAgentData.mobile)||/Android|iPhone|iPod/.test(n.userAgent||''))d.classList.add('not-windows')})();</script>
 <script type="application/ld+json">
 {
- "@context": "https://schema.org",
- "@graph": [
-  {
-   "@type": "WebSite",
-   "@id": "https://openworldclock.com/es/#website",
-   "url": "https://openworldclock.com/es/",
-   "name": "Open World Clock",
-   "inLanguage": "es-419"
-  },
-  {
-   "@type": "WebPage",
-   "@id": "https://openworldclock.com/es/world-map#webpage",
-   "url": "https://openworldclock.com/es/world-map",
-   "name": "Mapa mundial del día y la noche | Open World Clock",
-   "description": "Mapa mundial en vivo con el día, la noche y el crepúsculo, la posición del sol y un marcador por ciudad. Amanecer y atardecer reales, calculados sin conexión.",
-   "inLanguage": "es-419",
-   "isPartOf": {
-    "@id": "https://openworldclock.com/es/#website"
-   },
-   "about": {
-    "@id": "https://openworldclock.com/#app"
-   },
-   "breadcrumb": {
-    "@id": "https://openworldclock.com/es/world-map#breadcrumb"
-   },
-   "author": {
-    "@id": "https://openworldclock.com/#author"
-   },
-   "datePublished": "2026-09-25",
-   "dateModified": "2026-09-25",
-   "primaryImageOfPage": {
-    "@type": "ImageObject",
-    "url": "https://openworldclock.com/assets/img/pages/map.webp"
-   }
-  },
-  {
-   "@type": "BreadcrumbList",
-   "@id": "https://openworldclock.com/es/world-map#breadcrumb",
-   "itemListElement": [
+  "@context": "https://schema.org",
+  "@graph": [
     {
-     "@type": "ListItem",
-     "position": 1,
-     "name": "Inicio",
-     "item": "https://openworldclock.com/es/"
+      "@type": "WebSite",
+      "@id": "https://openworldclock.com/es/#website",
+      "url": "https://openworldclock.com/es/",
+      "name": "Open World Clock",
+      "inLanguage": "es-419"
     },
     {
-     "@type": "ListItem",
-     "position": 2,
-     "name": "Mapa mundial",
-     "item": "https://openworldclock.com/es/world-map"
+      "@type": "WebPage",
+      "@id": "https://openworldclock.com/es/world-map#webpage",
+      "url": "https://openworldclock.com/es/world-map",
+      "name": "Mapa Mundial de Día y Noche en Vivo",
+      "description": "Sigue el día y la noche por el planeta. Elige una hora para ver el mundo en ese momento.",
+      "inLanguage": "es-419",
+      "isPartOf": {
+        "@id": "https://openworldclock.com/es/#website"
+      },
+      "about": {
+        "@id": "https://openworldclock.com/#app"
+      },
+      "breadcrumb": {
+        "@id": "https://openworldclock.com/es/world-map#breadcrumb"
+      },
+      "author": {
+        "@id": "https://openworldclock.com/#author"
+      },
+      "datePublished": "2026-09-25",
+      "dateModified": "2026-10-01",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://openworldclock.com/assets/img/pages/map.webp"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://openworldclock.com/es/world-map#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://openworldclock.com/es/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Mapa mundial",
+          "item": "https://openworldclock.com/es/world-map"
+        }
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://openworldclock.com/#author",
+      "name": "João Carvalho",
+      "url": "https://github.com/joaoCarvalho1000"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://openworldclock.com/es/world-map#tool",
+      "name": "Mapa Mundial de Día y Noche en Vivo",
+      "url": "https://openworldclock.com/es/world-map",
+      "operatingSystem": "Web browser",
+      "applicationCategory": "UtilitiesApplication",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
     }
-   ]
-  },
-  {
-   "@type": "Person",
-   "@id": "https://openworldclock.com/#author",
-   "name": "João Carvalho",
-   "url": "https://github.com/joaoCarvalho1000"
-  }
- ]
+  ]
 }
 </script>
+<link rel="stylesheet" href="/assets/tools.css?v=2715ed7b78">
 </head>
-<body class="pg-body">
+<body class="pg-body tool-page">
 <a class="skip" href="#main">Saltar al contenido</a>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
@@ -139,23 +160,10 @@
   </div>
 </header>
 <main id="main" class="pg">
-<section class="pg-hero" id="hero" aria-labelledby="h1">
-  <div class="wrap">
-    <nav class="crumbs" aria-label="Ruta de navegación"><ol><li><a href="/es/">Inicio</a></li><li><span aria-current="page">Mapa mundial</span></li></ol></nav>
-    <h1 id="h1">El día y la noche en vivo, en un mapa mundial</h1>
-    <p class="pg-lede">La vista de mapa de Open World Clock muestra dónde es de día ahora mismo, dónde es de noche y dónde está cada una de tus ciudades. Todo se calcula en tu PC, sin servicios de mapas y sin conexión.</p>
-    <div class="pg-cta">
-      <a class="btn btn-primary" data-store data-link="store" data-cid="site-world-map" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-world-map"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Descargar desde Microsoft Store</span></a>
-      <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
-      <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
-      <a class="btn btn-quiet" href="/es/features"><span>Ver todas las funciones</span><svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-    </div>
-    <p class="dl-note" data-store-off hidden>Gratis para Windows 10 y 11, x64, unos 90 MB. Todavía no tiene firma de código, así que SmartScreen puede mostrar un aviso la primera vez (<a href="/es/download#smartscreen">qué hacer</a>).</p>
-    <ul class="pg-facts"><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Día y noche en vivo</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Amanecer y atardecer reales</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Funciona sin conexión</li><li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg>Gratis</li></ul>
-    
-    <figure class="shot has-phone"><picture><source media="(max-width: 640px)" srcset="/assets/img/pages/map-phone.webp" width="1010" height="740"><img src="/assets/img/pages/map.webp" srcset="/assets/img/pages/map-half.webp 810w, /assets/img/pages/map.webp 1620w" sizes="(min-width: 1400px) 1240px, 94vw" width="1620" height="740" alt="La vista de mapa mundial: noche sobre el Pacífico, Asia y Australia, luz de día sobre América, Europa y África, el sol sobre el Atlántico Sur y marcadores en Tokio, Sídney, San Francisco, Nueva York, Londres y Lisboa." fetchpriority="high" decoding="async"></picture><figcaption>Las 14:20 en Lisboa, el 23 de septiembre: noche sobre el Pacífico y Asia, y el sol sobre el Atlántico Sur.</figcaption></figure>
-  </div>
-</section>
+<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Inicio"><ol><li><a href="/es/">Inicio</a></li><li><span aria-current="page">Mapa de día y noche</span></li></ol></nav><h1 id="h1">Mira dónde el mundo está despierto.</h1><p class="pg-lede">Sigue el día y la noche por el planeta. Elige una hora para ver el mundo en ese momento.</p><nav class="tool-nav" aria-label="Sigue explorando"><a href="/es/time-zone-converter">Convertidor de zona horaria</a><a href="/es/meeting-planner">Planificador de reuniones</a><a href="/es/world-map" aria-current="page">Mapa de día y noche</a></nav>
+<div class="tool-window is-loading"><div class="app-win-bar"><span class="tool-status" id="toolStatus" role="status">Cargando los relojes…</span><button class="app-win-share tool-retry" id="toolRetry" type="button" hidden>Volver a intentar</button><button class="app-win-share" id="heroShare" type="button" disabled>Compartir</button></div>
+<iframe class="app-frame" id="heroApp" data-tool="map" data-cities="" title="Mapa de día y noche" allow="clipboard-write"></iframe><input class="tool-share-link" id="toolShareLink" readonly hidden aria-label="Compartir"></div>
+<noscript><p class="pg-sub">Activa JavaScript para usar la herramienta. Los ejemplos de abajo funcionan sin él.</p></noscript><div class="tool-after"><p>Gratis y sin cuenta. Tus ciudades guardadas siguen siendo tuyas.</p><a href="/es/download">Tenlo en tu escritorio Windows</a></div></div></section>
 <section class="pg-sec" id="shows" aria-labelledby="shows-h">
   <div class="wrap">
     <div class="sec-head"><h2 id="shows-h">Lo que muestra el mapa</h2></div>
@@ -192,10 +200,12 @@
     <ul class="related">
       <li><a href="/es/time-zone-converter"><strong>Convertidor de zona horaria<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Escribe una hora en cualquier ciudad o gira la rueda sobre los relojes.</span></a></li>
       <li><a href="/es/meeting-planner"><strong>Planificador de reuniones<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>El horario laboral de cada ciudad y las horas que todos comparten.</span></a></li>
-      <li><a href="/es/features"><strong>Todas las funciones<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Todo lo que trae la versión 1.3.0, agrupado y con capturas.</span></a></li>
+      <li><a href="/es/features"><strong>Todas las funciones<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></strong><span>Todo lo que trae la versión 1.3.1, agrupado y con capturas.</span></a></li>
     </ul>
   </div>
 </section>
+
+<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Guías útiles</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/es/daylight-saving-meetings">Horario de Verano en EE. UU. y Europa: Reuniones de 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/always-on-top-world-clock">Reloj Mundial Siempre Visible para Windows 11 y 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/time-zone-converter">Convertidor de zona horaria<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
 <section class="cta-band" id="download" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="cta-card rv">
@@ -205,8 +215,8 @@
       <div class="pg-cta">
         <a class="btn btn-primary" data-store data-link="store" data-cid="site-world-map" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-world-map"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Descargar desde Microsoft Store</span></a>
         <a class="btn btn-quiet" data-store href="/es/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Otras descargas</span></a>
-        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
-        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.0-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
+        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
+        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
       </div>
       <p class="dl-note" data-store-off hidden>Gratis para Windows 10 y 11, x64, unos 90 MB. Todavía no tiene firma de código, así que SmartScreen puede mostrar un aviso la primera vez (<a href="/es/download#smartscreen">qué hacer</a>).</p>
       <p class="dl-kofi"><a href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="download"><svg class="i" aria-hidden="true"><use href="#i-cup"/></svg>Apoya al creador en Ko-fi</a></p>
@@ -228,6 +238,9 @@
       <li><a href="/es/windows-clock-alternative">Alternativa al Reloj de Windows</a></li>
       <li><a href="/es/multiple-time-zones-windows">Varias zonas horarias en Windows</a></li>
       <li><a href="/es/world-time-buddy-alternative">Alternativa a World Time Buddy</a></li>
+      <li><a href="/es/daylight-saving-meetings">Horario de verano y reuniones</a></li>
+      <li><a href="/es/always-on-top-world-clock">Reloj siempre visible</a></li>
+      <li><a href="/es/press">Prensa</a></li>
       <li><a href="/es/privacy">Privacidad</a></li>
       <li><a href="/es/support">Ayuda</a></li>
       <li><a data-link="repo" href="https://github.com/joaoCarvalho1000/open-world-clock">Código fuente en GitHub</a></li>
@@ -240,10 +253,11 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Apoya al creador en Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Apoya al creador</span></a>
-<script src="/assets/config.js?v=65b3fa7d24"></script>
+<script src="/assets/config.js?v=53bcecc7ff"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
-<script src="/assets/analytics.js?v=ec35845c3e" defer></script>
+<script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
+<script src="/assets/tool-page.js?v=a076815e08" defer></script>
 </body>
 </html>

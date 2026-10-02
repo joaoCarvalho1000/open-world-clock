@@ -276,30 +276,52 @@ module.exports = (w, app) => {
       await run(() => { document.getElementById('convClear').click(); if (document.activeElement) document.activeElement.blur(); });
       await sleep(100);
 
-      // 5b3. Planner default size: from the strip's default size with six cities (and no stored planner size), the
-      // planner opens tall enough for every row at its 24px minimum, without scrolling.
+      // 5b3. Planner size: it opens at the size its content needs (measured by the renderer, not guessed): about 1056
+      // wide and as tall as the head, the rows and the padding, from any window size, with no band above or below the grid.
       for (let n = (await run(cards)).length; n > 6; n--) { await run(menuAct, (await run(cards)).pop().zone, 'remove'); await sleep(100); }
       const planN = (await run(cards)).length;
+      const planWa = require('electron').screen.getDisplayMatching(w.getBounds()).workArea;
+      const planGeo = () => run(() => {
+        const p = document.getElementById('planner'), body = document.getElementById('planBody'), head = p.querySelector('.plan-head').getBoundingClientRect();
+        const rows = [...p.querySelectorAll('.plan-row')].map((r) => r.getBoundingClientRect());
+        return { n: rows.length, headBottom: head.bottom, gridTop: rows[0] ? rows[0].top : 0, lastBottom: rows.length ? rows[rows.length - 1].bottom : 0, inner: window.innerHeight, innerW: window.innerWidth,
+          fits: body.scrollHeight <= body.clientHeight + 1, moreBelow: p.classList.contains('more-below'), row: parseFloat(getComputedStyle(p).getPropertyValue("--plan-row")) };
+      });
       const planStored = ((await run(async () => window.wc.getSettings())).viewSizes || {}).planner;
       const planStrip = w.getSize();
-      await run(() => document.getElementById('btnPlanner').click()); await sleep(500);
-      const planWant = Math.min(520, 112 + 30 * planN);
-      const planWa = require('electron').screen.getDisplayMatching(w.getBounds()).workArea;
-      const planSz = w.getSize();
-      const planFit = await run(() => {
-        const body = document.getElementById('planBody').getBoundingClientRect(), p = document.getElementById('planner');
-        const rows = [...document.querySelectorAll('#planner .plan-row')].map((r) => Math.round(r.getBoundingClientRect().bottom * 10) / 10);
-        return { rows: rows.length, lastBottom: rows[rows.length - 1], bodyBottom: Math.round(body.bottom * 10) / 10, below: rows.filter((b) => b > body.bottom + 1).length,
-          moreBelow: p.classList.contains('more-below'), row: parseFloat(getComputedStyle(p).getPropertyValue('--plan-row')), inner: window.innerHeight };
-      });
+      await run(() => document.getElementById('btnPlanner').click()); await sleep(600);
+      const planSz = w.getSize(), pg = await planGeo();
       await run(() => document.getElementById('btnPlanner').click()); await sleep(400);
       // (the harness's own setBounds above can leave the window a DIP or two off at fractional scaling; main's strip size
       // is the 1160x250 default)
       const planStripW = Math.min(1160, planWa.width), planStripH = Math.min(250, planWa.height);
-      check(`planner default size with ${planN} cities: ${planWant} tall from the 1160x250 strip (within 1 DIP or the work area)`, !planStored && Math.abs(planSz[0] - planStripW) <= 1 && Math.abs(planSz[1] - Math.min(planWant, planWa.height)) <= 1, JSON.stringify({ planStored, planStrip, planSz, planWant }));
-      check('planner default size: every row visible, no scroll fade, rows at least 24px', planFit.rows === planN && planFit.below === 0 && !planFit.moreBelow && planFit.row >= 24, JSON.stringify(planFit));
-      out.push(`INFO planner default size ${planSz} rows ${JSON.stringify(planFit)}`);
+      check(`planner opens at its content size with ${planN} cities: about 1056 wide, and the window hugs the grid (<= 40px under the last row)`, !planStored && planSz[0] >= 1000 && planSz[0] <= 1120
+        && pg.inner - pg.lastBottom >= 0 && pg.inner - pg.lastBottom <= 40 && pg.gridTop - pg.headBottom <= 20, JSON.stringify({ planStored, planStrip, planSz, pg }));
+      check('planner size: every row visible, no scroll fade, rows 24px', pg.n === planN && pg.fits && !pg.moreBelow && pg.row === 24, JSON.stringify(pg));
+      out.push(`INFO planner size ${planSz} ${JSON.stringify(pg)}`);
       check('closing the planner returns to the strip size', Math.abs(w.getSize()[0] - planStripW) <= 1 && Math.abs(w.getSize()[1] - planStripH) <= 1, `${planStrip} -> ${w.getSize()}`);
+
+      // 5b3b. From a big strip window the planner shrinks to its content (no empty band above the grid), a new city grows
+      // it, and a size the user gave it is not stored or brought back.
+      w.setBounds({ x: 40, y: 40, width: Math.min(1900, planWa.width), height: Math.min(670, planWa.height) }); await sleep(300); w.emit('resized'); await sleep(200);
+      const bigStrip = w.getSize();
+      await run(() => document.getElementById('btnPlanner').click()); await sleep(600);
+      const bigPlan = w.getSize(), bg = await planGeo();
+      check('planner from a big strip window shrinks to its content height, no empty band above the grid', bigPlan[1] < bigStrip[1] - 150 && bigPlan[1] === planSz[1] && bg.gridTop - bg.headBottom <= 20 && bg.inner - bg.lastBottom <= 40, JSON.stringify({ bigStrip, bigPlan, planSz, bg }));
+      const lastCity = (await run(cards)).pop();
+      await run(menuAct, lastCity.zone, 'remove'); await sleep(700);
+      const fewer = w.getSize(), fg = await planGeo();
+      await run(addFirst, lastCity.city); await sleep(700);
+      const grown = w.getSize(), gg = await planGeo();
+      check('adding a city grows the planner by one row (removing one shrinks it)', fg.n === planN - 1 && gg.n === planN && grown[1] >= fewer[1] + 24 && grown[1] <= fewer[1] + 40 && Math.abs(grown[1] - bigPlan[1]) <= 2 && gg.inner - gg.lastBottom <= 40 && gg.fits, JSON.stringify({ fewer, grown, bigPlan, fg, gg }));
+      w.setBounds({ x: 40, y: 40, width: 1500, height: 640 }); await sleep(200); w.emit('resized'); await sleep(200);
+      check('a manual resize of the open planner is respected while it stays open', Math.abs(w.getSize()[0] - 1500) <= 2 && Math.abs(w.getSize()[1] - 640) <= 2, String(w.getSize()));
+      await run(() => document.getElementById('btnPlanner').click()); await sleep(400);
+      await run(() => document.getElementById('btnPlanner').click()); await sleep(600);
+      const reopened = w.getSize(), storedVs = (await run(async () => window.wc.getSettings())).viewSizes || {};
+      check('the planner size is not stored and a reopened planner is at its content size again', !storedVs.planner && !storedVs.plannerVertical && Math.abs(reopened[0] - bigPlan[0]) <= 2 && Math.abs(reopened[1] - bigPlan[1]) <= 2, JSON.stringify({ reopened, bigPlan, storedVs }));
+      await run(() => document.getElementById('btnPlanner').click()); await sleep(400);
+      w.setBounds({ x: 40, y: 40, width: 1160, height: 250 }); await sleep(250); w.emit('resized'); await sleep(150);
 
       // 5c. Custom label via the card menu rename flow
       await run(() => {
@@ -1202,7 +1224,7 @@ module.exports = (w, app) => {
       await run(() => document.getElementById('btnPlanner').click()); await sleep(250);
       const plh = await run(() => Math.min(...[...document.querySelectorAll('#planner .plan-label')].map((l) => l.getBoundingClientRect().height)));
       await run(() => document.getElementById('btnPlanner').click()); await sleep(250);
-      check('planner row labels are at least 24px tall', plh >= 24, plh);
+      check('planner row labels are at least 24px tall', plh >= 23.99, plh); // 24px as laid out (a fraction under at some DPI)
 
       // 16h2. Closing keeps the app in the tray: X hides the window (no quit), the tray brings it back.
       const beforeClose = w.isVisible();
@@ -1775,14 +1797,13 @@ module.exports = (w, app) => {
           cellH: Math.round(document.querySelector('#planner .plan-cell').getBoundingClientRect().height), inside: rows.every((r) => r.getBoundingClientRect().bottom <= body.bottom + 1), rows: rows.length,
           free: axis ? Math.round(innerHeight - axis.getBoundingClientRect().bottom) : null, conv: !document.getElementById('convClear').hidden };
       });
-      // 20e2. Its default size fits the rows and the scale (min(760, 250 + 57 per city); it used to be at least the
-      // vertical window's 640, about 150 px of nothing under the scale with five cities). Not converting, the bar is one
-      // row shorter than the size allows for, so at most 38 + 12 (padding) + a two-line head's 37 px stay free.
+      // 20e2. Its size is measured, not guessed: tall enough for the bar, the head, the rows and the scale and no taller
+      // (at most the bottom padding free under the scale), and wide enough for 24 hour cells of 14px.
       const vpWa = require('electron').screen.getDisplayMatching(w.getBounds()).workArea;
-      const vpSize = w.getSize(), vpWant = vpStored ? vpStored.height : Math.min(760, 250 + 57 * vplan.rows);
-      const vpClamped = vpSize[1] >= vpWa.height - 2;
-      check(`vertical planner default size fits its ${vplan.rows} rows and the hour scale (${vpWant} tall${vpStored ? ', stored' : ''}), nothing past the bottom`, Math.abs(vpSize[1] - Math.min(vpWant, vpWa.height)) <= 2
-        && (vpClamped || (vplan.free >= 0 && (vpStored || vplan.free <= 90))), JSON.stringify({ vpSize, vpWant, vpStored, free: vplan.free, conv: vplan.conv }));
+      const vpSize = w.getSize(), vpClamped = vpSize[1] >= vpWa.height - 2;
+      const vpCell = await run(() => document.querySelector('#planner .plan-cell').getBoundingClientRect().width);
+      check(`vertical planner fits its ${vplan.rows} rows and the hour scale (${vpSize} window), nothing past the bottom and under 40px free below`, !vpStored && (vpClamped || (vplan.free >= 0 && vplan.free <= 40)), JSON.stringify({ vpSize, vpStored, free: vplan.free, conv: vplan.conv }));
+      check('vertical planner: hour cells at least 14px wide', vpCell >= 13.9, String(vpCell));
       await run(() => document.getElementById('btnPlanner').click()); await sleep(300);
       await run(() => { const o = document.getElementById('optLayout'); o.value = 'strip'; o.dispatchEvent(new Event('change')); }); await sleep(500);
       await resizeTo(1160, 250);

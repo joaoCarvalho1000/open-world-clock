@@ -4,8 +4,17 @@ name: Release
 # PUBLISHING.md, "Every release", step 4 has the steps around it: commit the version bump, push the tag vx.y.z,
 # check the draft's four asset names, then publish it. The Store packages (.appx) are still built locally.
 #
-# No signing secrets: the builds are unsigned, like the local ones. The provenance attestation records that these
-# exact files came from this workflow and this commit; anyone can check a download with
+# Signing: scripts/dist-release.js signs with Azure Artifact Signing when the repository has these set (Settings >
+# Secrets and variables > Actions), and then also turns auto-update on for the installer (scripts/signing.js):
+#   secrets    AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET: the app registration that has the
+#              "Artifact Signing Certificate Profile Signer" role on the certificate profile
+#   variables  AZURE_SIGNING_ENDPOINT (the account's region, e.g. https://brs.codesigning.azure.net),
+#              AZURE_SIGNING_ACCOUNT, AZURE_SIGNING_PROFILE, WIN_PUBLISHER_NAME (the certificate subject CN)
+# The four variables may be secrets instead. With none of them set, the build is unsigned with auto-update off,
+# exactly like `npm run dist` on a PC. A partial setup fails the build instead of shipping a half-signed release.
+#
+# The provenance attestation records that these exact files came from this workflow and this commit; anyone can
+# check a download with
 #   gh attestation verify <file> -R joaoCarvalho1000/open-world-clock
 # Attestations are free on public repos; on a private repo on a free plan that step fails.
 on:
@@ -76,9 +85,18 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$REF_NAME" >> "$GITHUB_OUTPUT"
 
-      # Same targets as `npm run dist`. Writes dist/win-unpacked as well, which the smoke test starts.
+      # Same targets as `npm run dist`. Writes dist/win-unpacked as well, which the smoke test starts. Signs, and turns
+      # installer updates on, only when the signing secrets and variables above are set.
       - name: Build the installer and the portable exe
-        run: npx electron-builder --win portable:x64 nsis:x64 --publish never
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_SIGNING_ENDPOINT: ${{ vars.AZURE_SIGNING_ENDPOINT || secrets.AZURE_SIGNING_ENDPOINT }}
+          AZURE_SIGNING_ACCOUNT: ${{ vars.AZURE_SIGNING_ACCOUNT || secrets.AZURE_SIGNING_ACCOUNT }}
+          AZURE_SIGNING_PROFILE: ${{ vars.AZURE_SIGNING_PROFILE || secrets.AZURE_SIGNING_PROFILE }}
+          WIN_PUBLISHER_NAME: ${{ vars.WIN_PUBLISHER_NAME || secrets.WIN_PUBLISHER_NAME }}
+        run: node scripts/dist-release.js
 
       - name: Packaged smoke test
         run: node scripts/smoke-packaged.mjs
@@ -96,6 +114,36 @@ jobs:
             echo "dist/$f"
           done
 
+      # Reads what was actually built, not the settings. A signed build must be signed all the way through (the app
+      # exe and both downloads), with updates on and app-update.yml naming the signer and the download feed. An
+      # unsigned build must have updates off.
+      - name: Check signatures and the update switch
+        id: signing
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $wc = node -e "const a=require('@electron/asar');process.stdout.write(String(JSON.parse(a.extractFile('dist/win-unpacked/resources/app.asar','package.json')).wcUpdates===true))"
+          $feed = Get-Content -Raw dist/win-unpacked/resources/app-update.yml
+          $files = @('dist/win-unpacked/Open World Clock.exe', "dist/Open-World-Clock-$env:VERSION-setup.exe", "dist/Open-World-Clock-$env:VERSION-portable.exe")
+          $sigs = @($files | ForEach-Object { Get-AuthenticodeSignature -LiteralPath $_ })
+          $sigs | ForEach-Object { Write-Host "$($_.Path): $($_.Status) $($_.SignerCertificate.Subject)" }
+          $valid = @($sigs | Where-Object { $_.Status -eq 'Valid' }).Count
+          if ($valid -eq 0) {
+            if ($wc -ne 'false') { Write-Host "::error::Unsigned build with wcUpdates=$wc. Updates must stay off in unsigned builds."; exit 1 }
+            Write-Host 'Unsigned build, auto-update off.'
+            "signed=false" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+          if ($valid -ne $files.Count) { Write-Host "::error::Only $valid of $($files.Count) files have a valid signature."; exit 1 }
+          if ($wc -ne 'true') { Write-Host '::error::Signed build, but wcUpdates is not true in the packaged app.'; exit 1 }
+          if ($feed -notmatch 'publisherName') { Write-Host '::error::app-update.yml has no publisherName, so the updater would not check who signed an update.'; exit 1 }
+          if ($feed -notmatch 'https://download\.openworldclock\.com') { Write-Host '::error::app-update.yml does not point at https://download.openworldclock.com.'; exit 1 }
+          Write-Host "Signed build, installer auto-update on. app-update.yml:"
+          Write-Host $feed
+          "signed=true" >> $env:GITHUB_OUTPUT
+
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
           subject-path: |
@@ -104,16 +152,20 @@ jobs:
             dist/Open-World-Clock-${{ steps.version.outputs.version }}-portable.exe
             dist/latest.yml
 
-      # A draft, so nothing reaches the site or users until the owner checks the asset names and publishes it.
+      # A draft, so nothing reaches the site or users until the owner checks the asset names and publishes it. The
+      # updater does not read GitHub releases: installs update only once latest.yml is uploaded to the R2 bucket
+      # behind https://download.openworldclock.com (build.publish in package.json), which stays a manual step.
       - name: Create the draft release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
           VERSION: ${{ steps.version.outputs.version }}
+          SIGNED: ${{ steps.signing.outputs.signed }}
         run: |
+          if [ "$SIGNED" = "true" ]; then state="Signed; installer auto-update on."; else state="Unsigned; auto-update off."; fi
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --verify-tag --title "Open World Clock $VERSION" \
-            --notes "Draft built by the Release workflow. Check the four asset names, then publish." \
+            --notes "Draft built by the Release workflow. $state Check the four asset names, then publish." \
             "dist/Open-World-Clock-$VERSION-setup.exe" \
             "dist/Open-World-Clock-$VERSION-setup.exe.blockmap" \
             "dist/Open-World-Clock-$VERSION-portable.exe" \

@@ -41,6 +41,7 @@
   // ---------- settings rules: a port of src/main.js (keep in step; test/web/shim.test.mjs compares them) ----------
   const LAYOUTS = ['strip', 'compact', 'vertical'];
   const VIEW_KEYS = [...LAYOUTS, 'map', 'planner', 'mapVertical', 'plannerVertical'];
+  const PLANNER_KEYS = ['planner', 'plannerVertical'];
   const MIN_W = 280, MIN_H = 120, MAX_DIM = 16384, ZOOM_MAX = 3.8;
   const MAIN_OWNED = new Set(['viewSizes']);
   const WEB_FIXED = new Set(['layout']); // the web picks the layout from the width; a patch for it is ignored
@@ -118,6 +119,7 @@
       if (!isPlainObject(v)) return undefined;
       const out = {};
       for (const k of VIEW_KEYS) {
+        if (PLANNER_KEYS.includes(k)) continue; // sizes saved by older versions are dropped
         const s = v[k];
         if (!isPlainObject(s) || !Number.isInteger(s.width) || !Number.isInteger(s.height)) continue;
         out[k] = { width: Math.min(MAX_DIM, Math.max(MIN_W, s.width)), height: Math.min(MAX_DIM, Math.max(MIN_H, s.height)) };

@@ -73,3 +73,7 @@ v1.3.0 details: sharing, planner slots, robustness and a lighter app.
 - Lighter: fewer processes and less memory at startup, a digit roll that animates only the digits that change, and a cheaper time scrub. `npm run perf` checks the numbers against scripts/perf/budgets.json.
 - A build with auto-update turned on but without electron-updater packaged now fails instead of shipping an app that never updates.
 - Tests: `npm test` and `npm run shots` run while the installed app is open, and keep the test app's stderr in test/deep-stderr.log when it fails to start.
+
+v1.3.1: the meeting planner opens at the size it needs.
+- The planner window is sized to its content, measured from the real layout: as tall as the head, the cities and the hour scale, with no empty space above or below the grid, whatever size the window had before. Adding or removing a city, a longer head line or the selection bar resizes it to fit; the vertical planner gets hour cells wide enough to read. A size you drag the planner to is kept while it stays open and is no longer saved, so it opens fitted every time.
+- The website: the home page frame fits the planner on desktop too, not only on phones.

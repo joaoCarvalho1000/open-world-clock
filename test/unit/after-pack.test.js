@@ -51,3 +51,23 @@ for (const packAsar of [true, false]) {
     });
   }
 }
+
+// checkUpdateBuild: updates may only be on in a signed build with no Store (appx) target.
+const { checkUpdateBuild } = require('../../scripts/after-pack.js');
+const azure = { azureSignOptions: { endpoint: 'https://eus.codesigning.azure.net', codeSigningAccountName: 'a', certificateProfileName: 'p', publisherName: 'X' } };
+const updateBuildCases = [
+  ['updates off, unsigned (the default build)', { updates: false, targets: ['nsis', 'portable'] }, true],
+  ['updates off, Store build', { updates: false, targets: ['appx'] }, true],
+  ['updates on, Azure signed, nsis + portable', { updates: true, targets: ['nsis', 'portable'], winOptions: azure }, true],
+  ['updates on, certificate thumbprint', { updates: true, targets: ['nsis'], winOptions: { signtoolOptions: { certificateSha1: 'AB' } } }, true],
+  ['updates on, CSC_LINK certificate file', { updates: true, targets: ['nsis'], env: { CSC_LINK: 'cert.pfx' } }, true],
+  ['updates on, unsigned', { updates: true, targets: ['nsis', 'portable'] }, /not code-signed/],
+  ['updates on, signtoolOptions without a certificate', { updates: true, targets: ['nsis'], winOptions: { signtoolOptions: { publisherName: 'X' } } }, /not code-signed/],
+  ['updates on, signed, with an appx target', { updates: true, targets: ['nsis', 'appx'], winOptions: azure }, /appx/],
+];
+for (const [name, args, expect] of updateBuildCases) {
+  test(`checkUpdateBuild: ${name}`, () => {
+    if (expect === true) assert.doesNotThrow(() => checkUpdateBuild(args));
+    else assert.throws(() => checkUpdateBuild(args), expect);
+  });
+}

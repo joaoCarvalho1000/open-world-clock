@@ -159,12 +159,13 @@ function node(tag, attrs = {}, parent = null) {
 
 // a page on `hostname` (openworldclock.com by default); `frame` (optional) is the hero's #heroApp: { pathname, doc },
 // doc from frameDoc()
-function eventPage({ lang = 'en', themePref = 'system', frame = null, hostname = 'openworldclock.com' } = {}) {
+function eventPage({ lang = 'en', themePref = 'system', frame = null, hostname = 'openworldclock.com', tool = '' } = {}) {
   const on = {};
   const listen = (t, fn) => { (on[t] = on[t] || []).push(fn); };
   let heroFrame = null;
   if (frame) {
     heroFrame = node('iframe', { id: 'heroApp' });
+    heroFrame.dataset = { tool };
     heroFrame.contentWindow = { location: { pathname: frame.pathname } };
     heroFrame.contentDocument = frame.doc;
     heroFrame.loads = [];
@@ -176,7 +177,7 @@ function eventPage({ lang = 'en', themePref = 'system', frame = null, hostname =
     head: { appendChild: (x) => x },
     body: {},
     createElement: (tag) => ({ tagName: String(tag).toUpperCase(), src: '', async: false }),
-    querySelector: (sel) => (sel === '#heroApp' ? heroFrame : null),
+    querySelector: (sel) => (sel === '#heroApp' || (sel === '#heroApp[data-tool]' && tool) ? heroFrame : null),
     querySelectorAll: () => [],
     addEventListener: listen,
   };
@@ -302,6 +303,16 @@ function appElements() {
   add('help', 'a', { href: 'https://github.com/joaoCarvalho1000/open-world-clock' });
   return els;
 }
+
+test('tool_used distinguishes the tool, counts trusted actions once, and excludes selected values', () => {
+  const els = appElements();
+  const doc = frameDoc(Object.values(els));
+  const p = eventPage({ tool: 'planner', frame: { pathname: '/app/', doc } });
+  doc.fire('click', els.btnPlanner, {}, false);
+  doc.fire('input', els.convTime);
+  doc.fire('input', els.convTime);
+  assert.deepEqual(p.sent(), [['tool_used', { action: 'convert', tool: 'planner' }, null]]);
+});
 
 test('hero_app_used: real use of the app in the hero, once per action, never scripted events or values', () => {
   const els = appElements();
