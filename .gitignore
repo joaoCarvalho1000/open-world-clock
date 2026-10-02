@@ -1,6 +1,7 @@
 # build output and dependencies
 node_modules/
 dist/
+dist-*/
 out/
 coverage/
 build/icons-tools/node_modules/
