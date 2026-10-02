@@ -1089,6 +1089,8 @@ ipcMain.on('window:fitView', (e, size) => {
   if (!trusted(e) || !win || win.isDestroyed() || geo.overlay !== 'planner' || !size || typeof size !== 'object') return;
   const w = Number(size.width), h = Number(size.height);
   if (!Number.isFinite(w) || !Number.isFinite(h)) return;
+  // A measurement taken in another layout (sent just before a layout switch) is stale: the new layout sends its own.
+  if (size.layout !== settings.layout) return;
   const key = viewKey();
   geo.fit = { key, width: Math.min(MAX_DIM, Math.max(MIN_W, Math.round(w))), height: Math.min(MAX_DIM, Math.max(MIN_H, Math.round(h))), keepWidth: size.keepWidth === true };
   if (geo.key !== key || geo.loop) return;

@@ -1468,7 +1468,7 @@
     const now = document.createElement('div'); now.className = 'plan-now'; now.hidden = true; layer.append(now);
     if (rows.length) {
       const grid = document.createElement('div'); grid.className = 'plan-grid'; grid.append(...rows, layer);
-      // Hour scale under the rows (shown in the vertical and compact layouts, whose cells carry no numbers): the source
+      // Hour scale under the rows (shown only by the narrow planner, whose cells carry no numbers): the source
       // city's 0, 6, 12, 18 and 24 h, as the clock shows them, cut to the hour (24 on the 24-hour clock).
       const axis = document.createElement('div'); axis.className = 'plan-axis'; axis.setAttribute('aria-hidden', 'true');
       axis.append(...[0, 6, 12, 18, 24].map((h) => { const sp = document.createElement('span'); sp.textContent = h === 24 && !settings.hour12 ? '24' : formatTime(h % 24, 0).replace(/[:.]00/, ''); return sp; }));
@@ -1560,6 +1560,8 @@
   function renderPlanner(date) {
     const on = plannerOn();
     el.app.classList.toggle('planner-on', on);
+    // narrow planner only where the window cannot widen: the web app's vertical layout (a phone)
+    el.app.classList.toggle('plan-narrow', on && layout() === 'vertical' && !!settings.web);
     if (el.planner.hidden === on) el.planner.hidden = !on;
     if (el.btnPlanner.getAttribute('aria-pressed') !== String(on)) el.btnPlanner.setAttribute('aria-pressed', String(on));
     if (!on) { planKey = null; planFitSent = null; return; }
@@ -1581,17 +1583,19 @@
   }
   // The planner's natural size in CSS px, read from the real elements: everything above it (bar, tip), its padding, the
   // head, the grid with its hour scale (the body's scrollHeight, even while the body is scrolling). Width: the label
-  // column (the minimum of --plan-label) and 24 cells at a readable minimum; the vertical planner has no label column
-  // and only asks for a minimum width (a wider window stays as it is).
-  const PLAN_CELL_MIN = { strip: 34, compact: 22, vertical: 14 };
+  // column (the minimum of --plan-label) and 24 cells at a readable minimum; the narrow planner (web, phone) has no label
+  // column and only asks for a minimum width.
+  const PLAN_CELL_MIN = { full: 34, narrow: 14 };
   function measurePlanner() {
     const p = el.planner, cs = getComputedStyle(p), px = (v) => parseFloat(v) || 0;
-    const head = p.querySelector('.plan-head'), lay = layout();
+    const head = p.querySelector('.plan-head'), narrow = el.app.classList.contains('plan-narrow');
     const headH = head && head.offsetParent ? head.offsetHeight + px(cs.rowGap) : 0;
     const height = Math.ceil(p.offsetTop + px(cs.paddingTop) + headH + el.planBody.scrollHeight + px(cs.paddingBottom)) + 1;
-    const label = lay === 'vertical' ? 0 : (lay === 'compact' ? 140 : 150) + 12;
-    const width = Math.ceil(px(cs.paddingLeft) + px(cs.paddingRight) + label + 24 * PLAN_CELL_MIN[lay] + 23 * (lay === 'vertical' ? 1 : 2));
-    return { width, height, keepWidth: lay === 'vertical' };
+    // the label column at the planner's natural width (--plan-label is clamp(150px, 14vw, 220px): 150 there) plus the
+    // 12px column gap; a constant, so a window the user widens does not change what is asked for
+    const label = narrow ? 0 : 150 + 12;
+    const width = Math.ceil(px(cs.paddingLeft) + px(cs.paddingRight) + label + 24 * (narrow ? PLAN_CELL_MIN.narrow : PLAN_CELL_MIN.full) + 23 * (narrow ? 1 : 2));
+    return { width, height, keepWidth: narrow, layout: layout() };
   }
   // Tell main the size when it changed by more than 2px. The first one goes out at once, later ones after the layout
   // settles (a head line that wraps, the bar stacking at the new width). main ignores them while the user drags the frame.
@@ -1600,7 +1604,7 @@
     planFitTimer = 0;
     if (!plannerOn() || !window.wc.fitView || !el.planner.offsetParent) return;
     const m = measurePlanner(), s = planFitSent;
-    if (s && Math.abs(m.width - s.width) <= 2 && Math.abs(m.height - s.height) <= 2) return;
+    if (s && s.layout === m.layout && Math.abs(m.width - s.width) <= 2 && Math.abs(m.height - s.height) <= 2) return;
     planFitSent = m;
     window.wc.fitView(m);
   }

@@ -64,8 +64,8 @@ It is completely free, with no strings attached. You should not have to pay for 
 
 - **Microsoft Store (recommended):** [Open World Clock on the Microsoft Store](https://apps.microsoft.com/detail/9N88FR8M81BM?cid=github-readme). One click to install, signed by Microsoft, runs natively on x64 and ARM64, and keeps itself updated.
 - **winget:** `winget install 9N88FR8M81BM -s msstore`, the same Store build from the command line.
-- **Installer:** [Open-World-Clock-1.3.1-setup.exe](https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe), per user, no admin rights.
-- **Portable exe:** [Open-World-Clock-1.3.1-portable.exe](https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe), runs from any folder and never updates itself.
+- **Installer:** [Open-World-Clock-1.3.2-setup.exe](https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe), per user, no admin rights.
+- **Portable exe:** [Open-World-Clock-1.3.2-portable.exe](https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe), runs from any folder and never updates itself.
 - **In your browser:** the same app runs right on the home page, [openworldclock.com](https://openworldclock.com/), with nothing to install; see [Web app](#web-app) below.
 
 The installer and the portable exe come straight from openworldclock.com; their SHA-256 checksums are on the [download page](https://openworldclock.com/download).
