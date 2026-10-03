@@ -20,7 +20,7 @@
     "indexnow": "node indexnow.mjs"
   },
   "devDependencies": {
-    "wrangler": "4.137.0"
+    "wrangler": "4.147.0"
   },
   "allowScripts": {
     "workerd@1.20260921.1": true
