@@ -91,6 +91,11 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
+      # The suite exercises windows up to 1920 CSS pixels. The hosted runner's
+      # default 1024x768 desktop clamps them and invalidates geometry assertions.
+      - name: Set the test desktop size
+        shell: powershell
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
       - name: Keep LF line endings
         run: git config --global core.autocrlf false
 
