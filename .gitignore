@@ -67,3 +67,6 @@ marketing-video/
 # Python release tooling bytecode
 __pycache__/
 *.py[cod]
+
+# Authenticated browser inspection captures stay local.
+.playwright-mcp/
