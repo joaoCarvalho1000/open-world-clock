@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  merge_group:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,7 +15,7 @@ concurrency:
   group: unit-${{ github.ref }}
   cancel-in-progress: true
 
-# What runs here, with Node built-ins only (nothing is installed):
+# What runs here (dependencies are installed from the committed lockfiles):
 #   - the Node unit tests in test/unit/
 #   - npm audit on the app's and the website's lockfiles
 #   - the website link-check tests (cloudflare/check-links.test.mjs, fetch is stubbed, no network)
@@ -22,9 +24,9 @@ concurrency:
 #   - the CSP check: site/_headers must list the hash of every inline script in site/*.html
 #   - the shared data check: shared/ and apple/Shared/Localizable.xcstrings must match what the exporters produce
 #     from src/ today
-# The in-app Electron suite (test/run.js driving test/deep.js in a real window) runs in the second job, `app`. It is
-# non-blocking (continue-on-error) until it has passed reliably on the runner for a while, so a red `app` job does not
-# fail the workflow: read its deep.txt artifact. Run `npm test` on a Windows PC before a release as well. The live
+# The in-app Electron suite (test/run.js driving test/deep.js in a real window) runs in `app`.
+# Its failures block the CI gate. Read the deep-report artifact to diagnose runner or application failures.
+# Run `npm test` on a Windows PC before a release as well. The live
 # link check (`npm run links` in cloudflare/) needs the network and a published release, so it runs before each
 # deploy instead.
 jobs:
@@ -88,8 +90,6 @@ jobs:
     name: In-app suite
     runs-on: windows-latest
     timeout-minutes: 20
-    # Non-blocking for now: see the header comment.
-    continue-on-error: true
     steps:
       - name: Keep LF line endings
         run: git config --global core.autocrlf false
@@ -141,3 +141,63 @@ jobs:
           path: test/deep.txt
           if-no-files-found: warn
           retention-days: 14
+
+  website:
+    name: Website
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+        working-directory: cloudflare
+      - run: npm audit --audit-level=high
+        working-directory: cloudflare
+      - name: Website unit tests and browser settings
+        run: node --test 'cloudflare/*.test.mjs' test/web/shim.test.mjs
+      - name: Generated site, search metadata, translations and security policy
+        run: |
+          node scripts/build-web.mjs --check
+          node cloudflare/seo-check.mjs
+          node cloudflare/site-chrome.mjs
+          node cloudflare/asset-versions.mjs
+          node cloudflare/csp-hashes.mjs
+      - name: Bundle the Pages Functions without deploying
+        working-directory: cloudflare
+        run: npm exec --no -- wrangler pages functions build functions --outdir ../dist/pages-functions
+      - name: Browser tests for time conversion, sharing and mobile layouts
+        env:
+          PUPPETEER_CORE: ${{ github.workspace }}/cloudflare
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          "$CHROME_PATH" --version
+          node test/web/seo.test.mjs
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: website-browser-report
+          path: dist/seo-shots/
+          if-no-files-found: warn
+          retention-days: 14
+
+  gate:
+    name: CI gate
+    if: always()
+    needs: [unit, app, website]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every check to succeed
+        env:
+          UNIT: ${{ needs.unit.result }}
+          APP: ${{ needs.app.result }}
+          WEBSITE: ${{ needs.website.result }}
+        run: |
+          test "$UNIT" = success
+          test "$APP" = success
+          test "$WEBSITE" = success
