@@ -21,7 +21,12 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'wc-test-'));
 
 let status = 1, stderr = '';
 try {
-  const r = spawnSync(electron, [path.resolve(__dirname, '..')], {
+  // Hosted Windows defaults to reduced motion, while this suite explicitly
+  // checks animations. Select its intended preference without changing the app
+  // or a developer's OS settings. Screenshots continue to use local preferences.
+  const switches = process.env.GITHUB_ACTIONS === 'true' && !shots
+    ? ['--force-prefers-no-reduced-motion'] : [];
+  const r = spawnSync(electron, [...switches, path.resolve(__dirname, '..')], {
     env: { ...process.env, WC_USER_DATA: tmp, WC_LANG: 'en', WC_SMOKE: suite, WC_SHOTS_DIR: shotsDir },
     stdio: ['ignore', 'ignore', 'pipe'], timeout: shots ? 240000 : 150000, maxBuffer: 64 * 1024 * 1024,
   });
