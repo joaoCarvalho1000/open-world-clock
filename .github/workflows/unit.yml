@@ -30,6 +30,12 @@ concurrency:
 # link check (`npm run links` in cloudflare/) needs the network and a published release, so it runs before each
 # deploy instead.
 jobs:
+  security:
+    uses: ./.github/workflows/codeql.yml
+    permissions:
+      contents: read
+      security-events: write
+
   unit:
     runs-on: windows-latest
     timeout-minutes: 15
@@ -220,7 +226,7 @@ jobs:
   gate:
     name: CI gate
     if: always()
-    needs: [unit, app, website]
+    needs: [unit, app, website, security]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -229,10 +235,12 @@ jobs:
           UNIT: ${{ needs.unit.result }}
           APP: ${{ needs.app.result }}
           WEBSITE: ${{ needs.website.result }}
+          SECURITY: ${{ needs.security.result }}
         run: |
           test "$UNIT" = success
           test "$APP" = success
           test "$WEBSITE" = success
+          test "$SECURITY" = success
 
   deploy:
     name: Deploy website
