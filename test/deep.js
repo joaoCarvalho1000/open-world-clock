@@ -634,6 +634,11 @@ module.exports = (w, app) => {
       const posAfter = w.getPosition();
       await dragBy('.card[data-zone]'); await sleep(150);
       check('dragging a card does not move the window', String(w.getPosition()) === String(posAfter), `${posAfter} -> ${w.getPosition()}`);
+      // The 20 drag cycles can leave the window below the runner's desktop.
+      // Restore the starting position before tests that depend on live renderer
+      // timers; an occluded window throttles both rAF and the scrub fallback.
+      w.setPosition(...pos0); w.show(); w.focus(); w.webContents.focus();
+      await sleep(150);
       // 12b. Batch 1: sun-driven night, asleep cue, wheel scrubber, abbreviation/offset search
       for (const z of ['America/Los_Angeles', 'Asia/Tokyo']) if (await run((z) => !!document.querySelector(`.card[data-zone="${z}"]`), z)) await run(menuAct, z, 'remove');
       await addAll(['Lisbon', 'Auckland', 'Reykjavik']);
