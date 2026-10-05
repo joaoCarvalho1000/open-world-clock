@@ -22,7 +22,7 @@
 // check (npm test). Slugs stay English in every language (/pt/features), so a page's three addresses differ only in
 // the prefix.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { extraSlugs } from './seo-content.mjs';
+import { extraSlugs, copy as SEO } from './seo-content.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -138,7 +138,8 @@ export function footerHtml(lang, slug, mark = true) {
     <nav aria-label="${w.footer}">
       <ul class="footer-pages">
 ${[li('features', w.features), li('download', w.download), li('faq', w.fFaq), li('time-zone-converter', w.fConverter),
-  li('meeting-planner', w.fPlanner), li('world-map', w.map), li('windows-clock-alternative', w.alt),
+  li('meeting-planner', w.fPlanner), li('world-time-now', SEO[lang].now), li('utc-time', SEO[lang].utc),
+  li('world-map', w.map), li('windows-clock-alternative', w.alt),
   li('multiple-time-zones-windows', w.fMulti), li('world-time-buddy-alternative', w.wtb),
   li('daylight-saving-meetings', searchLabels[0]), li('always-on-top-world-clock', searchLabels[1]),
   li('press', searchLabels[2]), li('privacy', w.privacy), li('support', w.help)].join('\n')}

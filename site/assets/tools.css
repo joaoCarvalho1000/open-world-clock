@@ -27,11 +27,17 @@
 .route-list a:hover { text-decoration: underline; }
 .route-list svg { width: 16px; height: 16px; flex: none; }
 .seo-table { font-variant-numeric: tabular-nums; }
+.live-table code { font-size: .8125rem; color: var(--fg-2); overflow-wrap: anywhere; }
+.live-table [data-live="time"] { white-space: nowrap; }
 .seo-date { color: var(--fg-2); margin-top: 16px; font-size: .9375rem; }
 .tool-page .pg-sec { padding-top: clamp(48px, 7vw, 88px); }
 @media (max-width: 700px) {
-  .tool-nav { gap: 4px 18px; }
-  .tool-nav a { font-size: .9375rem; }
+  /* One scrollable row, so the live tool starts high on a phone. */
+  .tool-page .pg-hero h1 { font-size: clamp(1.75rem, 1.2rem + 3vw, 2.25rem); }
+  .tool-page .pg-lede { margin-top: 12px; font-size: 1rem; }
+  .tool-nav { flex-wrap: nowrap; gap: 18px; margin: 12px -16px 8px; padding-inline: 16px; overflow-x: auto; scrollbar-width: none; }
+  .tool-nav::-webkit-scrollbar { display: none; }
+  .tool-nav a { flex: none; font-size: .9375rem; }
   .tool-window .app-win-bar { padding-inline: 12px; }
   .tool-window .app-frame { --frame-h: 550px; }
   .tool-window [data-tool="planner"] { --frame-h: 540px; }

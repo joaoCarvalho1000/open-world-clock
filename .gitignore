@@ -60,3 +60,6 @@ store/
 apple/appstore/
 build/logo/SPEC.md
 marketing-video/
+
+# Website release artifacts
+/output/

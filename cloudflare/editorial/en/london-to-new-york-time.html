@@ -1,0 +1,119 @@
+<main id="main" class="pg"><section class="pg-hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Home"><ol><li><a href="/">Home</a></li><li><span aria-current="page">London to New York Time Converter</span></li></ol></nav><h1 id="h1">London to New York time difference and converter</h1><p class="pg-lede">See the UK ↔ NYC offset for any date, convert times like 2pm London or 8pm New York, then share the result or open the meeting planner for shared working hours.</p><nav class="tool-nav" aria-label="Keep exploring"><a href="/time-zone-converter" aria-current="page">Time zone converter</a><a href="/meeting-planner">Meeting planner</a><a href="/world-time-now">World time now</a><a href="/utc-time">UTC time</a><a href="/world-map">Day and night map</a></nav>
+<div class="tool-window is-loading"><div class="app-win-bar"><span class="tool-status" id="toolStatus" role="status">Loading your clocks…</span><button class="app-win-share tool-retry" id="toolRetry" type="button" hidden>Try again</button><button class="app-win-share" id="heroShare" type="button" disabled>Share clocks</button></div>
+<iframe class="app-frame" id="heroApp" data-tool="converter" data-cities="Europe/London,America/New_York" title="Time zone converter" allow="clipboard-write"></iframe><input class="tool-share-link" id="toolShareLink" readonly hidden aria-label="Share clocks"></div>
+<noscript><p class="pg-sub">Turn on JavaScript to use the live tool. The examples below work without it.</p></noscript><div class="tool-after"><p>Free to use. No account. Your saved cities stay yours.</p><a href="/download">Keep it on your Windows desktop</a></div></div></section>
+
+<section class="pg-sec cols" id="difference" aria-labelledby="difference-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="difference-h">London to New York time difference</h2></div>
+    <div class="sec-body prose">
+      <p>New York is usually <strong>5 hours behind London</strong> (EST/EDT vs GMT/BST). When both cities are on standard time or both on daylight saving, 14:00 in London is 09:00 in New York. For a few weeks each spring and autumn the gap is <strong>4 hours</strong> because the US and UK change clocks on different dates.</p>
+      <p>That is why a date picker matters. “London time vs New York” is not one fixed offset for every day of the year. Use the converter above for a specific date, or check the seasonal table below.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pg-sec cols" id="examples" aria-labelledby="examples-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="examples-h">Common conversions: UK time to New York and back</h2></div>
+    <div class="sec-body prose">
+      <p>Worked examples for <time datetime="2026-10-01">1 October 2026</time> (5-hour gap). Change the date in the tool if your meeting falls near a clock change.</p>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="UK to New York time examples">
+        <table class="tbl seo-table">
+          <thead><tr><th scope="col">If it is… in London (UK)</th><th scope="col">It is… in New York</th><th scope="col">Notes</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">09:00</th><td>04:00</td><td>Early US morning</td></tr>
+            <tr><th scope="row">12:00</th><td>07:00</td><td>US start-of-day</td></tr>
+            <tr><th scope="row">14:00 (2pm UK)</th><td>09:00</td><td>Common US standup slot</td></tr>
+            <tr><th scope="row">15:00</th><td>10:00</td><td>Mid-morning NYC</td></tr>
+            <tr><th scope="row">17:00</th><td>12:00</td><td>US lunch</td></tr>
+            <tr><th scope="row">18:00</th><td>13:00</td><td>Afternoon NYC</td></tr>
+            <tr><th scope="row">21:00</th><td>16:00</td><td>Late UK / mid US afternoon</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="New York to London time examples">
+        <table class="tbl seo-table">
+          <thead><tr><th scope="col">If it is… in New York</th><th scope="col">It is… in London (UK)</th><th scope="col">Notes</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">09:00</th><td>14:00</td><td>UK afternoon</td></tr>
+            <tr><th scope="row">12:00</th><td>17:00</td><td>UK end of day</td></tr>
+            <tr><th scope="row">15:00</th><td>20:00</td><td>UK evening</td></tr>
+            <tr><th scope="row">20:00 (8pm NYC)</th><td>01:00 <em>next day</em></td><td>Overnight in London</td></tr>
+            <tr><th scope="row">22:00</th><td>03:00 <em>next day</em></td><td>Deep UK night</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Type <code>2pm</code> or <code>8pm</code> in either city card in the converter, or scroll any card in 15-minute steps. One click copies the pair for chat or calendar invites.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pg-sec cols" id="seasonal" aria-labelledby="seasonal-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="seasonal-h">When the gap is 5 hours vs 4 hours</h2></div>
+    <div class="sec-body prose">
+      <p>Same local hour (09:00 in London) across the year. Offsets come from browser IANA rules. keep your browser updated.</p>
+      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Seasonal London to New York offsets">
+        <table class="tbl seo-table">
+          <thead><tr><th scope="col">Date in London</th><th scope="col">London</th><th scope="col">New York</th><th scope="col">Gap</th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><time datetime="2026-01-15">15 Jan 2026</time></th><td>09:00</td><td>04:00</td><td>5 hours</td></tr>
+            <tr><th scope="row"><time datetime="2026-03-20">20 Mar 2026</time></th><td>09:00</td><td>05:00</td><td>4 hours (US already on DST)</td></tr>
+            <tr><th scope="row"><time datetime="2026-07-15">15 Jul 2026</time></th><td>09:00</td><td>04:00</td><td>5 hours</td></tr>
+            <tr><th scope="row"><time datetime="2026-10-28">28 Oct 2026</time></th><td>09:00</td><td>05:00</td><td>4 hours (UK already off BST)</td></tr>
+            <tr><th scope="row"><time datetime="2026-11-04">4 Nov 2026</time></th><td>09:00</td><td>04:00</td><td>5 hours</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="seo-date">Dates matter. These are worked examples, not a fixed year-round offset. Abbreviations like EST/EDT/GMT/BST can be ambiguous. prefer the city and date. More on spring/autumn flips: <a href="/daylight-saving-meetings">daylight saving and meetings</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pg-sec cols" id="overlap" aria-labelledby="overlap-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="overlap-h">Shared working hours (London ↔ New York)</h2></div>
+    <div class="sec-body prose">
+      <p>For a typical 09:00 to 17:00 office day in both cities on a 5-hour gap, the useful overlap is roughly <strong>14:00 to 17:00 London / 09:00 to 12:00 New York</strong>. Night-shift or flexible teams get more room. Open the <a href="/meeting-planner#c=Europe/London,America/New_York">meeting planner with London and New York preloaded</a> to paint working hours, including overnight shifts.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pg-sec cols" id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="faq-h">FAQ</h2></div>
+    <div class="sec-body prose">
+      <details><summary>How many hours between London and New York?</summary><p>Usually five. For short windows around the US and UK daylight-saving changes, the difference is four hours. Always confirm with a date.</p></details>
+      <details><summary>What is 2pm UK time in New York?</summary><p>On a normal 5-hour day, 14:00 in London is 09:00 in New York. Near DST transitions it can be 10:00. use the converter above.</p></details>
+      <details><summary>What is 8pm New York time in London?</summary><p>On a normal 5-hour day, 20:00 in New York is 01:00 the next calendar day in London.</p></details>
+      <details><summary>Is New York ahead of or behind London?</summary><p>New York is behind London. Morning in London is still night or early morning on the US East Coast.</p></details>
+      <details><summary>Can I keep both clocks on my Windows desktop?</summary><p>Yes. <a href="/always-on-top-world-clock">Open World Clock</a> pins city cards above other windows, works offline, and has no ads or telemetry. Free for Windows 10 and 11.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="pg-sec cols" id="related" aria-labelledby="related-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="related-h">Keep exploring</h2></div>
+    <div class="sec-body prose">
+      <ul class="route-list">
+        <li><a href="/meeting-planner#c=Europe/London,America/New_York">Meeting planner<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        <li><a href="/time-zone-converter">Time zone converter<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        <li><a href="/daylight-saving-meetings">US &amp; Europe Daylight Saving: Meeting Times in 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        <li><a href="/london-to-singapore-time">London to Singapore<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        <li><a href="/new-york-to-tokyo-time">New York to Tokyo<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+        <li><a href="/always-on-top-world-clock">Always-on-top world clock<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2 class="pg-h2">Keep London and New York on your Windows desktop</h2>
+    <p class="pg-sub">The browser tool is handy for a quick check. Pinning both cities above other apps is a feature of the Windows desktop app.</p>
+    <p class="more"><a class="btn btn-primary" href="/download">For Windows</a></p>
+  </div>
+</section>
+</main>

@@ -60,3 +60,24 @@ merge protection. Review the latest PR commit and the generated pages before mer
 These checks do not publish the website or release desktop or iOS packages.
 
 Everyone taking part is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
+
+### Website releases
+
+Production deploys use the website artifact from the successful CI run on `main`.
+The `website-production` GitHub environment permits only `main`. Its Cloudflare
+credential needs Pages Edit for this account; do not store a personal OAuth token.
+The maintainer enables deployment with `WEBSITE_DEPLOY_ENABLED=true` only after
+configuring that environment secret (`CLOUDFLARE_API_TOKEN`).
+
+The release script checks every artifact hash and the latest `main` SHA, records
+Cloudflare's previous deployment, and verifies the public `/release.json`, core
+pages and discovery routes. A failed post-deploy check rolls back this deployment
+only. Ambiguous upload failures or an outside deployment require reconciliation;
+do not blindly rerun them. Deployment reports are retained as Actions artifacts.
+Desktop and iOS releases remain separate workflows.
+
+Curated SEO routes come from `cloudflare/seo-content.mjs` and
+`scripts/build-seo-pages.mjs`. Individual editorial pages can provide a main HTML
+fragment plus metadata in `cloudflare/editorial/<language>/`. Run
+`npm run prepare:site --prefix cloudflare` and commit generated pages too. CI
+regenerates them and rejects drift, including newly generated untracked pages.

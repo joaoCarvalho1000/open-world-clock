@@ -27,7 +27,7 @@ const REGIONS = {
   eu: { api: 'https://eu.i.posthog.com', assets: 'https://eu-assets.i.posthog.com' },
 };
 
-export const DEFAULT_KEY = 'phc_qngHqsrdSs4wZChMLmqrpqN2HJj84i6vmnczAASJ4V5i';
+export const DEFAULT_KEY = 'phc_xNf9EdeZoqL2EFKCngCxqubrNddx8VpDXCNMGGn5RaAT';
 export const MAX_BODY = 64 * 1024;
 export const METHODS = ['GET', 'POST', 'OPTIONS'];
 export const STATIC_FILES = new Set(['array.js']);
