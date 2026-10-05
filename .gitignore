@@ -63,3 +63,7 @@ marketing-video/
 
 # Website release artifacts
 /output/
+
+# Python release tooling bytecode
+__pycache__/
+*.py[cod]
