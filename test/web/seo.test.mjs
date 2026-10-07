@@ -13,7 +13,7 @@ const server=await startOnFreePort(8840,8850);
 const browser=await puppeteer.launch({executablePath,headless:true});
 const results=[];
 try {
-  for(const [route,mode] of (process.argv.includes('--functional-only') ? [] : [['time-zone-converter','converter'],['meeting-planner','planner'],['world-map','map']])) {
+  for(const [route,mode] of (process.argv.includes('--functional-only') ? [] : [['time-zone-converter','converter'],['meeting-planner','planner'],['world-map','map'],['world-time-now','now'],['utc-time','utc']])) {
     for(const width of [390,1440]) for(const theme of ['light','dark']) {
       const context=await browser.createBrowserContext(),page=await context.newPage();const errors=[];
       page.on('pageerror',err=>errors.push(err.message));
@@ -28,7 +28,7 @@ try {
       await page.goto(`${server.url}/${route}`,{waitUntil:'networkidle0'});
       await page.waitForSelector('.tool-window.is-ready',{timeout:25000});
       const frame=await (await page.$('#heroApp')).contentFrame();
-      if(mode!=='converter')await frame.waitForSelector(`#${mode==='planner'?'btnPlanner':'btnMap'}[aria-pressed="true"]`);
+      if(mode==='planner'||mode==='map')await frame.waitForSelector(`#${mode==='planner'?'btnPlanner':'btnMap'}[aria-pressed="true"]`);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,route+' page overflow');
       assert.deepEqual(errors,[],route+' console');
       await page.screenshot({path:path.join(out,`${route}-${width}-${theme}.png`)});
@@ -62,6 +62,37 @@ try {
   await page.screenshot({path:path.join(out,'calendar-tablet.png')});
   await frame.$eval('#webCalendar',el=>{el.value='2026-11-04';el.dispatchEvent(new Event('change',{bubbles:true}));});
   assert.match(await frame.$eval('[data-zone="Europe/London"]',el=>el.textContent),/14:00|2:00/);
+  // World time now: the preset cities in clock mode, the visitor's own converter zone, and live table cells.
+  await page.goto(`${server.url}/world-time-now`,{waitUntil:'networkidle0'});await page.waitForSelector('.is-ready');
+  const now=await(await page.$('#heroApp')).contentFrame();
+  assert.equal(await now.$$eval('.card[data-zone]',nodes=>nodes.length),5);
+  assert.equal(await now.$eval('#btnPlanner',el=>el.getAttribute('aria-pressed'))==='true',false);
+  assert.notEqual(await now.$eval('#convZone',el=>el.value),'America/Los_Angeles');
+  const cells=await page.$$eval('[data-live-zone]',els=>els.map(el=>el.textContent));
+  assert.equal(cells.length,34);assert(cells.every(t=>t&&t!=='--:--'),'live cells filled');
+  assert.match(await page.$eval('[data-live-zone="Asia/Kolkata"][data-live="offset"]',el=>el.textContent),/^UTC\+5:30$/);
+  // UTC: converting from UTC, so 14:00 UTC on a winter date reads 09:00 in New York.
+  await page.goto(`${server.url}/es/utc-time`,{waitUntil:'networkidle0'});await page.waitForSelector('.is-ready');
+  const utc=await(await page.$('#heroApp')).contentFrame();
+  assert.equal(await utc.$eval('#convZone',el=>el.value),'UTC');
+  await page.goto(`${server.url}/utc-time#c=UTC,America/New_York&t=2026-01-15T14:00&z=UTC`,{waitUntil:'networkidle0'});await page.waitForSelector('.is-ready');
+  const winter=await(await page.$('#heroApp')).contentFrame();
+  assert.match(await winter.$eval('[data-zone="America/New_York"]',el=>el.textContent),/9:00|09:00/);
+  // A team preset further down the planner page opens those cities in the app and brings the tool into view.
+  await page.goto(`${server.url}/meeting-planner`,{waitUntil:'networkidle0'});await page.waitForSelector('.is-ready');
+  await page.$eval('#presets a[href*="Asia/Kolkata"][href*="Los_Angeles"]',a=>a.click());
+  const preset=await(await page.$('#heroApp')).contentFrame();
+  await preset.waitForFunction(()=>document.querySelectorAll('.plan-row').length===2);
+  await page.waitForFunction(()=>Math.abs(document.querySelector('.tool-window').getBoundingClientRect().top)<120);
+  // Optional accessibility pass on the search pages when axe-core sits next to puppeteer-core.
+  const axePath=process.env.PUPPETEER_CORE&&path.resolve(process.env.PUPPETEER_CORE,'node_modules/axe-core/axe.min.js');
+  if(axePath&&fs.existsSync(axePath)) await page.setBypassCSP(true);
+  if(axePath&&fs.existsSync(axePath)) for(const route of ['meeting-planner','time-zone-converter','world-time-now','utc-time','pt/meeting-planner','es/utc-time']) {
+    await page.goto(`${server.url}/${route}`,{waitUntil:'networkidle0'});await page.waitForSelector('.is-ready');
+    await page.addScriptTag({path:axePath});
+    const violations=await page.evaluate(async()=>(await axe.run(document,{runOnly:['wcag2a','wcag2aa'],exclude:[['#heroApp']]})).violations.map(v=>`${v.id}: ${v.nodes.map(n=>n.target.join(' ')).slice(0,3).join(', ')}`));
+    assert.deepEqual(violations,[],route+' axe');
+  }
   // Switching tool pages preserves the cities and the picked date.
   await page.click('.tool-nav a[href*="meeting-planner"]');
   await page.waitForSelector('.is-ready');

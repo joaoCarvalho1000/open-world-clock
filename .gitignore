@@ -60,3 +60,13 @@ store/
 apple/appstore/
 build/logo/SPEC.md
 marketing-video/
+
+# Website release artifacts
+/output/
+
+# Python release tooling bytecode
+__pycache__/
+*.py[cod]
+
+# Authenticated browser inspection captures stay local.
+.playwright-mcp/

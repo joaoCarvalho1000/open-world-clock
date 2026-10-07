@@ -2,6 +2,34 @@
    The parent keeps the searchable HTML; shared city/time values stay in the URL hash. */
 (function () {
   'use strict';
+  // Live cells in the page's own HTML (world time now): local time and the current UTC offset, from the browser's
+  // IANA data. The served HTML keeps the offsets of the page's review date for crawlers and no-JS readers.
+  var live = document.querySelectorAll('[data-live-zone]');
+  if (live.length) {
+    var tag = document.documentElement.lang || 'en';
+    var tick = function () {
+      var now = new Date();
+      live.forEach(function (cell) {
+        var zone = cell.dataset.liveZone;
+        try {
+          if (cell.dataset.live === 'time') {
+            cell.textContent = new Intl.DateTimeFormat(tag, { timeZone: zone, weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(now);
+          } else {
+            var name = new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'shortOffset' }).formatToParts(now)
+              .filter(function (p) { return p.type === 'timeZoneName'; })[0].value;
+            cell.textContent = name.replace('GMT', 'UTC');
+          }
+        } catch (e) { /* An unknown zone in an old browser keeps the served value. */ }
+      });
+      setTimeout(tick, 60000 - now.getSeconds() * 1000 - now.getMilliseconds() + 50);
+    };
+    tick();
+  }
+  // On a phone the tool switcher is one scrolling row: keep the current tool in view.
+  var current = document.querySelector('.tool-nav [aria-current]');
+  if (current && current.offsetLeft + current.offsetWidth > current.parentNode.clientWidth) {
+    current.parentNode.scrollLeft = current.offsetLeft - 16;
+  }
   var frame = document.getElementById('heroApp');
   if (!frame || !frame.dataset.tool) return;
   var shell = frame.closest('.tool-window');
@@ -49,10 +77,12 @@
       if (!w.WCWeb || !w.WCShareHash) { fail(); return; }
       w.WCWeb.whenBooted(function () {
         if (run !== generation) return;
-        var id = frame.dataset.tool === 'planner' ? 'btnPlanner' : frame.dataset.tool === 'map' ? 'btnMap' : '';
+        var tool = frame.dataset.tool;
+        var id = tool === 'planner' ? 'btnPlanner' : tool === 'map' ? 'btnMap' : '';
         var button = id && w.document.getElementById(id);
         if (button && button.getAttribute('aria-pressed') !== 'true') button.click();
-        if (!location.hash && frame.dataset.cities) {
+        // Converting from the first city suits a pair or UTC; "world time now" keeps the visitor's own zone.
+        if (!location.hash && frame.dataset.cities && tool !== 'now') {
           var source = w.document.getElementById('convZone');
           source.value = frame.dataset.cities.split(',')[0];
           source.dispatchEvent(new w.Event('change', { bubbles: true }));
@@ -65,6 +95,10 @@
         share.disabled = false;
       });
     } catch (e) { fail(); }
+  });
+  // A preset link further down the page (#c=...) opens in the app (web.js follows the hash): bring the tool into view.
+  window.addEventListener('hashchange', function () {
+    if (/(^#|&)c=/.test(location.hash)) shell.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   });
   retry.addEventListener('click', function () { frame.removeAttribute('src'); start(); });
   document.querySelectorAll('.tool-nav a').forEach(function (link) {

@@ -167,7 +167,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="/assets/tools.css?v=2715ed7b78">
+<link rel="stylesheet" href="/assets/tools.css?v=fdaa61e1f5">
 </head>
 <body class="pg-body tool-page">
 <a class="skip" href="#main">Skip to content</a>
@@ -200,7 +200,7 @@
   </div>
 </header>
 <main id="main" class="pg">
-<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Home"><ol><li><a href="/">Home</a></li><li><span aria-current="page">Meeting planner</span></li></ol></nav><h1 id="h1">Find a time that works for everyone.</h1><p class="pg-lede">Add your cities and set their working hours. Find the overlap, then copy the meeting time.</p><nav class="tool-nav" aria-label="Keep exploring"><a href="/time-zone-converter">Time zone converter</a><a href="/meeting-planner" aria-current="page">Meeting planner</a><a href="/world-map">Day and night map</a></nav>
+<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Home"><ol><li><a href="/">Home</a></li><li><span aria-current="page">Meeting planner</span></li></ol></nav><h1 id="h1">Find a time that works for everyone.</h1><p class="pg-lede">Add your cities and set their working hours. Find the overlap, then copy the meeting time.</p><nav class="tool-nav" aria-label="Keep exploring"><a href="/time-zone-converter">Time zone converter</a><a href="/meeting-planner" aria-current="page">Meeting planner</a><a href="/world-time-now">World time now</a><a href="/utc-time">UTC time</a><a href="/world-map">Day and night map</a></nav>
 <div class="tool-window is-loading"><div class="app-win-bar"><span class="tool-status" id="toolStatus" role="status">Loading your clocks…</span><button class="app-win-share tool-retry" id="toolRetry" type="button" hidden>Try again</button><button class="app-win-share" id="heroShare" type="button" disabled>Share clocks</button></div>
 <iframe class="app-frame" id="heroApp" data-tool="planner" data-cities="" title="Meeting planner" allow="clipboard-write"></iframe><input class="tool-share-link" id="toolShareLink" readonly hidden aria-label="Share clocks"></div>
 <noscript><p class="pg-sub">Turn on JavaScript to use the live tool. The examples below work without it.</p></noscript><div class="tool-after"><p>Free to use. No account. Your saved cities stay yours.</p><a href="/download">Keep it on your Windows desktop</a></div></div></section>
@@ -240,6 +240,7 @@
     <div class="sec-body"><div class="prose"><p>Clocks change on different dates around the world, and the planner uses each day’s own rules. London and New York share 4 working hours on 21 October 2026, but 5 on 28 October, because Europe has already turned its clocks back and the US waits until 1 November. The same thing happens for two weeks in March. Worth a look before you set up a recurring meeting.</p></div></div>
   </div>
 </section>
+<!-- planner-guide --><section class="pg-sec cols" id="presets" aria-labelledby="presets-h"><div class="wrap"><div class="sec-head"><h2 id="presets-h">Team presets</h2></div><div class="sec-body prose"><p>Each link opens the planner above with those cities. Overlap uses the default hours, 09:00 to 18:00, Monday to Friday, on Wednesday 14 October 2026. Change any city’s hours in the planner.</p><div class="tbl-wrap" tabindex="0" role="region" aria-label="Team presets"><table class="tbl seo-table"><thead><tr><th scope="col">Team</th><th scope="col">Shared working time</th></tr></thead><tbody><tr><th scope="row"><a href="/meeting-planner#c=America/New_York,Europe/London,Europe/Berlin">US East + UK + Europe</a><br><span class="t">New York, London, Berlin</span></th><td>3 h · 09:00 to 12:00 (New York)</td></tr><tr><th scope="row"><a href="/meeting-planner#c=Europe/London,Europe/Berlin,Asia/Kolkata">UK + Europe + India</a><br><span class="t">London, Berlin, Mumbai</span></th><td>4 h 30 min · 09:00 to 13:30 (London)</td></tr><tr><th scope="row"><a href="/meeting-planner#c=America/Los_Angeles,Asia/Kolkata">US West + India</a><br><span class="t">Los Angeles, Mumbai</span></th><td>No shared hour; at most 1 of 2 cities working</td></tr><tr><th scope="row"><a href="/meeting-planner#c=Europe/London,Asia/Singapore,Asia/Tokyo">UK + Singapore + Japan</a><br><span class="t">London, Singapore, Tokyo</span></th><td>1 h · 09:00 to 10:00 (London)</td></tr><tr><th scope="row"><a href="/meeting-planner#c=America/New_York,America/Sao_Paulo,Asia/Singapore,Australia/Sydney">Americas + Asia-Pacific</a><br><span class="t">New York, São Paulo, Singapore, Sydney</span></th><td>No shared hour; at most 2 of 4 cities working</td></tr><tr><th scope="row"><a href="/meeting-planner#c=America/Sao_Paulo,Europe/Lisbon,Europe/Madrid">Brazil + Portugal + Spain</a><br><span class="t">São Paulo, Lisbon, Madrid</span></th><td>4 h · 09:00 to 13:00 (São Paulo)</td></tr></tbody></table></div></div></div></section><section class="pg-sec cols" id="fair" aria-labelledby="fair-h"><div class="wrap"><div class="sec-head"><h2 id="fair-h">When no hour works for everyone</h2></div><div class="sec-body prose"><ul class="steps"><li>Use the hours when the most people are working, and say who is outside them. The planner’s Best line shows this.</li><li>Rotate the early or late slot between regions instead of always asking the same city.</li><li>See whether one office can shift its day, for example an 08:00 start. Change that city’s hours and the overlap updates.</li><li>Not everything needs a live call. A shared document or recorded update can cover the region that would be asleep.</li></ul></div></div></section><section class="pg-sec cols" id="questions" aria-labelledby="questions-h"><div class="wrap"><div class="sec-head"><h2 id="questions-h">Questions</h2></div><div class="sec-body prose"><h3>How do I find a meeting time across 4 or more time zones?</h3><p>Add every city, open the planner, and look for the outlined overlap. If there is none, the Best line shows the hours when the most cities are working.</p><h3>Does it handle daylight saving time?</h3><p>Yes. Each day uses that day’s rules from the IANA time zone database, so the overlap can change in the weeks when regions change clocks on different dates.</p><h3>Can I send the result to my team?</h3><p>Share clocks copies a link with the cities and the selected time. Copy times in the app puts every converted time on your clipboard.</p><h3>Is it free?</h3><p>Yes. There is no account, and your cities are saved in your browser.</p></div></div></section><!-- /planner-guide -->
 <section class="pg-sec" id="more" aria-labelledby="more-h">
   <div class="wrap">
     <h2 id="more-h">More about Open World Clock</h2>
@@ -251,7 +252,7 @@
   </div>
 </section>
 
-<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Useful guides</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/daylight-saving-meetings">US &amp; Europe Daylight Saving: Meeting Times in 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/always-on-top-world-clock">Always-on-Top World Clock for Windows 11 &amp; 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/time-zone-converter">Time zone converter<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
+<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Useful guides</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/world-time-now">Current Time Around the World : Major Cities Now<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/utc-time">UTC Time Now &amp; UTC to Local Time Converter<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/daylight-saving-meetings">US &amp; Europe Daylight Saving: Meeting Times in 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/always-on-top-world-clock">Always-on-Top World Clock for Windows 11 &amp; 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
 <section class="cta-band" id="download" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="cta-card rv">
@@ -280,6 +281,8 @@
       <li><a href="/faq">FAQ</a></li>
       <li><a href="/time-zone-converter">Time zone converter</a></li>
       <li><a href="/meeting-planner" aria-current="page">Meeting planner</a></li>
+      <li><a href="/world-time-now">World time now</a></li>
+      <li><a href="/utc-time">UTC time</a></li>
       <li><a href="/world-map">World map</a></li>
       <li><a href="/windows-clock-alternative">Windows Clock alternative</a></li>
       <li><a href="/multiple-time-zones-windows">Multiple time zones on Windows</a></li>
@@ -299,11 +302,11 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Support the creator on Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Support the creator</span></a>
-<script src="/assets/config.js?v=51c7bf3354"></script>
+<script src="/assets/config.js?v=17eec50ba5"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
 <script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
-<script src="/assets/tool-page.js?v=a076815e08" defer></script>
+<script src="/assets/tool-page.js?v=c5061d0438" defer></script>
 </body>
 </html>

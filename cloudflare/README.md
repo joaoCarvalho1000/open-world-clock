@@ -21,6 +21,10 @@ The website (`../site`) is a static Cloudflare Pages project with one Pages Func
 
 In `../site`: `_headers` (CSP, HSTS and the other security headers, cache rules, noindex on non-canonical hosts), `_redirects` (path redirects only) and `_routes.json` (only `/ingest/*` runs the Function, so static files never cost a Function invocation).
 
+Miniflare currently pins sharp 0.35.4. The package override selects the patched
+0.35.5 release for [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w).
+Remove the override when the pinned Miniflare version includes that fix.
+
 ## Values the owner fills in
 
 | What | Where | Value |

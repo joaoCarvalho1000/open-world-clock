@@ -167,7 +167,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="/assets/tools.css?v=2715ed7b78">
+<link rel="stylesheet" href="/assets/tools.css?v=fdaa61e1f5">
 </head>
 <body class="pg-body tool-page">
 <a class="skip" href="#main">Pular para o conteúdo</a>
@@ -200,7 +200,7 @@
   </div>
 </header>
 <main id="main" class="pg">
-<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Início"><ol><li><a href="/pt/">Início</a></li><li><span aria-current="page">Planejador de reuniões</span></li></ol></nav><h1 id="h1">Encontre um horário bom para todos.</h1><p class="pg-lede">Adicione as cidades e ajuste o expediente de cada uma. Encontre um horário em comum e copie o resultado.</p><nav class="tool-nav" aria-label="Continue explorando"><a href="/pt/time-zone-converter">Conversor de fuso horário</a><a href="/pt/meeting-planner" aria-current="page">Planejador de reuniões</a><a href="/pt/world-map">Mapa de dia e noite</a></nav>
+<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Início"><ol><li><a href="/pt/">Início</a></li><li><span aria-current="page">Planejador de reuniões</span></li></ol></nav><h1 id="h1">Encontre um horário bom para todos.</h1><p class="pg-lede">Adicione as cidades e ajuste o expediente de cada uma. Encontre um horário em comum e copie o resultado.</p><nav class="tool-nav" aria-label="Continue explorando"><a href="/pt/time-zone-converter">Conversor de fuso horário</a><a href="/pt/meeting-planner" aria-current="page">Planejador de reuniões</a><a href="/pt/world-time-now">Hora mundial agora</a><a href="/pt/utc-time">Hora UTC</a><a href="/pt/world-map">Mapa de dia e noite</a></nav>
 <div class="tool-window is-loading"><div class="app-win-bar"><span class="tool-status" id="toolStatus" role="status">Carregando os relógios…</span><button class="app-win-share tool-retry" id="toolRetry" type="button" hidden>Tentar novamente</button><button class="app-win-share" id="heroShare" type="button" disabled>Compartilhar</button></div>
 <iframe class="app-frame" id="heroApp" data-tool="planner" data-cities="" title="Planejador de reuniões" allow="clipboard-write"></iframe><input class="tool-share-link" id="toolShareLink" readonly hidden aria-label="Compartilhar"></div>
 <noscript><p class="pg-sub">Ative o JavaScript para usar a ferramenta. Os exemplos abaixo funcionam sem ele.</p></noscript><div class="tool-after"><p>Grátis, sem conta. Suas cidades salvas continuam suas.</p><a href="/pt/download">Tenha no seu desktop Windows</a></div></div></section>
@@ -240,6 +240,7 @@
     <div class="sec-body"><div class="prose"><p>Cada lugar muda o relógio numa data diferente, e o planejador usa as regras de cada dia. Londres e Nova York têm 4 horas de expediente em comum em 21 de outubro de 2026, mas 5 em 28 de outubro, porque a Europa já atrasou os relógios e os EUA só atrasam em 1º de novembro. O mesmo acontece durante duas semanas em março. Vale conferir antes de marcar uma reunião recorrente.</p></div></div>
   </div>
 </section>
+<!-- planner-guide --><section class="pg-sec cols" id="presets" aria-labelledby="presets-h"><div class="wrap"><div class="sec-head"><h2 id="presets-h">Equipes prontas</h2></div><div class="sec-body prose"><p>Cada link abre o planejador acima com essas cidades. A sobreposição usa o expediente padrão, 09:00 às 18:00, de segunda a sexta, na quarta-feira, 14 de outubro de 2026. Ajuste o horário de qualquer cidade no planejador.</p><div class="tbl-wrap" tabindex="0" role="region" aria-label="Equipes prontas"><table class="tbl seo-table"><thead><tr><th scope="col">Equipe</th><th scope="col">Expediente em comum</th></tr></thead><tbody><tr><th scope="row"><a href="/pt/meeting-planner#c=America/New_York,Europe/London,Europe/Berlin">EUA (leste) + Reino Unido + Europa</a><br><span class="t">Nova York, Londres, Berlim</span></th><td>3 h · 09:00 às 12:00 (Nova York)</td></tr><tr><th scope="row"><a href="/pt/meeting-planner#c=Europe/London,Europe/Berlin,Asia/Kolkata">Reino Unido + Europa + Índia</a><br><span class="t">Londres, Berlim, Mumbai</span></th><td>4 h 30 min · 09:00 às 13:30 (Londres)</td></tr><tr><th scope="row"><a href="/pt/meeting-planner#c=America/Los_Angeles,Asia/Kolkata">EUA (oeste) + Índia</a><br><span class="t">Los Angeles, Mumbai</span></th><td>Nenhum horário em comum; no máximo 1 de 2 cidades em expediente</td></tr><tr><th scope="row"><a href="/pt/meeting-planner#c=Europe/London,Asia/Singapore,Asia/Tokyo">Reino Unido + Singapura + Japão</a><br><span class="t">Londres, Singapura, Tóquio</span></th><td>1 h · 09:00 às 10:00 (Londres)</td></tr><tr><th scope="row"><a href="/pt/meeting-planner#c=America/New_York,America/Sao_Paulo,Asia/Singapore,Australia/Sydney">Américas + Ásia-Pacífico</a><br><span class="t">Nova York, São Paulo, Singapura, Sydney</span></th><td>Nenhum horário em comum; no máximo 2 de 4 cidades em expediente</td></tr><tr><th scope="row"><a href="/pt/meeting-planner#c=America/Sao_Paulo,Europe/Lisbon,Europe/Madrid">Brasil + Portugal + Espanha</a><br><span class="t">São Paulo, Lisboa, Madri</span></th><td>4 h · 09:00 às 13:00 (São Paulo)</td></tr></tbody></table></div></div></div></section><section class="pg-sec cols" id="fair" aria-labelledby="fair-h"><div class="wrap"><div class="sec-head"><h2 id="fair-h">Quando nenhum horário serve para todos</h2></div><div class="sec-body prose"><ul class="steps"><li>Use as horas em que mais pessoas estão trabalhando e diga quem fica de fora. A linha Melhor horário do planejador mostra isso.</li><li>Alterne o horário cedo ou tarde entre as regiões, em vez de pedir sempre à mesma cidade.</li><li>Veja se um escritório pode mudar o expediente, por exemplo começando às 08:00. Mude o horário da cidade e a sobreposição se atualiza.</li><li>Nem tudo precisa de chamada ao vivo. Um documento compartilhado ou um vídeo gravado atende a região que estaria dormindo.</li></ul></div></div></section><section class="pg-sec cols" id="questions" aria-labelledby="questions-h"><div class="wrap"><div class="sec-head"><h2 id="questions-h">Perguntas</h2></div><div class="sec-body prose"><h3>Como encontrar um horário de reunião para 4 ou mais fusos?</h3><p>Adicione todas as cidades, abra o planejador e procure a sobreposição destacada. Se não houver, a linha Melhor horário mostra as horas em que mais cidades estão em expediente.</p><h3>Ele considera o horário de verão?</h3><p>Sim. Cada dia usa as regras daquele dia da base de fusos horários IANA, então a sobreposição pode mudar nas semanas em que as regiões mudam os relógios em datas diferentes.</p><h3>Posso enviar o resultado para a equipe?</h3><p>Compartilhar copia um link com as cidades e o horário escolhido. Copiar horários, no app, copia todos os horários convertidos.</p><h3>É grátis?</h3><p>Sim. Não precisa de conta, e suas cidades ficam salvas no navegador.</p></div></div></section><!-- /planner-guide -->
 <section class="pg-sec" id="more" aria-labelledby="more-h">
   <div class="wrap">
     <h2 id="more-h">Mais sobre o Open World Clock</h2>
@@ -251,7 +252,7 @@
   </div>
 </section>
 
-<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Guias úteis</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/pt/daylight-saving-meetings">Horário de Verão nos EUA e Europa: Reuniões em 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/pt/always-on-top-world-clock">Relógio Mundial Sempre Visível para Windows 11 e 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/pt/time-zone-converter">Conversor de fuso horário<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
+<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Guias úteis</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/pt/world-time-now">Que Horas São no Mundo : Grandes Cidades Agora<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/pt/utc-time">Hora UTC Agora e Conversor de UTC para Hora Local<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/pt/daylight-saving-meetings">Horário de Verão nos EUA e Europa: Reuniões em 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/pt/always-on-top-world-clock">Relógio Mundial Sempre Visível para Windows 11 e 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
 <section class="cta-band" id="download" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="cta-card rv">
@@ -280,6 +281,8 @@
       <li><a href="/pt/faq">Perguntas frequentes</a></li>
       <li><a href="/pt/time-zone-converter">Conversor de fuso horário</a></li>
       <li><a href="/pt/meeting-planner" aria-current="page">Planejador de reuniões</a></li>
+      <li><a href="/pt/world-time-now">Hora mundial agora</a></li>
+      <li><a href="/pt/utc-time">Hora UTC</a></li>
       <li><a href="/pt/world-map">Mapa-múndi</a></li>
       <li><a href="/pt/windows-clock-alternative">Alternativa ao Relógio do Windows</a></li>
       <li><a href="/pt/multiple-time-zones-windows">Vários fusos horários no Windows</a></li>
@@ -299,11 +302,11 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Apoie o criador no Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Apoie o criador</span></a>
-<script src="/assets/config.js?v=51c7bf3354"></script>
+<script src="/assets/config.js?v=17eec50ba5"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
 <script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
-<script src="/assets/tool-page.js?v=a076815e08" defer></script>
+<script src="/assets/tool-page.js?v=c5061d0438" defer></script>
 </body>
 </html>
