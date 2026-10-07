@@ -1,5 +1,52 @@
 {
   "title": "Always-on-Top World Clock for Windows 11 & 10: Free, Offline",
   "description": "Keep multiple time zones above every window. Free open-source world clock for Windows 11 and 10: converter, meeting planner, no ads or telemetry.",
-  "modified": "2026-10-05"
+  "modified": "2026-10-05",
+  "schema": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Open World Clock really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. There is no price, no ads, no account, and no in-app purchase. It is open source under the MIT License. Tips on Ko-fi are optional and change nothing in the app."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the always-on-top window work offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The whole app works offline. Time zone rules ship with the app, and updates bring new rules when a country changes its clocks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it collect any data?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Your settings stay in one local file, and the app makes no network requests of its own. The privacy policy also covers what this website measures."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does Windows say Windows protected your PC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The installer and the portable exe are not code-signed yet, so SmartScreen may warn you the first time. Select More info, then Run anyway. The Microsoft Store build is signed by Microsoft and does not show this warning."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can the browser version stay on top?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The web demo on the home page is handy for a quick check, but staying above other apps is a feature of the Windows desktop app."
+          }
+        }
+      ]
+    }
+  ]
 }
