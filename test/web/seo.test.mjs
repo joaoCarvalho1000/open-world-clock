@@ -14,27 +14,91 @@ const browser=await puppeteer.launch({executablePath,headless:true});
 const results=[];
 try {
   for(const [route,mode] of (process.argv.includes('--functional-only') ? [] : [['time-zone-converter','converter'],['meeting-planner','planner'],['world-map','map'],['world-time-now','now'],['utc-time','utc']])) {
-    for(const width of [390,1440]) for(const theme of ['light','dark']) {
+    for(const width of (mode==='planner'?[320,360,390,430,1440]:[390,1440])) for(const theme of ['light','dark']) {
       const context=await browser.createBrowserContext(),page=await context.newPage();const errors=[];
       page.on('pageerror',err=>errors.push(err.message));
       page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
-      await page.setViewport({width,height:1000});
+      await page.setViewport({width,height:1000,isMobile:width<600,hasTouch:width<600});
       await page.emulateMediaFeatures([{name:'prefers-color-scheme',value:theme},{name:'prefers-reduced-motion',value:'reduce'}]);
       await page.evaluateOnNewDocument(()=>{
         window.metrics={cls:0,lcp:0};
         new PerformanceObserver(list=>{for(const e of list.getEntries()) if(!e.hadRecentInput)window.metrics.cls+=e.value;}).observe({type:'layout-shift',buffered:true});
         new PerformanceObserver(list=>{for(const e of list.getEntries())window.metrics.lcp=e.startTime;}).observe({type:'largest-contentful-paint',buffered:true});
       });
-      await page.goto(`${server.url}/${route}`,{waitUntil:'networkidle0'});
+      const plannerHash=mode==='planner'?'#c=Europe/London,America/New_York,Asia/Kolkata,Asia/Kathmandu&z=Europe/London':'';
+      await page.goto(`${server.url}/${route}${plannerHash}`,{waitUntil:'networkidle0'});
       await page.waitForSelector('.tool-window.is-ready',{timeout:25000});
       const frame=await (await page.$('#heroApp')).contentFrame();
       if(mode==='planner'||mode==='map')await frame.waitForSelector(`#${mode==='planner'?'btnPlanner':'btnMap'}[aria-pressed="true"]`);
+      if(mode==='planner'&&width<600) {
+        const labels=await frame.$$eval('.plan-cell > span',els=>els.map(el=>({
+          text:el.textContent,visible:el.checkVisibility(),width:el.getBoundingClientRect().width,
+          cellWidth:el.parentElement.clientWidth,height:el.getBoundingClientRect().height,cellHeight:el.parentElement.clientHeight,
+        })));
+        assert(labels.length>=48&&labels.length%24===0,'all city-hour labels exist');
+        assert(labels.every(x=>x.text&&x.visible&&x.width>0&&x.width<=x.cellWidth&&x.height<=x.cellHeight),`${width} ${theme}: hour labels remain visible and fit their cells`);
+        assert(labels.some(x=>/:30|:45/.test(x.text)),'fractional time-zone labels covered');
+        const atEnd=await frame.evaluate(()=>{
+          const body=document.querySelector('.plan-body');body.scrollLeft=body.scrollWidth;
+          const bounds=body.getBoundingClientRect(),label=document.querySelector('.plan-label').getBoundingClientRect();
+          const last=document.querySelector('.plan-row .plan-cell:last-child').getBoundingClientRect();
+          return {scroll:body.scrollLeft,labelLeft:label.left-body.getBoundingClientRect().left,
+            lastVisible:last.left>=bounds.left-1&&last.right<=bounds.right+1,pageOverflow:document.documentElement.scrollWidth>innerWidth};
+        });
+        assert(atEnd.scroll>0&&Math.abs(atEnd.labelLeft)<1&&atEnd.lastVisible&&!atEnd.pageOverflow,`${width}: later hours reachable, city label stays visible, no page overflow`);
+        await frame.$eval('.plan-body',el=>{el.scrollLeft=0;});
+      }
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,route+' page overflow');
       assert.deepEqual(errors,[],route+' console');
       await page.screenshot({path:path.join(out,`${route}-${width}-${theme}.png`)});
       results.push({route,width,theme,...await page.evaluate(()=>window.metrics)});
       await context.close();
     }
+  }
+  // A real touch swipe pans all city rows without selecting a slot; tapping still converts.
+  // Include both clock formats and localized day-period labels, plus half/quarter-hour zones.
+  for(const [language,hour12] of [['en',true],['pt',false],['es',true]]) {
+    const mobileContext=await browser.createBrowserContext(),mobile=await mobileContext.newPage();
+    await mobile.setViewport({width:360,height:1000,isMobile:true,hasTouch:true});
+    await mobile.evaluateOnNewDocument(value=>localStorage.setItem('owc-app-settings',JSON.stringify({hour12:value,firstRun:false})),hour12);
+    const route=language==='en'?'meeting-planner':`${language}/meeting-planner`;
+    await mobile.goto(`${server.url}/${route}#c=Europe/London,Asia/Kolkata,Asia/Kathmandu`,{waitUntil:'networkidle0'});
+    await mobile.waitForSelector('.is-ready');
+    const app=await(await mobile.$('#heroApp')).contentFrame();
+    await app.waitForSelector('.plan-row');
+    await mobile.$eval('.tool-window',el=>el.scrollIntoView({block:'center'}));
+    assert.equal(await app.evaluate(()=>document.documentElement.lang.slice(0,2)),language);
+    assert.equal(await app.$eval('.app',el=>el.classList.contains('h12')),hour12);
+    const readable=await app.$$eval('.plan-cell > span',els=>els.every(el=>el.checkVisibility()&&el.getBoundingClientRect().width<=el.parentElement.clientWidth));
+    assert(readable,`${language}: all localized hour labels fit`);
+    const frameBox=await(await mobile.$('#heroApp')).boundingBox();
+    const row=await app.$eval('.plan-cells',el=>{const r=el.getBoundingClientRect();return {y:r.top+r.height/2};});
+    const y=Math.round(frameBox.y+row.y),x=Math.round(frameBox.x+frameBox.width-36);
+    const client=await mobile.createCDPSession();
+    await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+    for(let step=1;step<=8;step++) {
+      await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-step*24,y}]});
+      await new Promise(resolve=>setTimeout(resolve,20));
+    }
+    await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await app.waitForFunction(()=>document.querySelector('.plan-body').scrollLeft>80);
+    assert.equal(await app.$eval('#convClear',el=>el.hidden),true,`${language}: a swipe does not convert`);
+    assert.equal(await app.$eval('#planner',el=>el.classList.contains('has-sel')),false,`${language}: a swipe does not select a slot`);
+    // Let the browser finish its fling before testing a separate tap.
+    await app.evaluate(async()=>{
+      const body=document.querySelector('.plan-body');let previous=body.scrollLeft,stable=0;
+      for(let tick=0;tick<180;tick++) {
+        await new Promise(resolve=>requestAnimationFrame(resolve));
+        stable=body.scrollLeft===previous?stable+1:0;previous=body.scrollLeft;
+        if(stable>=8)return;
+      }
+      throw new Error('Planner swipe did not settle');
+    });
+    await app.$eval('.plan-body',el=>{el.scrollLeft=360;});
+    const cell=await app.$('.plan-row .plan-cell[data-h="9"]');
+    await cell.tap();
+    await app.waitForFunction(()=>!document.getElementById('convClear').hidden&&document.querySelector('.plan-cell[data-h="9"]').classList.contains('sel'));
+    await mobileContext.close();
   }
   // Two-city presets, the autumn mismatch, sharing, keyboard conversion and localized frames.
   const context=await browser.createBrowserContext();await context.overridePermissions(server.url,['clipboard-read','clipboard-write']);
