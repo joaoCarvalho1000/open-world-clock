@@ -68,6 +68,11 @@ Only the web layer changes. `src/renderer/` has no web-specific code.
 
 ## Shared links
 
+On phones, planner hours stay visible in a horizontally scrollable grid. City
+labels remain in view as all rows and the hour scale scroll together. Swipe to
+reach later hours, then tap a cell to select a meeting time. Half-hour and
+quarter-hour offsets and localized AM/PM labels remain readable.
+
 The app also runs inside the dedicated converter, meeting planner, map and city comparison pages. Their parent wrapper opens the relevant view and preserves the current cities/time when a visitor switches tools. Sharing retains that page's path; personal state remains in the hash. A native date picker in the date-shortcut popover supports dates from 1900 through 2100 and dispatches to the same conversion engine as the desktop app.
 
 Share (in the hero window's bar) copies a link to the cities on screen, plus the converted time while converting:

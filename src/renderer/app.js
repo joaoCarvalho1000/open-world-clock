@@ -1573,7 +1573,8 @@
     if (key !== planKey) { planKey = key; planYmd = ymd; buildPlanner(src, ymd, zones); fitPlanner(); }
     updatePlanner(date);
   }
-  // Rows are always 24px (the labels' target size), so the planner has one natural size: the window is made that size
+  // Desktop rows are 24px (the labels' target size); phone rows are taller for readable, scrollable hours.
+  // The planner has one natural size: the window is made that size
   // (fitWindow) and a taller one only leaves room below the grid. When the work area caps the window, the body
   // scrolls and a bottom fade shows there is more.
   function fitPlanner() {
@@ -1676,6 +1677,8 @@
   el.planBody.addEventListener('pointerdown', (e) => {
     const cell = e.target.closest('.plan-cell');
     if (!cell || e.button !== 0 || !settings) return;
+    // A phone swipe scrolls the readable hour grid. A tap still selects through the click handler below.
+    if (e.pointerType === 'touch' && el.app.classList.contains('plan-narrow')) return;
     const cells = cell.closest('.plan-cells');
     planSelDrag = { id: e.pointerId, from: +cell.dataset.h, to: +cell.dataset.h, moved: false, rect: cells.getBoundingClientRect() };
   });

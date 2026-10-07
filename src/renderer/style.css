@@ -652,28 +652,34 @@ select option:disabled { color: var(--fg-3); }
 .boot-failed p { margin: 0; max-width: 64ch; text-wrap: balance; }
 /* The planner is the same full view (numbers, caption, legend) in every layout, at its own size (the window fits it).
    Only the web app's vertical layout on a phone, which cannot widen, gets the narrow planner (.plan-narrow, app.js
-   renderPlanner): cells without numbers and this hour scale under them. */
+   renderPlanner): a horizontally scrollable grid with this source-hour scale under it. */
 .plan-axis { display: none; }
 .app.plan-narrow .plan-axis { flex-shrink: 0; display: flex; justify-content: space-between; margin-top: 2px;
   font-size: 11px; line-height: 1.2; color: var(--fg-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .plan-empty { display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: var(--s4); text-align: center; color: var(--fg-2); }
 
 
-/* the narrow planner starts at the top, with 24 px rows (the target size) and the hour scale under them */
-.app.plan-narrow .planner { --plan-row: 24px; justify-content: flex-start; padding: var(--s2) var(--s3) var(--s3); }
+/* Keep local hours readable on phones. All cities and the source-hour scale scroll together. */
+.app.plan-narrow .planner { --plan-row: 36px; justify-content: flex-start; padding: var(--s2) var(--s3) var(--s3); }
 .app.plan-narrow .plan-head { flex-wrap: wrap; row-gap: 0; padding-left: 2px; }
 .app.plan-narrow .plan-caption { flex-basis: 100%; }
 .app.plan-narrow .plan-best-btn { flex-basis: 100%; white-space: normal; text-align: left; padding-left: 0; }
 .app.plan-narrow .plan-selbar { flex-basis: 100%; flex-wrap: wrap; row-gap: 4px; }
 .app.plan-narrow .plan-legend { display: none; }
+.app.plan-narrow .plan-body { overflow-x: auto; container-type: inline-size; }
+.app.plan-narrow .plan-body::-webkit-scrollbar { height: 6px; }
+.app.plan-narrow .plan-body::-webkit-scrollbar-thumb { background: var(--hair-strong); border-radius: 3px; }
+.app.plan-narrow .plan-grid, .app.plan-narrow .plan-axis { min-width: calc(24 * 44px + 23px); }
 .app.plan-narrow .plan-grid { gap: 6px; }
 .app.plan-narrow .plan-row { grid-template-columns: minmax(0, 1fr); row-gap: 3px; }
-.app.plan-narrow .plan-label { height: auto; min-height: 24px; padding: 0 2px; font-size: 12.5px; }
+.app.plan-narrow .plan-label { position: sticky; left: 0; z-index: 2; width: 100cqw; max-width: 100%;
+  height: auto; min-height: 24px; padding: 0 2px; font-size: 12.5px; background: var(--tint); }
 .app.plan-narrow .plan-cells { gap: 1px; }
-.app.plan-narrow .plan-cell { border-radius: 2px; }
+.app.plan-narrow .plan-cell { border-radius: 2px; font-size: 12px; }
 .app.plan-narrow .plan-cell:first-child { border-radius: 5px 2px 2px 5px; }
 .app.plan-narrow .plan-cell:last-child { border-radius: 2px 5px 5px 2px; }
-.app.plan-narrow .plan-cell span { display: none; }
+.app.plan-narrow .plan-cell span { display: flex; flex-direction: column; align-items: center; gap: 2px; white-space: nowrap; }
+.app.plan-narrow .plan-cell .ap { margin-left: 0; }
 .app.plan-narrow .plan-layer { left: 0; }
 .app.plan-narrow .plan-overlap { border-radius: 6px; }
 
