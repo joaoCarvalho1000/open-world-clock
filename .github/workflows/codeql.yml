@@ -3,10 +3,8 @@ name: CodeQL
 # Static analysis of the JavaScript (the Electron app, the web layer, the site scripts and the Cloudflare functions).
 # The Swift code is left out: analysing it needs a macOS build of the iPhone app.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_call:
+  workflow_dispatch:
   schedule:
     - cron: "41 5 * * 2"
 

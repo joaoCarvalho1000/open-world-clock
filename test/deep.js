@@ -634,6 +634,11 @@ module.exports = (w, app) => {
       const posAfter = w.getPosition();
       await dragBy('.card[data-zone]'); await sleep(150);
       check('dragging a card does not move the window', String(w.getPosition()) === String(posAfter), `${posAfter} -> ${w.getPosition()}`);
+      // The 20 drag cycles can leave the window below the runner's desktop.
+      // Restore the starting position before tests that depend on live renderer
+      // timers; an occluded window throttles both rAF and the scrub fallback.
+      w.setPosition(...pos0); w.show(); w.focus(); w.webContents.focus();
+      await sleep(150);
       // 12b. Batch 1: sun-driven night, asleep cue, wheel scrubber, abbreviation/offset search
       for (const z of ['America/Los_Angeles', 'Asia/Tokyo']) if (await run((z) => !!document.querySelector(`.card[data-zone="${z}"]`), z)) await run(menuAct, z, 'remove');
       await addAll(['Lisbon', 'Auckland', 'Reykjavik']);
@@ -1787,28 +1792,30 @@ module.exports = (w, app) => {
       check('vertical: a card with a day badge hides its UTC offset and every card has the same height', vcards.some((c) => c.badge) && vcards.every((c) => (c.badge ? c.utc === 'none' : c.utc !== 'none'))
         && new Set(vcards.map((c) => c.h)).size === 1, JSON.stringify(vcards));
 
-      // 20e. Vertical planner: starts at the top, 24 px cells, an hour scale 00 06 12 18 24 under the rows, every row inside.
+      // 20e. Vertical layout, desktop app: the planner is the same full view as in the strip (numbers in its cells, no hour
+      // scale, no narrow class), and the window widens to fit it. Only the web app on a phone keeps the narrow planner.
       const vpStored = ((await run(async () => window.wc.getSettings())).viewSizes || {}).plannerVertical || null;
-      await run(() => document.getElementById('btnPlanner').click()); await sleep(500);
+      await run(() => document.getElementById('btnPlanner').click()); await sleep(700);
       const vplan = await run(() => {
         const axis = document.querySelector('#planner .plan-axis'), head = document.querySelector('#planner .plan-head').getBoundingClientRect();
         const rows = [...document.querySelectorAll('#planner .plan-row')], body = document.getElementById('planBody').getBoundingClientRect();
-        return { axis: axis ? getComputedStyle(axis).display : null, labels: axis ? [...axis.children].map((s) => s.textContent) : [], gap: Math.round(rows[0].getBoundingClientRect().top - head.bottom),
-          cellH: Math.round(document.querySelector('#planner .plan-cell').getBoundingClientRect().height), inside: rows.every((r) => r.getBoundingClientRect().bottom <= body.bottom + 1), rows: rows.length,
-          free: axis ? Math.round(innerHeight - axis.getBoundingClientRect().bottom) : null, conv: !document.getElementById('convClear').hidden };
+        const span = document.querySelector('#planner .plan-cell span');
+        return { narrow: document.getElementById('app').classList.contains('plan-narrow'), axis: axis ? getComputedStyle(axis).display : null,
+          nums: !!span && getComputedStyle(span).display !== 'none', gap: Math.round(rows[0].getBoundingClientRect().top - head.bottom),
+          inside: rows.every((r) => r.getBoundingClientRect().bottom <= body.bottom + 1), rows: rows.length,
+          free: Math.round(innerHeight - document.querySelector('#planner .plan-grid').getBoundingClientRect().bottom), conv: !document.getElementById('convClear').hidden };
       });
-      // 20e2. Its size is measured, not guessed: tall enough for the bar, the head, the rows and the scale and no taller
-      // (at most the bottom padding free under the scale), and wide enough for 24 hour cells of 14px.
+      // 20e2. Its size is measured: wide enough for the label column and 24 numbered cells, tall enough for every row, no taller.
       const vpWa = require('electron').screen.getDisplayMatching(w.getBounds()).workArea;
       const vpSize = w.getSize(), vpClamped = vpSize[1] >= vpWa.height - 2;
       const vpCell = await run(() => document.querySelector('#planner .plan-cell').getBoundingClientRect().width);
-      check(`vertical planner fits its ${vplan.rows} rows and the hour scale (${vpSize} window), nothing past the bottom and under 40px free below`, !vpStored && (vpClamped || (vplan.free >= 0 && vplan.free <= 40)), JSON.stringify({ vpSize, vpStored, free: vplan.free, conv: vplan.conv }));
-      check('vertical planner: hour cells at least 14px wide', vpCell >= 13.9, String(vpCell));
+      check(`vertical layout planner fits its ${vplan.rows} rows (${vpSize} window), nothing past the bottom and under 40px free below`, !vpStored && (vpClamped || (vplan.free >= 0 && vplan.free <= 40)), JSON.stringify({ vpSize, vpStored, free: vplan.free, conv: vplan.conv }));
+      check('vertical layout planner: full width, hour cells at least 33px wide', vpSize[0] >= 1000 && vpCell >= 33, JSON.stringify({ vpSize, vpCell }));
+      check('vertical layout planner is the full planner: numbers in the cells, no hour scale, not narrow, rows inside', !vplan.narrow && vplan.nums && vplan.axis === 'none'
+        && vplan.gap >= 0 && vplan.gap <= 40 && vplan.inside, JSON.stringify(vplan));
       await run(() => document.getElementById('btnPlanner').click()); await sleep(300);
       await run(() => { const o = document.getElementById('optLayout'); o.value = 'strip'; o.dispatchEvent(new Event('change')); }); await sleep(500);
       await resizeTo(1160, 250);
-      check('vertical planner: hour scale "00 06 12 18 24", first row within 40 px of the head, cells 24 px, every row inside the body', vplan.axis === 'flex' && vplan.labels.join(' ') === '00 06 12 18 24'
-        && vplan.gap >= 0 && vplan.gap <= 40 && vplan.cellH >= 24 && vplan.inside, JSON.stringify(vplan));
       const stripAxis = await run(() => { document.getElementById('btnPlanner').click(); const a = document.querySelector('#planner .plan-axis'); const d = a ? getComputedStyle(a).display : null; document.getElementById('btnPlanner').click(); return d; });
       check('strip planner keeps the hour numbers in its cells and hides the scale', stripAxis === 'none', String(stripAxis));
       await sleep(300);

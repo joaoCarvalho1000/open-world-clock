@@ -13,5 +13,5 @@ routes = [
 [vars]
 POSTHOG_REGION = "us"
 # Project key whose remote config (/ingest/array/<key>/config) the proxy serves; must match site/assets/config.js.
-POSTHOG_KEY = "phc_qngHqsrdSs4wZChMLmqrpqN2HJj84i6vmnczAASJ4V5i"
+POSTHOG_KEY = "phc_xNf9EdeZoqL2EFKCngCxqubrNddx8VpDXCNMGGn5RaAT"
 PROXY_PREFIX = "/ingest"

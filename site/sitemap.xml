@@ -98,7 +98,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/london-to-new-york-time</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/london-to-new-york-time"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/london-to-new-york-time"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/london-to-new-york-time"/>
@@ -177,6 +177,22 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/lisbon-to-tokyo-time"/>
   </url>
   <url>
+    <loc>https://openworldclock.com/world-time-now</loc>
+    <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-time-now"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/utc-time</loc>
+    <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/utc-time"/>
+  </url>
+  <url>
     <loc>https://openworldclock.com/daylight-saving-meetings</loc>
     <lastmod>2026-10-01</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/daylight-saving-meetings"/>
@@ -186,7 +202,7 @@
   </url>
   <url>
     <loc>https://openworldclock.com/always-on-top-world-clock</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/always-on-top-world-clock"/>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/always-on-top-world-clock"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/always-on-top-world-clock"/>
@@ -375,6 +391,22 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/lisbon-to-tokyo-time"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/lisbon-to-tokyo-time"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/lisbon-to-tokyo-time"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/world-time-now</loc>
+    <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-time-now"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/pt/utc-time</loc>
+    <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/utc-time"/>
   </url>
   <url>
     <loc>https://openworldclock.com/pt/daylight-saving-meetings</loc>
@@ -575,6 +607,22 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/lisbon-to-tokyo-time"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/lisbon-to-tokyo-time"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/lisbon-to-tokyo-time"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/world-time-now</loc>
+    <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/world-time-now"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/world-time-now"/>
+  </url>
+  <url>
+    <loc>https://openworldclock.com/es/utc-time</loc>
+    <lastmod>2026-10-01</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://openworldclock.com/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://openworldclock.com/es/utc-time"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://openworldclock.com/utc-time"/>
   </url>
   <url>
     <loc>https://openworldclock.com/es/daylight-saving-meetings</loc>

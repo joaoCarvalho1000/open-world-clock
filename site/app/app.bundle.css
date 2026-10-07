@@ -651,38 +651,32 @@ select option:disabled { color: var(--fg-3); }
 .boot-failed { flex: 1; align-self: center; display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s4);
   text-align: center; color: var(--fg); font-size: 14px; cursor: default; }
 .boot-failed p { margin: 0; max-width: 64ch; text-wrap: balance; }
-/* hour scale (app.js buildPlanner): only where the cells carry no numbers */
+/* The planner is the same full view (numbers, caption, legend) in every layout, at its own size (the window fits it).
+   Only the web app's vertical layout on a phone, which cannot widen, gets the narrow planner (.plan-narrow, app.js
+   renderPlanner): cells without numbers and this hour scale under them. */
 .plan-axis { display: none; }
-.app.layout-vertical .plan-axis, .app.layout-compact .plan-axis { flex-shrink: 0; display: flex; justify-content: space-between; margin-top: 2px;
+.app.plan-narrow .plan-axis { flex-shrink: 0; display: flex; justify-content: space-between; margin-top: 2px;
   font-size: 11px; line-height: 1.2; color: var(--fg-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.app.layout-compact .plan-axis { margin-left: calc(var(--plan-label) + 12px); }
 .plan-empty { display: flex; flex-direction: column; align-items: center; gap: var(--s2); padding: var(--s4); text-align: center; color: var(--fg-2); }
 
-.app.layout-compact .planner { --plan-label: 140px; gap: 2px; padding-bottom: var(--s2); }
-.app.layout-compact .plan-summary { font-size: 13px; }
-.app.layout-compact .plan-caption { display: none; }
-.app.layout-compact .plan-legend { display: none; }
-.app.layout-compact .plan-grid { gap: 3px; padding: 3px 0; }
-.app.layout-compact .plan-cell span { display: none; }
-.app.layout-compact .plan-city { font-size: 12px; }
 
-/* the vertical planner starts at the top, with 24 px rows (the target size) and the hour scale under them */
-.app.layout-vertical .planner { --plan-row: 24px; justify-content: flex-start; padding: var(--s2) var(--s3) var(--s3); }
-.app.layout-vertical .plan-head { flex-wrap: wrap; row-gap: 0; padding-left: 2px; }
-.app.layout-vertical .plan-caption { flex-basis: 100%; }
-.app.layout-vertical .plan-best-btn { flex-basis: 100%; white-space: normal; text-align: left; padding-left: 0; }
-.app.layout-vertical .plan-selbar { flex-basis: 100%; flex-wrap: wrap; row-gap: 4px; }
-.app.layout-vertical .plan-legend { display: none; }
-.app.layout-vertical .plan-grid { gap: 6px; }
-.app.layout-vertical .plan-row { grid-template-columns: minmax(0, 1fr); row-gap: 3px; }
-.app.layout-vertical .plan-label { height: auto; min-height: 24px; padding: 0 2px; font-size: 12.5px; }
-.app.layout-vertical .plan-cells { gap: 1px; }
-.app.layout-vertical .plan-cell { border-radius: 2px; }
-.app.layout-vertical .plan-cell:first-child { border-radius: 5px 2px 2px 5px; }
-.app.layout-vertical .plan-cell:last-child { border-radius: 2px 5px 5px 2px; }
-.app.layout-vertical .plan-cell span { display: none; }
-.app.layout-vertical .plan-layer { left: 0; }
-.app.layout-vertical .plan-overlap { border-radius: 6px; }
+/* the narrow planner starts at the top, with 24 px rows (the target size) and the hour scale under them */
+.app.plan-narrow .planner { --plan-row: 24px; justify-content: flex-start; padding: var(--s2) var(--s3) var(--s3); }
+.app.plan-narrow .plan-head { flex-wrap: wrap; row-gap: 0; padding-left: 2px; }
+.app.plan-narrow .plan-caption { flex-basis: 100%; }
+.app.plan-narrow .plan-best-btn { flex-basis: 100%; white-space: normal; text-align: left; padding-left: 0; }
+.app.plan-narrow .plan-selbar { flex-basis: 100%; flex-wrap: wrap; row-gap: 4px; }
+.app.plan-narrow .plan-legend { display: none; }
+.app.plan-narrow .plan-grid { gap: 6px; }
+.app.plan-narrow .plan-row { grid-template-columns: minmax(0, 1fr); row-gap: 3px; }
+.app.plan-narrow .plan-label { height: auto; min-height: 24px; padding: 0 2px; font-size: 12.5px; }
+.app.plan-narrow .plan-cells { gap: 1px; }
+.app.plan-narrow .plan-cell { border-radius: 2px; }
+.app.plan-narrow .plan-cell:first-child { border-radius: 5px 2px 2px 5px; }
+.app.plan-narrow .plan-cell:last-child { border-radius: 2px 5px 5px 2px; }
+.app.plan-narrow .plan-cell span { display: none; }
+.app.plan-narrow .plan-layer { left: 0; }
+.app.plan-narrow .plan-overlap { border-radius: 6px; }
 
 /* ---------- working-hours editor ---------- */
 .hours-pop { position: fixed; z-index: 35; width: 280px; padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 12px;

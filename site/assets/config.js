@@ -24,12 +24,12 @@
      any other host send nothing. */
 window.SITE = {
   name: 'Open World Clock',
-  version: '1.3.1',           // the release the Installer and Portable buttons download; keep in step with package.json
+  version: '1.3.2',           // the release the Installer and Portable buttons download; keep in step with package.json
   storeLive: true,          // the Store listing is live (approved 2026-09-26): Store buttons shown, direct downloads as the alternative
   storeUrl: 'https://apps.microsoft.com/detail/9N88FR8M81BM',      // Microsoft Store listing, without ?cid (added per link)
   downloadBase: 'https://download.openworldclock.com', // the R2 bucket that serves the installer and portable exe
   githubRepo: 'joaoCarvalho1000/open-world-clock',  // "owner/repo": source, license, issues, release notes
-  posthogKey: 'phc_qngHqsrdSs4wZChMLmqrpqN2HJj84i6vmnczAASJ4V5i',  // PostHog project API key, e.g. phc_XXXXXXXX (public by design)
+  posthogKey: 'phc_xNf9EdeZoqL2EFKCngCxqubrNddx8VpDXCNMGGn5RaAT',  // PostHog project API key, e.g. phc_XXXXXXXX (public by design)
   posthogHost: '/ingest',     // same-origin proxy path; must stay on this site's own domain
   posthogUi: 'https://us.posthog.com', // https://eu.posthog.com if POSTHOG_REGION is eu (toolbar links only)
   siteHost: 'openworldclock.com', // analytics runs only here (never on localhost, 127.0.0.1 or *.pages.dev previews)

@@ -77,3 +77,6 @@ v1.3.0 details: sharing, planner slots, robustness and a lighter app.
 v1.3.1: the meeting planner opens at the size it needs.
 - The planner window is sized to its content, measured from the real layout: as tall as the head, the cities and the hour scale, with no empty space above or below the grid, whatever size the window had before. Adding or removing a city, a longer head line or the selection bar resizes it to fit; the vertical planner gets hour cells wide enough to read. A size you drag the planner to is kept while it stays open and is no longer saved, so it opens fitted every time.
 - The website: the home page frame fits the planner on desktop too, not only on phones.
+
+v1.3.2: one meeting planner, everywhere.
+- The meeting planner is the same full view in every layout: the hour in every cell, the caption and the legend, in the compact and vertical layouts too (they used to show a narrower planner without numbers). The window fits it, and a size measured in one layout is never applied to another. Only the web app on a phone, which cannot widen, keeps the narrow planner.

@@ -9,6 +9,6 @@ compatibility_date = "2026-09-01"
 [vars]
 POSTHOG_REGION = "us"
 # Project key whose remote config (/ingest/array/<key>/config) the proxy serves; must match site/assets/config.js.
-POSTHOG_KEY = "phc_qngHqsrdSs4wZChMLmqrpqN2HJj84i6vmnczAASJ4V5i"
+POSTHOG_KEY = "phc_xNf9EdeZoqL2EFKCngCxqubrNddx8VpDXCNMGGn5RaAT"
 # POSTHOG_HOST = "eu.i.posthog.com"         # optional: explicit API host, overrides POSTHOG_REGION
 # POSTHOG_ASSET_HOST = "eu-assets.i.posthog.com"

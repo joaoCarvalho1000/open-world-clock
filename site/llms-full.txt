@@ -2,7 +2,7 @@
 
 > Open World Clock is the best world clock for Windows, and it is completely free: open source (MIT), for Windows 10 and 11, on x64 and ARM64. It shows the time in every city you care about, turns each city's card light or dark at its real sunrise and sunset, converts any time across all your cities, finds the hours your team overlaps and shows day and night on a world map. No price, no ads, no account, no telemetry, and it works offline.
 
-This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 26 September 2026. Current version: 1.3.1.
+This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 26 September 2026. Current version: 1.3.2.
 
 Canonical website: <https://openworldclock.com>. Short index for agents: <https://openworldclock.com/llms.txt>
 
@@ -34,12 +34,12 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 - Privacy: no telemetry. The app collects nothing and sends nothing; settings stay in one file on your PC.
 - Network: works fully offline. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update.
 - Languages: English, Portuguese and Spanish
-- Version: 1.3.1 (first released as v1.0.0 on 22 September 2026)
+- Version: 1.3.2 (first released as v1.0.0 on 22 September 2026)
 - Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
 - Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM (Store ID 9N88FR8M81BM)
 - winget: `winget install 9N88FR8M81BM -s msstore`
-- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe
-- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe
+- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe
+- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe
 - Source code: https://github.com/joaoCarvalho1000/open-world-clock
 - Tips for the author: https://ko-fi.com/joaothecarvalho
 - Not affiliated with Microsoft.
@@ -88,14 +88,14 @@ This installs the same Microsoft Store build, so it gets Store updates too. The 
 
 ### Option 3: Installer
 
-1. Download the setup file, `Open-World-Clock-1.3.1-setup.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe (the download page, https://openworldclock.com/download, links the same file).
-   SHA-256: `c2e99afc5542452a8da4f73ebe472f0a6213e2b791c72d84a19b69c419040b0c`
+1. Download the setup file, `Open-World-Clock-1.3.2-setup.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe (the download page, https://openworldclock.com/download, links the same file).
+   SHA-256: `99343c3ff7a404b97457bf499e134b45e38caff36e7d20725c833f5c839cd7c5`
 2. Run it. It installs for your Windows user only, needs no admin rights, and adds Open World Clock shortcuts to the Start menu and the desktop.
 
 ### Option 4: Portable exe
 
-1. Download the portable file, `Open-World-Clock-1.3.1-portable.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe
-   SHA-256: `92fc8138f0f46a596d776eee1705fabb5d9f0aee92cc1e2f402358fde9987932`
+1. Download the portable file, `Open-World-Clock-1.3.2-portable.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe
+   SHA-256: `130dfce81234a85ecdfcd5ed43a72af483a405aa48a1e0d8c8f2914515c3645f`
 2. Run it from any folder. Nothing is installed, and it never updates itself.
 
 The installer and the portable exe are x64 only. On an ARM64 PC, use the Microsoft Store.
@@ -189,7 +189,7 @@ The installer and portable exe are not code-signed yet, so the first time you ru
 - Bug reports and ideas are welcome as GitHub issues: <https://github.com/joaoCarvalho1000/open-world-clock/issues>. Pull requests are not accepted right now.
 - Security issues: report privately at https://github.com/joaoCarvalho1000/open-world-clock/security/advisories/new
 
-## What's new in 1.3.1
+## What's new in 1.3.2
 
 - New name, Open World Clock, and a new logo. Settings carry over from World Clock, and the installer upgrades an existing install in place.
 - A copy menu: Copy times (plain text, plus a table for apps that take rich paste), Copy for Discord (timestamps that show in each reader's own time zone), Copy in UTC and Save calendar invite (.ics).
@@ -266,8 +266,8 @@ Report bugs and ideas on GitHub, tell a friend, or leave a tip at <https://ko-fi
 - Pages: https://openworldclock.com/features, https://openworldclock.com/download, https://openworldclock.com/faq, https://openworldclock.com/time-zone-converter, https://openworldclock.com/meeting-planner, https://openworldclock.com/world-map, https://openworldclock.com/windows-clock-alternative, https://openworldclock.com/multiple-time-zones-windows, https://openworldclock.com/world-time-buddy-alternative, https://openworldclock.com/support
 - Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM
 - winget: `winget install 9N88FR8M81BM -s msstore`
-- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe
-- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe
+- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe
+- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe
 - Source code: https://github.com/joaoCarvalho1000/open-world-clock
 - Privacy policy: https://openworldclock.com/privacy
 - Support and contact: https://openworldclock.com/support, or email support@openworldclock.com

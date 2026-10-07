@@ -1,0 +1,52 @@
+{
+  "title": "London to New York Time Difference & Converter (UK ↔ NYC)",
+  "description": "London to New York time difference is usually 5 hours (4 around DST flips). Convert 2pm UK to New York, 8pm NYC to London, pick a date, and share.",
+  "modified": "2026-10-05",
+  "schema": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How many hours between London and New York?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usually five. For short windows around the US and UK daylight-saving changes, the difference is four hours. Always confirm with a date."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is 2pm UK time in New York?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On a normal 5-hour day, 14:00 in London is 09:00 in New York. Near DST transitions it can be 10:00. Use the converter on this page."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is 8pm New York time in London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On a normal 5-hour day, 20:00 in New York is 01:00 the next calendar day in London."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is New York ahead of or behind London?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "New York is behind London. Morning in London is still night or early morning on the US East Coast."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I keep both clocks on my Windows desktop?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Open World Clock pins city cards above other windows, works offline, and has no ads or telemetry. Free for Windows 10 and 11."
+          }
+        }
+      ]
+    }
+  ]
+}

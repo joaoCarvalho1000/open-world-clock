@@ -167,7 +167,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="/assets/tools.css?v=2715ed7b78">
+<link rel="stylesheet" href="/assets/tools.css?v=fdaa61e1f5">
 </head>
 <body class="pg-body tool-page">
 <a class="skip" href="#main">Saltar al contenido</a>
@@ -200,7 +200,7 @@
   </div>
 </header>
 <main id="main" class="pg">
-<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Inicio"><ol><li><a href="/es/">Inicio</a></li><li><span aria-current="page">Planificador de reuniones</span></li></ol></nav><h1 id="h1">Encuentra una hora que les venga bien a todos.</h1><p class="pg-lede">Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.</p><nav class="tool-nav" aria-label="Sigue explorando"><a href="/es/time-zone-converter">Convertidor de zona horaria</a><a href="/es/meeting-planner" aria-current="page">Planificador de reuniones</a><a href="/es/world-map">Mapa de día y noche</a></nav>
+<section class="pg-hero" id="hero" aria-labelledby="h1"><div class="wrap"><nav class="crumbs" aria-label="Inicio"><ol><li><a href="/es/">Inicio</a></li><li><span aria-current="page">Planificador de reuniones</span></li></ol></nav><h1 id="h1">Encuentra una hora que les venga bien a todos.</h1><p class="pg-lede">Añade las ciudades y ajusta sus horarios laborales. Encuentra las horas en común y copia el resultado.</p><nav class="tool-nav" aria-label="Sigue explorando"><a href="/es/time-zone-converter">Convertidor de zona horaria</a><a href="/es/meeting-planner" aria-current="page">Planificador de reuniones</a><a href="/es/world-time-now">Hora mundial ahora</a><a href="/es/utc-time">Hora UTC</a><a href="/es/world-map">Mapa de día y noche</a></nav>
 <div class="tool-window is-loading"><div class="app-win-bar"><span class="tool-status" id="toolStatus" role="status">Cargando los relojes…</span><button class="app-win-share tool-retry" id="toolRetry" type="button" hidden>Volver a intentar</button><button class="app-win-share" id="heroShare" type="button" disabled>Compartir</button></div>
 <iframe class="app-frame" id="heroApp" data-tool="planner" data-cities="" title="Planificador de reuniones" allow="clipboard-write"></iframe><input class="tool-share-link" id="toolShareLink" readonly hidden aria-label="Compartir"></div>
 <noscript><p class="pg-sub">Activa JavaScript para usar la herramienta. Los ejemplos de abajo funcionan sin él.</p></noscript><div class="tool-after"><p>Gratis y sin cuenta. Tus ciudades guardadas siguen siendo tuyas.</p><a href="/es/download">Tenlo en tu escritorio Windows</a></div></div></section>
@@ -240,6 +240,7 @@
     <div class="sec-body"><div class="prose"><p>Cada país cambia la hora en su propia fecha, y el planificador usa las reglas de cada día. Londres y Nueva York comparten 4 horas laborales el 21 de octubre de 2026, pero 5 el 28 de octubre, porque Europa ya atrasó sus relojes y Estados Unidos espera hasta el 1 de noviembre. En marzo pasa lo mismo durante dos semanas. Vale la pena revisarlo antes de programar una reunión recurrente.</p></div></div>
   </div>
 </section>
+<!-- planner-guide --><section class="pg-sec cols" id="presets" aria-labelledby="presets-h"><div class="wrap"><div class="sec-head"><h2 id="presets-h">Equipos listos</h2></div><div class="sec-body prose"><p>Cada enlace abre el planificador de arriba con esas ciudades. La coincidencia usa el horario por defecto, de 09:00 a 18:00, de lunes a viernes, el miércoles 14 de octubre de 2026. Cambia el horario de cualquier ciudad en el planificador.</p><div class="tbl-wrap" tabindex="0" role="region" aria-label="Equipos listos"><table class="tbl seo-table"><thead><tr><th scope="col">Equipo</th><th scope="col">Horario laboral en común</th></tr></thead><tbody><tr><th scope="row"><a href="/es/meeting-planner#c=America/New_York,Europe/London,Europe/Berlin">EE. UU. (este) + Reino Unido + Europa</a><br><span class="t">Nueva York, Londres, Berlín</span></th><td>3 h · de 09:00 a 12:00 (Nueva York)</td></tr><tr><th scope="row"><a href="/es/meeting-planner#c=Europe/London,Europe/Berlin,Asia/Kolkata">Reino Unido + Europa + India</a><br><span class="t">Londres, Berlín, Bombay</span></th><td>4 h 30 min · de 09:00 a 13:30 (Londres)</td></tr><tr><th scope="row"><a href="/es/meeting-planner#c=America/Los_Angeles,Asia/Kolkata">EE. UU. (oeste) + India</a><br><span class="t">Los Ángeles, Bombay</span></th><td>Ninguna hora en común; como máximo 1 de 2 ciudades trabajando</td></tr><tr><th scope="row"><a href="/es/meeting-planner#c=Europe/London,Asia/Singapore,Asia/Tokyo">Reino Unido + Singapur + Japón</a><br><span class="t">Londres, Singapur, Tokio</span></th><td>1 h · de 09:00 a 10:00 (Londres)</td></tr><tr><th scope="row"><a href="/es/meeting-planner#c=America/New_York,America/Sao_Paulo,Asia/Singapore,Australia/Sydney">América + Asia-Pacífico</a><br><span class="t">Nueva York, São Paulo, Singapur, Sídney</span></th><td>Ninguna hora en común; como máximo 2 de 4 ciudades trabajando</td></tr><tr><th scope="row"><a href="/es/meeting-planner#c=America/Sao_Paulo,Europe/Lisbon,Europe/Madrid">Brasil + Portugal + España</a><br><span class="t">São Paulo, Lisboa, Madrid</span></th><td>4 h · de 09:00 a 13:00 (São Paulo)</td></tr></tbody></table></div></div></div></section><section class="pg-sec cols" id="fair" aria-labelledby="fair-h"><div class="wrap"><div class="sec-head"><h2 id="fair-h">Cuando ninguna hora sirve para todos</h2></div><div class="sec-body prose"><ul class="steps"><li>Usa las horas en que más personas trabajan y di quién queda fuera. La línea Mejor opción del planificador lo muestra.</li><li>Alterna el horario temprano o tardío entre regiones, en vez de pedírselo siempre a la misma ciudad.</li><li>Mira si una oficina puede mover su jornada, por ejemplo empezar a las 08:00. Cambia el horario de esa ciudad y la coincidencia se actualiza.</li><li>No todo necesita una llamada en vivo. Un documento compartido o una actualización grabada sirve para la región que estaría durmiendo.</li></ul></div></div></section><section class="pg-sec cols" id="questions" aria-labelledby="questions-h"><div class="wrap"><div class="sec-head"><h2 id="questions-h">Preguntas</h2></div><div class="sec-body prose"><h3>¿Cómo encuentro una hora de reunión para 4 o más zonas horarias?</h3><p>Añade todas las ciudades, abre el planificador y busca la coincidencia marcada. Si no la hay, la línea Mejor opción muestra las horas en que más ciudades trabajan.</p><h3>¿Tiene en cuenta el horario de verano?</h3><p>Sí. Cada día usa las reglas de ese día de la base de zonas horarias IANA, así que la coincidencia puede cambiar en las semanas en que las regiones cambian la hora en fechas distintas.</p><h3>¿Puedo enviar el resultado a mi equipo?</h3><p>Compartir copia un enlace con las ciudades y la hora elegida. Copiar horas, en la app, copia todas las horas convertidas.</p><h3>¿Es gratis?</h3><p>Sí. No necesitas cuenta y tus ciudades se guardan en tu navegador.</p></div></div></section><!-- /planner-guide -->
 <section class="pg-sec" id="more" aria-labelledby="more-h">
   <div class="wrap">
     <h2 id="more-h">Más sobre Open World Clock</h2>
@@ -251,7 +252,7 @@
   </div>
 </section>
 
-<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Guías útiles</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/es/daylight-saving-meetings">Horario de Verano en EE. UU. y Europa: Reuniones de 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/always-on-top-world-clock">Reloj Mundial Siempre Visible para Windows 11 y 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/time-zone-converter">Convertidor de zona horaria<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
+<!-- seo-discovery --><section class="pg-sec cols" id="explore" aria-labelledby="explore-h"><div class="wrap"><div class="sec-head"><h2 id="explore-h">Guías útiles</h2></div><div class="sec-body prose"><ul class="route-list"><li><a href="/es/world-time-now">Qué Hora Es en el Mundo : Grandes Ciudades Ahora<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/utc-time">Hora UTC Ahora y Convertidor de UTC a Hora Local<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/daylight-saving-meetings">Horario de Verano en EE. UU. y Europa: Reuniones de 2026<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li><li><a href="/es/always-on-top-world-clock">Reloj Mundial Siempre Visible para Windows 11 y 10<svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a></li></ul></div></div></section><!-- /seo-discovery -->
 <section class="cta-band" id="download" aria-labelledby="cta-h">
   <div class="wrap">
     <div class="cta-card rv">
@@ -261,8 +262,8 @@
       <div class="pg-cta">
         <a class="btn btn-primary" data-store data-link="store" data-cid="site-meeting-planner" data-track="store_click" href="https://apps.microsoft.com/detail/9N88FR8M81BM?cid=site-meeting-planner"><svg class="i" aria-hidden="true"><use href="#i-store"/></svg><span>Descargar desde Microsoft Store</span></a>
         <a class="btn btn-quiet" data-store href="/es/download"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Otras descargas</span></a>
-        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.1-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
-        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.1-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
+        <a class="btn btn-primary" data-store-off hidden data-link="setup" data-track="installer_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg><span>Descargar instalador</span></a>
+        <a class="btn btn-quiet" data-store-off hidden data-link="portable" data-track="portable_click" href="https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Exe portátil</span></a>
       </div>
       <p class="dl-note" data-store-off hidden>Gratis para Windows 10 y 11, x64, unos 90 MB. Todavía no tiene firma de código, así que SmartScreen puede mostrar un aviso la primera vez (<a href="/es/download#smartscreen">qué hacer</a>).</p>
       <p class="dl-kofi"><a href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="download"><svg class="i" aria-hidden="true"><use href="#i-cup"/></svg>Apoya al creador en Ko-fi</a></p>
@@ -280,6 +281,8 @@
       <li><a href="/es/faq">Preguntas frecuentes</a></li>
       <li><a href="/es/time-zone-converter">Convertidor de zona horaria</a></li>
       <li><a href="/es/meeting-planner" aria-current="page">Planificador de reuniones</a></li>
+      <li><a href="/es/world-time-now">Hora mundial ahora</a></li>
+      <li><a href="/es/utc-time">Hora UTC</a></li>
       <li><a href="/es/world-map">Mapa mundial</a></li>
       <li><a href="/es/windows-clock-alternative">Alternativa al Reloj de Windows</a></li>
       <li><a href="/es/multiple-time-zones-windows">Varias zonas horarias en Windows</a></li>
@@ -299,11 +302,11 @@
   <p class="footer-mark" aria-hidden="true"><span data-name>Open World Clock</span></p>
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Apoya al creador en Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Apoya al creador</span></a>
-<script src="/assets/config.js?v=53bcecc7ff"></script>
+<script src="/assets/config.js?v=17eec50ba5"></script>
 <script src="/assets/i18n.js?v=104d6aaf51"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
 <script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
-<script src="/assets/tool-page.js?v=a076815e08" defer></script>
+<script src="/assets/tool-page.js?v=c5061d0438" defer></script>
 </body>
 </html>

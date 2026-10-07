@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('wc', {
   setView: (view) => ipcRenderer.send('window:view', view === 'map' || view === 'planner' ? view : null),
   // Natural size of the open planner in CSS px { width, height, keepWidth }: main sizes the window to it (zoom applied there).
   fitView: (size) => {
-    if (size && Number.isFinite(size.width) && Number.isFinite(size.height)) ipcRenderer.send('window:fitView', { width: size.width, height: size.height, keepWidth: size.keepWidth === true });
+    if (size && Number.isFinite(size.width) && Number.isFinite(size.height)) ipcRenderer.send('window:fitView', { width: size.width, height: size.height, keepWidth: size.keepWidth === true, layout: String(size.layout || '') });
   },
   // Close keeps the app running in the tray; quitting is done from the tray menu.
   hide: () => ipcRenderer.send('window:hide'),
