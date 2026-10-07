@@ -31,6 +31,45 @@ class ReleaseTests(unittest.TestCase):
     def packaged(self):
         release.package("open-world-clock", self.sha, self.target)
 
+    def compiled_worker(self, text):
+        compiled = self.root / "dist/pages-functions"
+        compiled.mkdir(parents=True)
+        (compiled / "index.js").write_text(text, encoding="utf-8")
+        return compiled
+
+    def test_prepare_preserves_and_hashes_compiled_javascript_without_rebuilding(self):
+        self.packaged()
+        script = "export default { fetch() { return new Response('ok'); } };\n"
+        self.compiled_worker(script)
+        with patch.object(release, "wrangler") as wrangler:
+            release.prepare("open-world-clock", self.sha, self.target)
+        wrangler.assert_not_called()
+        self.assertEqual((self.target / "site/_worker.js").read_text(), script)
+        release.verify("open-world-clock", self.sha, self.target)
+        manifest = json.loads((self.target / "manifest.json").read_text())
+        self.assertIn("_worker.js", manifest["files"])
+
+    def test_prepare_rejects_multipart_output_before_sealing_the_artifact(self):
+        self.packaged()
+        self.compiled_worker('--boundary\nContent-Disposition: form-data; name="metadata"\n')
+        with self.assertRaisesRegex(RuntimeError, "not valid JavaScript"):
+            release.prepare("open-world-clock", self.sha, self.target)
+        self.assertFalse((self.target / "site/_worker.js").exists())
+
+    def test_prepare_rejects_missing_or_additional_worker_modules(self):
+        self.packaged()
+        with self.assertRaisesRegex(RuntimeError, "rebuild Functions"):
+            release.prepare("open-world-clock", self.sha, self.target)
+        compiled = self.compiled_worker("export default {};\n")
+        (compiled / "extra.wasm").write_bytes(b"wasm")
+        with self.assertRaisesRegex(RuntimeError, "one bundled Pages Worker"):
+            release.prepare("open-world-clock", self.sha, self.target)
+
+    def test_hash_consistent_but_invalid_worker_is_rejected_by_verification(self):
+        (self.source / "_worker.js").write_text('Content-Disposition: form-data;\n')
+        with self.assertRaisesRegex(RuntimeError, "not valid JavaScript"):
+            self.packaged()
+
     def test_content_mutation_extra_files_and_wrong_commit_are_rejected(self):
         self.packaged()
         release.verify("open-world-clock", self.sha, self.target)

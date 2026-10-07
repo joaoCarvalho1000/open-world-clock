@@ -83,6 +83,19 @@ def verify(kind, sha, target):
         == {"repository": kind, "sha": sha},
         "Wrong public release marker",
     )
+    worker = target / "site/_worker.js"
+    if kind == "open-world-clock" and worker.exists():
+        validate_pages_worker(worker)
+
+
+def validate_pages_worker(worker):
+    require(worker.is_file(), "Expected a compiled Pages Worker script")
+    # Parse only. Never execute the Worker during artifact validation.
+    result = subprocess.run(
+        ["node", "--input-type=module", "--check"],
+        input=worker.read_bytes(), capture_output=True, timeout=30,
+    )
+    require(result.returncode == 0, "Compiled Pages Worker is not valid JavaScript")
 
 
 def api(path, data=None):
@@ -186,16 +199,12 @@ def prepare(kind, sha, target):
         )
         wrangler(kind, "deploy", "--config", target / "stage/wrangler.jsonc", "--dry-run")
     else:
-        wrangler(
-            kind,
-            "pages",
-            "functions",
-            "build",
-            "functions",
-            "--outfile",
-            target / "site/_worker.js",
-        )
-        # Compiled Functions are produced without deployment credentials from this same commit.
+        # The credential-free Website job builds this with `pages functions build --outdir`.
+        # Deprecated --outfile emits a multipart upload body, not a JavaScript _worker.js.
+        compiled = ROOT / "dist/pages-functions"
+        require(set(files(compiled)) == {"index.js"}, "Expected one bundled Pages Worker; rebuild Functions first")
+        validate_pages_worker(compiled / "index.js")
+        shutil.copyfile(compiled / "index.js", target / "site/_worker.js")
         write_json(
             target / "manifest.json",
             {"repository": kind, "sha": sha, "files": files(target / "site")},
