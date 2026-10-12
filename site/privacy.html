@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Privacy policy · Open World Clock</title>
-<meta name="description" content="The Open World Clock apps collect nothing and work offline. How the website counts visits without cookies, and how Ko-fi loads only on a click.">
+<meta name="description" content="The Open World Clock apps have no telemetry, keep your cities on your device and work offline. How the website counts visits without cookies, and how Ko-fi loads only on a click.">
 <link rel="canonical" href="https://openworldclock.com/privacy">
 <link rel="alternate" hreflang="en" href="https://openworldclock.com/privacy">
 <link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/privacy">
@@ -71,30 +71,30 @@
   <div class="wrap">
     <article>
       <h1>Privacy policy</h1>
-      <p class="updated">Last updated 1 October 2026</p>
-      <p class="summary"><strong>The short version:</strong> the <span data-name>Open World Clock</span> apps collect nothing. Your settings stay on your device, the apps work offline, and they make no network requests of their own. This website counts visits with cookieless, anonymous analytics, and skips them entirely if your browser sends Do Not Track or Global Privacy Control. Ko-fi loads only if you click Support the creator.</p>
+      <p class="updated">Last updated 12 October 2026</p>
+      <p class="summary"><strong>The short version:</strong> the <span data-name>Open World Clock</span> apps have no telemetry and no usage tracking. Your cities and settings stay on your device, and the clocks work offline. The Windows app contacts our servers only for updates: when you ask, or automatically if that option is on (see Network access for each build's default). This website counts visits with cookieless, anonymous analytics, and skips them entirely if your browser sends Do Not Track or Global Privacy Control. Ko-fi loads only if you click Support the creator.</p>
 
       <p class="intro"><span data-name>Open World Clock</span> is a desktop application for Windows that shows the current time in the time zones you choose and converts times between them. An iPhone app with widgets is in development; it has its own section below.</p>
 
       <h2>Data the app collects</h2>
-      <p>None. <span data-name>Open World Clock</span> does not collect, transmit or share any personal data, usage data or telemetry. There is no account and no sign-in.</p>
+      <p>No telemetry and no usage tracking. Your cities and settings never leave your device, and there is no account and no sign-in. The app's only network requests are update checks and, in a code-signed installer, update downloads; the information they carry is listed under Network access.</p>
 
       <h2>Data stored on your device</h2>
       <p>Your choices are saved in a local settings file inside your Windows user profile:</p>
       <ul>
         <li>The <strong>cities</strong> you add and their order, and any <strong>custom labels</strong> you give them.</li>
         <li>The <strong>working hours</strong> and workdays you set per city for the meeting planner.</li>
-        <li>Your <strong>layout</strong> (strip, compact or vertical) and <strong>language</strong>, plus theme, 12 or 24-hour clock, seconds, opacity, always on top, launch at login, zoom level, the window's position and the size you gave each view.</li>
+        <li>Your <strong>layout</strong> (strip, compact or vertical) and <strong>language</strong>, plus theme, 12 or 24-hour clock, seconds, opacity, always on top, launch at login, zoom level, the window's position and the size you gave each view, and your update preference.</li>
       </ul>
       <p>This file never leaves your device. Uninstalling the Microsoft Store build removes it. Uninstalling the installer build keeps it (in the Open World Clock folder under AppData\Roaming) so your cities survive a reinstall; delete that folder to remove it.</p>
 
       <h2>Network access</h2>
       <p>Time zone rules are built into the app, and sunrise and sunset are calculated on your PC, so clocks, conversions and day and night all work fully offline.</p>
       <ul>
-        <li><strong>Installer build</strong> (the setup .exe from this site or GitHub): makes no network requests. Automatic update checks are turned off until the installer is code-signed, so to update, download the new version here. If a future signed release turns update checks on, this page will say so first; the check would only ask the project's public GitHub Releases feed for a newer version, with no personal data, settings or identifiers beyond what any HTTPS request to GitHub carries, such as your IP address, which GitHub handles under its own privacy policy.</li>
-        <li><strong>Portable build:</strong> makes no network requests and never updates itself.</li>
+        <li><strong>Installer and portable builds from this site</strong> (not code-signed today): make no network requests unless you choose <strong>Check for updates</strong> in Settings, or turn on <strong>Automatically check for updates</strong> (off by default; then once when the app starts and once a day). A check is one HTTPS request for <code>https://openworldclock.com/api/app.json</code>, the site's public app information. The app reads only the version number from the answer and never downloads or installs anything; <strong>Open download page</strong> opens the page in your browser. The request carries what a request from the app's built-in browser engine carries: your IP address, its user agent (the app's name and version and its Chromium, Electron and Windows versions) and your language preference. It sends no cookies, cities, settings or identifiers, and it goes directly, not through a system proxy (on a network that requires a proxy the check reports that it could not reach the server).</li>
+        <li><strong>A code-signed installer</strong> (when a signed release is published): has <strong>Automatic updates</strong>, on by default and easy to turn off in Settings. When on, it checks the signed release update feed on download.openworldclock.com over HTTPS (not published yet) every 6 hours and downloads a new version in the background; it installs it only when you choose <strong>Restart and install</strong>, and only an installer signed by the same publisher. When off, it checks and downloads only when you ask. Its update requests also carry a random identifier for this installation, kept in the app's data folder, that the update software uses for staged rollouts, plus your IP address and standard request headers. It sends no cities or settings.</li>
         <li><strong>Microsoft Store build:</strong> makes no requests of its own; the Store handles updates.</li>
-        <li>Settings has <strong>Website</strong>, <strong>Report a problem</strong> and <strong>Check for updates</strong> links. They only open the page in your browser; the app itself sends nothing. The Report a problem link fills in the app version and build (Installer, Portable or Microsoft Store) on the GitHub form, and you see and can change that before anything is sent.</li>
+        <li>Settings has <strong>Website</strong> and <strong>Report a problem</strong> links. They only open the page in your browser; the app itself sends nothing. The Report a problem link fills in the app version and build (Installer, Portable or Microsoft Store) on the GitHub form, and you see and can change that before anything is sent.</li>
         <li><strong>Copy times</strong> puts the times on the clipboard as text and as a small table. <strong>Save calendar invite</strong> writes an .ics file only where you pick in the save dialog. Neither sends anything anywhere.</li>
       </ul>
 
@@ -156,7 +156,7 @@
   </div>
 </footer>
 <script src="assets/config.js?v=17eec50ba5"></script>
-<script src="assets/i18n.js?v=104d6aaf51"></script>
+<script src="assets/i18n.js?v=4d23aa059e"></script>
 <script src="assets/theme.js?v=aafee8fca3"></script>
 <script src="assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="assets/kofi.js?v=e08e26d9a4" defer></script>

@@ -453,6 +453,23 @@ final class UniqueClocksTests: XCTestCase {
 }
 
 final class PlannerPartialTests: XCTestCase {
+    func testRunsSplitWhenWorkingCitiesChange() throws {
+        // Wed 2026-10-14, New York source: New York 09:00 to 11:00, Toronto 09:00 to 10:00, Detroit 10:00 to 11:00. Each
+        // hour has 2 of 3 working, but not the same 2: no single 09:00 to 11:00 run may claim 2 cities throughout.
+        let wd = [1, 2, 3, 4, 5]
+        let hours = ["America/New_York": WorkingHours(start: "09:00", end: "11:00", days: wd),
+                     "America/Toronto": WorkingHours(start: "09:00", end: "10:00", days: wd),
+                     "America/Detroit": WorkingHours(start: "10:00", end: "11:00", days: wd)]
+        let plan = Planner.plan(source: "America/New_York", year: 2026, month: 10, day: 14,
+                                zones: ["America/New_York", "America/Toronto", "America/Detroit"], hours: hours)
+        XCTAssertEqual(plan.totalHours, 0)
+        let partial = try XCTUnwrap(Planner.partial(plan))
+        XCTAssertEqual(partial.working, 2)
+        XCTAssertEqual(partial.runs, [PlannerRun(start: 9, end: 10), PlannerRun(start: 10, end: 11)])
+        XCTAssertEqual(partial.best, PlannerRun(start: 9, end: 10))
+        XCTAssertFalse(partial.runs.contains(PlannerRun(start: 9, end: 11)))
+    }
+
     let firstRunSaoPaulo = ["America/Sao_Paulo", "Europe/Lisbon", "America/New_York", "America/Los_Angeles", "Asia/Singapore"]
 
     func testDefaultCitiesFromSaoPaulo() throws {
@@ -515,7 +532,7 @@ final class PlannerPartialTests: XCTestCase {
         XCTAssertNil(Planner.partial(plan([row("A", [1]), row("B", [2]), row("C", [3])])))
     }
 
-    /// The tie-breaks of time.js bestHours. Each expected run is what `WCTime.bestHours(states, prefer)` returns in node
+    /// The tie-breaks of the former time.js bestHours (removed in 2026-10 for Find a time). Each expected run was what `WCTime.bestHours(states, prefer)` returned in node
     /// for the same states ('work' / 'night' / 'off' per hour; prefer = row indexes there, zones here).
     func testTieBreaksMatchBestHours() {
         func row(_ zone: String, work: Set<Int>, night: Set<Int> = []) -> PlannerRow {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Política de privacidade · Open World Clock</title>
-<meta name="description" content="Os apps do Open World Clock não coletam nada e funcionam offline. Veja como o site conta visitas sem cookies e por que o Ko-fi só carrega com um clique.">
+<meta name="description" content="Os apps do Open World Clock não têm telemetria, guardam suas cidades no seu aparelho e funcionam offline. Veja como o site conta visitas sem cookies e por que o Ko-fi só carrega com um clique.">
 <link rel="canonical" href="https://openworldclock.com/pt/privacy">
 <link rel="alternate" hreflang="en" href="https://openworldclock.com/privacy">
 <link rel="alternate" hreflang="pt-BR" href="https://openworldclock.com/pt/privacy">
@@ -71,30 +71,30 @@
   <div class="wrap">
     <article>
       <h1>Privacidade</h1>
-      <p class="updated">Última atualização: 1 de outubro de 2026</p>
-      <p class="summary"><strong>Resumindo:</strong> os apps do <span data-name>Open World Clock</span> não coletam nada. Suas configurações ficam no seu aparelho, os apps funcionam offline e não fazem nenhuma conexão de rede por conta própria. Este site conta as visitas com estatísticas anônimas e sem cookies, e não conta nada se o seu navegador enviar o sinal Do Not Track ou Global Privacy Control. O Ko-fi só carrega se você clicar em Apoie o criador.</p>
+      <p class="updated">Última atualização: 12 de outubro de 2026</p>
+      <p class="summary"><strong>Resumindo:</strong> os apps do <span data-name>Open World Clock</span> não têm telemetria nem rastreamento de uso. Suas cidades e configurações ficam no seu aparelho, e os relógios funcionam offline. O app para Windows só contata os nossos servidores para atualizações: quando você pede, ou automaticamente se essa opção estiver ativada (veja em Acesso à rede o padrão de cada versão). Este site conta as visitas com estatísticas anônimas e sem cookies, e não conta nada se o seu navegador enviar o sinal Do Not Track ou Global Privacy Control. O Ko-fi só carrega se você clicar em Apoie o criador.</p>
 
       <p class="intro">O <span data-name>Open World Clock</span> é um aplicativo de desktop para Windows que mostra a hora certa nos fusos horários que você escolher e converte horários entre eles. Um app para iPhone, com widgets, está em desenvolvimento e tem uma seção só dele mais abaixo.</p>
 
       <h2>Dados que o app coleta</h2>
-      <p>Nenhum. O <span data-name>Open World Clock</span> não coleta, não transmite e não compartilha nenhum dado pessoal, dado de uso ou telemetria. Não existe conta nem login.</p>
+      <p>Nenhuma telemetria e nenhum rastreamento de uso. Suas cidades e configurações nunca saem do seu aparelho, e não existe conta nem login. As únicas conexões do app são as verificações de atualização e, num instalador com assinatura de código, os downloads de atualização; as informações que elas levam estão listadas em Acesso à rede.</p>
 
       <h2>Dados guardados no seu aparelho</h2>
       <p>Suas escolhas ficam salvas num arquivo de configurações local, dentro do seu perfil de usuário do Windows:</p>
       <ul>
         <li>As <strong>cidades</strong> que você adiciona e a ordem delas, além dos <strong>nomes personalizados</strong> que você der a elas.</li>
         <li>O <strong>horário de trabalho</strong> e os dias de trabalho que você define para cada cidade no planejador de reuniões.</li>
-        <li>Seu <strong>layout</strong> (faixa, compacto ou vertical) e o <strong>idioma</strong>, além de tema, relógio de 12 ou 24 horas, segundos, opacidade, Sempre visível, Iniciar com o Windows, nível de zoom, posição da janela e o tamanho que você deu a cada visualização.</li>
+        <li>Seu <strong>layout</strong> (faixa, compacto ou vertical) e o <strong>idioma</strong>, além de tema, relógio de 12 ou 24 horas, segundos, opacidade, Sempre visível, Iniciar com o Windows, nível de zoom, posição da janela, o tamanho que você deu a cada visualização e a sua preferência de atualizações.</li>
       </ul>
       <p>Esse arquivo nunca sai do seu aparelho. Desinstalar a versão da Microsoft Store apaga o arquivo. Desinstalar a versão do instalador mantém o arquivo (na pasta Open World Clock, dentro de AppData\Roaming), para que suas cidades continuem lá se você reinstalar; para removê-lo, apague essa pasta.</p>
 
       <h2>Acesso à rede</h2>
       <p>As regras de fuso horário já vêm no app, e o nascer e o pôr do sol são calculados no seu PC. Por isso os relógios, as conversões e o dia e a noite funcionam totalmente offline.</p>
       <ul>
-        <li><strong>Versão do instalador</strong> (o .exe de instalação baixado deste site ou do GitHub): não faz nenhuma conexão de rede. A verificação automática de atualizações fica desligada até o instalador ter assinatura de código; para atualizar, baixe a versão nova aqui. Se uma futura versão assinada ligar a verificação de atualizações, esta página vai avisar antes. Essa verificação só perguntaria ao feed público de GitHub Releases do projeto se existe uma versão mais nova, sem dados pessoais, configurações ou identificadores além do que qualquer requisição HTTPS ao GitHub já leva, como o seu endereço IP, que o GitHub trata de acordo com a política de privacidade dele.</li>
-        <li><strong>Versão portátil:</strong> não faz nenhuma conexão de rede e nunca se atualiza sozinha.</li>
+        <li><strong>Versões com instalador e portátil baixadas deste site</strong> (hoje sem assinatura de código): não fazem nenhuma conexão de rede, a não ser que você escolha <strong>Procurar atualizações</strong> nas Configurações ou ative <strong>Procurar atualizações automaticamente</strong> (desativado por padrão; quando ativado, uma vez ao iniciar o app e uma vez por dia). Cada verificação é uma requisição HTTPS para <code>https://openworldclock.com/api/app.json</code>, as informações públicas do app no site. O app lê só o número da versão na resposta e nunca baixa nem instala nada; <strong>Abrir página de download</strong> abre a página no seu navegador. A requisição leva o que qualquer requisição do navegador embutido do app leva: o seu endereço IP, o user agent (nome e versão do app e as versões do Chromium, do Electron e do Windows) e a sua preferência de idioma. Ela não envia cookies, cidades, configurações nem identificadores, e vai direto, sem passar por um proxy do sistema (numa rede que exige proxy, a verificação avisa que não conseguiu acessar o servidor).</li>
+        <li><strong>Um instalador com assinatura de código</strong> (quando uma versão assinada for publicada): tem <strong>Atualizações automáticas</strong>, ativadas por padrão e fáceis de desativar nas Configurações. Ativadas, ele verifica o feed de atualizações das versões assinadas em download.openworldclock.com por HTTPS (ainda não publicado) a cada 6 horas e baixa a versão nova em segundo plano; só a instala quando você escolhe <strong>Reiniciar e instalar</strong>, e só se o instalador for assinado pelo mesmo editor. Desativadas, ele só verifica e baixa quando você pede. As requisições de atualização também levam um identificador aleatório desta instalação, guardado na pasta de dados do app, que o software de atualização usa para liberar versões aos poucos, além do seu endereço IP e dos cabeçalhos padrão. Não enviam cidades nem configurações.</li>
         <li><strong>Versão da Microsoft Store:</strong> não faz nenhuma conexão por conta própria; quem cuida das atualizações é a Store.</li>
-        <li>As Configurações têm os links <strong>Site</strong>, <strong>Relatar um problema</strong> e <strong>Verificar atualizações</strong>. Eles só abrem a página no seu navegador; o app em si não envia nada. O link Relatar um problema preenche no formulário do GitHub a versão do app e o tipo de instalação (instalador, portátil ou Microsoft Store), e você vê e pode mudar esses dados antes de qualquer envio.</li>
+        <li>As Configurações têm os links <strong>Site</strong> e <strong>Relatar um problema</strong>. Eles só abrem a página no seu navegador; o app em si não envia nada. O link Relatar um problema preenche no formulário do GitHub a versão do app e o tipo de instalação (instalador, portátil ou Microsoft Store), e você vê e pode mudar esses dados antes de qualquer envio.</li>
         <li><strong>Copiar horários</strong> coloca os horários na área de transferência, como texto e como uma tabelinha. <strong>Salvar convite de calendário</strong> grava um arquivo .ics só no lugar que você escolher na janela de salvar. Nenhum dos dois envia nada para lugar nenhum.</li>
       </ul>
 
@@ -156,7 +156,7 @@
   </div>
 </footer>
 <script src="/assets/config.js?v=17eec50ba5"></script>
-<script src="/assets/i18n.js?v=104d6aaf51"></script>
+<script src="/assets/i18n.js?v=4d23aa059e"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
 <script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>

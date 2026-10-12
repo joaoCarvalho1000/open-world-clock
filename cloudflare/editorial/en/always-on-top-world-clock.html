@@ -100,7 +100,7 @@
     <div class="sec-body prose">
       <ul>
         <li><strong>Free, with no strings attached:</strong> no price, no ads, no account, no in-app purchases, no upsell. The code is MIT licensed and <a data-link="repo" href="https://github.com/joaoCarvalho1000/open-world-clock">on GitHub</a>.</li>
-        <li><strong>Works offline:</strong> time zone rules are built into the app, and sunrise and sunset are calculated on your PC. The app makes no network requests of its own.</li>
+        <li><strong>Works offline:</strong> time zone rules are built into the app, and sunrise and sunset are calculated on your PC. Clocks and conversions work offline; the app only contacts the project’s server to check for updates, when you ask or have automatic checks on.</li>
         <li><strong>No telemetry:</strong> your cities and settings live in one file under <code>%APPDATA%\Open World Clock</code> and never leave your PC.</li>
         <li><strong>Daylight saving handled:</strong> each conversion uses the rules for its date, and cards show a note in the week before clocks change. See <a href="/daylight-saving-meetings">daylight saving and meetings</a>.</li>
       </ul>
@@ -114,7 +114,7 @@
     <div class="sec-body prose">
       <details><summary>Is Open World Clock really free?</summary><p>Yes. There’s no price, no ads, no account, and no in-app purchase. It’s open source under the MIT License. Tips on Ko-fi are optional and change nothing in the app.</p></details>
       <details><summary>Does the always-on-top window work offline?</summary><p>Yes. The whole app works offline. Time zone rules ship with the app, and updates bring new rules when a country changes its clocks.</p></details>
-      <details><summary>Does it collect any data?</summary><p>No. Your settings stay in one local file, and the app makes no network requests of its own. The <a href="/privacy">privacy policy</a> also covers what this website measures.</p></details>
+      <details><summary>Does it collect any data?</summary><p>No telemetry and no usage data. Your settings stay in one local file, and the app never sends your cities or settings. Its only network requests are update checks and, in a code-signed installer, update downloads, when you ask or have automatic updates on. The <a href="/privacy">privacy policy</a> lists what those requests carry and also covers what this website measures.</p></details>
       <details><summary>Why does Windows say “Windows protected your PC”?</summary><p>The installer and the portable exe aren’t code-signed yet, so SmartScreen may warn you the first time. Select <strong>More info</strong>, then <strong>Run anyway</strong>. The Microsoft Store build is signed by Microsoft and doesn’t show this warning.</p></details>
       <details><summary>Can the browser version stay on top?</summary><p>No. The web demo on the home page is handy for a quick check, but staying above other apps is a feature of the Windows desktop app.</p></details>
     </div>

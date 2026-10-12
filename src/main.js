@@ -8,6 +8,9 @@ const { createReloadGuard } = require('./reload-guard');
 const { prefers12h } = require('./locale-prefs');
 const { createSettingsStore } = require('./settings-store');
 const { buildIcs, validIcsRequest, htmlTable } = require('./share-format');
+const { checkUpdateConfig, DOWNLOAD_PAGE } = require('./update-config');
+const { createUpdateController, discoverLatest, electronUpdaterBackend } = require('./update-controller');
+const { createBalloonTracker } = require('./tray-balloon');
 const fs = require('fs');
 const crypto = require('crypto');
 
@@ -74,7 +77,7 @@ const VIEW_KEYS = [...Object.keys(LAYOUT_SIZES), 'map', 'planner', 'mapVertical'
 // window:fitView), so a size left over from a bigger window or fewer cities cannot bring back empty space.
 const PLANNER_KEYS = ['planner', 'plannerVertical'];
 // Settings only main writes (never accepted from a settings:set patch).
-const MAIN_OWNED = new Set(['viewSizes']);
+const MAIN_OWNED = new Set(['viewSizes', 'updNotified']);
 const LANGUAGES = new Set(['auto', 'en', 'pt', 'es']);
 const ENV_LANG = ['en', 'pt', 'es'].includes(process.env.WC_LANG) ? process.env.WC_LANG : 'auto';
 const DEFAULTS = {
@@ -96,6 +99,11 @@ const DEFAULTS = {
   planner: false,
   viewSizes: {},
   zoom: 0,
+  // Update preferences (src/update-controller.js). autoUpdate: the signed installer checks and downloads in the
+  // background (on, as before). autoCheck: other website copies ask for the latest version number (off: offline).
+  autoUpdate: true,
+  autoCheck: false,
+  updNotified: '', // main-owned: the channel and version last announced in the tray, so each is announced once
 };
 const THEMES = new Set(['system', 'light', 'dark']);
 
@@ -163,6 +171,9 @@ const VALIDATE = {
   tipSeen: (v) => (typeof v === 'boolean' ? v : undefined),
   closeHintSeen: (v) => (typeof v === 'boolean' ? v : undefined),
   planner: (v) => (typeof v === 'boolean' ? v : undefined), // overlap planner view open; not a layout, never resizes
+  autoUpdate: (v) => (typeof v === 'boolean' ? v : undefined),
+  autoCheck: (v) => (typeof v === 'boolean' ? v : undefined),
+  updNotified: (v) => (typeof v === 'string' && v.length <= 64 ? v : undefined),
   // Background alpha (text stays opaque). At least 0.6: lower values let the desktop wash out the text.
   opacity: (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(1, Math.max(0.6, v)) : undefined),
   zoom: (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.round(Math.min(ZOOM_MAX, Math.max(0, v)) * 10) / 10 : undefined),
@@ -304,7 +315,7 @@ function regionLocale() {
 }
 
 const publicSettings = () => ({
-  ...settings,
+  ...Object.fromEntries(Object.entries(settings).filter(([k]) => k !== 'updNotified')),
   version: app.getVersion(),
   portable: !!process.env.PORTABLE_EXECUTABLE_FILE,
   store: !!process.windowsStore,
@@ -740,9 +751,9 @@ function resetPosition() {
 }
 
 const TRAY_STRINGS = {
-  en: { tooltip: 'Open World Clock', showHide: 'Show / Hide', pin: 'Pin above all windows', login: 'Launch at login', loginStore: 'Launch at login: Windows Settings > Apps > Startup', reset: 'Reset position', kofi: 'Support on Ko-fi', quit: 'Quit', closeHintTitle: 'Open World Clock is still running', closeHintText: 'It lives in the tray. Click the clock icon to bring it back, or right-click it and choose Quit.' },
-  pt: { tooltip: 'Open World Clock', showHide: 'Mostrar / Ocultar', pin: 'Fixar por cima de todas as janelas', login: 'Iniciar com o Windows', loginStore: 'Iniciar com o Windows: Configurações > Aplicativos > Inicialização', reset: 'Redefinir posição', kofi: 'Apoiar no Ko-fi', quit: 'Sair', closeHintTitle: 'O Open World Clock continua aberto', closeHintText: 'Ele continua na bandeja do sistema. Clique no ícone do relógio para abrir de novo, ou clique nele com o botão direito e escolha Sair.' },
-  es: { tooltip: 'Open World Clock', showHide: 'Mostrar / Ocultar', pin: 'Siempre visible', login: 'Iniciar con Windows', loginStore: 'Iniciar con Windows: Configuración > Aplicaciones > Inicio', reset: 'Restablecer posición', kofi: 'Apoyar en Ko-fi', quit: 'Salir', closeHintTitle: 'Open World Clock sigue abierto', closeHintText: 'Sigue en la bandeja del sistema. Haz clic en el ícono del reloj para volver a abrirlo, o haz clic derecho en él y elige Salir.' },
+  en: { tooltip: 'Open World Clock', showHide: 'Show / Hide', pin: 'Pin above all windows', login: 'Launch at login', loginStore: 'Launch at login: Windows Settings > Apps > Startup', reset: 'Reset position', kofi: 'Support on Ko-fi', quit: 'Quit', closeHintTitle: 'Open World Clock is still running', closeHintText: 'It lives in the tray. Click the clock icon to bring it back, or right-click it and choose Quit.', updTitle: 'Open World Clock update', updReady: 'Version {v} is ready. Open settings and choose Restart and install.', updAvailable: 'Version {v} is available. Open settings to get it from the download page.' },
+  pt: { tooltip: 'Open World Clock', showHide: 'Mostrar / Ocultar', pin: 'Fixar por cima de todas as janelas', login: 'Iniciar com o Windows', loginStore: 'Iniciar com o Windows: Configurações > Aplicativos > Inicialização', reset: 'Redefinir posição', kofi: 'Apoiar no Ko-fi', quit: 'Sair', closeHintTitle: 'O Open World Clock continua aberto', closeHintText: 'Ele continua na bandeja do sistema. Clique no ícone do relógio para abrir de novo, ou clique nele com o botão direito e escolha Sair.', updTitle: 'Atualização do Open World Clock', updReady: 'A versão {v} está pronta. Abra as configurações e escolha Reiniciar e instalar.', updAvailable: 'A versão {v} está disponível. Abra as configurações para obtê-la na página de download.' },
+  es: { tooltip: 'Open World Clock', showHide: 'Mostrar / Ocultar', pin: 'Siempre visible', login: 'Iniciar con Windows', loginStore: 'Iniciar con Windows: Configuración > Aplicaciones > Inicio', reset: 'Restablecer posición', kofi: 'Apoyar en Ko-fi', quit: 'Salir', closeHintTitle: 'Open World Clock sigue abierto', closeHintText: 'Sigue en la bandeja del sistema. Haz clic en el ícono del reloj para volver a abrirlo, o haz clic derecho en él y elige Salir.', updTitle: 'Actualización de Open World Clock', updReady: 'La versión {v} está lista. Abre la configuración y elige Reiniciar e instalar.', updAvailable: 'La versión {v} está disponible. Abre la configuración para obtenerla en la página de descarga.' },
 };
 function resolvedLanguage() {
   return settings.language !== 'auto' ? settings.language : systemLanguage();
@@ -807,9 +818,16 @@ function createTray() {
   refreshTray();
   tray.on('click', toggleWindow);
   // Registered once here (not per close), so repeated hides never add listeners.
-  tray.on('balloon-show', onCloseHintShown);
-  tray.on('balloon-click', onCloseHintShown);
-  tray.on('balloon-closed', () => { hintPending = false; });
+  tray.on('balloon-show', () => {
+    if (balloons.kind === 'hint') onCloseHintShown();
+    else if (balloons.kind === 'update') onUpdateBalloonShown();
+  });
+  tray.on('balloon-click', () => {
+    const kind = balloons.clicked();
+    if (kind === 'hint') onCloseHintShown();
+    else if (kind === 'update') { onUpdateBalloonShown(); onUpdateBalloonClick(); }
+  });
+  tray.on('balloon-closed', () => { hintPending = false; balloons.closed(); updPendingKey = null; });
   // Hovering the icon shows the cities and their times. Built on hover (at most every 5 s), so there is no timer.
   tray.on('mouse-move', () => {
     const now = Date.now();
@@ -843,7 +861,9 @@ function hideToTray() {
   // try again (balloon-show, when Windows really shows it, comes well before that).
   clearTimeout(hintTimer);
   hintTimer = setTimeout(() => { hintPending = false; }, 15000);
-  try { tray.displayBalloon({ iconType: 'info', title: t.closeHintTitle, content: t.closeHintText }); } catch { hintPending = false; }
+  balloons.shown('hint');
+  updPendingKey = null; // the hint replaces any update notice on screen
+  try { tray.displayBalloon({ iconType: 'info', title: t.closeHintTitle, content: t.closeHintText }); } catch { hintPending = false; balloons.closed(); }
 }
 function onCloseHintShown() {
   if (!hintPending) return;
@@ -935,6 +955,7 @@ function updateSettings(patch, sender) {
   if ('alwaysOnTop' in changed && win) win.setAlwaysOnTop(changed.alwaysOnTop, 'floating');
   if ('theme' in changed && NATIVE_FRAME) nativeTheme.themeSource = changed.theme;
   if ('launchAtLogin' in changed) applyLoginItem(changed.launchAtLogin);
+  if (('autoUpdate' in changed || 'autoCheck' in changed) && updates) updates.prefsChanged();
   // The planner is an overlay view; window:view usually switched it already (then applyView is a no-op).
   if ('planner' in changed) {
     if (changed.planner) geo.overlay = 'planner';
@@ -1102,26 +1123,99 @@ ipcMain.on('window:startupSettings', (e) => {
   shell.openExternal('ms-settings:startupapps').catch(() => {});
 });
 
-// Website installer (NSIS) only: the Store updates the Store build, and the portable build never updates itself.
-// Off by default (updatesActive): only a signed website build opts in. electron-updater is required only then, never
-// in the default build, which packs it but never loads it (scripts/after-pack.js fails a build that turns updates on
-// without it). The feed is build.publish in package.json: latest.yml on https://download.openworldclock.com, and
-// app-update.yml carries the certificate's publisher name, so an installer signed by anyone else is refused.
-function startAutoUpdate() {
-  if (!updatesActive()) return;
-  let autoUpdater;
-  try { ({ autoUpdater } = require('electron-updater')); } catch (err) {
-    console.error('auto-update is on (wcUpdates) but electron-updater could not be loaded; this build will not update:', err && err.message);
-    return;
+// ---------- updates (src/update-controller.js) ----------
+// The channel is decided here, never by the page: 'signed' only in the installed copy of a signed website build
+// (updatesActive) whose app-update.yml passes the feed and publisher check; 'disabled' when that check fails (the
+// updater is never loaded); 'discovery' in other packaged website copies (unsigned installer, portable: version number
+// only, never a download); 'store' in the Store build; 'none' unpackaged. Only the signed channel ever loads
+// electron-updater. Nothing touches the network unless a check is asked for or the automatic preference is on.
+function signedBackend() {
+  const file = path.join(process.resourcesPath, 'app-update.yml');
+  let cfg;
+  try { cfg = require('js-yaml').load(fs.readFileSync(file, 'utf8')); } catch (err) {
+    console.error('updates are off: app-update.yml could not be read:', err && err.message);
+    return null;
   }
-  autoUpdater.logger = null;
-  autoUpdater.on('error', () => { /* silent */ });
-  const check = () => {
-    try { Promise.resolve(autoUpdater.checkForUpdatesAndNotify()).catch(() => {}); } catch { /* silent */ }
-  };
-  setTimeout(check, 10 * 1000);
-  setInterval(check, 6 * 60 * 60 * 1000);
+  const ok = checkUpdateConfig(cfg);
+  if (!ok.ok) { console.error('updates are off:', ok.reason); return null; }
+  try {
+    const { autoUpdater } = require('electron-updater');
+    const { CancellationToken } = require('builder-util-runtime');
+    autoUpdater.updateConfigPath = file; // the file just checked
+    return electronUpdaterBackend(autoUpdater, CancellationToken);
+  } catch (err) {
+    console.error('updates are off: electron-updater could not be loaded:', err && err.message);
+    return null;
+  }
 }
+function updateChannel() {
+  if (!app.isPackaged) return { channel: 'none' };
+  if (process.windowsStore) return { channel: 'store' };
+  if (updatesActive()) { const updater = signedBackend(); return updater ? { channel: 'signed', updater } : { channel: 'disabled' }; }
+  return { channel: 'discovery' };
+}
+// Discovery uses Electron's net.fetch (the default session). In these builds main starts with --no-proxy-server (see
+// above), so the request goes directly to openworldclock.com; behind a proxy that is required it fails as a network
+// error, never as "up to date".
+const discoverWithNet = (signal) => discoverLatest(net.fetch, { signal });
+
+let updates = null;
+const balloons = createBalloonTracker();
+function sendUpdates(state) {
+  if (win && !win.isDestroyed()) win.webContents.send('updates:changed', state);
+}
+// One tray notification per channel and version, only for background results (a scheduled check that found a version,
+// a background download that is ready). It opens the settings at Updates; it never downloads or installs.
+// A version-available notice is skipped while the window is on screen. A notice counts as given only once Windows
+// shows it (balloon-show) or it is clicked, as for the close hint: one that Focus assist dropped is tried again by a
+// later background result.
+let updPendingKey = null;
+function notifyUpdate(kind, version) {
+  const key = `${updates ? updates.get().channel : ''}:${version}`;
+  if (!tray || settings.updNotified === key || process.platform !== 'win32' || process.env.WC_SMOKE) return;
+  if (kind === 'available' && win && !win.isDestroyed() && win.isVisible()) return;
+  updPendingKey = key;
+  const t = TRAY_STRINGS[resolvedLanguage()] || TRAY_STRINGS.en;
+  balloons.shown('update');
+  try { tray.displayBalloon({ iconType: 'info', title: t.updTitle, content: (kind === 'ready' ? t.updReady : t.updAvailable).replace('{v}', version) }); } catch { balloons.closed(); }
+}
+function onUpdateBalloonShown() {
+  if (!updPendingKey || settings.updNotified === updPendingKey) return;
+  settings.updNotified = updPendingKey;
+  saveSettings();
+}
+function onUpdateBalloonClick() {
+  if (!win || win.isDestroyed()) return;
+  retryStoppedReload();
+  win.show(); win.focus();
+  win.webContents.send('updates:reveal');
+}
+function startUpdates(deps = {}) {
+  if (updates) updates.dispose();
+  const { channel, updater } = deps.channel ? deps : updateChannel();
+  updates = createUpdateController({
+    channel, updater, currentVersion: app.getVersion(),
+    discover: deps.discover || discoverWithNet,
+    timers: deps.timers || { setTimeout, clearTimeout },
+    now: deps.now || Date.now,
+    getPrefs: () => ({ autoUpdate: settings.autoUpdate, autoCheck: settings.autoCheck }),
+    onState: sendUpdates,
+    notify: deps.notify || notifyUpdate,
+  });
+  updates.start();
+  sendUpdates(updates.get());
+  return updates;
+}
+// The page asks; main decides. No arguments cross (no URL, version, path or provider): extra ones are ignored.
+ipcMain.handle('updates:get', (e) => (trusted(e) && updates ? updates.get() : null));
+ipcMain.handle('updates:check', (e) => (trusted(e) && updates ? updates.check('manual') : null));
+ipcMain.handle('updates:download', (e) => (trusted(e) && updates ? updates.download() : false));
+ipcMain.handle('updates:cancel', (e) => (trusted(e) && updates ? updates.cancel() : false));
+ipcMain.handle('updates:install', (e) => (trusted(e) && updates ? updates.install() : false));
+ipcMain.handle('updates:openDownloadPage', (e) => {
+  const ch = updates && updates.get().channel;
+  return trusted(e) && (ch === 'discovery' || ch === 'signed' || ch === 'disabled') ? openExternalSafe(DOWNLOAD_PAGE) : false;
+});
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -1131,7 +1225,7 @@ if (!app.requestSingleInstanceLock()) {
   // process its own id (JoaosApps.OpenWorldClock_...!WorldClock), and a different explicit id would put the window's
   // taskbar button apart from the Start tile and the taskbar pin.
   if (process.platform === 'win32' && !process.windowsStore) app.setAppUserModelId(APP_ID);
-  app.on('before-quit', () => { quitting = true; captureBounds(true); flushSettings(); });
+  app.on('before-quit', () => { quitting = true; captureBounds(true); flushSettings(); if (updates) updates.dispose(); });
   app.on('will-quit', () => { flushSettings(); });
   app.on('window-all-closed', () => { /* keep running in the tray */ });
   // No webviews and no new windows from any page; the only links that leave the app go through openExternalSafe.
@@ -1159,11 +1253,13 @@ if (!app.requestSingleInstanceLock()) {
     screen.on('display-removed', () => ensureOnScreen(false));
     screen.on('display-added', () => ensureOnScreen(false));
     screen.on('display-metrics-changed', () => ensureOnScreen(true));
-    startAutoUpdate();
+    startUpdates();
     if (process.env.WC_SMOKE && !app.isPackaged) {
       // test hooks, dev runs only
       global.__wcTest = { buildTrayMenu, KOFI_URL, trayTooltip, hideToTray, failSettingsGet: (n) => { testFailGets = Math.max(0, n | 0); },
-        stubSaveDialog: (fn) => { testSaveDialog = typeof fn === 'function' ? fn : null; } };
+        stubSaveDialog: (fn) => { testSaveDialog = typeof fn === 'function' ? fn : null; },
+        // injected update backends (fake updater, fake discovery, fake timers): never the network or a real installer
+        startUpdates, updates: () => updates, updateSettings, settings: () => settings };
       require(process.env.WC_SMOKE)(win, app);
     }
   });

@@ -4,6 +4,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/fuses
 const fs = require('fs');
 const path = require('path');
+const { configuredPublisher } = require('../src/update-config.js');
 
 // Chromium files the app never loads: the WebGPU shader compilers (DXC) and the SwiftShader Vulkan software
 // renderer with its loader. The page draws with DOM, CSS and a 2D canvas (no WebGL or WebGPU), which use ANGLE on
@@ -38,7 +39,7 @@ function checkUpdater(resourcesDir) {
 // Store build is updated by the Store. scripts/dist-release.js turns wcUpdates on together with the signing options;
 // this stops any other route to wcUpdates: true (package.json edited by hand, -c.extraMetadata.wcUpdates=true, or
 // `npm run dist:all` with updates on). `winOptions` is the merged win config, `targets` the target names being built.
-function checkUpdateBuild({ updates, targets = [], winOptions = {}, env = {} }) {
+function checkUpdateBuild({ updates, targets = [], winOptions = {}, env = {}, forceCodeSigning = false }) {
   if (!updates) return;
   if (targets.some((t) => /^appx$/i.test(t))) {
     throw new Error('wcUpdates is true in a build with a Store package (appx). The Store updates the Store build; build the '
@@ -50,6 +51,27 @@ function checkUpdateBuild({ updates, targets = [], winOptions = {}, env = {} }) 
   if (!signed) {
     throw new Error('wcUpdates is true but this build is not code-signed. Updates stay off in unsigned builds; build with '
       + 'signing configured (scripts/dist-release.js and the variables in scripts/signing.js).');
+  }
+  // Signing config alone is not enough (SEC-2): electron-updater checks the installer's publisher only when
+  // app-update.yml names one, and electron-builder writes it only with verification on and a publisher it can resolve.
+  // Signing that can be skipped is not signing: without forceCodeSigning a failed or skipped signature ships unsigned,
+  // signAndEditExecutable: false skips signing (and the afterSign check of app-update.yml), and signExecutable: false
+  // skips the signature while still reporting the app as signed.
+  if (forceCodeSigning !== true) {
+    throw new Error('wcUpdates is true but forceCodeSigning is not on, so an unsigned file could ship. Build with '
+      + 'scripts/dist-release.js (scripts/signing.js sets it).');
+  }
+  for (const flag of ['signAndEditExecutable', 'signExecutable']) {
+    if (winOptions[flag] === false) throw new Error(`wcUpdates is true but win.${flag} is false, so the app would not be signed.`);
+  }
+  if (winOptions.verifyUpdateCodeSignature === false) {
+    throw new Error('wcUpdates is true but win.verifyUpdateCodeSignature is false, so updates would install without a '
+      + 'publisher check. Remove it.');
+  }
+  if (!configuredPublisher(winOptions)) {
+    throw new Error('wcUpdates is true but no publisher name is configured (azureSignOptions.publisherName or '
+      + 'signtoolOptions.publisherName), so updates could not be checked for who signed them. Set WIN_PUBLISHER_NAME '
+      + '(scripts/signing.js).');
   }
 }
 
@@ -69,6 +91,7 @@ module.exports = async function afterPack(context) {
       targets: (context.targets || []).map((t) => t.name),
       winOptions: context.packager.platformSpecificBuildOptions || {},
       env: process.env,
+      forceCodeSigning: context.packager.forceCodeSigning === true, // the packager's value, platform override included
     });
   }
   console.log(`  • auto-update  ${upd.updates ? 'on (electron-updater packaged, signed build)' : 'off'}`);

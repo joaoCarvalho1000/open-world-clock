@@ -201,11 +201,11 @@ public enum Planner {
     public static func isWorking(_ zone: String, hours: WorkingHours, at date: Date) -> Bool
     public static func cellState(_ zone: String, hours: WorkingHours, hourStart: Date) -> CellState
     public static func plan(source: String, year: Int, month: Int, day: Int, zones: [String], hours: [String: WorkingHours]) -> PlannerResult
-    /// nil when totalHours > 0, rows.count < 3 or no column has 2+ cities working. Columns score like time.js bestHours
-    /// ([cities working, `prefer` zones working, minus cities at night], in that order); `runs` are the top-score runs
-    /// and `best` the longest (earliest on ties), the run bestHours returns. The app passes [home zone, planner source],
-    /// as app.js buildPlanner does. No golden vectors (bestHours is not exported); PlannerPartialTests checks it against
-    /// bestHours results computed in node.
+    /// nil when totalHours > 0, rows.count < 3 or no column has 2+ cities working. Columns score [cities working, `prefer`
+    /// zones working, minus cities at night], in that order; `runs` are maximal runs of top-score columns with the SAME
+    /// working cities (a change of membership splits a run, so no run claims cities that miss part of it) and `best` the
+    /// longest (earliest on ties). The app passes [home zone, planner source]. The Windows app replaced its bestHours with
+    /// Find a time (whole-meeting coverage); PlannerPartialTests keep the former tie-break expectations and the split case.
     public static func partial(_ plan: PlannerResult, prefer: [String] = []) -> PlannerPartial?
 }
 ```

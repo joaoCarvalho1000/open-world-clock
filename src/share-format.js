@@ -2,19 +2,23 @@
 //   buildIcs(request)        a calendar invite (.ics, RFC 5545) for one event, or null when the request is not valid
 //   htmlTable(caption, rows) the rich clipboard version of "Copy times" (Outlook and Teams paste it as a table)
 // main.js validates the renderer's input again through these, so the page never sends HTML or calendar text itself.
+// The same file runs in the browser: scripts/build-web.mjs puts it in front of web/shim.js (window.WCShareFormat), so the
+// web app's calendar download is built and checked by exactly this code.
 
 const WEEK_MS = 7 * 86400000;
+const MAX_MS = Date.UTC(9999, 11, 31, 23, 59, 59);
 
 // RFC 5545 TEXT: backslash, semicolon and comma are escaped, a line break becomes \n.
 const icsText = (s) => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n');
 
 // Content lines are folded at 75 octets (UTF-8): the continuation starts with one space, which counts toward the 75.
 // Splits between code points only, so a multibyte character is never cut in half.
+const utf8Bytes = (ch) => { const c = ch.codePointAt(0); return c < 0x80 ? 1 : c < 0x800 ? 2 : c < 0x10000 ? 3 : 4; };
 function foldLine(line) {
   const out = [];
   let cur = '', bytes = 0;
   for (const ch of line) {
-    const b = Buffer.byteLength(ch, 'utf8');
+    const b = utf8Bytes(ch);
     if (bytes + b > (out.length ? 74 : 75)) { out.push(cur); cur = ''; bytes = 0; }
     cur += ch; bytes += b;
   }
@@ -25,15 +29,17 @@ function foldLine(line) {
 // 20260924T150000Z
 const icsUtc = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z').replace(/[-:]/g, '');
 
-// { startMs, endMs, title, description } from the page: finite times, end after start and at most 7 days later, a
+// { startMs, endMs, title, description } from the page: whole seconds (a calendar keeps no milliseconds, so a time that
+// would be rounded is refused, never moved), from 1970 to the year 9999, end after start and at most 7 days later, a
 // title of 1 to 100 characters and a description of at most 2000. Returns the cleaned request or null.
 function validIcsRequest(r) {
   if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
   const { startMs, endMs, title, description = '' } = r;
-  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs || endMs - startMs > WEEK_MS) return null;
+  if (!Number.isInteger(startMs) || !Number.isInteger(endMs) || startMs % 1000 || endMs % 1000) return null;
+  if (startMs <= 0 || endMs > MAX_MS || endMs <= startMs || endMs - startMs > WEEK_MS) return null;
   if (typeof title !== 'string' || !title.trim() || title.length > 100) return null;
   if (typeof description !== 'string' || description.length > 2000) return null;
-  return { startMs: Math.round(startMs), endMs: Math.round(endMs), title: title.trim(), description };
+  return { startMs, endMs, title: title.trim(), description };
 }
 
 // One VEVENT in UTC, CRLF line endings. `uid` and `now` are passed in (crypto.randomUUID() and Date.now() in main).
@@ -78,4 +84,6 @@ function htmlTable(caption, rows) {
   return `${cap}<table style="border-collapse:collapse">${body}</table>`;
 }
 
-module.exports = { buildIcs, validIcsRequest, foldLine, icsText, htmlTable, validRows, escapeHtml };
+const api = { buildIcs, validIcsRequest, foldLine, icsText, htmlTable, validRows, escapeHtml };
+if (typeof module === 'object' && module && module.exports) module.exports = api;
+else if (typeof window === 'object') window.WCShareFormat = Object.freeze(api);

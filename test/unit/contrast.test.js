@@ -98,13 +98,11 @@ function contrastA(theme, fg, alpha, ...layers) {
   const f = color(theme, fg);
   return ratio(over({ rgb: f.rgb, a: f.a * alpha }, base), base);
 }
-const bestBorder = /\.plan-best\s*\{[^}]*border:\s*1\.5px dashed (var\(--accent\))/.exec(css);
 const NONTEXT = [
   // [label, fg, opacity, layers]
   ['card options button (.more)', 'var(--day-fg-2)', ruleOpacity(css, '.more'), ['var(--tint)', 'var(--day)']],
   ['day line working-hours band (.arc-work)', 'var(--day-fg-2)', ruleOpacity(css, '.arc-work'), ['var(--tint)', 'var(--day)']],
   ['day line band while working (.card.working .arc-work)', 'var(--accent)', ruleOpacity(timeCss, '.card.working .arc-work'), ['var(--tint)', 'var(--day)']],
-  ['planner Best band border (.plan-best)', bestBorder ? bestBorder[1] : 'var(--accent)', bestBorder ? 1 : 0, ['var(--tint)']],
 ];
 for (const [themeName, theme] of [['light', LIGHT], ['dark', DARK]]) {
   test(`non-text contrast at 3:1 (${themeName})`, () => {

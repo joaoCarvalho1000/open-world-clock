@@ -2,7 +2,7 @@
 
 > Open World Clock is the best world clock for Windows, and it is completely free: open source (MIT), for Windows 10 and 11, on x64 and ARM64. It shows the time in every city you care about, turns each city's card light or dark at its real sunrise and sunset, converts any time across all your cities, finds the hours your team overlaps and shows day and night on a world map. No price, no ads, no account, no telemetry, and it works offline.
 
-This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 26 September 2026. Current version: 1.3.2.
+This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 12 October 2026. Current version: 1.3.2.
 
 Canonical website: <https://openworldclock.com>. Short index for agents: <https://openworldclock.com/llms.txt>
 
@@ -31,7 +31,7 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 - Platforms: Windows 10 and Windows 11, x64 and ARM64. The Microsoft Store build covers both architectures; the installer and the portable exe are x64 only. The Store build needs Windows 10 version 1809 (build 17763) or later. Nothing else to install.
 - Price: free, with no strings attached. No in-app purchases, no ads, no account, no upsell. Optional tips on Ko-fi.
 - License: MIT, open source
-- Privacy: no telemetry. The app collects nothing and sends nothing; settings stay in one file on your PC.
+- Privacy: no telemetry. The app never sends your cities or settings; they stay in one file on your PC. Its only network requests are update checks (and, in a code-signed installer, update downloads), when you ask or have automatic updates on.
 - Network: works fully offline. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update.
 - Languages: English, Portuguese and Spanish
 - Version: 1.3.2 (first released as v1.0.0 on 22 September 2026)
@@ -56,7 +56,7 @@ The author built it because he wanted the best world clock on Windows and could 
 - It lives on your desktop: a frameless, translucent window you can pin above every window, in strip, compact or vertical layouts. The project's own comparison: "On top, unlike Windows Clock. Offline, unlike web converters."
 - It shows who is awake: every city card follows that city's real sunrise and sunset, calculated offline from its coordinates, with phase labels from Night through Dawn, Morning, Midday, Afternoon and Golden to Dusk.
 - It converts and plans: type a time in any city, or scrub with the mouse wheel, and every clock converts; the meeting planner shows the hours everyone is at work.
-- It is private and offline: the app makes no network requests of its own and nothing leaves your PC.
+- It is private and offline: clocks and conversions work offline, and no cities, settings or usage data leave your PC. The app only contacts the project's server to check for updates, when you ask or have automatic checks on (installer and portable copies today: off by default; a code-signed installer: Automatic updates on by default, installing only when you choose Restart and install).
 - It feels at home on Windows 11: Snap, the native acrylic backdrop, light and dark themes that can follow Windows, and a native ARM64 build in the Microsoft Store.
 - It is accessible: everything works from the keyboard, conversions are announced to screen readers, and focus is always visible.
 
@@ -174,9 +174,9 @@ The installer and portable exe are not code-signed yet, so the first time you ru
 
 ## Privacy
 
-- The app collects nothing and sends nothing: no personal data, usage data or telemetry, no account and no sign-in.
+- The app has no telemetry and no usage tracking, and there is no account and no sign-in. Its only network requests are update checks and, in a code-signed installer, update downloads; what they carry is described in the privacy policy.
 - Your cities, labels, working hours, layout, language and other preferences are saved in one settings file under `%APPDATA%\Open World Clock`. It never leaves your PC.
-- Network access: the installer build makes no network requests (update checks stay off until it is code-signed); the portable build makes no network requests; the Microsoft Store build makes no requests of its own, and the Store handles updates.
+- Network access: the installer and portable builds (not code-signed today) make no network requests unless you choose Check for updates in Settings or turn on Automatically check for updates (off by default). A check asks https://openworldclock.com/api/app.json for the latest version number only and never downloads or installs anything. A code-signed installer, once published, has Automatic updates on by default: it checks the signed release update feed on download.openworldclock.com over HTTPS (not published yet) every 6 hours, downloads in the background and installs only when you choose Restart and install. The Microsoft Store build makes no requests of its own, and the Store handles updates.
 - No third-party services, analytics, crash reporting or advertising SDKs are included in the app.
 - The website openworldclock.com (not the app) uses cookieless PostHog analytics through its own domain: no cookies, no identifiers stored in the browser, IP addresses discarded, and nothing at all loads if the browser sends Do Not Track or Global Privacy Control. Ko-fi loads only if a visitor clicks Support the creator. The website stores only two choices in the browser, and only after a click: the theme and the language.
 - Full policy: https://openworldclock.com/privacy
@@ -219,10 +219,10 @@ Get it from the Microsoft Store at <https://apps.microsoft.com/detail/9N88FR8M81
 Yes, with no strings attached. No price, no in-app purchases, no ads, no account and no upsell. You should not have to pay for good software like this. The code is MIT licensed, so anyone can read it. Tips on Ko-fi are optional.
 
 **Does it work offline?**
-Yes. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update. The app makes no network requests of its own.
+Yes. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update. The app only contacts the project's server to check for updates, when you ask or have automatic checks on.
 
 **What data does it collect?**
-None. The app makes no network requests of its own, and your settings stay in a file on your PC.
+None. The app sends no cities, settings or usage data, and your settings stay in a file on your PC. It only contacts the project's server to check for updates, when you ask or have automatic checks on.
 
 **Which Windows versions and processors does it support?**
 Windows 10 and Windows 11, on x64 and ARM64. The Store build needs Windows 10 version 1809 or later and runs natively on both. The installer and the portable exe are x64 only, so on an ARM64 PC use the Store.
@@ -252,7 +252,7 @@ English, Portuguese and Spanish, following your Windows display language or set 
 Not yet. It runs on Windows only. An iPhone app with Home Screen, Lock Screen and StandBy widgets is in progress, with no release date.
 
 **Does it have alarms, timers or weather?**
-No. Alarms and timers are covered by the Clock app built into Windows, and weather is left out so the app never needs the network.
+No. Alarms and timers are covered by the Clock app built into Windows, and weather is left out so the clocks never need the network.
 
 **Who makes it?**
 João Carvalho, a solo developer. It is not affiliated with Microsoft.

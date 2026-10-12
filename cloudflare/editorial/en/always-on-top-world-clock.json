@@ -1,7 +1,7 @@
 {
   "title": "Always-on-Top World Clock for Windows 11 & 10: Free, Offline",
   "description": "Keep multiple time zones above every window. Free open-source world clock for Windows 11 and 10: converter, meeting planner, no ads or telemetry.",
-  "modified": "2026-10-05",
+  "modified": "2026-10-12",
   "schema": [
     {
       "@type": "FAQPage",
@@ -27,7 +27,7 @@
           "name": "Does it collect any data?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Your settings stay in one local file, and the app makes no network requests of its own. The privacy policy also covers what this website measures."
+            "text": "No telemetry and no usage data. Your settings stay in one local file, and the app never sends your cities or settings. Its only network requests are update checks and, in a code-signed installer, update downloads, when you ask or have automatic updates on. The privacy policy lists what those requests carry and also covers what this website measures."
           }
         },
         {

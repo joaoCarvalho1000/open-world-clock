@@ -83,6 +83,12 @@ html.is-shared .web-shared {
 .web-shared-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .web-shared .web-btn { height: 32px; }
 
+/* ---------- what a shared link brought (web.js showImport): stays while it is on screen ---------- */
+.web-import { flex: 0 0 auto; margin: 0; padding: 6px max(var(--web-gutter), env(safe-area-inset-right)) 6px max(var(--web-gutter), env(safe-area-inset-left));
+  background: var(--accent-soft); color: var(--fg); font-size: 13px; line-height: 1.35; }
+.web-import[hidden] { display: none; }
+.web-import.bad { color: var(--danger); }
+
 /* ---------- status toast ---------- */
 .web-toast {
   position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); z-index: 60; max-width: calc(100vw - 32px);

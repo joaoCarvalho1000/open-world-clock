@@ -51,6 +51,7 @@
       <button id="btnClose" class="icon-btn" title="Close to tray. Quit from the tray menu." aria-label="Close to tray" data-i18n-title="btn.closeTitle" data-i18n-aria="btn.close"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
   </header>
+  <p id="convError" class="conv-error no-drag" hidden></p>
 
   <div id="tip" class="tip help-pop no-drag" role="dialog" aria-labelledby="helpTitle" hidden>
     <div id="helpTitle" class="help-title" data-i18n="help.title">Tips</div>
@@ -67,11 +68,12 @@
   <section id="planner" class="planner no-drag" aria-label="Meeting planner" data-i18n-aria="plan.aria" hidden>
     <div class="plan-head">
       <span id="plannerSummary" class="plan-summary"></span>
-      <button id="plannerBest" class="plan-best-btn" type="button" hidden></button>
+      <button id="planFind" class="pill plan-find-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="planFindPanel" data-i18n="plan.find" hidden>Find a time</button>
       <span id="plannerCaption" class="plan-caption"></span>
-      <span id="planSelBar" class="plan-selbar" hidden><span id="planSel" class="plan-sel-text" aria-live="polite"></span><button id="planCopy" class="pill plan-sel-btn" type="button" data-i18n="plan.copy">Copy slot</button><button id="planIcs" class="pill plan-sel-btn" type="button" data-i18n="plan.ics">Save invite</button></span>
-      <span class="plan-legend" aria-hidden="true"><i class="lg work"></i><span data-i18n="plan.legend.work">Working</span><i class="lg night"></i><span data-i18n="plan.legend.night">Night</span></span>
+      <span id="planSelBar" class="plan-selbar" hidden><span id="planSel" class="plan-sel-text" aria-live="polite"></span><span class="plan-sel-actions"><button id="planCopy" class="pill plan-sel-btn" type="button" data-i18n="plan.copy">Copy times</button><button id="planLink" class="pill plan-sel-btn" type="button" data-i18n="plan.link" hidden>Copy link</button><button id="planIcs" class="pill plan-sel-btn" type="button" data-i18n="plan.ics">Calendar file</button></span><span id="planStatus" class="plan-status" role="status" hidden></span></span>
+      <span class="plan-legend" aria-hidden="true"><span class="lg-item work"><i class="lg work"></i><span data-i18n="plan.legend.work">Working</span></span><span class="lg-item night"><i class="lg night"></i><span data-i18n="plan.legend.night">Night</span></span><span class="lg-item all"><i class="lg all"></i><span data-i18n="plan.legend.all">Everyone working</span></span><span class="lg-item sel"><i class="lg sel"></i><span data-i18n="plan.legend.sel">Selected</span></span></span>
     </div>
+    <div id="planFindPanel" class="find-panel" role="dialog" aria-labelledby="planFind" tabindex="-1" hidden></div>
     <div id="planBody" class="plan-body"></div>
   </section>
 
@@ -93,7 +95,12 @@
     <button role="menuitem" tabindex="-1" data-copy="text" data-i18n="conv.copyTimes">Copy times</button>
     <button role="menuitem" tabindex="-1" data-copy="discord" data-i18n="copy.discord">Copy for Discord</button>
     <button role="menuitem" tabindex="-1" data-copy="utc" data-i18n="copy.utc">Copy in UTC</button>
-    <button role="menuitem" tabindex="-1" data-copy="ics" data-i18n="copy.ics">Save calendar invite</button>
+    <button role="menuitem" tabindex="-1" data-copy="ics" data-i18n="copy.ics">Calendar file</button>
+  </div>
+  <div id="copyFallback" class="copy-fallback no-drag" role="dialog" aria-labelledby="copyFallbackTitle" hidden>
+    <p id="copyFallbackTitle" class="copy-fallback-title" data-i18n="copy.failTitle">Copying was blocked. The text is selected: press Ctrl+C to copy it.</p>
+    <textarea id="copyFallbackText" readonly spellcheck="false" aria-labelledby="copyFallbackTitle"></textarea>
+    <button id="copyFallbackClose" class="pill" type="button" data-i18n="copy.close">Close</button>
   </div>
   <div id="hoursEditor" class="hours-pop no-drag" role="dialog" aria-labelledby="hoursTitle hoursCity" hidden>
     <div class="hours-head"><span id="hoursTitle" class="hours-title" data-i18n="hours.title">Working hours</span><span id="hoursCity" class="hours-city"></span></div>
@@ -140,13 +147,25 @@
         <button id="optLoginOpen" class="row row-btn" type="button" hidden data-i18n="opt.login.open">Open Startup apps</button>
       </div>
     </section>
+    <!-- Updates: main owns the state and decides the channel (src/update-controller.js); hidden in the web app and unpackaged runs -->
+    <section id="updGroup" class="panel-group upd-group" aria-labelledby="grpUpdates" hidden>
+      <h3 id="grpUpdates" class="group-title" data-i18n="upd.title">Updates</h3>
+      <div class="panel-grid">
+        <div class="upd-status-row">
+          <p id="updStatus" class="upd-status" role="status" aria-live="polite"></p>
+          <progress id="updProgress" class="upd-progress" max="100" value="0" aria-labelledby="updStatus" hidden></progress>
+        </div>
+        <button id="updAction" class="row row-btn" type="button" hidden></button>
+        <button id="updSecondary" class="row row-btn" type="button" hidden></button>
+        <label id="updAutoRow" class="row" hidden><span class="row-label"><span id="updAutoLabel"></span><small id="updAutoHelp" class="row-note"></small></span><input id="optUpdAuto" type="checkbox" aria-labelledby="updAutoLabel" aria-describedby="updAutoHelp" /></label>
+      </div>
+    </section>
     <div class="about">
       <span><span data-i18n="app.title">Open World Clock</span> <span id="ver"></span></span>
       <span class="muted" data-i18n="about.text">Free, open source, no telemetry.</span>
       <span class="about-links">
         <a id="siteLink" href="https://openworldclock.com/" target="_blank" rel="noopener noreferrer" data-i18n="about.website">Website</a>
         <a id="reportLink" href="https://github.com/joaoCarvalho1000/open-world-clock/issues/new?template=bug.yml" target="_blank" rel="noopener noreferrer" data-i18n="about.report">Report a problem</a>
-        <a id="updatesLink" href="https://openworldclock.com/download#new" target="_blank" rel="noopener noreferrer" data-i18n="about.updates" hidden>Check for updates</a>
       </span>
       <a id="kofiLink" class="kofi-link" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener noreferrer" hidden><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M2.5 5.5h8.5v4a3.5 3.5 0 0 1-3.5 3.5h-1.5A3.5 3.5 0 0 1 2.5 9.5zM11 6.5h1a2 2 0 0 1 0 4h-1.2"/></svg><span data-i18n="about.kofi">Support on Ko-fi</span></a>
     </div>
@@ -168,6 +187,7 @@
 <script src="motion/sky.js"></script>
 <script src="views/world-land.js"></script>
 <script src="views/map.js"></script>
+<script src="share-link.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
