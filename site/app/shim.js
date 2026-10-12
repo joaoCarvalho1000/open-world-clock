@@ -179,7 +179,7 @@ else if (typeof window === 'object') window.WCShareFormat = Object.freeze(api);
   'use strict';
   const KEY = 'owc-app-settings';
   const SITE_THEME_KEY = 'wc-theme';
-  const VERSION = '1.3.2';
+  const VERSION = '1.4.0';
   const root = document.documentElement;
 
   // Top level: this page belongs in the home page's hero. Go there with the hash (the shared cities, if any). The rest
