@@ -81,7 +81,7 @@ All set in `assets/config.js`, which rewrites the links at load:
 
 | Setting | Value |
 | --- | --- |
-| `version` | `1.3.0`: the release the Installer and Portable buttons download. Must equal `version` in the root `package.json` (the launch gate in `../cloudflare/check-links.mjs` fails the deploy otherwise) |
+| `version` | `1.4.0`: the release the Installer and Portable buttons download. Must equal `version` in the root `package.json` (the launch gate in `../cloudflare/check-links.mjs` fails the deploy otherwise) |
 | `storeLive` | `true` since the Microsoft Store listing was approved (September 2026); `false` hides every Store link. See The Store switch below |
 | `storeUrl` | `https://apps.microsoft.com/detail/9N88FR8M81BM` (no query: each Store link adds its own `?cid=`, see below) |
 | `downloadBase` | `https://download.openworldclock.com`: the Cloudflare R2 bucket `owc-downloads` on its own domain, which serves the installer and the portable exe |
