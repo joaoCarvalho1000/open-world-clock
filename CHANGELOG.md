@@ -80,3 +80,9 @@ v1.3.1: the meeting planner opens at the size it needs.
 
 v1.3.2: one meeting planner, everywhere.
 - The meeting planner is the same full view in every layout: the hour in every cell, the caption and the legend, in the compact and vertical layouts too (they used to show a narrower planner without numbers). The window fits it, and a size measured in one layout is never applied to another. Only the web app on a phone, which cannot widen, keeps the narrow planner.
+
+v1.4.0: plan a meeting from start to finish.
+- Meeting planner: Find a time lists the times that work for everyone for a meeting of the length you pick, and the next date that works when none does. When nobody fits, it lists compromises that say how many people are in working hours for the whole meeting and who is outside them. Edit each city's working hours from its row; the legend marks working, night, everyone working and the selected meeting.
+- Clock changes: a time that does not exist on the chosen date in a city (skipped by a daylight saving change) is reported by name, with the city, instead of being shifted silently, and copying or sharing waits until the time is fixed.
+- Sharing a meeting: Copy times, Copy link and Calendar file (.ics) from the planner. A link carries up to 50 cities and meetings of up to 7 days; a meeting that cannot fit says so. When copying is blocked, the text is selected for Ctrl+C.
+- Updates: an Updates group in Settings. The installer and portable exe (not code-signed) only ask openworldclock.com for the latest version number, never download anything, and check automatically only if you turn that on. The Microsoft Store keeps the Store build up to date.
