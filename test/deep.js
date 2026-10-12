@@ -1385,7 +1385,9 @@ module.exports = (w, app) => {
         const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
 
         // discovery (unsigned installer, portable): version number only, automatic checking off by default
-        let discoverCalls = 0, answer = () => Promise.resolve('1.4.0');
+        // always newer than this build, so the check stays "available" after a version bump
+        const newer = app.getVersion().replace(/^(\d+)\.(\d+)\..*$/, (_, ma, mi) => `${ma}.${+mi + 1}.0`);
+        let discoverCalls = 0, answer = () => Promise.resolve(newer);
         const dt = mkTimers();
         T.updateSettings({ autoCheck: false });
         T.startUpdates({ channel: 'discovery', timers: dt, discover: () => { discoverCalls++; return answer(); } });
@@ -1400,8 +1402,8 @@ module.exports = (w, app) => {
         await click('updAction'); await sleep(150);
         const d1 = await run(updUi);
         await shot('discovery-available-en');
-        check('updates (discovery): a check finds 1.4.0, says this copy does not update itself, offers the download page; focus stays on the action',
-          discoverCalls === 1 && /^Version 1\.4\.0 is available\. This copy doesn’t update itself/.test(d1.status) && d1.action === 'Open download page' && d1.second === 'Check for updates' && d1.focus === 'updAction', JSON.stringify({ d1, discoverCalls }));
+        check('updates (discovery): a check finds a newer version, says this copy does not update itself, offers the download page; focus stays on the action',
+          discoverCalls === 1 && d1.status.startsWith(`Version ${newer} is available. This copy doesn’t update itself`) && d1.action === 'Open download page' && d1.second === 'Check for updates' && d1.focus === 'updAction', JSON.stringify({ d1, discoverCalls }));
         const opened = [], realOpen = shell.openExternal;
         let patched = false;
         try { shell.openExternal = async (u) => { opened.push(u); }; patched = shell.openExternal !== realOpen; } catch { patched = false; }
