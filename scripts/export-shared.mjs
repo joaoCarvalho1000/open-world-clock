@@ -654,6 +654,10 @@ const PLANS = [
   { name: 'Invalid hours fall back to default', source: 'Europe/Lisbon', ymd: [2026, 9, 23], zones: ['Europe/Lisbon'],
     hours: { 'Europe/Lisbon': { start: '9:00', end: '18:00', days: [1, 2, 3, 4, 5] } } },
   { name: 'Empty zone list', source: 'Europe/Lisbon', ymd: [2026, 9, 23], zones: [], hours: {} },
+  // Lord Howe falls back 30 min at 15:00Z inside Kathmandu's 20:00 hour (14:15Z to 15:15Z): both ends of the hour are
+  // inside Sunday 01:00 to 01:45, the middle (14:45Z to 15:00Z, 01:45 to 02:00 local) is not, so the cell is not 'work'.
+  { name: 'Rollback inside the hour: Lord Howe Sunday 01:00 to 01:45 from Kathmandu', source: 'Asia/Kathmandu', ymd: [2026, 4, 4], zones: ['Asia/Kathmandu', 'Australia/Lord_Howe'],
+    hours: { 'Australia/Lord_Howe': { start: '01:00', end: '01:45', days: [0] } } },
 ];
 G.planner = PLANS.map((p) => {
   const [y, m, d] = p.ymd;
@@ -661,6 +665,8 @@ G.planner = PLANS.map((p) => {
   return { name: p.name, source: p.source, y, m, d, zones: p.zones, hours: p.hours, columnsMs: r.columnsMs, cells: r.cells, localTimes: r.localTimes,
     runs: r.runs, totalHours: r.totalHours, best: r.best };
 });
+// Independent expectation (not read back from the app): the rollback hour is not a full working hour.
+{ const lh = G.planner.find((p) => p.name.startsWith('Rollback inside the hour')); if (!lh || lh.columnsMs[20] !== Date.UTC(2026, 3, 4, 14, 15) || lh.cells['Australia/Lord_Howe'][20] === 'work') die('sanity: Lord Howe rollback interior must not be a working hour'); }
 
 section('nextOffsetChange');
 // nextOffsetChange + dstNote

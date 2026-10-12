@@ -1,22 +1,24 @@
 # Open World Clock Privacy Policy
 
-Last updated: 25 September 2026
+Last updated: 12 October 2026
 
 The published policy is https://openworldclock.com/privacy. This file has the same text. When the two differ, this
 file is the newer one and the page catches up with the next website update.
 
-**The short version:** the Open World Clock apps collect nothing. Your settings stay on your device, the apps work
-offline, and they make no network requests of their own. The website counts visits with cookieless, anonymous
-analytics, and skips them entirely if your browser sends Do Not Track or Global Privacy Control. Ko-fi loads only if
-you click Support.
+**The short version:** the Open World Clock apps have no telemetry and no usage tracking. Your cities and settings
+stay on your device, and the clocks work offline. The Windows app contacts our servers only for updates: when
+you ask, or automatically if that option is on (see Network access for each build's default). The website counts
+visits with cookieless, anonymous analytics, and skips them entirely if your browser sends Do Not Track or Global
+Privacy Control. Ko-fi loads only if you click Support.
 
 Open World Clock is a desktop application for Windows that shows the current time in the time zones you choose and
 converts times between them. An iPhone app with widgets is in development; it has its own section below.
 
 ## Data the app collects
 
-None. Open World Clock does not collect, transmit or share any personal data, usage data or telemetry. There is no
-account and no sign-in.
+No telemetry and no usage tracking. Your cities and settings never leave your device, and there is no account and no
+sign-in. The app's only network requests are update checks and, in a code-signed installer, update downloads; the
+information they carry is listed under Network access.
 
 ## Data stored on your device
 
@@ -25,7 +27,8 @@ Your choices are saved in a local settings file inside your Windows user profile
 - The cities you add and their order, and any custom labels you give them.
 - The working hours and workdays you set per city for the meeting planner.
 - Your layout (strip, compact or vertical) and language, plus theme, 12 or 24-hour clock, seconds, opacity, always
-  on top, launch at login, zoom level, the window's position and the size you gave each view.
+  on top, launch at login, zoom level, the window's position and the size you gave each view, and your update
+  preference.
 
 This file never leaves your device. Uninstalling the Microsoft Store build removes it. Uninstalling the installer
 build keeps it (in the Open World Clock folder under AppData\Roaming) so your cities survive a reinstall; delete that
@@ -36,17 +39,26 @@ folder to remove it.
 Time zone rules are built into the app, and sunrise and sunset are calculated on your PC, so clocks, conversions
 and day and night all work fully offline.
 
-- Installer build (the setup .exe from the website or GitHub): makes no network requests. Automatic update checks
-  are turned off until the installer is code-signed, so to update, download the new version from the website. If a
-  future signed release turns update checks on, this policy will say so first; the check would only ask the
-  project's public GitHub Releases feed for a newer version, with no personal data, settings or identifiers beyond
-  what any HTTPS request to GitHub carries, such as your IP address, which GitHub handles under its own privacy
-  policy.
-- Portable build: makes no network requests and never updates itself.
+- Installer and portable builds from the website (not code-signed today): make no network requests unless you choose
+  Check for updates in Settings, or turn on Automatically check for updates (off by default; then once when the app
+  starts and once a day). A check is one HTTPS request for `https://openworldclock.com/api/app.json`, the site's
+  public app information. The app reads only the version number from the answer and never downloads or installs
+  anything; Open download page opens the page in your browser. The request carries what a request from the app's
+  built-in browser engine carries: your IP address, its user agent (the app's name and version and its Chromium,
+  Electron and Windows versions) and your language preference. It sends no cookies, cities, settings or identifiers,
+  and it goes directly, not through a system proxy (on a network that requires a proxy the check reports that it could
+  not reach the server).
+- A code-signed installer (when a signed release is published): has Automatic updates, on by default and easy to turn
+  off in Settings. When on, it checks `https://download.openworldclock.com/latest.yml` (not published
+  until the first signed release, so it returns 404 today) every 6 hours and downloads a
+  new version in the background; it installs it only when you choose Restart and install, and only an installer signed
+  by the same publisher. When off, it checks and downloads only when you ask. Its update requests also carry a random
+  identifier for this installation, kept in the app's data folder, that the update software uses for staged rollouts,
+  plus your IP address and standard request headers. It sends no cities or settings.
 - Microsoft Store build: makes no requests of its own; the Store handles updates.
-- Settings has Website, Report a problem and Check for updates links. They only open the page in your browser; the
-  app itself sends nothing. The Report a problem link fills in the app version and build (Installer, Portable or
-  Microsoft Store) on the GitHub form, and you see and can change that before anything is sent.
+- Settings has Website and Report a problem links. They only open the page in your browser; the app itself sends
+  nothing. The Report a problem link fills in the app version and build (Installer, Portable or Microsoft Store) on
+  the GitHub form, and you see and can change that before anything is sent.
 - Copy times puts the times on the clipboard as text and as a small table. Save calendar invite writes an .ics file
   only where you pick in the save dialog. Neither sends anything anywhere.
 

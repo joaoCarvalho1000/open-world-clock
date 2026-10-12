@@ -10,7 +10,8 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const MAIN = fs.readFileSync(path.join(ROOT, 'src', 'main.js'), 'utf8');
-const SHIM = fs.readFileSync(path.join(ROOT, 'web', 'shim.js'), 'utf8');
+// as build-web ships it: the version 2 link codec (src/renderer/share-link.js) runs first
+const SHIM = [fs.readFileSync(path.join(ROOT, 'src', 'renderer', 'share-link.js'), 'utf8'), fs.readFileSync(path.join(ROOT, 'web', 'shim.js'), 'utf8')].join(';\n');
 
 // ---------- src/main.js rules, in a sandbox ----------
 function mainRules() {
@@ -76,7 +77,7 @@ function fakeBrowser({ hash = '', parentHash = '', topLevel = false, languages =
   const web = {
     ...ctx.WCWeb,
     parseShare: (h) => plain(ctx.WCWeb.parseShare(h)),
-    buildShare: (zones, conv) => ctx.WCWeb.buildShare(inRealm(zones), inRealm(conv)),
+    buildShare: (zones, conv, meeting) => ctx.WCWeb.buildShare(inRealm(zones), inRealm(conv), meeting ? inRealm(meeting) : undefined),
   };
   return {
     ctx, store, classes, queries, wc, web, replaced,
@@ -304,6 +305,42 @@ test('parseShare and buildShare: hash format, validation and round trip', () => 
   assert.deepEqual(back.zones, ['Europe/Lisbon', 'Etc/GMT+5']);
   assert.equal(back.t.h, 9);
   assert.equal(back.t.mi, 5);
+});
+
+test('version 2 links: an exact meeting, all or nothing; legacy links unchanged', () => {
+  const b = fakeBrowser();
+  const { parseShare, buildShare } = b.web;
+  const plain = (v) => JSON.parse(JSON.stringify(v));
+  const s = Date.UTC(2026, 10, 1, 5, 30) / 1000, e = s + 3600; // New York's second 01:30 on 2026-11-01 (EST)
+  const hash = buildShare(['Europe/Lisbon'], null, { zone: 'America/New_York', startMs: s * 1000, endMs: e * 1000 });
+  assert.equal(hash, `v=2&c=Europe/Lisbon,America/New_York&z=America/New_York&s=${s}&e=${e}`);
+  assert.deepEqual(plain(parseShare('#' + hash)), { zones: ['Europe/Lisbon', 'America/New_York'], t: null, z: 'America/New_York', m: { startMs: s * 1000, endMs: e * 1000 } });
+  assert.deepEqual(plain(parseShare(`#lang=pt&${hash}`)).m, { startMs: s * 1000, endMs: e * 1000 });
+  // nothing plausible from a bad version 2 link: { bad: true } with no cities and no time
+  const bad = { bad: true, zones: [], t: null, z: null };
+  for (const h of [`v=3&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}&e=${e}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${e}&e=${s}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}&e=${s}`,
+    `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}`, `v=2&c=Asia/Tokyo&z=Bad/Zone&s=${s}&e=${e}`, `v=2&c=Asia/Tokyo&s=${s}&e=${e}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}.5&e=${e}`,
+    `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=-1&e=${e}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}&e=${s + 8 * 86400}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=253402300000&e=253402400000`,
+    `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}&e=${e}&t=2026-11-01T01:30`,
+    // review cases: repeated keys, s/e without v, an oversized meeting hash, a source with no room among 50 cities
+    `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}&s=bad&e=${e}`, `v=2&v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${s}&e=${e}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&z=Europe/Paris&s=${s}&e=${e}`,
+    `v=2&c=Asia/Tokyo&c=Europe/Paris&z=Asia/Tokyo&s=${s}&e=${e}`, `c=Europe/Lisbon&s=${s}&e=${e}`, `c=Europe/Lisbon&e=${e}`, `v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=&e=${e}`,
+    `v=2&c=${'Asia/Tokyo,'.repeat(400)}&z=Asia/Tokyo&s=${s}&e=${e}`,
+    `v=2&c=${Intl.supportedValuesOf('timeZone').filter((z) => z !== 'Asia/Tokyo').slice(0, 50).join(',')}&z=Asia/Tokyo&s=${s}&e=${e}`]) assert.deepEqual(plain(parseShare('#' + h)), bad, h);
+  // a meeting that cannot be written exactly is not written at all
+  assert.equal(buildShare(['Asia/Tokyo'], null, { zone: 'Asia/Tokyo', startMs: s * 1000 + 1, endMs: e * 1000 }), '');
+  assert.equal(buildShare(['Asia/Tokyo'], null, { zone: 'Asia/Tokyo', startMs: e * 1000, endMs: s * 1000 }), '');
+  // the 50-city bound: build gives every city or nothing, and whatever it builds parses back to the same meeting
+  const all = Intl.supportedValuesOf('timeZone').filter((z) => z !== 'Asia/Tokyo');
+  const m50 = { zone: 'Asia/Tokyo', startMs: s * 1000, endMs: e * 1000 };
+  for (const [zs, ok] of [[[...all.slice(0, 49), 'Asia/Tokyo'], true], [['Asia/Tokyo', ...all.slice(0, 49)], true], [all.slice(0, 49), true], [all.slice(0, 50), false], [[...all.slice(0, 50), 'Asia/Tokyo'], false], [[...all.slice(0, 55)], false]]) {
+    const h = buildShare(zs, null, m50);
+    if (!ok) { assert.equal(h, '', `${zs.length} cities: refused, never cut`); continue; }
+    const back = plain(parseShare('#' + h));
+    assert.deepEqual([back.m, back.z, back.zones.length, back.zones.includes('Asia/Tokyo')], [{ startMs: s * 1000, endMs: e * 1000 }, 'Asia/Tokyo', 50, true], `${zs.length} cities round trip`);
+  }
+  // legacy c/t/z still parse to the same shape (no m, no bad)
+  assert.deepEqual(plain(parseShare('#c=Asia/Tokyo&t=2026-09-24T15:00&z=Asia/Tokyo')), { zones: ['Asia/Tokyo'], t: { ymd: '2026-09-24', h: 15, mi: 0 }, z: 'Asia/Tokyo' });
 });
 
 test('a shared link shows its cities without touching the saved list until saved', async () => {

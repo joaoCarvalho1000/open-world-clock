@@ -119,40 +119,123 @@
     return out;
   }
 
-  // Planner fallback when no hour works for everyone. `states` has one array of 24 'work' | 'night' | 'off' values per
-  // row (city); `prefer` lists the rows that should win ties (the home city and the planner source). Each hour scores
-  // [cities working, preferred cities working, minus cities at night], compared in that order. Returns the longest run
-  // of top-scoring hours (the earliest on a tie) as { start, end (exclusive), working, total, out: rows not working at
-  // start }, or null with fewer than 2 rows, when every row works at some hour (the overlap band covers that) or when
-  // at most one row works at any hour.
-  function bestHours(states, prefer) {
-    const rows = Array.isArray(states) ? states : [];
-    const total = rows.length;
-    if (total < 2) return null;
-    const pref = new Set((Array.isArray(prefer) ? prefer : []).filter((i) => Number.isInteger(i) && i >= 0 && i < total));
-    const score = [];
-    for (let h = 0; h < 24; h++) {
-      let w = 0, p = 0, n = 0;
-      rows.forEach((row, i) => {
-        const st = row && row[h];
-        if (st === 'work') { w++; if (pref.has(i)) p++; } else if (st === 'night') n++;
-      });
-      score.push([w, p, -n]);
-    }
-    const cmp = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
-    const top = score.reduce((m, s) => (cmp(s, m) > 0 ? s : m));
-    if (top[0] >= total || top[0] < 2) return null;
-    let best = null, start = -1;
-    for (let h = 0; h <= 24; h++) {
-      const on = h < 24 && cmp(score[h], top) === 0;
-      if (on && start < 0) start = h;
-      if (!on && start >= 0) { if (!best || h - start > best.end - best.start) best = { start, end: h }; start = -1; }
-    }
+  // ---------- working-hours coverage (exact, for whole meeting intervals) ----------
+  // Offset of `zone` at `t`, in ms, to the second (Monrovia before 1972 is -0:44:30).
+  function offsetMs(zone, t) {
+    const p = {};
+    for (const x of fmt(zone, OFFSET_OPTS).formatToParts(new Date(t))) p[x.type] = x.value;
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - Math.floor(t / 1000) * 1000;
+  }
+  const HOUR = 3600000, DAY = 86400000;
+  // [a, b) cut where the offset of `zone` changes, as [start, end, offsetMs] pieces. Offsets change on whole seconds and
+  // at most once in 6 hours, so each 6-hour chunk is split at most once, found by bisection over seconds.
+  function offsetPieces(zone, a, b) {
     const out = [];
-    rows.forEach((row, i) => { if (!row || row[best.start] !== 'work') out.push(i); });
-    return { start: best.start, end: best.end, working: top[0], total, out };
+    for (let s = a; s < b; s += 6 * HOUR) {
+      const e = Math.min(b, s + 6 * HOUR);
+      const oa = offsetMs(zone, s), ob = offsetMs(zone, e - 1);
+      if (oa === ob) { out.push([s, e, oa]); continue; }
+      let lo = Math.floor(s / 1000), hi = Math.ceil((e - 1) / 1000); // offset(lo s) = oa, offset(hi s) = ob
+      while (hi - lo > 1) { const mid = Math.floor((lo + hi) / 2); if (offsetMs(zone, mid * 1000) === oa) lo = mid; else hi = mid; }
+      const cut = Math.max(s, Math.min(e, hi * 1000));
+      if (cut > s) out.push([s, cut, oa]);
+      if (e > cut) out.push([cut, e, ob]);
+    }
+    return out;
+  }
+  const hhmm = (s) => { const m = /^(\d\d):(\d\d)$/.exec(String(s || '')); return m ? +m[1] * 60 + +m[2] : null; };
+  // Whether wall-clock ms `w` (the local date and time written as a UTC epoch) is inside schedule `hours`
+  // ({ start, end: 'HH:MM', days: [0..6] }; an end before the start is an overnight shift ending the next day).
+  function workingAtWall(hours, w) {
+    const s = hhmm(hours.start), e = hhmm(hours.end), days = hours.days || [];
+    const day = Math.floor(w / DAY), min = (w - day * DAY) / 60000, wd = (((day + 4) % 7) + 7) % 7; // 1970-01-01 was a Thursday
+    if (s === null || e === null || s === e) return false;
+    if (s < e) return min >= s && min < e && days.includes(wd);
+    if (min >= s) return days.includes(wd);
+    if (min < e) return days.includes((wd + 6) % 7);
+    return false;
+  }
+  // The parts of [a, b) (epoch ms) that `zone` spends inside `hours`, as merged [start, end) spans. Exact: the interval
+  // is cut at every offset change and at every local midnight, start and end of the schedule, and each piece is tested
+  // once. [] for an empty or reversed interval.
+  function workSpans(zone, hours, a, b) {
+    const spans = [];
+    if (!(b > a) || !hours) return spans;
+    const sm = hhmm(hours.start), em = hhmm(hours.end);
+    for (const [ps, pe, o] of offsetPieces(zone, a, b)) {
+      const cuts = [ps, pe];
+      for (let d = Math.floor((ps + o) / DAY); d <= Math.floor((pe - 1 + o) / DAY); d++) {
+        for (const mins of [0, sm, em]) {
+          if (mins === null) continue;
+          const t = d * DAY + mins * 60000 - o;
+          if (t > ps && t < pe) cuts.push(t);
+        }
+      }
+      cuts.sort((x, y) => x - y);
+      for (let i = 0; i < cuts.length - 1; i++) {
+        const x = cuts[i], y = cuts[i + 1];
+        if (y <= x || !workingAtWall(hours, x + o)) continue;
+        const last = spans[spans.length - 1];
+        if (last && last[1] === x) last[1] = y; else spans.push([x, y]);
+      }
+    }
+    return spans;
+  }
+  // Whether `zone` is inside `hours` for the whole of [a, b). False for an empty or reversed interval.
+  function worksThroughout(zone, hours, a, b) {
+    const s = workSpans(zone, hours, a, b);
+    return b > a && s.length === 1 && s[0][0] === a && s[0][1] === b;
+  }
+
+  // ---------- Find a time ----------
+  // Score candidate meetings for `zones` (with `hours[i]` the schedule of zones[i]), each lasting `durationMs`.
+  // Candidates start at each of `starts` (the source hours) and, when `untilMs` is given, also at every instant in
+  // [first start, untilMs) where some city's working time begins (its workSpans starts), so a schedule on minutes
+  // (09:10 to 10:10) is found even when no whole hour fits; duplicate or invalid starts are skipped. A city counts only
+  // when it works for the WHOLE meeting (inside one of its exact working spans), so a two-hour slot where one city works
+  // the first hour and another the second claims neither. Each city's spans (and offsets, for the night tie-break) are
+  // computed once per call. `prefer` lists row indexes that win ties (home city, source). Returns { full, partial }:
+  // `full` the meetings that work for everyone, earliest first; `partial` the compromises with the most cities (then
+  // preferred cities, then fewer at night, then earliest), each { startMs, endMs, working, total, out: row indexes
+  // outside their hours for part or all of it }. Each list keeps at most `limit` meetings that do not overlap one
+  // already listed.
+  function findTimes(zones, hours, starts, durationMs, prefer, limit, untilMs) {
+    const total = zones.length, max = limit || 3;
+    const none = { full: [], partial: [] };
+    const base = (starts || []).filter((t) => Number.isFinite(t));
+    if (!total || !(durationMs > 0) || !base.length) return none;
+    const pref = new Set((prefer || []).filter((i) => Number.isInteger(i)));
+    const from = Math.min(...base), until = Number.isFinite(untilMs) ? untilMs : Math.max(...base) + 1;
+    const to = Math.max(until, Math.max(...base) + 1) + durationMs;
+    const rows = zones.map((z, i) => ({ spans: workSpans(z, hours[i], from, to), pieces: offsetPieces(z, from, to) }));
+    const all = new Set(base);
+    if (Number.isFinite(untilMs)) for (const r of rows) for (const [s] of r.spans) if (s >= from && s < untilMs) all.add(s);
+    const inSpan = (spans, a, b) => { for (const [s, e] of spans) { if (s > a) return false; if (a < e) return b <= e; } return false; };
+    const offAt = (pieces, t) => { for (const [s, e, o] of pieces) if (t >= s && t < e) return o; return pieces.length ? pieces[pieces.length - 1][2] : 0; };
+    const cands = [];
+    for (const startMs of [...all].sort((a, b) => a - b)) {
+      const endMs = startMs + durationMs, mid = startMs + durationMs / 2, out = [];
+      let p = 0, night = 0;
+      rows.forEach((r, i) => {
+        if (inSpan(r.spans, startMs, endMs)) { if (pref.has(i)) p++; } else out.push(i);
+        const h = ((((mid + offAt(r.pieces, mid)) % DAY) + DAY) % DAY) / HOUR;
+        if (h >= 22 || h < 7) night++;
+      });
+      cands.push({ startMs, endMs, working: total - out.length, total, out, score: [total - out.length, p, -night] });
+    }
+    const pick = (list) => {
+      const got = [];
+      for (const c of list) {
+        if (got.length >= max) break;
+        if (got.some((g) => c.startMs < g.endMs && g.startMs < c.endMs)) continue;
+        got.push({ startMs: c.startMs, endMs: c.endMs, working: c.working, total: c.total, out: c.out });
+      }
+      return got;
+    };
+    const cmp = (a, b) => b.score[0] - a.score[0] || b.score[1] - a.score[1] || b.score[2] - a.score[2] || a.startMs - b.startMs;
+    return { full: pick(cands.filter((c) => c.working === total)), partial: pick(cands.filter((c) => c.working > 0 && c.working < total).sort(cmp)) };
   }
 
   window.WCTime = { fmt, parts, offsetMinutes, offsetMinutesUncached, formatOffset, zonedToEpoch, dayDiff, parseTime, splitTimePlace, phaseOf,
-    uniqueClocks, bestHours, _fmtSize: () => fmtCache.size };
+    uniqueClocks, offsetMs, workSpans, worksThroughout, findTimes, _fmtSize: () => fmtCache.size };
 })();

@@ -25,7 +25,7 @@ const iso = (ms) => new Date(ms).toISOString().slice(0, 16) + 'Z';
 
 test('exports the WCTime API', { skip }, () => {
   assert.ok(T, 'window.WCTime is defined');
-  for (const k of ['offsetMinutes', 'zonedToEpoch', 'dayDiff', 'parseTime', 'phaseOf', 'formatOffset', 'uniqueClocks', 'bestHours']) assert.equal(typeof T[k], 'function', k);
+  for (const k of ['offsetMinutes', 'zonedToEpoch', 'dayDiff', 'parseTime', 'phaseOf', 'formatOffset', 'uniqueClocks', 'workSpans', 'worksThroughout', 'findTimes']) assert.equal(typeof T[k], 'function', k);
 });
 
 test('offsetMinutes: fixed and DST zones', { skip }, () => {
@@ -134,54 +134,70 @@ test('uniqueClocks keeps the first zone of each same-time group', { skip }, () =
   assert.deepEqual(u(['Bad/Zone', 'Europe/Lisbon'], SEP), ['Bad/Zone', 'Europe/Lisbon']);
 });
 
-// Planner fallback: when no hour works for everyone, the hours where the most cities work (home city and planner source
-// first, then the fewest at night). States are hand-built: one array of 24 'work' | 'night' | 'off' per city.
-test('bestHours: the best partial hours when there is no full overlap', { skip }, () => {
-  const plain = (v) => JSON.parse(JSON.stringify(v)); // normalize cross-realm objects
-  const hours = (spec) => { const out = []; for (const r of spec) { if (Array.isArray(r)) { for (let h = r[0]; h <= r[1]; h++) out.push(h); } else out.push(r); } return out; };
-  const row = (work, night = []) => { const w = new Set(hours(work)), n = new Set(hours(night)); return Array.from({ length: 24 }, (_, h) => (w.has(h) ? 'work' : n.has(h) ? 'night' : 'off')); };
-  const best = (states, prefer = []) => plain(T.bestHours(states, prefer));
+// Whole-interval coverage: exact at offset changes and schedule edges, never two endpoint samples.
+test('workSpans / worksThroughout: Lord Howe rollback inside a Kathmandu 20:00 hour', { skip }, () => {
+  const plain = (v) => JSON.parse(JSON.stringify(v));
+  const LH = 'Australia/Lord_Howe', hours = { start: '01:00', end: '01:45', days: [0] }; // Sunday 01:00 to 01:45
+  const a = T.zonedToEpoch('Asia/Kathmandu', 2026, 4, 4, 20, 0), b = a + 3600000;
+  assert.equal(iso(a), '2026-04-04T14:15Z');
+  // Lord Howe goes from +11 to +10:30 at 15:00Z (02:00 back to 01:30): 01:15 to 02:00, then 01:30 to 01:45 again.
+  // Both ends work; 14:45Z to 15:00Z (01:45 to 02:00 local) does not.
+  assert.deepEqual(plain(T.workSpans(LH, hours, a, b)), [[a, Date.UTC(2026, 3, 4, 14, 45)], [Date.UTC(2026, 3, 4, 15, 0), b]]);
+  assert.equal(T.worksThroughout(LH, hours, a, b), false);
+  assert.equal(T.worksThroughout(LH, hours, a, a + 30 * 60000), true);
+  // empty and reversed intervals never count
+  assert.deepEqual(plain(T.workSpans(LH, hours, a, a)), []);
+  assert.equal(T.worksThroughout(LH, hours, b, a), false);
+  // Monrovia 1971 (UTC-0:44:30): 09:00 local starts at 09:44:30Z exactly
+  const mon = Date.UTC(1971, 0, 1, 9, 44, 30), day = { start: '09:00', end: '10:00', days: [5] };
+  assert.equal(T.worksThroughout('Africa/Monrovia', day, mon, mon + 3600000), true);
+  assert.equal(T.worksThroughout('Africa/Monrovia', day, mon - 1000, mon + 3600000), false);
+  // an overnight shift crosses midnight into Saturday
+  const ny = { start: '22:00', end: '06:00', days: [5] }, fri22 = T.zonedToEpoch('America/New_York', 2026, 10, 16, 22, 0);
+  assert.equal(T.worksThroughout('America/New_York', ny, fri22, fri22 + 8 * 3600000), true);
+  assert.equal(T.worksThroughout('America/New_York', ny, fri22, fri22 + 9 * 3600000), false);
+});
 
-  // Default five cities on Thu 2026-09-24, New York hours (Sao Paulo home, New York source): only 12:00 has 4 of 5.
-  const five = [
-    row([[8, 16]], [[0, 5], [21, 23]]), // Sao Paulo (NY + 1)
-    row([[4, 12]], [0, 1, [17, 23]]), // Lisbon (NY + 5)
-    row([[9, 17]], [[0, 6], 22, 23]), // New York
-    row([[12, 20]], [[1, 9]]), // Los Angeles (NY - 3)
-    row([[0, 5], [21, 23]], [[10, 18]]), // Singapore (NY + 12)
-  ];
-  assert.deepEqual(best(five, [0, 2]), { start: 12, end: 13, working: 4, total: 5, out: [4] });
-
-  // Los Angeles, London, Kolkata in LA hours: 01:00 to 05:00 has London and Kolkata, 09:00 has LA and London. With LA
-  // preferred (home or source) 09:00 wins; with no preference the longer run wins.
-  const lak = [
-    row([[9, 17]], [[0, 6], 22, 23]), // Los Angeles
-    row([[1, 9]], [[14, 22]]), // London (LA + 8)
-    row([[0, 4], [21, 23]], [[9, 17]]), // Kolkata (LA + 12:30)
-  ];
-  assert.deepEqual(best(lak, [0]), { start: 9, end: 10, working: 2, total: 3, out: [2] });
-  assert.equal(best(lak, []).start, 1);
-  assert.equal(best(lak, []).end, 5);
-
-  // Everyone works at some hour: the overlap band handles it
-  assert.equal(T.bestHours([row([[9, 17]]), row([[10, 18]])], [0]), null);
-  // Weekend: nobody works
-  assert.equal(T.bestHours([row([], [[0, 6]]), row([]), row([])], [0]), null);
-  // Two cities that never work at the same time: at most one works at any hour
-  assert.equal(T.bestHours([row([[1, 5]]), row([[10, 15]])], [0, 1]), null);
-  // One city (or none) is never a comparison
-  assert.equal(T.bestHours([row([[9, 17]])], [0]), null);
-  assert.equal(T.bestHours([], []), null);
-
-  // Ties: the longest run of top hours wins, then the earliest
-  const tie = [row([2, 3, [10, 12], [20, 22]]), row([2, 3, [10, 12], [20, 22]]), row([])];
-  assert.deepEqual(best(tie), { start: 10, end: 13, working: 2, total: 3, out: [2] });
-  const early = [row([5, 6, 15, 16]), row([5, 6, 15, 16]), row([])];
-  assert.equal(best(early).start, 5);
-  assert.equal(best(early).end, 7);
-  // Fewer cities at night breaks a tie in the count
-  const night = [row([3, 14]), row([3, 14]), row([], [[0, 6]])];
-  assert.equal(best(night).start, 14);
+test('findTimes: a city counts only when it works for the whole meeting', { skip }, () => {
+  const plain = (v) => JSON.parse(JSON.stringify(v));
+  const NY = 'America/New_York', wd = [1, 2, 3, 4, 5];
+  const zones = [NY, 'America/Toronto', 'America/Detroit'];
+  const hours = [{ start: '09:00', end: '11:00', days: wd }, { start: '09:00', end: '10:00', days: wd }, { start: '10:00', end: '11:00', days: wd }];
+  const starts = Array.from({ length: 24 }, (_, h) => T.zonedToEpoch(NY, 2026, 10, 14, h, 0)); // Wednesday
+  const at = (h, m = 0) => T.zonedToEpoch(NY, 2026, 10, 14, h, m);
+  // Two hours from 09:00: Toronto works the first hour and Detroit the second, so only New York is there throughout.
+  const two = plain(T.findTimes(zones, hours, starts, 2 * 3600000, [0], 3));
+  assert.deepEqual(two.full, []);
+  assert.deepEqual(two.partial, [{ startMs: at(9), endMs: at(11), working: 1, total: 3, out: [1, 2] }]);
+  // One hour: 09:00 has New York and Toronto, 10:00 New York and Detroit; neither is everyone.
+  const one = plain(T.findTimes(zones, hours, starts, 3600000, [0], 3));
+  assert.deepEqual(one.full, []);
+  assert.deepEqual(one.partial.map((r) => [r.startMs, r.working, r.out]), [[at(9), 2, [2]], [at(10), 2, [1]]]);
+  // Everyone at 10:00 once Toronto works until 11:00; listed results never overlap each other.
+  const wide = [hours[0], { start: '09:00', end: '11:00', days: wd }, hours[2]];
+  assert.deepEqual(plain(T.findTimes(zones, wide, starts, 3600000, [0], 3)).full, [{ startMs: at(10), endMs: at(11), working: 3, total: 3, out: [] }]);
+  // Sunday: nobody works, nothing to offer; duplicate, invalid starts and a nonpositive length are ignored.
+  const sun = Array.from({ length: 24 }, (_, h) => T.zonedToEpoch(NY, 2026, 10, 18, h, 0));
+  assert.deepEqual(plain(T.findTimes(zones, hours, sun, 3600000, [0], 3)), { full: [], partial: [] });
+  assert.deepEqual(plain(T.findTimes(zones, hours, [at(10), at(10), NaN], 3600000, [], 3)).partial.length, 1);
+  assert.deepEqual(plain(T.findTimes(zones, hours, starts, 0, [], 3)), { full: [], partial: [] });
+  // Minute schedules: two cities working 09:10 to 10:10 fit a one-hour meeting at 09:10, which no whole hour does.
+  const ten = { start: '09:10', end: '10:10', days: wd };
+  const lisbon = ['Europe/Lisbon', 'Europe/London'], lStarts = Array.from({ length: 24 }, (_, h) => T.zonedToEpoch('Europe/Lisbon', 2026, 10, 14, h, 0));
+  const lEnd = T.zonedToEpoch('Europe/Lisbon', 2026, 10, 15, 0, 0);
+  assert.deepEqual(plain(T.findTimes(lisbon, [ten, ten], lStarts, 3600000, [], 3)).full, [], 'whole hours alone miss it');
+  const minute = plain(T.findTimes(lisbon, [ten, ten], lStarts, 3600000, [], 3, lEnd));
+  assert.deepEqual(minute.full.map((r) => [iso(r.startMs), iso(r.endMs)]), [['2026-10-14T08:10Z', '2026-10-14T09:10Z']]);
+  // A bounded search stays fast with 50 cities: 15 days of two-hour meetings.
+  const many = Intl.supportedValuesOf('timeZone').slice(0, 50), mh = many.map(() => ({ start: '09:00', end: '18:00', days: wd }));
+  const t0 = Date.now();
+  for (let k = 0; k < 15; k++) {
+    const st = Array.from({ length: 24 }, (_, h) => T.zonedToEpoch('UTC', 2026, 10, 14 + k, h, 0));
+    T.findTimes(many, mh, st, 2 * 3600000, [0], 3, st[0] + 86400000);
+  }
+  const took = Date.now() - t0;
+  console.log(`findTimes: 50 cities x 15 days in ${took} ms`);
+  assert.ok(took < 1500, `took ${took} ms`);
 });
 
 test('fmt: the formatter cache is an LRU capped at 300; a hit returns the same instance', { skip }, () => {

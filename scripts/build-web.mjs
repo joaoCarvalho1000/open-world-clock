@@ -121,6 +121,18 @@ for (const name of WEB_FILES) {
   if (name === 'shim.js') {
     if (!text.includes("'__OWC_VERSION__'")) fail('web/shim.js lost its version placeholder');
     text = text.replace("'__OWC_VERSION__'", `'${VERSION.replace(/[^0-9A-Za-z.+-]/g, '')}'`);
+    // src/share-format.js (the calendar file builder main.js uses) goes first, in its own scope: window.WCShareFormat
+    const sf = lf(read(path.join(ROOT, 'src', 'share-format.js')));
+    if (!sf.includes('window.WCShareFormat')) fail('src/share-format.js lost its browser export');
+    // and the version 2 link codec (src/renderer/share-link.js, also in the app bundle), which the shim reads at boot
+    const sl = lf(read(path.join(SRC, 'share-link.js')));
+    text = `/* src/share-format.js */
+(function () {
+${sf}})();
+/* src/renderer/share-link.js */
+${sl}
+/* web/shim.js */
+${text}`;
   }
   fs.writeFileSync(path.join(OUT, name), text);
 }

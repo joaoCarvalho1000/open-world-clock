@@ -27,30 +27,36 @@
   const STR = {
     en: {
       'shared.region': 'Shared cities',
-      'shared.text': 'Showing shared cities. Your saved list is unchanged.',
+      'shared.text': 'Showing shared cities. Your saved list is unchanged. Working hours are yours, not the sender’s.',
       'shared.save': 'Save these cities',
       'shared.mine': 'Show my cities',
       'shared.saved': 'Saved. These are now your cities.',
+      'shared.meeting': 'Shared meeting. Working hours shown are yours, not the sender’s.',
+      'shared.bad': 'This link isn’t valid, so nothing from it is shown. Ask the sender for a new link.',
       'free': 'Free and open source. No account, no ads.',
       'free.title': 'Source code on GitHub',
       'touch.tip': 'Touch and hold a city, then drag it to a new place. Let go without moving to open its menu.',
     },
     pt: {
       'shared.region': 'Cidades compartilhadas',
-      'shared.text': 'Você está vendo cidades compartilhadas. Sua lista salva continua igual.',
+      'shared.text': 'Você está vendo cidades compartilhadas. Sua lista salva continua igual. O expediente é o seu, não o de quem enviou.',
       'shared.save': 'Salvar estas cidades',
       'shared.mine': 'Mostrar minhas cidades',
       'shared.saved': 'Cidades salvas. Agora esta é a sua lista.',
+      'shared.meeting': 'Reunião compartilhada. O expediente mostrado é o seu, não o de quem enviou.',
+      'shared.bad': 'Este link não é válido, então nada dele é mostrado. Peça um link novo.',
       'free': 'Grátis e de código aberto. Sem cadastro, sem anúncios.',
       'free.title': 'Código-fonte no GitHub',
       'touch.tip': 'Toque e segure uma cidade e arraste para outro lugar. Para abrir o menu dela, solte sem arrastar.',
     },
     es: {
       'shared.region': 'Ciudades compartidas',
-      'shared.text': 'Estás viendo ciudades compartidas. Tu lista guardada sigue igual.',
+      'shared.text': 'Estás viendo ciudades compartidas. Tu lista guardada sigue igual. El horario laboral es el tuyo, no el de quien envió el enlace.',
       'shared.save': 'Guardar estas ciudades',
       'shared.mine': 'Mostrar mis ciudades',
       'shared.saved': 'Listo. Ahora estas son tus ciudades.',
+      'shared.meeting': 'Reunión compartida. El horario laboral es el tuyo, no el de quien la envió.',
+      'shared.bad': 'Este enlace no es válido, así que no se muestra nada de él. Pide un enlace nuevo.',
       'free': 'Gratis y de código abierto. Sin cuenta, sin anuncios.',
       'free.title': 'Código fuente en GitHub',
       'touch.tip': 'Mantén presionada una ciudad y arrástrala a otro lugar. Suéltala sin moverla para abrir su menú.',
@@ -110,7 +116,7 @@
       input.addEventListener('change', () => {
         if (!input.value || !input.validity.valid) return;
         const field = $('convTime');
-        if (!window.WCTime.parseTime(field.value)) {
+        if (!field.value.trim()) { // a time being fixed stays; only an empty field takes the current time
           const now = window.WCTime.parts($('convZone').value, new Date(), { hourCycle:'h23', hour:'2-digit', minute:'2-digit' });
           field.value = `${now.hour}:${now.minute}`;
         }
@@ -143,18 +149,42 @@
     const p = window.WCTime.parts(zone, new Date(), { year: 'numeric', month: '2-digit', day: '2-digit' });
     return `${p.year}-${p.month}-${p.day}`;
   }
-  // The conversion on screen, { ymd, h, mi, zone }, or null when the clocks show the current time.
+  // The conversion on screen, { ymd, h, mi, zone }, or null when the clocks show the current time. Read from the app's
+  // own converter state (app.js window.WCConverter): the exact instant on screen, as a wall time in the source city.
   function currentConversion() {
-    if (!$('convClear') || $('convClear').hidden) return null;
-    const p = window.WCTime.parseTime($('convTime').value);
-    const zone = $('convZone').value;
-    if (!p || !zone) return null;
-    return { ymd: $('convDate').value || todayIn(zone), h: p[0], mi: p[1], zone };
+    const st = window.WCConverter && window.WCConverter.state();
+    if (!st || !st.convert) return null;
+    const p = window.WCTime.parts(st.convert.zone, new Date(st.convert.epochMs), { year: 'numeric', month: '2-digit', day: '2-digit', hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+    return { ymd: `${p.year}-${p.month}-${p.day}`, h: +p.hour % 24, mi: +p.minute, zone: st.convert.zone };
   }
-  // The hash for a link to the clocks on screen ('c=...&t=...&z=...'), or '' when there is no city.
+  // The hash for a link to what is on screen, or '' while the time field holds an error (never the cities alone instead):
+  // the selected meeting, exact ('v=2&c=...&z=...&s=...&e=...'), else the converted time ('c=...&t=...&z=...'), else the
+  // cities ('c=...'). '' with no city. Only time zones and times: no labels, working hours or groups.
   window.WCShareHash = () => {
     const s = W.settings();
+    const st = window.WCConverter && window.WCConverter.state();
+    if (st && st.error) return '';
+    if (st && st.meeting && st.convert) return W.buildShare(s.zones, null, { zone: st.convert.zone, startMs: st.meeting.startMs, endMs: st.meeting.endMs });
     return s.zones.length ? W.buildShare(s.zones, currentConversion()) : '';
+  };
+  // What a Share would carry: 'meeting', 'time', 'cities', 'blocked' (time field error) or 'none' (no city). The host
+  // page's Share button reads it for its label, and hears 'wc-share' events on this window when it changes.
+  window.WCShareKind = () => {
+    const st = window.WCConverter && window.WCConverter.state();
+    if (st && st.error) return 'blocked';
+    if (st && st.meeting) return 'meeting';
+    if (st && st.convert) return 'time';
+    return W.settings().zones.length ? 'cities' : 'none';
+  };
+  W.whenBooted(() => {
+    if (window.WCConverter && window.WCConverter.onChange) window.WCConverter.onChange(() => window.dispatchEvent(new CustomEvent('wc-share', { detail: window.WCShareKind() })));
+  });
+  // Why WCShareHash gave nothing: the converter's error text, or '' (then there is simply no city).
+  window.WCShareBlocked = () => {
+    const st = window.WCConverter && window.WCConverter.state();
+    if (st && st.error) return st.error;
+    if (st && st.meeting && !window.WCShareHash()) return window.WCConverter.linkProblem(); // more than 50 cities, or not exact
+    return '';
   };
 
   // ---------- shared links ----------
@@ -198,16 +228,50 @@
     time.value = s.hour12 ? `${p.t.h % 12 || 12}:${pad2(p.t.mi)} ${p.t.h < 12 ? 'AM' : 'PM'}` : `${pad2(p.t.h)}:${pad2(p.t.mi)}`;
     time.dispatchEvent(new Event('input', { bubbles: true }));
   }
+  // A link's exact meeting (version 2): its source city, then the interval, committed by the app. Nothing is saved.
+  // What a link brought stays said under the bar (#webImport) for as long as it is what is on screen: an imported meeting
+  // ("Working hours are yours, not the sender's") until the meeting changes, a bad link until a meeting or time is set.
+  let imported = null; // { kind: 'meeting', m } | { kind: 'bad' } | null
+  function showImport() {
+    const el = $('webImport');
+    if (!el) return;
+    const text = !imported ? '' : imported.kind === 'bad' ? t('shared.bad') : t('shared.meeting');
+    el.textContent = text; el.hidden = !text; el.classList.toggle('bad', !!imported && imported.kind === 'bad');
+  }
+  function importChanged(st) {
+    if (!imported) return;
+    if (imported.kind === 'meeting' && !(st.meeting && st.meeting.startMs === imported.m.startMs && st.meeting.endMs === imported.m.endMs)) imported = null;
+    else if (imported.kind === 'bad' && (st.meeting || st.convert)) imported = null;
+    showImport();
+  }
+  function applyMeeting(p) {
+    // the meeting's summary and its actions live in the planner: open it (for this visit only, see shim.js linkView)
+    const plan = $('btnPlanner');
+    if (plan && plan.getAttribute('aria-pressed') !== 'true') plan.click();
+    const ok = window.WCConverter && window.WCConverter.apply(p.z, p.m.startMs, p.m.endMs);
+    imported = ok ? { kind: 'meeting', m: p.m } : { kind: 'bad' };
+    showImport();
+  }
+  // A bad link: nothing from it, and a meeting or time already on screen goes back to now, so nothing that is exported
+  // afterwards can be mistaken for the link's.
+  function badLink() {
+    const clear = $('convClear');
+    if (clear && !clear.hidden) clear.click();
+    imported = { kind: 'bad' }; showImport();
+  }
+  const applyLink = (p) => { if (p.bad) badLink(); else if (p.m) applyMeeting(p); else if (p.t) applyTime(p); };
+  W.whenBooted(() => { if (window.WCConverter && window.WCConverter.onChange) window.WCConverter.onChange(importChanged); });
   W.whenBooted(() => {
     const p = W.parseShare(W.shareHash());
-    if (p && p.t) applyTime(p);
+    if (p) applyLink(p);
   });
   // A new link pasted into the address bar: the home page's (the usual case) or this page's own.
   const onHash = (hash) => {
     const p = W.parseShare(hash);
     if (!p) return;
+    if (!p.bad) W.enterLink();
     if (p.zones.length) W.enterShared(p.zones);
-    W.whenBooted(() => { if (p.t) applyTime(p); });
+    W.whenBooted(() => applyLink(p));
   };
   window.addEventListener('hashchange', () => onHash(location.hash));
   try { if (window.parent !== window) window.parent.addEventListener('hashchange', () => onHash(window.parent.location.hash)); } catch { /* not the home page */ }

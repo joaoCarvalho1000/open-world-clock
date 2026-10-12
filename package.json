@@ -46,6 +46,7 @@
       "!test/**"
     ],
     "afterPack": "scripts/after-pack.js",
+    "afterSign": "scripts/after-sign.js",
     "win": {
       "icon": "build/icon.ico",
       "artifactName": "Open-World-Clock-${version}-${arch}.${ext}",

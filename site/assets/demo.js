@@ -43,7 +43,10 @@
   var heroFrame = doc.getElementById('heroApp');
   if (heroFrame && heroFrame.dataset.src) {
     var frameHash = function () {
-      var share = String(location.hash || '').replace(/^#/, '').split('&').filter(function (p) { return /^[ctz]=/.test(p); }).join('&');
+      var raw = String(location.hash || '').replace(/^#/, '');
+      // a meeting link (version 2: v, s or e) goes as it came, so a bad one stays bad (never trimmed to plausible cities)
+      if (/(^|&)(v|s|e)=/.test(raw)) return '#' + raw + (/(^|&)lang=/.test(raw) ? '' : '&lang=' + I18N.lang);
+      var share = raw.split('&').filter(function (p) { return /^[ctz]=/.test(p); }).join('&');
       return '#' + (share ? share + '&' : '') + 'lang=' + I18N.lang;
     };
     var startApp = function () { if (!heroFrame.getAttribute('src')) heroFrame.src = heroFrame.dataset.src + frameHash(); };
@@ -351,22 +354,49 @@
   // a server; opening it shows those cities in the hero without touching the visitor's saved list.
   var shareBtn = $('#heroShare'), shareText = $('#heroShareText'), shareTimer = 0;
   if (shareBtn) {
+    // The label says what a press shares (the app's WCShareKind): the selected meeting, the converted time or the cities.
+    var shareKind = function () { try { var w = $('#heroApp').contentWindow; return w && w.WCShareKind ? w.WCShareKind() : ''; } catch (e) { return ''; } };
+    var shareLabel = function () { var k = shareKind(); return k === 'meeting' ? T('share.meeting') : k === 'time' ? T('share.time') : k === 'cities' ? T('share.cities') : T('share'); };
+    var syncShare = function () { if (!shareTimer) shareText.textContent = shareLabel(); };
+    var heroFrame = $('#heroApp');
+    if (heroFrame) heroFrame.addEventListener('load', function () {
+      try { heroFrame.contentWindow.addEventListener('wc-share', syncShare); } catch (e) { /* not this origin */ }
+      syncShare();
+    });
     var shareSay = function (msg, done) {
       clearTimeout(shareTimer);
       shareText.textContent = msg; shareBtn.classList.toggle('is-done', !!done); announce(msg);
-      shareTimer = setTimeout(function () { shareText.textContent = T('share'); shareBtn.classList.remove('is-done'); }, 2200);
+      shareTimer = setTimeout(function () { shareTimer = 0; shareText.textContent = shareLabel(); shareBtn.classList.remove('is-done'); }, 2200);
+    };
+    // The clipboard refused: the link in a field under the window, selected, to copy by hand.
+    var shareField = null;
+    var showLink = function (url) {
+      if (!shareField) {
+        shareField = doc.createElement('input');
+        shareField.type = 'text'; shareField.readOnly = true; shareField.className = 'share-fallback-link';
+        var st = shareField.style; st.display = 'block'; st.boxSizing = 'border-box'; st.width = 'calc(100% - 24px)'; st.margin = '8px 12px'; st.padding = '10px'; st.font = 'inherit';
+        var win = shareBtn.closest('.app-win') || shareBtn.parentNode;
+        win.parentNode.insertBefore(shareField, win.nextSibling);
+      }
+      shareField.value = url; shareField.setAttribute('aria-label', T('share.copyThis')); shareField.hidden = false;
+      shareSay(T('share.copyThis'));
+      shareField.focus(); shareField.select();
     };
     shareBtn.addEventListener('click', function () {
       var f = $('#heroApp'), h = '';
       try { h = f && f.contentWindow && f.contentWindow.WCShareHash ? f.contentWindow.WCShareHash() : ''; } catch (e) { h = ''; }
-      if (!h) { shareSay(T('share.first')); return; }
+      if (!h) {
+        // the time field holds an error: say so (its own words) rather than share the cities without the time
+        var why = ''; try { why = f.contentWindow.WCShareBlocked ? f.contentWindow.WCShareBlocked() : ''; } catch (e) { why = ''; }
+        shareSay(why || T('share.first')); return;
+      }
       var url = location.origin + I18N.prefix + '#' + h; // this page, in its language
       var ok = function () { shareSay(T('share.done'), true); };
       var legacy = function () {
         var ta = doc.createElement('textarea'); ta.value = url; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
         doc.body.appendChild(ta); ta.select(); var done = false; try { done = doc.execCommand('copy'); } catch (e) { done = false; } ta.remove();
         shareBtn.focus({ preventScroll: true });
-        if (done) ok(); else shareSay(T('share.fail'));
+        if (done) ok(); else showLink(url);
       };
       if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) navigator.clipboard.writeText(url).then(ok, legacy); else legacy();
     });

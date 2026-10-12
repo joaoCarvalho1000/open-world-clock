@@ -74,3 +74,27 @@ test('htmlTable escapes every cell and the caption; rows are checked', () => {
   assert.equal(validRows([['a', 'b', 3]]), null);
   assert.equal(validRows([['a', 'b', 'x'.repeat(201)]]), null);
 });
+
+test('validIcsRequest: whole positive seconds only, never rounded; bounded; the browser gets the same builder', () => {
+  const ok = (a, b) => validIcsRequest({ startMs: a, endMs: b, title: 'Meeting' });
+  assert.ok(ok(START, START + 1000));
+  assert.equal(ok(START + 500, START + 3600000), null, 'milliseconds are refused, not rounded');
+  assert.equal(ok(START, START + 3600000.5), null);
+  assert.equal(ok(0, 3600000), null, 'the epoch itself is not a positive start');
+  assert.equal(ok(-3600000, 0), null);
+  assert.equal(ok(START, START), null);
+  assert.equal(ok(START, START + 7 * 86400000 + 1000), null, 'over 7 days');
+  assert.ok(ok(Date.UTC(9999, 11, 31, 22, 0), Date.UTC(9999, 11, 31, 23, 0)));
+  assert.equal(ok(Date.UTC(9999, 11, 31, 23, 0), Date.UTC(10000, 0, 1, 1, 0)), null, 'past the year 9999');
+  // a year boundary and a multibyte title: CRLF only, folded at 75 octets without splitting a character
+  const ics = buildIcs({ startMs: Date.UTC(2026, 11, 31, 23, 30), endMs: Date.UTC(2027, 0, 1, 1, 0), title: 'Reunião '.repeat(12).trim(), description: '東京 São Paulo\n'.repeat(20) }, OPTS);
+  assert.match(ics, /\r\nDTSTART:20261231T233000Z\r\nDTEND:20270101T010000Z\r\n/);
+  assert.equal(ics.replace(/\r\n/g, '').includes('\n'), false, 'no bare LF');
+  for (const line of ics.split('\r\n')) assert.ok(Buffer.byteLength(line, 'utf8') <= 75, `line over 75 octets: ${line}`);
+  assert.equal(Buffer.from(ics, 'utf8').toString('utf8'), ics, 'valid UTF-8 (no split code points)');
+  // the browser copy (window.WCShareFormat, as build-web injects it) gives the same bytes
+  const vm = require('vm'), fs = require('fs'), path = require('path');
+  const win = {};
+  vm.runInNewContext(`(function () {\n${fs.readFileSync(path.join(__dirname, '../../src/share-format.js'), 'utf8')}})();`, { window: win });
+  assert.equal(win.WCShareFormat.buildIcs({ ...REQ, title: 'Reunião 東京' }, OPTS), buildIcs({ ...REQ, title: 'Reunião 東京' }, OPTS));
+});

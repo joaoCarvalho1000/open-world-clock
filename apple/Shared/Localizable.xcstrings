@@ -73,30 +73,6 @@
         }
       }
     },
-    "about.updates": {
-      "comment": "about",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check for updates"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Buscar actualizaciones"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verificar atualizações"
-          }
-        }
-      }
-    },
     "about.website": {
       "comment": "about",
       "extractionState": "manual",
@@ -1249,6 +1225,30 @@
         }
       }
     },
+    "copy.close": {
+      "comment": "copy",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechar"
+          }
+        }
+      }
+    },
     "copy.discord": {
       "comment": "copy",
       "extractionState": "manual",
@@ -1269,6 +1269,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copiar para o Discord"
+          }
+        }
+      }
+    },
+    "copy.failTitle": {
+      "comment": "copy",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copying was blocked. The text is selected: press Ctrl+C to copy it."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo copiar. El texto está seleccionado: pulsa Ctrl+C para copiarlo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cópia foi bloqueada. O texto está selecionado: pressione Ctrl+C para copiar."
           }
         }
       }
@@ -1304,19 +1328,19 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Save calendar invite"
+            "value": "Calendar file"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Guardar invitación de calendario"
+            "value": "Archivo de calendario"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salvar convite de calendário"
+            "value": "Arquivo de calendário"
           }
         }
       }
@@ -1893,6 +1917,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copiado"
+          }
+        }
+      }
+    },
+    "hint.gap": {
+      "comment": "hint",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{time} doesn’t exist on this date in {city} because the clocks change. Choose another time"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{time} no existe en esta fecha en {city} (cambia la hora). Elige otra hora"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{time} não existe nesta data em {city} por causa da mudança de horário. Escolha outro horário"
           }
         }
       }
@@ -4352,19 +4400,91 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copy slot"
+            "value": "Copy times"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiar horario"
+            "value": "Copiar horas"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiar horário"
+            "value": "Copiar horários"
+          }
+        }
+      }
+    },
+    "plan.dur.h": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{h} h"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{h} h"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{h} h"
+          }
+        }
+      }
+    },
+    "plan.dur.hm": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{h} h {m} min"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{h} h {m} min"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{h} h {m} min"
+          }
+        }
+      }
+    },
+    "plan.dur.m": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{m} min"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{m} min"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{m} min"
           }
         }
       }
@@ -4417,6 +4537,318 @@
         }
       }
     },
+    "plan.find": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find a time"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar horario"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encontrar horário"
+          }
+        }
+      }
+    },
+    "plan.findAll": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Works for everyone"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A todos les va bien"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona para todos"
+          }
+        }
+      }
+    },
+    "plan.findAllN": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All {total} in working hours for the whole meeting"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los {total} están en horario laboral durante toda la reunión"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos os {total} no expediente durante toda a reunião"
+          }
+        }
+      }
+    },
+    "plan.findDate": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose another date"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elegir otra fecha"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolher outra data"
+          }
+        }
+      }
+    },
+    "plan.findFor": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For a {dur} meeting on {date}, times in {city}"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para una reunión de {dur} el {date}, con horas de {city}"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para uma reunião de {dur} em {date}, horários de {city}"
+          }
+        }
+      }
+    },
+    "plan.findHours": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working hours: {city}"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horario laboral: {city}"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expediente: {city}"
+          }
+        }
+      }
+    },
+    "plan.findNext": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next date that works for everyone"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próxima fecha que les va bien a todos"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próxima data que funciona para todos"
+          }
+        }
+      }
+    },
+    "plan.findNoNext": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing works for everyone in the next {n} days"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ningún horario les va bien a todos en los próximos {n} días"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum horário funciona para todos nos próximos {n} dias"
+          }
+        }
+      }
+    },
+    "plan.findNone": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No one is in working hours for the whole meeting on this date"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nadie está en horario laboral durante toda la reunión en esta fecha"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguém está no expediente durante toda a reunião nesta data"
+          }
+        }
+      }
+    },
+    "plan.findSome": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compromises: not everyone is in working hours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opciones intermedias: no todos están en horario laboral"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternativas: nem todos estão no expediente"
+          }
+        }
+      }
+    },
+    "plan.findSomeN": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} of {total} in working hours for the whole meeting. Outside working hours for some or all of it: {list}"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} de {total} están en horario laboral durante toda la reunión. Fuera de horario en parte o en toda la reunión: {list}"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "{n} de {total} no expediente durante toda a reunião. Fora do expediente em parte ou em toda a reunião: {list}"
+          }
+        }
+      }
+    },
+    "plan.findTry": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try another date, or check everyone’s working hours"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba otra fecha o revisa el horario laboral"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tente outra data ou confira o expediente"
+          }
+        }
+      }
+    },
+    "plan.fix": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fix the time to copy or share this meeting"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrige la hora para copiar o compartir esta reunión"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrija o horário para copiar ou compartilhar esta reunião"
+          }
+        }
+      }
+    },
     "plan.ics": {
       "comment": "plan",
       "extractionState": "manual",
@@ -4424,19 +4856,67 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Save invite"
+            "value": "Calendar file"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Guardar invitación"
+            "value": "Archivo de calendario"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salvar convite"
+            "value": "Arquivo de calendário"
+          }
+        }
+      }
+    },
+    "plan.icsFailed": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t create the calendar file. Select Calendar file to try again."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo crear el archivo de calendario. Vuelve a pulsar Archivo de calendario."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível criar o arquivo de calendário. Clique em Arquivo de calendário para tentar de novo."
+          }
+        }
+      }
+    },
+    "plan.legend.all": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everyone working"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos en horario laboral"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos no expediente"
           }
         }
       }
@@ -4513,6 +4993,30 @@
         }
       }
     },
+    "plan.legend.sel": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selected meeting"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reunión seleccionada"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reunião selecionada"
+          }
+        }
+      }
+    },
     "plan.legend.work": {
       "comment": "plan",
       "extractionState": "manual",
@@ -4533,6 +5037,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Expediente"
+          }
+        }
+      }
+    },
+    "plan.link": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy link"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar enlace"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar link"
+          }
+        }
+      }
+    },
+    "plan.linkFailed": {
+      "comment": "plan",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This meeting can’t be shared as a link. Links support up to 50 cities and meetings of up to 7 days, with times in whole seconds."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta reunión no se puede compartir con un enlace: admite como máximo 50 ciudades y 7 días, sin fracciones de segundo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta reunião não cabe em um link: o limite é de 50 cidades e 7 dias, sem frações de segundo."
           }
         }
       }
@@ -4969,6 +5521,78 @@
         }
       }
     },
+    "say.icsCanceled": {
+      "comment": "say",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar file not saved"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivo de calendario no guardado"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arquivo de calendário não salvo"
+          }
+        }
+      }
+    },
+    "say.icsDownloaded": {
+      "comment": "say",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar file download started"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se inició la descarga del archivo de calendario"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download do arquivo de calendário iniciado"
+          }
+        }
+      }
+    },
+    "say.icsFailed": {
+      "comment": "say",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t create the calendar file"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo crear el archivo de calendario"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível criar o arquivo de calendário"
+          }
+        }
+      }
+    },
     "say.icsSaved": {
       "comment": "say",
       "extractionState": "manual",
@@ -4976,19 +5600,19 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Invite saved"
+            "value": "Calendar file saved"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Invitación guardada"
+            "value": "Archivo de calendario guardado"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Convite salvo"
+            "value": "Arquivo de calendário salvo"
           }
         }
       }
@@ -5901,6 +6525,630 @@
           "stringUnit": {
             "state": "translated",
             "value": "{n} min"
+          }
+        }
+      }
+    },
+    "upd.auto.manual": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatically check for updates"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar actualizaciones automáticamente"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurar atualizações automaticamente"
+          }
+        }
+      }
+    },
+    "upd.auto.manual.help": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off by default. When on, World Clock asks openworldclock.com for the latest version number at startup and once a day. It never downloads or installs anything."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado por defecto. Si está activado, consulta a openworldclock.com el número de la versión más reciente al iniciar World Clock y una vez al día. Nunca descarga ni instala nada."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desativado por padrão. Quando ativado, consulta openworldclock.com pelo número da versão mais recente ao iniciar o World Clock e uma vez por dia. Nunca baixa nem instala nada."
+          }
+        }
+      }
+    },
+    "upd.auto.signed": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic updates"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizaciones automáticas"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizações automáticas"
+          }
+        }
+      }
+    },
+    "upd.auto.signed.help": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, World Clock checks every 6 hours and downloads new versions in the background. A downloaded version installs only when you choose Restart and install, so World Clock never restarts by itself. When off, nothing is checked or downloaded unless you ask."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si está activado, busca actualizaciones cada 6 horas y descarga las nuevas versiones en segundo plano. Una versión descargada solo se instala cuando eliges Reiniciar e instalar, así que World Clock nunca se reinicia por sí solo. Si está desactivado, no se busca ni descarga nada salvo que lo pidas."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quando ativado, verifica a cada 6 horas e baixa novas versões em segundo plano. Uma versão baixada só é instalada quando você escolhe Reiniciar e instalar, então o World Clock nunca reinicia sozinho. Quando desativado, nada é verificado nem baixado a menos que você peça."
+          }
+        }
+      }
+    },
+    "upd.available.manual": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version {v} is available. This copy doesn’t update itself, so get the new version from the download page."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versión {v} está disponible. Esta copia no se actualiza sola: descárgala desde la página de descarga."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A versão {v} está disponível. Esta cópia não se atualiza sozinha: baixe a nova versão na página de download."
+          }
+        }
+      }
+    },
+    "upd.available.signed": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version {v} is available."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versión {v} está disponible."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A versão {v} está disponível."
+          }
+        }
+      }
+    },
+    "upd.cancel": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel download"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar descarga"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar download"
+          }
+        }
+      }
+    },
+    "upd.check": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for updates"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar actualizaciones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurar atualizações"
+          }
+        }
+      }
+    },
+    "upd.checking": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking for updates…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscando actualizaciones…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurando atualizações…"
+          }
+        }
+      }
+    },
+    "upd.current": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have version {cur}. The latest version listed on openworldclock.com is {v}. Checked {time}."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tienes la versión {cur}. La versión más reciente publicada en openworldclock.com es la {v}. Comprobado el {time}."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você tem a versão {cur}. A versão mais recente listada em openworldclock.com é a {v}. Verificado em {time}."
+          }
+        }
+      }
+    },
+    "upd.current.signed": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No update is available for this copy (version {v}). Checked {time}."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay actualizaciones disponibles para esta copia (versión {v}). Comprobado el {time}."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma atualização disponível para esta cópia (versão {v}). Verificado em {time}."
+          }
+        }
+      }
+    },
+    "upd.disabled": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates are turned off for this copy. Get new versions from the download page."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las actualizaciones están desactivadas en esta copia. Obtén nuevas versiones en la página de descarga."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As atualizações estão desativadas nesta cópia. Baixe as novas versões na página de download."
+          }
+        }
+      }
+    },
+    "upd.download": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download update"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargar actualización"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baixar atualização"
+          }
+        }
+      }
+    },
+    "upd.downloading": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading version {v}…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargando la versión {v}…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baixando a versão {v}…"
+          }
+        }
+      }
+    },
+    "upd.error.feed": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update information isn’t available right now, so you may not be up to date."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La información de actualizaciones no está disponible ahora. Esto no significa que estés al día."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As informações de atualização não estão disponíveis agora. Isso não quer dizer que você já tem a versão mais recente."
+          }
+        }
+      }
+    },
+    "upd.error.install": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version {v} could not be installed, and nothing was changed. Try Restart and install again, or get it from the download page."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo instalar la versión {v} y no se cambió nada. Vuelve a probar Reiniciar e instalar o descárgala desde la página de descarga."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível instalar a versão {v}, e nada foi alterado. Tente Reiniciar e instalar de novo ou obtenha-a na página de download."
+          }
+        }
+      }
+    },
+    "upd.error.network": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn’t reach the update server. Nothing was changed, and you may not be up to date."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo conectar con el servidor de actualizaciones. No se cambió nada, y esto no significa que estés al día."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível acessar o servidor de atualizações. Nada foi alterado, mas isso não quer dizer que você já tem a versão mais recente."
+          }
+        }
+      }
+    },
+    "upd.error.verify": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The downloaded update failed verification and was not installed."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La actualización descargada no superó la verificación y no se instaló."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A atualização baixada não passou na verificação e não foi instalada."
+          }
+        }
+      }
+    },
+    "upd.idle.discovery": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A check only asks openworldclock.com for the latest version number. Nothing is downloaded."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al buscar, se consulta a openworldclock.com cuál es la versión más reciente. No se descarga nada."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ao verificar, o app só pergunta ao openworldclock.com qual é o número da versão mais recente. Nada é baixado."
+          }
+        }
+      }
+    },
+    "upd.idle.signed": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version {v}."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión {v}."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão {v}."
+          }
+        }
+      }
+    },
+    "upd.openDownload": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open download page"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir página de descarga"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir página de download"
+          }
+        }
+      }
+    },
+    "upd.ready": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version {v} is downloaded. It installs only when you choose Restart and install."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versión {v} se descargó. Solo se instalará cuando elijas Reiniciar e instalar."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A versão {v} foi baixada. Ela só será instalada quando você escolher Reiniciar e instalar."
+          }
+        }
+      }
+    },
+    "upd.restart": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart and install"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar e instalar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar e instalar"
+          }
+        }
+      }
+    },
+    "upd.retry": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar novamente"
+          }
+        }
+      }
+    },
+    "upd.store": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Microsoft Store keeps this app up to date."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Microsoft Store mantiene esta aplicación actualizada."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Microsoft Store mantém este app atualizado."
+          }
+        }
+      }
+    },
+    "upd.title": {
+      "comment": "upd",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizaciones"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizações"
           }
         }
       }

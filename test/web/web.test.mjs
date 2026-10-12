@@ -418,6 +418,866 @@ await check('Share (the app window\'s bar) copies a home page link, hash only, w
   assert(!/Team/.test(shareUrl), 'custom labels stay private');
 });
 
+// ======================= one meeting state (a fresh visitor, 1440 wide) =======================
+// The planner selection, the converter field, Copy slot, the header copy menu and the Share link all read one meeting:
+// typing a new start moves it (same length), a bad or skipped time keeps the draft with a lasting inline error and
+// refuses every export, presentation changes and idle keep it, and only an explicit clear goes back to now.
+await check('one meeting: select, retype, invalid paste, fix, presentation changes, idle and clear stay consistent', async () => {
+  const ctx = await browser.createBrowserContext();
+  await ctx.overridePermissions(base, ['clipboard-read', 'clipboard-sanitized-write']);
+  const P = await openPage(ctx);
+  const shots = path.join(SHOTS, 'meeting'); fs.mkdirSync(shots, { recursive: true });
+  try {
+    const G = await openHome(P);
+    await G.waitForFunction(() => window.WCConverter && window.WCWeb);
+    const NY = 'America/New_York';
+    const st = () => G.evaluate(() => {
+      const s = window.WCConverter.state(), band = document.querySelector('#planner .plan-sel');
+      return { ...s, field: document.getElementById('convTime').value, date: document.getElementById('convDate').value,
+        sel: document.getElementById('planSel').textContent, bar: !document.getElementById('planSelBar').hidden,
+        band: band ? [band.style.left, band.style.width] : null, hash: window.WCShareHash(),
+        copyOff: document.getElementById('btnCopy').disabled, slotOff: document.getElementById('planCopy').disabled };
+    });
+    const clip = async (fn) => { await P.evaluate(() => navigator.clipboard.writeText('')); await fn(); return ((await waitText(P)) || '').replace(/\r/g, ''); };
+    const waitText = async (page) => { for (let i = 0; i < 30; i++) { const t = await page.evaluate(() => navigator.clipboard.readText()); if (t) return t; await sleep(50); } return ''; };
+    const typeTime = async (text) => { await G.click('#convTime', { count: 3 }); await G.evaluate(() => document.getElementById('convTime').select()); await P.keyboard.type(text); await sleep(150); };
+    const band = (got, want, msg) => assert(got && got.every((v, i) => Math.abs(parseFloat(v) - (want[i] / 24) * 100) < 0.01), `${msg}: ${JSON.stringify(got)}`);
+    await G.select('#convZone', NY);
+    // a fixed Wednesday (2026-10-14: New York UTC-4, Lisbon UTC+1), so the hour assertions are not seasonal
+    await G.evaluate(() => { const d = document.getElementById('convDate'); d.value = '2026-10-14'; delete d.dataset.auto; });
+    await typeTime('10:00');
+    await G.click('#btnPlanner');
+    await G.waitForSelector('#planner:not([hidden]) .plan-row');
+    // select 09:00 to 11:00 in New York: a click, then Shift+Right
+    await G.click(`.plan-row[data-zone="${NY}"] .plan-cell[data-h="9"]`);
+    await P.keyboard.down('Shift'); await P.keyboard.press('ArrowRight'); await P.keyboard.up('Shift');
+    await sleep(150);
+    const sel = await st();
+    const ymd = sel.date;
+    eq(ymd, '2026-10-14', 'pinned date');
+    const start9 = zonedEpoch(NY, ymd, 9, 0);
+    eq(sel.meeting, { startMs: start9, endMs: start9 + 2 * 3600000 }, 'selected meeting');
+    eq(sel.convert.epochMs, start9, 'converter at the meeting start');
+    band(sel.band, [9, 2], 'band over 09:00 to 11:00');
+    // type another valid start: the meeting moves, 2 h long, and every consumer follows
+    await typeTime('11:30');
+    const moved = await st();
+    const start1130 = zonedEpoch(NY, ymd, 11, 30);
+    eq(moved.meeting, { startMs: start1130, endMs: start1130 + 2 * 3600000 }, 'meeting after typing 11:30');
+    eq(moved.convert.epochMs, start1130, 'converter instant after typing 11:30');
+    assert(/(11:30 to 13:30|11:30 AM to 1:30 PM) \(New York\)$/.test(moved.sel), `slot line: ${moved.sel}`);
+    band(moved.band, [11.5, 2], 'band moved with the time (half a column in)');
+    // D9: with a selected meeting the share link is that exact meeting (version 2: start and end in UTC seconds)
+    eq(moved.hash.split('&').filter((p) => !p.startsWith('c=')), ['v=2', `z=${NY}`, `s=${start1130 / 1000}`, `e=${start1130 / 1000 + 7200}`], 'share link is the meeting');
+    await P.screenshot({ path: path.join(shots, 'retyped.png') });
+    const slotClip = await clip(() => G.click('#planCopy'));
+    eq(slotClip.split('\n')[0], moved.sel, 'Copy slot first line');
+    assert(/New York: (11:30 to 13:30|11:30 AM to 1:30 PM)/.test(slotClip), `Copy slot city line: ${slotClip}`);
+    const utcClip = await clip(async () => { await G.click('#btnCopy'); await G.click('#copyMenu [data-copy="utc"]'); });
+    eq(utcClip.split('\n')[0], [start1130, start1130 + 7200000].map((ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z')).join('/'), 'UTC copy is the meeting interval');
+    // paste an invalid time in one input event: the draft stays, a lasting inline error, no exports
+    await G.evaluate(() => { const t = document.getElementById('convTime'); t.focus(); t.value = '25:99'; t.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste', data: '25:99' })); });
+    await P.setViewport({ width: 1280, height: 860, deviceScaleFactor: 1 });
+    await sleep(2000);
+    const bad = await st();
+    const err = await G.evaluate(() => {
+      const t = document.getElementById('convTime'), ids = (t.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+      const desc = ids.map((id) => document.getElementById(id));
+      return { invalid: t.getAttribute('aria-invalid'), desc: desc.map((n) => n && n.textContent).join(' '),
+        shown: desc.some((n) => n && !n.hidden && n.getClientRects().length > 0 && getComputedStyle(n).visibility !== 'hidden'), blocked: window.WCShareBlocked(),
+        // the error is a row of its own in the layout, under the bar (not a fixed toast laid over the page)
+        row: (() => { const r = document.getElementById('convError'), bar = document.querySelector('.bar').getBoundingClientRect(), b = r.getBoundingClientRect();
+          return { inDesc: ids.includes('convError'), pos: getComputedStyle(r).position, below: b.top >= bar.bottom - 1, h: b.height }; })() };
+    });
+    eq(bad.field, '25:99', 'the draft stays in the field');
+    assert(err.invalid === 'true' && /like 9/.test(err.desc) && err.shown, `inline error after resize and 2 s: ${JSON.stringify(err)}`);
+    assert(bad.copyOff && bad.slotOff && bad.hash === '' && /like 9/.test(err.blocked), `exports refused: ${JSON.stringify(bad)}`);
+    assert(err.row.inDesc && err.row.pos === 'static' && err.row.below && err.row.h > 0, `error row in the layout: ${JSON.stringify(err.row)}`);
+    assert(/Fix the time/.test(bad.sel), `slot line asks for a fix: ${bad.sel}`);
+    await P.screenshot({ path: path.join(shots, 'invalid.png') });
+    await P.evaluate(() => navigator.clipboard.writeText('unchanged'));
+    await G.evaluate(() => { document.getElementById('planCopy').click(); document.getElementById('btnCopy').click(); });
+    await P.evaluate(() => window.scrollTo(0, 0)); await sleep(200);
+    await P.click('#heroShare'); await sleep(300);
+    eq(await P.evaluate(() => navigator.clipboard.readText()), 'unchanged', 'nothing copied or shared while invalid');
+    await P.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+    // fixing the value restores the same consistent meeting
+    await typeTime('11:30');
+    const fixed = await st();
+    eq([fixed.meeting, fixed.convert.epochMs, fixed.copyOff, fixed.slotOff], [moved.meeting, start1130, false, false], 'fixed again');
+    eq(await G.$eval('#convTime', (n) => n.getAttribute('aria-invalid')), null, 'aria-invalid gone');
+    // presentation changes keep both endpoints: 12-hour clock, language and the source city
+    await G.click('#btnSettings'); await G.waitForSelector('#settingsPanel:not([hidden])');
+    await G.click('#optHour24'); await G.select('#optLanguage', 'pt'); await sleep(200);
+    await G.select('#optLanguage', 'auto'); await G.click('#optHour24'); await P.keyboard.press('Escape'); await sleep(200);
+    await G.select('#convZone', 'Europe/Lisbon'); await sleep(200);
+    const pres = await st();
+    eq(pres.meeting, moved.meeting, 'meeting after format, language and source changes');
+    assert(pres.convert.zone === 'Europe/Lisbon' && /^(16:30|4:30 PM)$/.test(pres.field), `source shows the same start: ${pres.field}`);
+    band(pres.band, [16.5, 2], 'band in Lisbon columns');
+    // background idle keeps a selected meeting
+    await G.evaluate(() => { window.__wcConvIdleMs = 200; document.hasFocus = () => false; window.dispatchEvent(new Event('blur')); });
+    await sleep(700);
+    await G.evaluate(() => {
+      const setHidden = (on) => { if (on) Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' }); else delete document.visibilityState; document.dispatchEvent(new Event('visibilitychange')); };
+      setHidden(true); return new Promise((ok) => setTimeout(() => { setHidden(false); ok(); }, 400));
+    });
+    const idle = await st();
+    await G.evaluate(() => { delete document.hasFocus; delete window.__wcConvIdleMs; });
+    eq(idle.meeting, moved.meeting, 'meeting survives idle and a long hide');
+    // explicit clear goes back to now
+    await G.click('#convClear'); await sleep(150);
+    const cleared = await st();
+    assert(!cleared.convert && !cleared.meeting && !cleared.bar && !cleared.band && cleared.field === '', `cleared: ${JSON.stringify(cleared)}`);
+    // a wall time skipped by the spring-forward change needs a correction (no silent shift)
+    await G.select('#convZone', NY);
+    await G.evaluate(() => { const d = document.getElementById('convDate'); d.value = '2027-03-14'; delete d.dataset.auto; });
+    await typeTime('2:30');
+    const gap = await st();
+    assert(/doesn’t exist on this date/.test(gap.error || '') && gap.field === '2:30' && gap.copyOff && gap.hash === '', `gap: ${JSON.stringify(gap)}`);
+    await typeTime('3:30');
+    const after = await st();
+    eq([after.error, after.convert && after.convert.epochMs], [null, zonedEpoch(NY, '2027-03-14', 3, 30)], 'corrected time converts');
+    assert(await G.$eval('#convError', (n) => n.hidden), 'error row gone once fixed');
+    // an offset with seconds is not a clock change: Monrovia 1971-01-01 09:00 (UTC-0:44:30) converts exactly
+    await G.click('#zoneSearch'); await P.keyboard.type('Monrovia');
+    await G.waitForSelector('#zoneResults li[id^="zr-"]', { visible: true }); await P.keyboard.press('Enter');
+    await G.waitForSelector('.card[data-zone="Africa/Monrovia"]');
+    await G.select('#convZone', 'Africa/Monrovia');
+    await G.evaluate(() => { const d = document.getElementById('convDate'); d.value = '1971-01-01'; delete d.dataset.auto; });
+    await typeTime('9:00');
+    const mon = await st();
+    eq([mon.error, mon.convert && mon.convert.epochMs], [null, Date.UTC(1971, 0, 1, 9, 44, 30)], 'Monrovia 1971 09:00');
+    noErrors(P, 'meeting state');
+  } finally { await ctx.close(); }
+});
+
+// A pin carried from the meeting keeps its exact instant (seconds, a repeated hour) when the source city changes.
+await check('one meeting: exact pins survive source and format changes (Monrovia 1971 seconds, Troll repeated hour)', async () => {
+  const ctx = await browser.createBrowserContext();
+  const P = await openPage(ctx);
+  try {
+    const G = await openHome(P);
+    await G.waitForFunction(() => window.WCConverter && window.WCWeb);
+    const st = () => G.evaluate(() => ({ ...window.WCConverter.state(), field: document.getElementById('convTime').value }));
+    const typeTime = async (text) => { await G.click('#convTime', { count: 3 }); await G.evaluate(() => document.getElementById('convTime').select()); await P.keyboard.type(text); await sleep(150); };
+    const add = async (q, zone) => {
+      await G.click('#zoneSearch'); await G.evaluate(() => document.getElementById('zoneSearch').select()); await P.keyboard.type(q);
+      await G.waitForSelector('#zoneResults li[id^="zr-"]', { visible: true }); await P.keyboard.press('Enter');
+      await G.waitForSelector(`.card[data-zone="${zone}"]`);
+    };
+    const setDate = (ymd) => G.evaluate((v) => { const d = document.getElementById('convDate'); d.value = v; delete d.dataset.auto; }, ymd);
+    await add('Monrovia', 'Africa/Monrovia'); await add('Troll', 'Antarctica/Troll');
+    // Monrovia 1971-01-01 is UTC-0:44:30: a one-hour meeting typed at 09:00 starts at 09:44:30Z
+    await G.select('#convZone', 'Africa/Monrovia'); await setDate('1971-01-01');
+    await typeTime('8:00');
+    await G.click('#btnPlanner'); await G.waitForSelector('#planner:not([hidden]) .plan-row');
+    await G.click('.plan-row[data-zone="Africa/Monrovia"] .plan-cell[data-h="8"]'); await sleep(150);
+    await typeTime('9:00');
+    const m0 = await st();
+    const start = Date.UTC(1971, 0, 1, 9, 44, 30);
+    eq([m0.error, m0.convert.epochMs, m0.meeting && m0.meeting.startMs, m0.meeting && m0.meeting.endMs - m0.meeting.startMs], [null, start, start, 3600000], 'Monrovia meeting');
+    await G.select('#convZone', 'Europe/Lisbon'); await sleep(150);
+    const m1 = await st();
+    await G.click('#btnSettings'); await G.waitForSelector('#settingsPanel:not([hidden])');
+    await G.click('#optHour24'); await sleep(150); await G.click('#optHour24'); await P.keyboard.press('Escape'); await sleep(150);
+    const m2 = await st();
+    await G.select('#convZone', 'Africa/Monrovia'); await sleep(150);
+    const m3 = await st();
+    for (const [m, at] of [[m1, 'Lisbon'], [m2, 'format'], [m3, 'back to Monrovia']]) {
+      eq([m.error, m.convert.epochMs, m.meeting], [null, start, m0.meeting], `exact endpoints after ${at}`);
+    }
+    assert(/^10:44( AM)?$/.test(m1.field) && /^0?9:00( AM)?$/.test(m3.field), `fields show the minute: ${m1.field} ${m3.field}`);
+    // Troll falls back two hours (+2 to +0) at 01:00Z on 2026-10-25: 02:00 Lisbon (02:00Z) is the SECOND 02:00 in Troll,
+    // two hours after the first (00:00Z). The carried pin keeps it; typed 02:00 there takes the first.
+    await G.select('#convZone', 'Europe/Lisbon'); await setDate('2026-10-25');
+    await typeTime('2:00');
+    const t0 = await st();
+    eq([t0.convert.epochMs, t0.meeting && t0.meeting.startMs], [Date.UTC(2026, 9, 25, 2), Date.UTC(2026, 9, 25, 2)], 'Lisbon 02:00 meeting');
+    await G.select('#convZone', 'Antarctica/Troll'); await sleep(150);
+    const t1 = await st();
+    eq([t1.error, t1.convert.epochMs, t1.meeting, /^0?2:00( AM)?$/.test(t1.field)], [null, Date.UTC(2026, 9, 25, 2), t0.meeting, true], 'second 02:00 in Troll kept');
+    await typeTime('2:00');
+    const t2 = await st();
+    eq(t2.convert.epochMs, Date.UTC(2026, 9, 25, 0), 'typed 02:00 in Troll takes the first occurrence');
+    // gaps are still refused: 02:30 on 2027-03-14 in New York
+    await G.select('#convZone', 'America/New_York'); await setDate('2027-03-14'); await typeTime('2:30');
+    const g = await st();
+    assert(/doesn’t exist on this date/.test(g.error || ''), `gap still refused: ${JSON.stringify(g)}`);
+    noErrors(P, 'exact pins');
+  } finally { await ctx.close(); }
+});
+
+// The search box's delayed blur (120 ms) must not hide the results of a query typed after coming straight back.
+await check('city search: a quick blur and refocus keeps the new results; leaving still dismisses them', async () => {
+  const ctx = await browser.createBrowserContext();
+  const P = await openPage(ctx);
+  try {
+    const G = await openHome(P);
+    await G.click('#zoneSearch'); await P.keyboard.type('Monrovia');
+    await G.waitForSelector('#zoneResults li[id^="zr-"]', { visible: true });
+    // blur, refocus within the old timer, a new query, then wait well past 120 ms
+    await G.evaluate(() => { const s = document.getElementById('zoneSearch'); s.blur(); s.focus(); s.value = 'Troll'; s.dispatchEvent(new Event('input', { bubbles: true })); });
+    await sleep(400);
+    const kept = await G.evaluate(() => ({ hidden: document.getElementById('zoneResults').hidden, first: (document.querySelector('#zoneResults li b') || {}).textContent, expanded: document.getElementById('zoneSearch').getAttribute('aria-expanded') }));
+    assert(!kept.hidden && kept.first === 'Troll' && kept.expanded === 'true', `results after refocus: ${JSON.stringify(kept)}`);
+    await P.keyboard.press('Enter');
+    await G.waitForSelector('.card[data-zone="Antarctica/Troll"]');
+    // normal dismissal: focus elsewhere and the list goes
+    await G.click('#zoneSearch'); await P.keyboard.type('Lima');
+    await G.waitForSelector('#zoneResults li[id^="zr-"]', { visible: true });
+    await G.click('#convTime'); await sleep(300);
+    assert(await G.$eval('#zoneResults', (n) => n.hidden), 'leaving the box hides the results');
+    noErrors(P, 'search refocus');
+  } finally { await ctx.close(); }
+});
+
+// ======================= Find a time (priority 2: truthful availability, fresh visitors) =======================
+// Results count a city only when it works for the whole meeting; compromises say so and name everyone outside their
+// hours; with nothing on the date the panel searches ahead (14 days) or offers a way forward. Opening it never moves
+// the selection; picking a result commits the exact interval.
+const findSeed = (zones, hours, extra = {}) => JSON.stringify({ zones, hours, hour12: false, planner: true, firstRun: false, ...extra });
+const findState = (G) => G.evaluate(() => {
+  const p = document.getElementById('planFindPanel'), b = document.getElementById('planFind'), s = window.WCConverter.state();
+  return { open: !p.hidden, expanded: b.getAttribute('aria-expanded'), disabled: b.disabled, intro: (p.querySelector('.find-intro') || {}).textContent || '',
+    heads: [...p.querySelectorAll('.find-head')].map((n) => n.textContent),
+    items: [...p.querySelectorAll('.find-item')].map((n) => ({ kind: n.className.replace('find-item ', ''), main: n.querySelector('.find-main').textContent, sub: n.querySelector('.find-sub').textContent, start: +n.dataset.start, end: +n.dataset.end })),
+    actions: [...p.querySelectorAll('.find-action')].map((n) => n.textContent),
+    focus: document.activeElement ? document.activeElement.id || document.activeElement.className : '', meeting: s.meeting, convert: s.convert,
+    field: document.getElementById('convTime').value, date: document.getElementById('convDate').value, sel: document.getElementById('planSel').textContent };
+});
+async function findSetup(ctx, settings, { width = 1440, height = 900, mobile = false } = {}) {
+  const P = await openPage(ctx, { width, height, mobile });
+  await P.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, settings);
+  const G = await openHome(P);
+  await G.waitForFunction(() => window.WCConverter && document.querySelector('#planner:not([hidden]) .plan-row'));
+  const typeTime = async (text) => { await G.click('#convTime', { count: 3 }); await G.evaluate(() => document.getElementById('convTime').select()); await P.keyboard.type(text); await sleep(150); };
+  const at = async (zone, ymd, time) => {
+    await G.select('#convZone', zone);
+    await G.evaluate((v) => { const d = document.getElementById('convDate'); d.value = v; delete d.dataset.auto; }, ymd);
+    await typeTime(time);
+  };
+  return { P, G, typeTime, at };
+}
+const openFindKeys = async (P, G) => { await G.focus('#planFind'); await P.keyboard.press('Enter'); await sleep(100); };
+
+await check('Find a time: whole-meeting coverage, labeled compromises with every conflict named, keyboard, no implicit selection, all-off recovery', async () => {
+  const ctx = await browser.createBrowserContext();
+  const shots = path.join(SHOTS, 'find'); fs.mkdirSync(shots, { recursive: true });
+  const NY = 'America/New_York', TO = 'America/Toronto', DE = 'America/Detroit', wd = [1, 2, 3, 4, 5];
+  const { P, G, at } = await findSetup(ctx, findSeed([NY, TO, DE], { [NY]: { start: '09:00', end: '11:00', days: wd }, [TO]: { start: '09:00', end: '10:00', days: wd }, [DE]: { start: '10:00', end: '11:00', days: wd } }));
+  try {
+    // Wednesday 2026-10-14, New York source: select 09:00 to 11:00 (a click and Shift+Right)
+    await at(NY, '2026-10-14', '9:00');
+    await G.click(`.plan-row[data-zone="${NY}"] .plan-cell[data-h="9"]`);
+    await P.keyboard.down('Shift'); await P.keyboard.press('ArrowRight'); await P.keyboard.up('Shift'); await sleep(150);
+    const before = await findState(G);
+    const s9 = zonedEpoch(NY, '2026-10-14', 9, 0);
+    eq(before.meeting, { startMs: s9, endMs: s9 + 2 * 3600000 }, 'selected 09:00 to 11:00');
+    const t0 = Date.now();
+    await openFindKeys(P, G);
+    const two = await findState(G);
+    two.ms = Date.now() - t0;
+    fs.writeFileSync(path.join(shots, 'two-hours.json'), JSON.stringify(two, null, 2));
+    await P.screenshot({ path: path.join(shots, 'compromise-two-hours.png') });
+    eq(two.meeting, before.meeting, 'opening Find a time does not move the selection');
+    assert(two.open && two.expanded === 'true' && /^For a 2 h meeting on Wed, Oct 14, times in New York$/.test(two.intro), `panel: ${JSON.stringify(two)}`);
+    assert(!two.heads.includes('Works for everyone') && two.heads[0] === 'Compromises: not everyone is in working hours', `no false full match: ${JSON.stringify(two.heads)}`);
+    eq(two.items.map((i) => [i.kind, i.main, i.sub]), [['partial', '09:00 to 11:00 (New York)', '1 of 3 in working hours for the whole meeting. Outside working hours for some or all of it: Toronto, Detroit']], 'two-hour compromise names Toronto and Detroit');
+    assert(!two.items.some((i) => /2 of 3/.test(i.sub)), 'never 2 of 3 throughout 09:00 to 11:00');
+    assert(two.focus === 'find-item partial', `focus on the first result: ${two.focus}`);
+    await P.keyboard.press('Escape'); await sleep(50);
+    const esc = await findState(G);
+    assert(!esc.open && esc.expanded === 'false' && esc.focus === 'planFind', `Escape closes and returns focus: ${JSON.stringify(esc)}`);
+    eq(esc.meeting, before.meeting, 'Escape leaves the selection');
+    // one hour: two compromises, each naming the city outside
+    await G.click('#convClear'); await at(NY, '2026-10-14', '9:00');
+    await openFindKeys(P, G);
+    const one = await findState(G);
+    eq(one.items.map((i) => [i.main, i.sub]), [['09:00 to 10:00 (New York)', '2 of 3 in working hours for the whole meeting. Outside working hours for some or all of it: Detroit'], ['10:00 to 11:00 (New York)', '2 of 3 in working hours for the whole meeting. Outside working hours for some or all of it: Toronto']], 'one-hour compromises');
+    assert(one.heads.includes('Nothing works for everyone in the next 14 days') && one.actions[0] === 'Choose another date' && one.actions.length === 4, `no full match ahead, actions: ${JSON.stringify(one)}`);
+    // keyboard: ArrowDown to the second compromise, Enter commits exactly that interval
+    await P.keyboard.press('ArrowDown'); await P.keyboard.press('Enter'); await sleep(200);
+    const picked = await findState(G);
+    const s10 = zonedEpoch(NY, '2026-10-14', 10, 0);
+    eq([picked.meeting, picked.convert.epochMs, picked.field, picked.open, picked.focus], [{ startMs: s10, endMs: s10 + 3600000 }, s10, '10:00', false, 'planFind'], 'Enter commits the compromise');
+    assert(/^Wed, Oct 14, 10:00 to 11:00 \(New York\)$/.test(picked.sel), `slot line: ${picked.sel}`);
+    // Saturday: nobody works, nothing ahead fits everyone: a clear message and ways forward, not a dead end
+    await at(NY, '2026-10-17', '10:00');
+    await openFindKeys(P, G);
+    const sat = await findState(G);
+    await P.screenshot({ path: path.join(shots, 'all-off.png') });
+    assert(sat.heads[0] === 'No one is in working hours for the whole meeting on this date' && sat.items.length === 0 && sat.heads.includes('Nothing works for everyone in the next 14 days'), `Saturday: ${JSON.stringify(sat)}`);
+    eq(sat.actions, ['Choose another date', 'Working hours: New York', 'Working hours: Toronto', 'Working hours: Detroit'], 'recovery actions');
+    assert(sat.focus === 'find-action', `focus on the first action: ${sat.focus}`);
+    await P.keyboard.press('Enter'); await sleep(150);
+    assert(await G.$eval('#dateChips', (n) => !n.hidden), 'Choose another date opens the dates');
+    await P.keyboard.press('Escape');
+    await openFindKeys(P, G);
+    await G.evaluate(() => [...document.querySelectorAll('#planFindPanel .find-action')].find((b) => /Toronto/.test(b.textContent)).click()); await sleep(150);
+    assert(await G.$eval('#hoursEditor', (n) => !n.hidden), 'the Toronto hours editor opens');
+    await P.keyboard.press('Escape');
+    noErrors(P, 'find a time');
+  } finally { await ctx.close(); }
+});
+
+await check('Find a time: minute schedules, Sunday recovery to the next date, exact result, invalid input gating', async () => {
+  const ctx = await browser.createBrowserContext();
+  const shots = path.join(SHOTS, 'find'); fs.mkdirSync(shots, { recursive: true });
+  const LI = 'Europe/Lisbon', LO = 'Europe/London', ten = { start: '09:10', end: '10:10', days: [1, 2, 3, 4, 5] };
+  const { P, G, at, typeTime } = await findSetup(ctx, findSeed([LI, LO], { [LI]: ten, [LO]: ten }));
+  try {
+    // Wednesday: no whole hour fits, 09:10 does (London is Lisbon's clock)
+    await at(LI, '2026-10-14', '12:00');
+    await openFindKeys(P, G);
+    const wed = await findState(G);
+    await P.screenshot({ path: path.join(shots, 'complete-match.png') });
+    eq([wed.heads[0], wed.items.map((i) => [i.kind, i.main, i.sub])], ['Works for everyone', [['full', '09:10 to 10:10 (Lisbon)', 'All 2 in working hours for the whole meeting']]], 'complete match at 09:10');
+    await P.keyboard.press('Enter'); await sleep(200);
+    const got = await findState(G);
+    const s = Date.UTC(2026, 9, 14, 8, 10);
+    eq([got.meeting, got.convert.epochMs, got.field], [{ startMs: s, endMs: s + 3600000 }, s, '09:10'], 'the result is the meeting, exactly');
+    // Sunday: nothing on the date, the next date that works is offered and keeps the meeting length
+    await G.click('#convClear');
+    await at(LI, '2026-10-18', '12:00');
+    await openFindKeys(P, G);
+    const sun = await findState(G);
+    await P.screenshot({ path: path.join(shots, 'sunday-next.png') });
+    eq(sun.heads, ['No one is in working hours for the whole meeting on this date', 'Next date that works for everyone'], 'Sunday groups');
+    eq(sun.items.map((i) => [i.kind, i.main]), [['full next', 'Mon, Oct 19, 09:10 to 10:10 (Lisbon)']], 'next date result');
+    eq(sun.meeting, null, 'nothing selected by the search');
+    await P.keyboard.press('Enter'); await sleep(200);
+    const mon = await findState(G);
+    const m = Date.UTC(2026, 9, 19, 8, 10);
+    eq([mon.meeting, mon.date, mon.field], [{ startMs: m, endMs: m + 3600000 }, '2026-10-19', '09:10'], 'Monday committed with its date');
+    // priority 1 gating: an invalid draft disables Find a time and keeps exports off until fixed
+    await G.evaluate(() => { const t = document.getElementById('convTime'); t.focus(); t.value = '25:99'; t.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertFromPaste', data: '25:99' })); });
+    await sleep(300);
+    const bad = await findState(G);
+    const exp = await G.evaluate(() => ({ copy: document.getElementById('btnCopy').disabled, slot: document.getElementById('planCopy').disabled, hash: window.WCShareHash() }));
+    assert(bad.disabled && !bad.open && exp.copy && exp.slot && exp.hash === '', `invalid input gating: ${JSON.stringify({ bad, exp })}`);
+    await G.evaluate(() => document.getElementById('planFind').click()); await sleep(100);
+    assert(!(await findState(G)).open, 'Find a time stays closed while the time is invalid');
+    await typeTime('9:10');
+    const fixed = await findState(G);
+    eq([fixed.disabled, fixed.meeting], [false, mon.meeting], 'fixing the time restores Find a time and the same meeting');
+    noErrors(P, 'find a time, minutes');
+  } finally { await ctx.close(); }
+});
+
+await check('Find a time on a 390 phone: the panel wraps inside the frame in English, Portuguese and Spanish', async () => {
+  const shots = path.join(SHOTS, 'find'); fs.mkdirSync(shots, { recursive: true });
+  const NY = 'America/New_York', TO = 'America/Toronto', DE = 'America/Detroit', wd = [1, 2, 3, 4, 5];
+  for (const lang of ['en', 'pt', 'es']) {
+    const ctx = await browser.createBrowserContext();
+    const { P, G, at } = await findSetup(ctx, findSeed([NY, TO, DE], { [NY]: { start: '09:00', end: '11:00', days: wd }, [TO]: { start: '09:00', end: '10:00', days: wd }, [DE]: { start: '10:00', end: '11:00', days: wd } }, { language: lang }), { width: 390, height: 844, mobile: true });
+    try {
+      await toApp(P);
+      await at(NY, '2026-10-17', '10:00'); // Saturday: the longest texts (no one, nothing ahead, actions)
+      await openFindKeys(P, G);
+      const fit = await G.evaluate(() => {
+        const p = document.getElementById('planFindPanel'), r = p.getBoundingClientRect();
+        const over = [...p.querySelectorAll('*')].filter((n) => n.scrollWidth > n.clientWidth + 1 || n.getBoundingClientRect().right > r.right + 1).map((n) => n.className);
+        return { open: !p.hidden, left: r.left, right: r.right, W: innerWidth, over, wide: p.scrollWidth > p.clientWidth + 1, n: p.querySelectorAll('.find-action').length };
+      });
+      await P.screenshot({ path: path.join(shots, `phone-${lang}.png`) });
+      assert(fit.open && fit.left >= 0 && fit.right <= fit.W && !fit.wide && fit.over.length === 0 && fit.n === 4, `${lang}: ${JSON.stringify(fit)}`);
+      noErrors(P, `find a time ${lang}`);
+    } finally { await ctx.close(); }
+  }
+});
+
+// ======================= priority 4: one meeting, three actions, exact links (fresh visitors) =======================
+// Copy times, Copy link and Calendar file all carry the selected meeting's exact UTC start and end; the link is the
+// version 2 form (s/e in whole seconds) and opens the same meeting on every route without saving anything.
+const DL = path.join(SHOTS, 'actions-downloads');
+async function meetingActions(P, G, dir) {
+  const out = {};
+  await P.evaluate(() => navigator.clipboard.writeText(''));
+  await G.click('#planCopy'); out.times = (await waitClip(P)).replace(/\r/g, '');
+  await P.evaluate(() => navigator.clipboard.writeText(''));
+  await G.click('#planLink'); out.link = await waitClip(P);
+  await P.evaluate(() => navigator.clipboard.writeText(''));
+  await G.click('#btnCopy'); await G.click('#copyMenu [data-copy="utc"]'); out.utc = (await waitClip(P)).replace(/\r/g, '');
+  for (const f of fs.readdirSync(dir)) fs.rmSync(path.join(dir, f));
+  await G.click('#planIcs');
+  for (let i = 0; i < 60 && !fs.readdirSync(dir).some((f) => f.endsWith('.ics')); i++) await sleep(100);
+  const file = fs.readdirSync(dir).find((f) => f.endsWith('.ics'));
+  out.icsName = file; out.ics = file ? fs.readFileSync(path.join(dir, file)) : null;
+  out.status = await G.evaluate(() => (document.getElementById('convToast').hidden ? '' : document.getElementById('convToast').textContent) || document.getElementById('convHint').textContent);
+  out.state = await G.evaluate(() => window.WCConverter.state());
+  out.kind = await G.evaluate(() => window.WCShareKind());
+  return out;
+}
+const waitClip = async (P) => { for (let i = 0; i < 40; i++) { const t = await P.evaluate(() => navigator.clipboard.readText()); if (t) return t; await sleep(50); } return ''; };
+const icsField = (buf, k) => { const m = new RegExp(`\\r\\n${k}:([0-9TZ]+)\\r\\n`).exec(buf.toString('utf8')); return m ? m[1] : null; };
+const icsUtc = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z').replace(/[-:]/g, '');
+const isoNoMs = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
+function agree(a, m, label) {
+  const hash = new URL(a.link).hash.slice(1), q = new URLSearchParams(hash);
+  eq([q.get('v'), +q.get('s') * 1000, +q.get('e') * 1000], ['2', m.startMs, m.endMs], `${label}: link s/e`);
+  assert(!/label|hours|group/i.test(hash), `${label}: no private data in the link: ${hash}`);
+  assert(a.ics && a.icsName === 'meeting.ics', `${label}: a calendar file downloaded (${a.icsName})`);
+  eq([icsField(a.ics, 'DTSTART'), icsField(a.ics, 'DTEND')], [icsUtc(m.startMs), icsUtc(m.endMs)], `${label}: calendar file endpoints`);
+  const text = a.ics.toString('utf8');
+  assert(!/(^|[^\r])\n/.test(text) && text.split('\r\n').every((l) => Buffer.byteLength(l) <= 75) && /\r\nMETHOD:PUBLISH\r\n/.test(text), `${label}: CRLF, folded, publish only`);
+  eq(a.utc.split('\n')[0], `${isoNoMs(m.startMs)}/${isoNoMs(m.endMs)}`, `${label}: UTC copy interval`);
+  eq(a.state.meeting, m, `${label}: meeting unchanged by the actions`);
+  assert(/Calendar file download started/.test(a.status), `${label}: truthful download feedback: ${a.status}`);
+  eq(a.times.split('\n').pop(), `UTC: ${isoNoMs(m.startMs)} to ${isoNoMs(m.endMs)}`, `${label}: Copy times ends with the exact UTC interval`);
+  return hash;
+}
+
+await check('meeting actions: Copy times, Copy link and Calendar file agree on exact intervals (minute start, multi-hour, year boundary, repeated hour)', async () => {
+  const ctx = await browser.createBrowserContext();
+  await ctx.overridePermissions(base, ['clipboard-read', 'clipboard-sanitized-write']);
+  const dir = path.join(DL, 'a'); fs.mkdirSync(dir, { recursive: true });
+  const LI = 'Europe/Lisbon', NY = 'America/New_York';
+  const { P, G, at, typeTime } = await findSetup(ctx, findSeed([LI, NY], {}, { labels: { [NY]: 'Private Office' } }));
+  const cdp = await browser.target().createCDPSession();
+  await cdp.send('Browser.setDownloadBehavior', { behavior: 'allow', downloadPath: dir, browserContextId: ctx.id });
+  const evidence = {};
+  try {
+    const select2h = async (zone, ymd) => {
+      await at(zone, ymd, '9:00');
+      await G.click(`.plan-row[data-zone="${zone}"] .plan-cell[data-h="9"]`);
+      await P.keyboard.down('Shift'); await P.keyboard.press('ArrowRight'); await P.keyboard.up('Shift'); await sleep(150);
+    };
+    // a: arbitrary minute start, two hours (Lisbon 09:10 to 11:10 on Wed 2026-10-14)
+    await select2h(LI, '2026-10-14'); await typeTime('9:10');
+    const ma = { startMs: Date.UTC(2026, 9, 14, 8, 10), endMs: Date.UTC(2026, 9, 14, 10, 10) };
+    eq(await G.evaluate(() => window.WCShareKind()), 'meeting', 'share kind');
+    const a = await meetingActions(P, G, dir);
+    const hashA = agree(a, ma, 'minute start');
+    assert(/^Wed, Oct 14, 09:10 to 11:10 \(Lisbon\)\n/.test(a.times) && /Private Office: 04:10 to 06:10/.test(a.times), `Copy times: ${a.times}`);
+    assert(/Private Office/.test(a.times) && !/Private/.test(hashA), 'labels stay in the copied text, never in the link');
+    eq(await P.$eval('#heroShareText', (n) => n.textContent), 'Share meeting', 'host Share label');
+    evidence.minute = { times: a.times, link: a.link, utc: a.utc, ics: a.ics.toString('utf8') };
+    // b: across midnight and the year (Lisbon 2026-12-31 23:30 to 2027-01-01 01:30)
+    await G.click('#convClear'); await select2h(LI, '2026-12-31'); await typeTime('23:30');
+    const mb = { startMs: Date.UTC(2026, 11, 31, 23, 30), endMs: Date.UTC(2027, 0, 1, 1, 30) };
+    const b = await meetingActions(P, G, dir);
+    agree(b, mb, 'year boundary');
+    assert(/^Thu, Dec 31, 2026, 23:30 to Fri, Jan 1, 2027, 01:30 \(Lisbon\)\n/.test(b.times) && /\nLisbon: 23:30, Thu, Dec 31 to 01:30, Fri, Jan 1\n/.test(b.times), `Copy times across the year: ${b.times}`);
+    evidence.year = { times: b.times, link: b.link, ics: b.ics.toString('utf8') };
+    // c: the second 01:30 of New York's fall-back night (06:30Z), opened from its version 2 link in this page
+    const sc = Date.UTC(2026, 10, 1, 6, 30) / 1000;
+    await G.click('#convClear');
+    await P.evaluate((h) => { location.hash = h; }, `v=2&c=${LI},${NY}&z=${NY}&s=${sc}&e=${sc + 5400}`);
+    await G.waitForFunction((s) => { const m = window.WCConverter.state().meeting; return m && m.startMs === s * 1000; }, { timeout: 5000 }, sc);
+    const mc = { startMs: sc * 1000, endMs: (sc + 5400) * 1000 };
+    const c = await meetingActions(P, G, dir);
+    const hashC = agree(c, mc, 'repeated hour');
+    eq([c.state.convert.zone, await G.$eval('#convTime', (n) => n.value)], [NY, '01:30'], 'source and field show the second 01:30');
+    assert(/^Sun, Nov 1, 01:30 to 03:00 \(Private Office, UTC-5 to UTC-5\)\n/.test(c.times), `repeated hour named by its offset: ${c.times}`);
+    evidence.repeated = { times: c.times, link: c.link, ics: c.ics.toString('utf8') };
+    // without a meeting: the converted time is shared (legacy c/t/z) and labeled Share time; with neither, the cities
+    await G.click('#convClear'); await at(LI, '2026-10-14', '15:00');
+    eq([await G.evaluate(() => window.WCShareKind()), await P.$eval('#heroShareText', (n) => n.textContent), await G.evaluate(() => window.WCShareHash())],
+      ['time', 'Share time', `c=${LI},${NY}&t=2026-10-14T15:00&z=${LI}`], 'converted time sharing');
+    await G.click('#convClear'); await sleep(150);
+    eq([await G.evaluate(() => window.WCShareKind()), await P.$eval('#heroShareText', (n) => n.textContent), await G.evaluate(() => window.WCShareHash())], ['cities', 'Share cities', `c=${LI},${NY}`], 'city sharing');
+    // an invalid draft never becomes city sharing
+    await G.evaluate(() => { const t = document.getElementById('convTime'); t.focus(); t.value = '25:99'; t.dispatchEvent(new InputEvent('input', { bubbles: true })); });
+    await sleep(200);
+    eq([await G.evaluate(() => window.WCShareKind()), await G.evaluate(() => window.WCShareHash())], ['blocked', ''], 'invalid draft blocks sharing');
+    fs.writeFileSync(path.join(SHOTS, 'actions-evidence.json'), JSON.stringify({ ...evidence, hashA, hashC }, null, 2));
+    globalThis.__p4links = { hashA, hashC, ma, mc };
+    noErrors(P, 'meeting actions');
+  } finally { await cdp.detach().catch(() => {}); await ctx.close(); }
+});
+
+await check('version 2 links open the same exact meeting on home, PT, a tool page, ES tool and /app/; nothing is saved; a bad link shows nothing plausible', async () => {
+  const { hashA, hashC, ma, mc } = globalThis.__p4links || {};
+  assert(hashA && hashC, 'links from the previous check');
+  const routes = [['/', hashA, ma, 'Europe/Lisbon'], ['/pt/', hashA, ma, 'Europe/Lisbon'], ['/meeting-planner.html', hashC, mc, 'America/New_York'], ['/es/meeting-planner.html', hashC, mc, 'America/New_York'], ['/app/', hashC, mc, 'America/New_York']];
+  // an ordinary saved profile: planner closed, a label, the 12-hour clock, dark theme (none of it may change on receiving)
+  const seeded = findSeed(['Asia/Tokyo'], { 'Asia/Tokyo': { start: '10:00', end: '19:00', days: [1, 2, 3, 4, 5] } }, { planner: false, labels: { 'Asia/Tokyo': 'Tokyo HQ' }, hour12: true, theme: 'dark' });
+  const seededObj = JSON.parse(seeded);
+  for (const [route, hash, m, zone] of routes) {
+    const ctx = await browser.createBrowserContext();
+    const P = await openPage(ctx);
+    try {
+      await P.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, seeded);
+      await P.goto(`${base}${route}#${hash}`, { waitUntil: 'load' });
+      const G = await appFrame(P);
+      await G.waitForFunction((s) => { const st = window.WCConverter && window.WCConverter.state(); return st && st.meeting && st.meeting.startMs === s; }, { timeout: 15000 }, m.startMs);
+      await sleep(500); // any save the app or the tool wrapper would make (a tool page opens its planner)
+      const got = await G.evaluate(() => ({ st: window.WCConverter.state(), stored: JSON.parse(localStorage.getItem('owc-app-settings')), banner: document.documentElement.classList.contains('is-shared') ? document.querySelector('.web-shared-text').textContent : '',
+        summary: document.getElementById('planSelBar').hidden ? '' : document.getElementById('planSel').textContent, planner: !document.getElementById('planner').hidden }));
+      eq([got.st.meeting, got.st.convert.zone], [m, zone], `${route}: exact meeting`);
+      eq(got.stored, seededObj, `${route}: saved settings byte for byte the same`);
+      assert(got.planner && got.summary, `${route}: the meeting summary and actions are on screen from the default view: ${JSON.stringify(got)}`);
+      assert(/(yours|o seu|el tuyo)/.test(got.banner), `${route}: says whose working hours: ${got.banner}`);
+      await sleep(3500); // past any toast
+      const note = await G.evaluate(() => { const n = document.getElementById('webImport'); return n.hidden ? '' : n.textContent; });
+      assert(/(yours|o seu|el tuyo)/.test(note), `${route}: the imported meeting keeps saying whose hours: ${note}`);
+      noErrors(P, `link ${route}`);
+    } finally { await ctx.close(); }
+  }
+  // the visitor's own cities: no shared banner, but the meeting still says whose working hours are shown
+  {
+    const c0 = await browser.createBrowserContext();
+    const P0 = await openPage(c0);
+    try {
+      await P0.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, seeded);
+      const sT = Date.UTC(2026, 9, 14, 1, 0) / 1000;
+      await P0.goto(`${base}/#v=2&c=Asia/Tokyo&z=Asia/Tokyo&s=${sT}&e=${sT + 3600}`, { waitUntil: 'load' });
+      const G0 = await appFrame(P0);
+      await G0.waitForFunction((x) => { const st = window.WCConverter && window.WCConverter.state(); return st && st.meeting && st.meeting.startMs === x; }, { timeout: 15000 }, sT * 1000);
+      await sleep(3500);
+      const r0 = await G0.evaluate(() => ({ shared: document.documentElement.classList.contains('is-shared'), note: document.getElementById('webImport').hidden ? '' : document.getElementById('webImport').textContent, stored: JSON.parse(localStorage.getItem('owc-app-settings')) }));
+      assert(!r0.shared && /yours/.test(r0.note), `same cities: disclosure without the shared banner: ${JSON.stringify(r0)}`);
+      eq(r0.stored, seededObj, 'same cities: saved settings unchanged');
+    } finally { await c0.close(); }
+  }
+  // malformed: end before start; nothing from it (no cities, no time), and the visitor is told
+  const ctx = await browser.createBrowserContext();
+  const P = await openPage(ctx);
+  try {
+    await P.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, seeded);
+    await P.goto(`${base}/#v=2&c=Europe/Paris&z=Europe/Paris&s=1792000000&e=1791990000`, { waitUntil: 'load' });
+    const G = await appFrame(P);
+    await G.waitForFunction(() => !document.getElementById('webImport').hidden, { timeout: 8000 });
+    const got = await G.evaluate(() => ({ st: window.WCConverter.state(), shared: document.documentElement.classList.contains('is-shared'), cards: [...document.querySelectorAll('.card[data-zone]')].map((c) => c.dataset.zone), toast: document.getElementById('webImport').textContent }));
+    eq([got.st.meeting, got.st.convert, got.shared, got.cards], [null, null, false, ['Asia/Tokyo']], 'bad link: nothing plausible');
+    await sleep(3500);
+    const kept = await G.evaluate(() => { const n = document.getElementById('webImport'); return n.hidden ? '' : n.textContent; });
+    assert(/isn’t valid/.test(kept), `bad link message stays: ${kept}`);
+  } finally { await ctx.close(); }
+  // a valid meeting link, then an invalid one by hashchange: the earlier meeting goes, nothing is exportable as the new link's
+  {
+    const ctx2 = await browser.createBrowserContext();
+    const P2 = await openPage(ctx2);
+    try {
+      await P2.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, seeded);
+      await P2.goto(`${base}/#${hashA}`, { waitUntil: 'load' });
+      const G2 = await appFrame(P2);
+      await G2.waitForFunction((s) => { const st = window.WCConverter && window.WCConverter.state(); return st && st.meeting && st.meeting.startMs === s; }, { timeout: 15000 }, ma.startMs);
+      await P2.evaluate(() => { location.hash = 'v=2&c=Europe/Paris&z=Europe/Paris&s=1792000000&s=1792000600&e=1792003600'; });
+      await sleep(3500);
+      const after = await G2.evaluate(() => ({ st: window.WCConverter.state(), hash: window.WCShareHash(), note: document.getElementById('webImport').hidden ? '' : document.getElementById('webImport').textContent }));
+      eq([after.st.meeting, after.st.convert], [null, null], 'the earlier meeting is gone after a bad link');
+      assert(/isn’t valid/.test(after.note) && !/v=2|t=/.test(after.hash), `after a bad hashchange: ${JSON.stringify(after)}`);
+    } finally { await ctx2.close(); }
+  }
+  // wrappers keep a bad tuple bad: repeated s, s and e without v, an oversized value (home and a tool page)
+  const badHashes = ['v=2&c=Europe/Paris&z=Europe/Paris&s=1792000000&s=x&e=1792003600', 'c=Europe/Paris&s=1792000000&e=1792003600',
+    `v=2&c=Europe/Paris&z=Europe/Paris&s=1792000000&e=1792003600&c=${'Asia/Tokyo,'.repeat(380)}`];
+  for (const route of ['/', '/meeting-planner.html']) {
+    for (const h of badHashes) {
+      const c3 = await browser.createBrowserContext();
+      const P3 = await openPage(c3);
+      try {
+        await P3.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, seeded);
+        await P3.goto(`${base}${route}#${h}`, { waitUntil: 'load' });
+        const G3 = await appFrame(P3);
+        await G3.waitForFunction(() => !document.getElementById('webImport').hidden, { timeout: 15000 });
+        const r = await G3.evaluate(() => ({ st: window.WCConverter.state(), shared: document.documentElement.classList.contains('is-shared'), cards: [...document.querySelectorAll('.card[data-zone]')].map((c) => c.dataset.zone), note: document.getElementById('webImport').textContent }));
+        eq([r.st.meeting, r.st.convert, r.shared, r.cards], [null, null, false, ['Asia/Tokyo']], `${route} ${h.slice(0, 60)}: nothing plausible`);
+        assert(/isn’t valid/.test(r.note), `${route}: says the link is not valid`);
+      } finally { await c3.close(); }
+    }
+  }
+});
+
+await check('clipboard refused: the full text and link to copy by hand, focused and selected; Escape returns focus', async () => {
+  const ctx = await browser.createBrowserContext();
+  const LI = 'Europe/Lisbon', NY = 'America/New_York';
+  const { P, G, at, typeTime } = await findSetup(ctx, findSeed([LI, NY], {}));
+  try {
+    await at(LI, '2026-10-14', '9:00');
+    await G.click(`.plan-row[data-zone="${LI}"] .plan-cell[data-h="9"]`); await sleep(100);
+    await typeTime('9:10');
+    // stubs: the async clipboard rejects and the execCommand fallback fails (the system clipboard is never touched)
+    const stub = () => { navigator.clipboard.writeText = () => Promise.reject(new DOMException('denied', 'NotAllowedError')); document.execCommand = () => false; };
+    await G.evaluate(stub); await P.evaluate(stub);
+    await G.focus('#planCopy'); await P.keyboard.press('Enter'); await sleep(200);
+    const fb = await G.evaluate(() => { const ta = document.getElementById('copyFallbackText'); return { shown: !document.getElementById('copyFallback').hidden, value: ta.value, focus: document.activeElement.id, sel: [ta.selectionStart, ta.selectionEnd, ta.value.length], title: document.getElementById('copyFallbackTitle').textContent }; });
+    assert(fb.shown && /^Wed, Oct 14, 09:10 to 10:10 \(Lisbon\)\nLisbon: 09:10 to 10:10/.test(fb.value) && fb.focus === 'copyFallbackText' && fb.sel[0] === 0 && fb.sel[1] === fb.sel[2] && /Ctrl\+C/.test(fb.title), `fallback: ${JSON.stringify(fb)}`);
+    await P.screenshot({ path: path.join(SHOTS, 'actions-clipboard-fallback.png') });
+    await P.keyboard.press('Escape'); await sleep(50);
+    eq(await G.evaluate(() => [document.getElementById('copyFallback').hidden, document.activeElement.id]), [true, 'planCopy'], 'Escape closes and returns focus');
+    await G.click('#planLink'); await sleep(200);
+    const link = await G.$eval('#copyFallbackText', (n) => n.value);
+    assert(/^http:\/\/127\.0\.0\.1:\d+\/#v=2&c=Europe\/Lisbon,America\/New_York&z=Europe\/Lisbon&s=\d+&e=\d+$/.test(link), `link fallback: ${link}`);
+    await G.click('#copyFallbackClose');
+    // the host page's Share: the link in a selected field under the window
+    await P.evaluate(() => window.scrollTo(0, 0)); await P.click('#heroShare'); await sleep(300);
+    const host = await P.evaluate(() => { const f = document.querySelector('.share-fallback-link'); return f && { value: f.value, focus: document.activeElement === f, sel: f.selectionEnd === f.value.length, label: f.getAttribute('aria-label') }; });
+    assert(host && host.value === link && host.focus && host.sel && /Copy this link/.test(host.label), `host fallback: ${JSON.stringify(host)}`);
+    noErrors(P, 'clipboard refused');
+  } finally { await ctx.close(); }
+});
+
+await check('Calendar file fails from the header with the planner closed: the planner opens and the failure stays beside the meeting', async () => {
+  const ctx = await browser.createBrowserContext();
+  const LI = 'Europe/Lisbon';
+  const { P, G, at } = await findSetup(ctx, findSeed([LI, 'America/New_York'], {}));
+  try {
+    await at(LI, '2026-10-14', '9:00');
+    await G.click(`.plan-row[data-zone="${LI}"] .plan-cell[data-h="9"]`); await sleep(150);
+    await G.click('#btnPlanner'); await sleep(200); // close the planner: the meeting stays
+    eq(await G.evaluate(() => [document.getElementById('planner').hidden, !!window.WCConverter.state().meeting]), [true, true], 'planner closed, meeting kept');
+    await G.evaluate(() => { URL.createObjectURL = () => { throw new Error('blocked'); }; }); // the download cannot start
+    await G.click('#btnCopy'); await G.click('#copyMenu [data-copy="ics"]');
+    await sleep(2200); // past any short status
+    const r = await G.evaluate(() => { const n = document.getElementById('planStatus'); return { planner: !document.getElementById('planner').hidden, status: n.hidden || !n.offsetParent ? '' : n.textContent, retry: !document.getElementById('planIcs').hidden && !document.getElementById('planIcs').disabled }; });
+    eq(r, { planner: true, status: 'Couldn’t create the calendar file. Select Calendar file to try again.', retry: true }, 'visible, lasting recovery');
+    await P.screenshot({ path: path.join(SHOTS, 'actions-ics-failed-header.png') });
+    noErrors(P, 'ics failed from the header');
+  } finally { await ctx.close(); }
+});
+
+await check('meeting actions wrap inside a 375 phone in English, Portuguese and Spanish', async () => {
+  for (const lang of ['en', 'pt', 'es']) {
+    const ctx = await browser.createBrowserContext();
+    const { P, G, at } = await findSetup(ctx, findSeed(['Europe/Lisbon', 'America/Sao_Paulo'], {}, { language: lang }), { width: 375, height: 812, mobile: true });
+    try {
+      await at('Europe/Lisbon', '2026-10-14', '9:00');
+      await G.click('.plan-row[data-zone="Europe/Lisbon"] .plan-cell[data-h="9"]'); await sleep(200);
+      const fit = await G.evaluate(() => {
+        const bar = document.getElementById('planSelBar'), W = innerWidth;
+        const btns = ['planCopy', 'planLink', 'planIcs'].map((id) => document.getElementById(id)).filter((b) => !b.hidden);
+        return { n: btns.length, inside: btns.every((b) => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= W + 0.5; }), clipped: btns.some((b) => b.scrollWidth > b.clientWidth + 1), text: btns.map((b) => b.textContent), barRight: bar.getBoundingClientRect().right, W };
+      });
+      await toApp(P); await P.screenshot({ path: path.join(SHOTS, `actions-375-${lang}.png`) });
+      assert(fit.n === 3 && fit.inside && !fit.clipped, `${lang}: ${JSON.stringify(fit)}`);
+      noErrors(P, `actions 375 ${lang}`);
+    } finally { await ctx.close(); }
+  }
+});
+
+// ======================= priority 5: the phone planner shows the meeting, and stays where the user scrolls it =======================
+// The phone planner (.plan-narrow) scrolls sideways inside #planBody. These checks measure real rectangles: the band or cell
+// must sit inside #planBody's visible box (labels are on their own row there, so nothing sticky covers the cells).
+const inView = (G, sel) => G.evaluate((sel) => {
+  const b = document.getElementById('planBody'), v = b.getBoundingClientRect(), n = document.querySelector(sel);
+  if (!n) return { ok: false, why: 'missing ' + sel };
+  const r = n.getBoundingClientRect(), right = v.left + b.clientWidth;
+  return { ok: r.left >= v.left - 0.5 && r.right <= right + 0.5 && r.width > 0, startIn: r.left >= v.left - 0.5 && r.left < right, past: r.right > right + 0.5,
+    r: [Math.round(r.left), Math.round(r.right)], v: [Math.round(v.left), Math.round(right)], scroll: Math.round(b.scrollLeft), max: b.scrollWidth - b.clientWidth };
+}, sel);
+const pageY = (P) => P.evaluate(() => Math.round(window.scrollY));
+async function phonePlanner(ctx, width, hash, extra = {}) {
+  const NY = 'America/New_York';
+  const { zones = ['Europe/Lisbon', NY, 'Asia/Tokyo'], ...rest } = extra;
+  const settings = findSeed(zones, {}, rest);
+  const P = await openPage(ctx, { width, height: 820, mobile: width < 600, scheme: extra.theme === 'dark' ? 'dark' : 'light' });
+  await P.evaluateOnNewDocument((s) => { if (!localStorage.getItem('owc-app-settings')) localStorage.setItem('owc-app-settings', s); }, settings);
+  await P.goto(`${base}/${hash ? '#' + hash : ''}`, { waitUntil: 'load' });
+  const G = await appFrame(P);
+  await G.waitForFunction(() => window.WCConverter && document.querySelector('#planner:not([hidden]) .plan-row'), { timeout: 20000 });
+  await P.evaluate(() => { const r = document.getElementById('heroApp').getBoundingClientRect(); window.scrollTo(0, scrollY + r.top + 120); });
+  await sleep(300);
+  return { P, G };
+}
+const nyAt = (ymd, h, mi = 0) => zonedEpoch('America/New_York', ymd, h, mi) / 1000;
+const v2 = (zone, s, e, cities = 'Europe/Lisbon,America/New_York,Asia/Tokyo') => `v=2&c=${cities}&z=${zone}&s=${s}&e=${e}`;
+
+await check('phone planner reveal: a received meeting is in view at 375 and 320, a manual scroll stays through ticks and format, explicit picks reveal', async () => {
+  const shots = path.join(SHOTS, 'reveal'); fs.mkdirSync(shots, { recursive: true });
+  for (const width of [375, 320]) {
+    const ctx = await browser.createBrowserContext();
+    try {
+      const s9 = nyAt('2026-10-14', 9);
+      const { P, G } = await phonePlanner(ctx, width, v2('America/New_York', s9, s9 + 3600));
+      await G.waitForFunction((x) => { const m = window.WCConverter.state().meeting; return m && m.startMs === x; }, { timeout: 15000 }, s9 * 1000);
+      await sleep(200);
+      assert(await G.evaluate(() => document.documentElement.classList.contains('plan-narrow') || document.getElementById('app').classList.contains('plan-narrow')), `${width}: the phone planner`);
+      let r = await inView(G, '#planner .plan-sel'); const r0 = r;
+      assert(r.ok && r.scroll > 0, `${width}: received 09:00 meeting in view, not midnight: ${JSON.stringify(r)}`);
+      r = await inView(G, '.plan-row[data-zone="America/New_York"] .plan-cell[data-h="9"]');
+      assert(r.ok, `${width}: its 09:00 cell in view: ${JSON.stringify(r)}`);
+      await P.screenshot({ path: path.join(shots, `received-${width}.png`) });
+      // a touch swipe scrolls the hours (to the far left) without selecting anything
+      const y0 = await pageY(P);
+      const box = await G.evaluate(() => { const b = document.getElementById('planBody').getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width }; });
+      const frame = await P.evaluate(() => { const r = document.getElementById('heroApp').getBoundingClientRect(); return { x: r.left, y: r.top }; });
+      const y = frame.y + box.y + 60, x0 = frame.x + box.x + 30;
+      const url0 = P.url();
+      // one swipe, never one that starts at the very start: Chrome gives an unscrollable swipe to the page (history back)
+      await P.touchscreen.touchStart(x0, y);
+      for (let i = 1; i <= 8; i++) await P.touchscreen.touchMove(x0 + i * (box.w * 0.85 / 8), y);
+      await P.touchscreen.touchEnd();
+      await sleep(400);
+      eq(P.url(), url0, `${width}: the swipe stayed on the page`);
+      const swiped = await G.evaluate(() => document.getElementById('planBody').scrollLeft);
+      assert(swiped < r0.scroll, `${width}: the touch swipe scrolled the hours toward the start: ${r0.scroll} -> ${swiped}`);
+      await G.evaluate(() => { document.getElementById('planBody').scrollLeft = 0; }); // then settle at the very start, whatever the fling did
+      await sleep(200);
+      const st0 = await G.evaluate(() => window.WCConverter.state());
+      eq(st0.meeting, { startMs: s9 * 1000, endMs: (s9 + 3600) * 1000 }, `${width}: touch scrolling selected nothing`);
+      const left0 = await G.evaluate(() => document.getElementById('planBody').scrollLeft);
+      // ticks (a minute's worth of renders) and a format change do not snap it back
+      await sleep(1500);
+      await G.evaluate(() => { for (let i = 0; i < 5; i++) window.dispatchEvent(new Event('resize')); });
+      // (clicked in the page, not with G.click: puppeteer's click scrolls the host page to the element itself)
+      eq(await pageY(P), y0, `${width}: ticks and resizes did not move the host page`);
+      // opening Settings focuses its first option, which the browser brings into view (smoothly): measure from there
+      await G.evaluate(() => document.getElementById('btnSettings').click()); await G.waitForSelector('#settingsPanel:not([hidden])'); await sleep(800);
+      const y1 = await pageY(P);
+      await G.evaluate(() => document.getElementById('optHour24').click()); await sleep(400);
+      eq(await pageY(P), y1, `${width}: the format change did not move the host page`);
+      await P.keyboard.press('Escape'); await sleep(300);
+      eq(await G.evaluate(() => document.getElementById('planBody').scrollLeft), left0, `${width}: the manual scroll is kept through ticks, resizes and a format change`);
+      await P.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), y0); await sleep(100); // back where the test started
+      // an explicit new start reveals it, inside the planner only
+      const ye = await pageY(P);
+      await G.evaluate(() => { const t = document.getElementById('convTime'); t.value = '18:00'; t.dispatchEvent(new Event('input', { bubbles: true })); });
+      await sleep(300);
+      r = await inView(G, '#planner .plan-sel');
+      assert(r.ok, `${width}: a new start (18:00) is revealed: ${JSON.stringify(r)}`);
+      assert(Math.abs((await pageY(P)) - ye) <= 2, `${width}: revealing the new start did not move the page`);
+      // keyboard to a later hour: the focused cell stays visible, the page does not move (measured once the edit's own
+      // short status has gone, so its height change, which the browser anchors, is not counted)
+      await sleep(2500);
+      const yk = await pageY(P);
+      await G.evaluate(() => document.querySelector('.plan-row[data-zone="America/New_York"] .plan-cell[data-h="18"]').focus({ preventScroll: true }));
+      for (let i = 0; i < 5; i++) await P.keyboard.press('ArrowRight');
+      await sleep(200);
+      r = await inView(G, '.plan-cell:focus');
+      const fh = await G.evaluate(() => document.activeElement.dataset.h);
+      assert(r.ok && fh === '23', `${width}: keyboard focus on 23:00 in view: ${fh} ${JSON.stringify(r)}`);
+      // the arrows move the meeting, its summary rewraps and the app's height changes: the browser's scroll anchoring may
+      // shift the page by layout rounding. A page-level reveal (scrollIntoView) would move it by hundreds.
+      const dyk = Math.abs((await pageY(P)) - yk);
+      assert(dyk <= 2, `${width}: keyboard did not move the page: ${dyk}px`);
+      // scrolled away by hand, then the planner closed and opened again: the meeting is revealed again
+      await G.evaluate(() => { document.getElementById('planBody').scrollLeft = 0; });
+      for (let i = 0; i < 2; i++) { await G.evaluate(() => document.getElementById('btnPlanner').click()); await sleep(250); }
+      r = await inView(G, '#planner .plan-sel');
+      assert(r.ok && r.scroll > 0, `${width}: reopening reveals the meeting: ${JSON.stringify(r)}`);
+      const dyr = Math.abs((await pageY(P)) - yk);
+      assert(dyr <= 2, `${width}: reopening did not move the page: ${dyr}px`);
+      noErrors(P, `reveal ${width}`);
+    } finally { await ctx.close(); }
+  }
+});
+
+await check('phone planner reveal: next date result, a long meeting shows its start with more past the edge, half and quarter hour sources, new rows keep the page, no meeting shows now, dark theme', async () => {
+  const shots = path.join(SHOTS, 'reveal'); fs.mkdirSync(shots, { recursive: true });
+  // next date: Sunday has nothing for everyone; the Monday result is revealed
+  {
+    const ctx = await browser.createBrowserContext();
+    try {
+      // Lisbon and New York (weekday hours) share Monday afternoon in Lisbon; Tokyo would leave no full overlap on any date
+      const { P, G } = await phonePlanner(ctx, 375, '', { theme: 'dark', zones: ['Europe/Lisbon', 'America/New_York'] });
+      await G.select('#convZone', 'Europe/Lisbon');
+      await G.evaluate(() => { const d = document.getElementById('convDate'); d.value = '2026-10-18'; delete d.dataset.auto; const t = document.getElementById('convTime'); t.value = '0:00'; t.dispatchEvent(new Event('input', { bubbles: true })); });
+      await sleep(300);
+      await G.evaluate(() => { document.getElementById('planBody').scrollLeft = 0; });
+      // as a user would: Find fully in view below the site's fixed header, then a real tap on it. Opening Find focuses its
+      // first result, which the browser may bring into view: measure the reveal from there
+      const navH = () => P.evaluate(() => document.querySelector('.nav').getBoundingClientRect().bottom);
+      const findOnPage = () => G.evaluate(() => { const r = document.getElementById('planFind').getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; })
+        .then(async (r) => { const f = await P.evaluate(() => document.getElementById('heroApp').getBoundingClientRect().top); return { top: f + r.top, bottom: f + r.bottom }; });
+      const f0 = await findOnPage(), nav = await navH();
+      await P.evaluate((dy) => window.scrollTo({ top: scrollY + dy, behavior: 'instant' }), Math.round(f0.top - nav - 40)); await sleep(200);
+      const f1 = await findOnPage();
+      assert(f1.top >= nav && f1.bottom <= 820, `Find fully visible below the header before the tap: ${JSON.stringify({ f1, nav })}`);
+      await P.touchscreen.tap((await P.evaluate(() => document.getElementById('heroApp').getBoundingClientRect().left)) + (await G.evaluate(() => { const r = document.getElementById('planFind').getBoundingClientRect(); return r.left + r.width / 2; })), (f1.top + f1.bottom) / 2);
+      await G.waitForSelector('#planFindPanel:not([hidden])'); await sleep(800);
+      const yr = await pageY(P), hr = await P.evaluate(() => document.getElementById('heroApp').getBoundingClientRect().height);
+      const next = await G.evaluate(() => { const b = document.querySelector('#planFindPanel .find-item.next'); if (b) b.click(); return b && b.textContent; });
+      await sleep(400);
+      const r = await inView(G, '#planner .plan-sel');
+      assert(next && r.ok, `next date result revealed: ${next} ${JSON.stringify(r)}`);
+      // the panel closing and the meeting bar appearing change the app's height, which the browser anchors: allowed up to
+      // that change (plus rounding). The old jump (focus returned to Find without preventScroll) moved the page ~450 px.
+      const res = await P.evaluate(() => ({ y: Math.round(scrollY), h: document.getElementById('heroApp').getBoundingClientRect().height }));
+      const findBtn = await findOnPage(), focus = await G.evaluate(() => document.activeElement.id), nav2 = await navH();
+      assert(Math.abs(res.y - yr) <= Math.abs(res.h - hr) + 2 && focus === 'planFind' && findBtn.top >= nav2 && findBtn.bottom <= 820,
+        `the result reveal kept the page, focus back on a fully visible Find: ${JSON.stringify({ yr, hr, res, findBtn, nav2, focus })}`);
+      await P.screenshot({ path: path.join(shots, 'next-date-375-dark.png') });
+      noErrors(P, 'reveal next date');
+    } finally { await ctx.close(); }
+  }
+  // a 12-hour meeting at 320: its start in view, the rest past the right edge, reachable by scrolling
+  {
+    const ctx = await browser.createBrowserContext();
+    try {
+      const s8 = nyAt('2026-10-14', 8);
+      const { P, G } = await phonePlanner(ctx, 320, v2('America/New_York', s8, s8 + 12 * 3600));
+      await G.waitForFunction((x) => { const m = window.WCConverter.state().meeting; return m && m.startMs === x; }, { timeout: 15000 }, s8 * 1000);
+      await sleep(200);
+      const r = await inView(G, '#planner .plan-sel');
+      const c8 = await inView(G, '.plan-row[data-zone="America/New_York"] .plan-cell[data-h="8"]');
+      assert(r.startIn && r.past && c8.ok && r.scroll < r.max, `long meeting: start in view, more past the edge: ${JSON.stringify({ r, c8 })}`);
+      await P.screenshot({ path: path.join(shots, 'long-320.png') });
+      noErrors(P, 'reveal long');
+    } finally { await ctx.close(); }
+  }
+  // half and quarter hour sources (Kolkata +5:30, Kathmandu +5:45): 09:00 there is in view
+  for (const zone of ['Asia/Kolkata', 'Asia/Kathmandu']) {
+    const ctx = await browser.createBrowserContext();
+    try {
+      const s = zonedEpoch(zone, '2026-10-14', 9, 0) / 1000;
+      const { P, G } = await phonePlanner(ctx, 375, v2(zone, s, s + 3600, `Europe/Lisbon,${zone}`));
+      await G.waitForFunction((x) => { const m = window.WCConverter.state().meeting; return m && m.startMs === x; }, { timeout: 15000 }, s * 1000);
+      await sleep(200);
+      const r = await inView(G, '#planner .plan-sel');
+      assert(r.ok && r.scroll > 0, `${zone}: 09:00 in view: ${JSON.stringify(r)}`);
+      noErrors(P, `reveal ${zone}`);
+    } finally { await ctx.close(); }
+  }
+  // no meeting: the current time line is in view; adding a city keeps the page and the sideways scroll
+  {
+    const ctx = await browser.createBrowserContext();
+    try {
+      const { P, G } = await phonePlanner(ctx, 375, '');
+      await sleep(300);
+      const now = await inView(G, '#planner .plan-now');
+      assert(now.ok, `no meeting: the current time in view: ${JSON.stringify(now)}`);
+      await G.evaluate(() => { document.getElementById('planBody').scrollLeft = 200; });
+      const y0 = await pageY(P), l0 = await G.evaluate(() => document.getElementById('planBody').scrollLeft);
+      await G.evaluate(() => { const s = document.getElementById('zoneSearch'); s.focus({ preventScroll: true }); s.value = 'Sydney'; s.dispatchEvent(new Event('input', { bubbles: true })); });
+      await G.waitForSelector('#zoneResults li[id^="zr-"]');
+      await G.evaluate(() => document.getElementById('zoneSearch').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })));
+      await G.waitForSelector('.plan-row[data-zone="Australia/Sydney"]');
+      await sleep(300);
+      eq([await pageY(P), await G.evaluate(() => document.getElementById('planBody').scrollLeft)], [y0, l0], 'a new row keeps the page and the scroll');
+      noErrors(P, 'reveal rows');
+    } finally { await ctx.close(); }
+  }
+  // a capped body with more rows than it shows (as in a work-area-limited window): keyboard down to a later city keeps
+  // the focused cell inside #planBody vertically too, by scrolling the body, never the page
+  {
+    const ctx = await browser.createBrowserContext();
+    try {
+      const zones = ['Europe/Lisbon', 'America/New_York', 'Asia/Tokyo', 'Europe/Berlin', 'Asia/Kolkata', 'Australia/Sydney', 'America/Los_Angeles', 'America/Sao_Paulo'];
+      const { P, G } = await phonePlanner(ctx, 375, '', { zones });
+      await G.evaluate(() => { const b = document.getElementById('planBody'); b.style.maxHeight = '160px'; });
+      await sleep(200);
+      const y0 = await pageY(P);
+      await G.evaluate(() => document.querySelector('.plan-row[data-zone="Europe/Lisbon"] .plan-cell[data-h="9"]').focus({ preventScroll: true }));
+      for (let i = 0; i < 7; i++) await P.keyboard.press('ArrowDown');
+      await sleep(200);
+      const v = await G.evaluate(() => {
+        const b = document.getElementById('planBody'), c = document.activeElement, r = c.getBoundingClientRect(), bb = b.getBoundingClientRect();
+        return { zone: c.closest('.plan-row') && c.closest('.plan-row').dataset.zone, inside: r.top >= bb.top - 0.5 && r.bottom <= bb.top + b.clientHeight + 0.5, top: b.scrollTop, capped: b.scrollHeight > b.clientHeight + 1 };
+      });
+      assert(v.capped && v.zone === 'America/Sao_Paulo' && v.inside && v.top > 0, `focused later city in view vertically: ${JSON.stringify(v)}`);
+      const h = await inView(G, '.plan-cell:focus');
+      assert(h.ok, `and horizontally: ${JSON.stringify(h)}`);
+      eq(await pageY(P), y0, 'vertical keyboard did not move the page');
+      noErrors(P, 'reveal vertical');
+    } finally { await ctx.close(); }
+  }
+  // desktop: the whole day fits, the received meeting is simply there (nothing scrolls)
+  {
+    const ctx = await browser.createBrowserContext();
+    try {
+      const s9 = nyAt('2026-10-14', 9);
+      const { P, G } = await phonePlanner(ctx, 1440, v2('America/New_York', s9, s9 + 3600));
+      await G.waitForFunction((x) => { const m = window.WCConverter.state().meeting; return m && m.startMs === x; }, { timeout: 15000 }, s9 * 1000);
+      const r = await inView(G, '#planner .plan-sel');
+      assert(r.ok && r.scroll === 0 && r.max <= 0, `desktop: in view without scrolling: ${JSON.stringify(r)}`);
+      noErrors(P, 'reveal desktop');
+    } finally { await ctx.close(); }
+  }
+});
+
 await check('a shared link opens those clocks in the hero for a new visitor without saving them', async () => {
   const ctxB = await browser.createBrowserContext();
   const B = await openPage(ctxB);
@@ -635,7 +1495,7 @@ await check('page language from the hash: #lang=pt at load and #lang=es later se
   await PF.waitForFunction(() => /^es/.test(document.documentElement.lang) && document.documentElement.classList.contains('is-shared'));
   eq((await cards(PF)).map((c) => c.zone), ['Asia/Tokyo', 'Europe/Paris'], 'shared cities');
   eq(await PF.$eval('#webSave', (n) => n.textContent), 'Guardar estas ciudades', 'banner button in Spanish');
-  eq(await PF.$eval('.web-shared-text', (n) => n.textContent), 'Estás viendo ciudades compartidas. Tu lista guardada sigue igual.', 'banner text in Spanish');
+  eq(await PF.$eval('.web-shared-text', (n) => n.textContent), 'Estás viendo ciudades compartidas. Tu lista guardada sigue igual. El horario laboral es el tuyo, no el de quien envió el enlace.', 'banner text in Spanish');
   await PF.click('#webMine');
   await P.waitForFunction(() => !location.hash, { timeout: 5000 }).catch(() => {});
   await PF.waitForFunction(() => document.querySelector('.card[data-zone]') && !document.documentElement.classList.contains('is-shared'), { timeout: 10000 }).catch(() => {});

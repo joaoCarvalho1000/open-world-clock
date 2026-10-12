@@ -61,7 +61,7 @@
       "description": "Keep multiple time zones above every window. Free open-source world clock for Windows 11 and 10: converter, meeting planner, no ads or telemetry.",
       "inLanguage": "en",
       "datePublished": "2026-10-01",
-      "dateModified": "2026-10-05",
+      "dateModified": "2026-10-12",
       "isPartOf": {
         "@id": "https://openworldclock.com/#website"
       },
@@ -112,7 +112,7 @@
           "name": "Does it collect any data?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Your settings stay in one local file, and the app makes no network requests of its own. The privacy policy also covers what this website measures."
+            "text": "No telemetry and no usage data. Your settings stay in one local file, and the app never sends your cities or settings. Its only network requests are update checks and, in a code-signed installer, update downloads, when you ask or have automatic updates on. The privacy policy lists what those requests carry and also covers what this website measures."
           }
         },
         {
@@ -270,7 +270,7 @@
     <div class="sec-body prose">
       <ul>
         <li><strong>Free, with no strings attached:</strong> no price, no ads, no account, no in-app purchases, no upsell. The code is MIT licensed and <a data-link="repo" href="https://github.com/joaoCarvalho1000/open-world-clock">on GitHub</a>.</li>
-        <li><strong>Works offline:</strong> time zone rules are built into the app, and sunrise and sunset are calculated on your PC. The app makes no network requests of its own.</li>
+        <li><strong>Works offline:</strong> time zone rules are built into the app, and sunrise and sunset are calculated on your PC. Clocks and conversions work offline; the app only contacts the project’s server to check for updates, when you ask or have automatic checks on.</li>
         <li><strong>No telemetry:</strong> your cities and settings live in one file under <code>%APPDATA%\Open World Clock</code> and never leave your PC.</li>
         <li><strong>Daylight saving handled:</strong> each conversion uses the rules for its date, and cards show a note in the week before clocks change. See <a href="/daylight-saving-meetings">daylight saving and meetings</a>.</li>
       </ul>
@@ -284,7 +284,7 @@
     <div class="sec-body prose">
       <details><summary>Is Open World Clock really free?</summary><p>Yes. There’s no price, no ads, no account, and no in-app purchase. It’s open source under the MIT License. Tips on Ko-fi are optional and change nothing in the app.</p></details>
       <details><summary>Does the always-on-top window work offline?</summary><p>Yes. The whole app works offline. Time zone rules ship with the app, and updates bring new rules when a country changes its clocks.</p></details>
-      <details><summary>Does it collect any data?</summary><p>No. Your settings stay in one local file, and the app makes no network requests of its own. The <a href="/privacy">privacy policy</a> also covers what this website measures.</p></details>
+      <details><summary>Does it collect any data?</summary><p>No telemetry and no usage data. Your settings stay in one local file, and the app never sends your cities or settings. Its only network requests are update checks and, in a code-signed installer, update downloads, when you ask or have automatic updates on. The <a href="/privacy">privacy policy</a> lists what those requests carry and also covers what this website measures.</p></details>
       <details><summary>Why does Windows say “Windows protected your PC”?</summary><p>The installer and the portable exe aren’t code-signed yet, so SmartScreen may warn you the first time. Select <strong>More info</strong>, then <strong>Run anyway</strong>. The Microsoft Store build is signed by Microsoft and doesn’t show this warning.</p></details>
       <details><summary>Can the browser version stay on top?</summary><p>No. The web demo on the home page is handy for a quick check, but staying above other apps is a feature of the Windows desktop app.</p></details>
     </div>
@@ -360,7 +360,7 @@
 </footer>
 <a class="kofi-fab" id="kofiFab" href="https://ko-fi.com/joaothecarvalho" target="_blank" rel="noopener" data-kofi="floating" aria-label="Support the creator on Ko-fi"><svg class="kofi-cup" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M2.5 6h14.5v6.8a6.2 6.2 0 0 1-6.2 6.2H8.7a6.2 6.2 0 0 1-6.2-6.2Z"/><path fill="none" stroke="#fff" stroke-width="2.2" d="M17 8.4h1.6a3.1 3.1 0 0 1 0 6.2H17"/><path fill="#ff5e5b" d="M9.75 15.9s-3.4-2-3.4-4.3a1.8 1.8 0 0 1 3.4-.85 1.8 1.8 0 0 1 3.4.85c0 2.3-3.4 4.3-3.4 4.3Z"/></svg><span>Support the creator</span></a>
 <script src="/assets/config.js?v=17eec50ba5"></script>
-<script src="/assets/i18n.js?v=104d6aaf51"></script>
+<script src="/assets/i18n.js?v=4d23aa059e"></script>
 <script src="/assets/theme.js?v=aafee8fca3"></script>
 <script src="/assets/analytics.js?v=bccaa1e471" defer></script>
 <script src="/assets/kofi.js?v=e08e26d9a4" defer></script>
