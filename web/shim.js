@@ -43,7 +43,7 @@
   const VIEW_KEYS = [...LAYOUTS, 'map', 'planner', 'mapVertical', 'plannerVertical'];
   const PLANNER_KEYS = ['planner', 'plannerVertical'];
   const MIN_W = 280, MIN_H = 120, MAX_DIM = 16384, ZOOM_MAX = 3.8;
-  const MAIN_OWNED = new Set(['viewSizes']);
+  const MAIN_OWNED = new Set(['viewSizes', 'updNotified']);
   const WEB_FIXED = new Set(['layout']); // the web picks the layout from the width; a patch for it is ignored
   const LANGUAGES = new Set(['auto', 'en', 'pt', 'es']);
   const THEMES = new Set(['system', 'light', 'dark']);
@@ -66,6 +66,10 @@
     planner: false,
     viewSizes: {},
     zoom: 0,
+    // update preferences: kept so the rules match main (src/main.js); the web app has no updates and never uses them
+    autoUpdate: true,
+    autoCheck: false,
+    updNotified: '',
   });
   const isZone = (z) => { try { new Intl.DateTimeFormat('en-US', { timeZone: z }); return true; } catch { return false; } };
   const isPlainObject = (v) => v !== null && typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype;
@@ -90,6 +94,9 @@
     tipSeen: bool,
     closeHintSeen: bool,
     planner: bool,
+    autoUpdate: bool,
+    autoCheck: bool,
+    updNotified: (v) => (typeof v === 'string' && v.length <= 64 ? v : undefined),
     opacity: (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(1, Math.max(0.6, v)) : undefined), // window only
     zoom: (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.round(Math.min(ZOOM_MAX, Math.max(0, v)) * 10) / 10 : undefined),
     theme: (v) => (THEMES.has(v) ? v : undefined),
@@ -217,7 +224,14 @@
   const encodeZone = (z) => encodeURIComponent(z).replace(/%2F/gi, '/');
   // '#c=Europe/Lisbon,Asia/Tokyo&t=2026-09-24T15:00&z=America/New_York' -> { zones, t: { ymd, h, mi } | null, z }, or
   // null when it holds nothing usable. Unknown keys and invalid zones are ignored; at most 50 cities.
+  //
+  // Version 2, a selected meeting (exact, src/renderer/share-link.js WCLink): '#v=2&c=...&z=...&s=...&e=...'. All or
+  // nothing: a meeting link that is not exactly valid gives { bad: true } with no cities and no time (never a plausible
+  // fallback). A valid one adds m: { startMs, endMs }.
+  const BAD = () => ({ bad: true, zones: [], t: null, z: null });
   function parseShare(hash) {
+    const v2 = window.WCLink && window.WCLink.parse(hash);
+    if (v2) return v2.bad ? BAD() : { zones: v2.zones, t: null, z: v2.z, m: { startMs: v2.startMs, endMs: v2.endMs } };
     const s = String(hash || '').replace(/^#/, '');
     if (!s || s.length > 4000) return null;
     const out = { zones: [], t: null, z: null };
@@ -243,8 +257,10 @@
     if (out.z && out.zones.length && !out.zones.includes(out.z)) out.zones.push(out.z); // the source city is on the list
     return out.zones.length || out.t ? out : null;
   }
-  // The hash for a list of cities and, while converting, the converted time: { ymd, h, mi, zone }.
-  function buildShare(zones, conv) {
+  // The hash for a list of cities and, while converting, the converted time: { ymd, h, mi, zone }; with a selected meeting
+  // ({ zone, startMs, endMs }, whole seconds) the version 2 hash instead, or '' when the meeting cannot be written exactly.
+  function buildShare(zones, conv, meeting) {
+    if (meeting) return window.WCLink ? window.WCLink.build(zones, meeting.zone, meeting.startMs, meeting.endMs) : '';
     let h = 'c=' + zones.map(encodeZone).join(',');
     if (conv) h += `&t=${conv.ymd}T${pad2(conv.h)}:${pad2(conv.mi)}&z=${encodeZone(conv.zone)}`;
     return h;
@@ -262,9 +278,13 @@
     shared = zones && zones.length && !same(zones, settings.zones) ? { zones: [...zones], labels: { ...settings.labels } } : null;
     root.classList.toggle('is-shared', !!shared);
   }
+  // While a link is on screen (any valid shared link, even with the visitor's own cities), opening or closing the planner
+  // is for this visit only: receiving a link never writes the saved settings (a tool page opens its planner on load).
+  let linkView = null;
   {
     const p = parseShare(shareHash());
     if (p && p.zones.length) enterShared(p.zones);
+    if (p && !p.bad) linkView = {};
   }
 
   // ---------- theme ----------
@@ -311,6 +331,7 @@
   const listeners = new Set();
   function publicSettings() {
     const view = shared ? { zones: shared.zones, labels: shared.labels, firstRun: false } : {};
+    if (linkView && Object.hasOwn(linkView, 'planner')) view.planner = linkView.planner;
     return copy({
       ...settings,
       ...view,
@@ -341,6 +362,7 @@
       const clean = VALIDATE[k](v);
       if (clean === undefined) continue;
       if (shared && (k === 'zones' || k === 'labels')) { shared[k] = clean; continue; } // this visit only
+      if (linkView && k === 'planner') { linkView.planner = clean; continue; } // this visit only
       if (!same(clean, settings[k])) changed[k] = clean;
     }
     if (Object.keys(changed).length) {
@@ -374,8 +396,35 @@
     return Promise.resolve(fallbackCopy(text));
   }
 
+  // A link to this hash on the page the visitor is on: the home or tool page around the iframe (its path keeps the
+  // language), else this page. The address only: nothing is sent anywhere.
+  function shareLink(hash) {
+    if (!hash) return '';
+    let loc = location;
+    try { if (window.parent !== window && window.parent.location.origin === location.origin) loc = window.parent.location; } catch { /* other origin */ }
+    return `${loc.origin}${loc.pathname}#${hash}`;
+  }
+  // Calendar file: the same builder and checks as main's ics:save (src/share-format.js), then a download the browser
+  // saves. Resolves 'downloaded' (the browser has it; it may still ask where), or false when the request is refused.
+  function saveIcs(req) {
+    const F = window.WCShareFormat;
+    let ics = null;
+    try { ics = F && F.buildIcs(req, { uid: (crypto.randomUUID && crypto.randomUUID()) || String(Date.now()), now: Date.now() }); } catch { ics = null; }
+    if (!ics) return Promise.resolve(false);
+    try {
+      const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = 'meeting.ics'; a.hidden = true;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      return Promise.resolve('downloaded');
+    } catch { return Promise.resolve(false); }
+  }
+
   const noop = () => {};
   window.wc = Object.freeze({
+    saveIcs,
+    shareLink,
     getSettings: () => Promise.resolve(publicSettings()),
     setSettings,
     onSettings: (cb) => {
@@ -464,6 +513,8 @@
     isShared: () => !!shared,
     onShared: (cb) => { if (typeof cb === 'function') sharedListeners.add(cb); },
     // Opens another shared list in this tab (a new link pasted into the address bar).
+    // a link arrived after load (hashchange): its view is for this visit too
+    enterLink() { if (!linkView) linkView = {}; },
     enterShared(zones) {
       enterShared(zones);
       sharedChanged();
@@ -476,7 +527,7 @@
       settings.labels = shared.labels;
       settings.firstRun = false;
       save();
-      shared = null;
+      shared = null; linkView = null;
       root.classList.remove('is-shared');
       sharedChanged();
       emit();
@@ -485,7 +536,7 @@
     // "Show my cities": back to the saved list. Returns false when the page should reload instead (a first visit that
     // began on a shared link: the app picks its first cities at start).
     leaveShared() {
-      shared = null;
+      shared = null; linkView = null;
       root.classList.remove('is-shared');
       sharedChanged();
       if (settings.firstRun) return false;

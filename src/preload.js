@@ -31,4 +31,24 @@ contextBridge.exposeInMainWorld('wc', {
   setTrayNames: (names) => ipcRenderer.send('tray:names', names),
   // Store build: opens Windows Settings > Apps > Startup (main ignores it in other builds).
   openStartupSettings: () => ipcRenderer.send('window:startupSettings'),
+  // Updates: main owns the state and every decision; nothing is passed across (no URL, version, path or provider).
+  updates: {
+    get: () => ipcRenderer.invoke('updates:get'),
+    check: () => ipcRenderer.invoke('updates:check'),
+    download: () => ipcRenderer.invoke('updates:download'),
+    cancel: () => ipcRenderer.invoke('updates:cancel'),
+    install: () => ipcRenderer.invoke('updates:install'),
+    openDownloadPage: () => ipcRenderer.invoke('updates:openDownloadPage'),
+  },
+  onUpdates: (cb) => {
+    const listener = (_e, s) => cb(s);
+    ipcRenderer.on('updates:changed', listener);
+    return () => ipcRenderer.removeListener('updates:changed', listener);
+  },
+  // A tray update notification was clicked: show the Updates settings.
+  onUpdatesReveal: (cb) => {
+    const listener = () => cb();
+    ipcRenderer.on('updates:reveal', listener);
+    return () => ipcRenderer.removeListener('updates:reveal', listener);
+  },
 });

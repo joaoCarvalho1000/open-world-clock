@@ -132,8 +132,76 @@ public enum Planner {
         isWorking(zone, hours: hours, ms: epochMs(date))
     }
 
+    /// The parts of [a, b) (epoch ms) that `zone` spends inside `h`, as merged [start, end) spans. Exact, like time.js
+    /// workSpans: the interval is cut at every offset change (found by bisection over seconds, at most one per 6 hours)
+    /// and at every local midnight, schedule start and end, and each piece is tested once. Empty for b <= a.
+    static func workSpans(_ zone: String, hours h: WorkingHours, from a: Double, to b: Double) -> [(Double, Double)] {
+        var spans: [(Double, Double)] = []
+        guard b > a else { return spans }
+        let day = 86_400_000.0, chunk = 6 * 3_600_000.0
+        func off(_ t: Double) -> Double { Double(TimeMath.offsetSeconds(zone, ms: t)) * 1000 }
+        var pieces: [(Double, Double, Double)] = []
+        var s = a
+        while s < b {
+            let e = min(b, s + chunk)
+            let oa = off(s), ob = off(e - 1)
+            if oa == ob {
+                pieces.append((s, e, oa))
+            } else {
+                var lo = (s / 1000).rounded(.down), hi = ((e - 1) / 1000).rounded(.up)
+                while hi - lo > 1 {
+                    let mid = ((lo + hi) / 2).rounded(.down)
+                    if off(mid * 1000) == oa { lo = mid } else { hi = mid }
+                }
+                let cut = max(s, min(e, hi * 1000))
+                if cut > s { pieces.append((s, cut, oa)) }
+                if e > cut { pieces.append((cut, e, ob)) }
+            }
+            s = e
+        }
+        let marks = [0.0, Double(h.startMinutes), Double(h.endMinutes)]
+        for (ps, pe, o) in pieces {
+            var cuts = [ps, pe]
+            var d = ((ps + o) / day).rounded(.down)
+            let last = ((pe - 1 + o) / day).rounded(.down)
+            while d <= last {
+                for mins in marks {
+                    let t = d * day + mins * 60_000 - o
+                    if t > ps && t < pe { cuts.append(t) }
+                }
+                d += 1
+            }
+            cuts.sort()
+            for i in 0..<(cuts.count - 1) {
+                let x = cuts[i], y = cuts[i + 1]
+                guard y > x, isWorking(h, wallMs: x + o) else { continue }
+                if let l = spans.last, l.1 == x { spans[spans.count - 1].1 = y } else { spans.append((x, y)) }
+            }
+        }
+        return spans
+    }
+
+    /// Whether wall-clock ms `w` (the local date and time written as a UTC epoch) is inside `h`.
+    static func isWorking(_ h: WorkingHours, wallMs w: Double) -> Bool {
+        let day = (w / 86_400_000).rounded(.down)
+        let min = (w - day * 86_400_000) / 60_000
+        let wd = ((Int(day) + 4) % 7 + 7) % 7 // 1970-01-01 was a Thursday
+        let s = Double(h.startMinutes), e = Double(h.endMinutes)
+        if s < e { return min >= s && min < e && h.days.contains(wd) }
+        if min >= s { return h.days.contains(wd) }
+        if min < e { return h.days.contains((wd + 6) % 7) }
+        return false
+    }
+
+    /// Whether `zone` is inside `h` for the whole of [a, b) (time.js worksThroughout). False for b <= a.
+    static func worksThroughout(_ zone: String, hours h: WorkingHours, from a: Double, to b: Double) -> Bool {
+        let s = workSpans(zone, hours: h, from: a, to: b)
+        return b > a && s.count == 1 && s[0].0 == a && s[0].1 == b
+    }
+
+    /// .work only when the city is inside its hours for the whole hour from `ms` (exact, not two samples).
     static func cellState(_ zone: String, hours: WorkingHours, ms: Double) -> CellState {
-        if isWorking(zone, hours: hours, ms: ms) && isWorking(zone, hours: hours, ms: ms + 59 * 60_000) { return .work }
+        if worksThroughout(zone, hours: hours, from: ms, to: ms + 3_600_000) { return .work }
         let w = TimeMath.wallClock(zone, ms: ms + 30 * 60_000)
         let h = Double((w.hour % 24) * 60 + w.minute) / 60
         return h >= 22 || h < 7 ? .night : .off
@@ -172,18 +240,20 @@ public enum Planner {
         return PlannerResult(columns: cols.map(dateFromMs), rows: rows, runs: runs, totalHours: total, best: best)
     }
 
-    /// Best partial slot for a day without a full overlap, scored like the Windows fallback (time.js bestHours): each
-    /// column scores [cities working, `prefer` cities working, minus cities at night], compared in that order, so a
-    /// tie goes to the hours where the home city and the planner source work, then to the hours with fewer cities at
-    /// night. nil when the plan has an overlap, fewer than 3 rows, or no hour with at least 2 cities working.
-    /// Otherwise `working` is the highest count of .work cells in one column, `runs` the maximal groups of adjacent
-    /// columns with the top score and `best` the longest of them (earliest on ties), which is the run bestHours returns.
+    /// Best partial slot for a day without a full overlap: each column scores [cities working, `prefer` cities working,
+    /// minus cities at night], compared in that order, so a tie goes to the hours where the home city and the planner
+    /// source work, then to the hours with fewer cities at night. nil when the plan has an overlap, fewer than 3 rows,
+    /// or no hour with at least 2 cities working. Otherwise `working` is the highest count of .work cells in one column,
+    /// `runs` the maximal groups of adjacent columns with the top score AND the same working cities (so a run never
+    /// claims `working` cities throughout when different cities work its hours) and `best` the longest of them
+    /// (earliest on ties). The Windows app replaced this with Find a time (time.js findTimes, whole-meeting coverage).
     /// `prefer` holds zones (duplicates and zones without a row are ignored); empty = no preference.
     public static func partial(_ plan: PlannerResult, prefer: [String] = []) -> PlannerPartial? {
         guard plan.totalHours == 0, plan.rows.count >= 3 else { return nil }
         let columns = plan.rows.map(\.cells.count).min() ?? 0
         guard columns > 0 else { return nil }
         let preferred = Set(prefer)
+        let members: [[Int]] = (0..<columns).map { i in plan.rows.indices.filter { plan.rows[$0].cells[i] == .work } }
         let scores: [PartialScore] = (0..<columns).map { i in
             var score = PartialScore()
             for row in plan.rows {
@@ -204,6 +274,8 @@ public enum Planner {
         var start = -1
         for i in 0...columns {
             let on = i < columns && scores[i] == top
+            // a change of working cities ends the run, even at the same score
+            if on && start >= 0 && members[i] != members[start] { runs.append(PlannerRun(start: start, end: i)); start = -1 }
             if on && start < 0 { start = i }
             if !on && start >= 0 { runs.append(PlannerRun(start: start, end: i)); start = -1 }
         }
@@ -212,7 +284,7 @@ public enum Planner {
         return PlannerPartial(working: top.working, total: plan.rows.count, runs: runs, best: best)
     }
 
-    /// time.js bestHours column score: more cities working, then more preferred cities working, then fewer at night.
+    /// Column score: more cities working, then more preferred cities working, then fewer at night.
     private struct PartialScore: Comparable {
         var working = 0
         var preferred = 0

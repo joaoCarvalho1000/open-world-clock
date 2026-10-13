@@ -38,10 +38,16 @@
   var share = document.getElementById('heroShare');
   var lang = document.documentElement.lang.slice(0, 2);
   var words = {
-    en: ['Loading your clocks…', 'The clocks couldn’t load. Try again.', 'Share clocks', 'Link copied', 'Copy this link', 'Live clocks'],
-    pt: ['Carregando os relógios…', 'Não foi possível carregar. Tente novamente.', 'Compartilhar', 'Link copiado', 'Copie este link', 'Relógios ao vivo'],
-    es: ['Cargando los relojes…', 'No se pudieron cargar. Inténtalo de nuevo.', 'Compartir', 'Enlace copiado', 'Copia este enlace', 'Relojes en vivo']
-  }[lang] || ['Loading your clocks…', 'The clocks couldn’t load. Try again.', 'Share clocks', 'Link copied', 'Copy this link', 'Live clocks'];
+    en: ['Loading your clocks…', 'The clocks couldn’t load. Try again.', 'Share clocks', 'Link copied', 'Copying was blocked. Copy this link', 'Live clocks', 'Share meeting', 'Share time', 'Share cities'],
+    pt: ['Carregando os relógios…', 'Não foi possível carregar. Tente novamente.', 'Compartilhar', 'Link copiado', 'A cópia foi bloqueada. Copie este link', 'Relógios ao vivo', 'Compartilhar reunião', 'Compartilhar horário', 'Compartilhar cidades'],
+    es: ['Cargando los relojes…', 'No se pudieron cargar. Inténtalo de nuevo.', 'Compartir', 'Enlace copiado', 'Se bloqueó la copia. Copia este enlace', 'Relojes en vivo', 'Compartir reunión', 'Compartir hora', 'Compartir ciudades']
+  }[lang] || ['Loading your clocks…', 'The clocks couldn’t load. Try again.', 'Share clocks', 'Link copied', 'Copying was blocked. Copy this link', 'Live clocks', 'Share meeting', 'Share time', 'Share cities'];
+  // The Share label says what a press shares (the app's WCShareKind): the selected meeting, the converted time or the cities.
+  function shareLabel() {
+    var k = ''; try { k = frame.contentWindow.WCShareKind ? frame.contentWindow.WCShareKind() : ''; } catch (e) { k = ''; }
+    return k === 'meeting' ? words[6] : k === 'time' ? words[7] : k === 'cities' ? words[8] : words[2];
+  }
+  function syncShare() { if (!messageTimer) share.textContent = shareLabel(); }
   var timer, messageTimer, generation = 0;
   function fail() {
     shell.classList.remove('is-loading');
@@ -58,7 +64,15 @@
     status.textContent = words[0];
     retry.hidden = true;
     share.disabled = true;
-    var params = new URLSearchParams(location.hash.slice(1));
+    var raw = location.hash.slice(1);
+    // A meeting link (version 2: v, s or e) goes to the app exactly as it came, so a bad one stays bad there (no repeated
+    // key collapsed, no oversized value dropped into a plausible cities-only link). The app reads the same hash here too.
+    if (/(^|&)(v|s|e)=/.test(raw)) {
+      frame.src = '/app/#' + raw + (/(^|&)lang=/.test(raw) ? '' : '&lang=' + lang);
+      timer = setTimeout(fail, 20000);
+      return;
+    }
+    var params = new URLSearchParams(raw);
     var hash = new URLSearchParams();
     ['c', 't', 'z'].forEach(function (key) {
       var value = params.get(key);
@@ -112,13 +126,22 @@
   share.addEventListener('click', async function () {
     try {
       var hash = frame.contentWindow.WCShareHash();
-      if (!hash) return;
+      if (!hash) {
+        // the time field holds an error: show it for a moment instead of sharing the cities without the time
+        var why = frame.contentWindow.WCShareBlocked ? frame.contentWindow.WCShareBlocked() : '';
+        if (why) {
+          share.textContent = why;
+          clearTimeout(messageTimer);
+          messageTimer = setTimeout(function () { messageTimer = 0; share.textContent = shareLabel(); }, 2400);
+        }
+        return;
+      }
       var url = location.origin + location.pathname + '#' + hash;
       try {
         await navigator.clipboard.writeText(url);
         share.textContent = words[3];
         clearTimeout(messageTimer);
-        messageTimer = setTimeout(function () { share.textContent = words[2]; }, 2400);
+        messageTimer = setTimeout(function () { messageTimer = 0; share.textContent = shareLabel(); }, 2400);
       } catch (e) {
         var field = document.getElementById('toolShareLink');
         field.hidden = false;

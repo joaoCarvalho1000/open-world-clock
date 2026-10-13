@@ -176,13 +176,20 @@ module.exports = (w, app) => {
       check('Lisbon is Jan 1 07:30 with +1 day marker', /Jan 1, 2027.*\+1 day/.test(byZone(c, 'Europe/Lisbon').date) && byZone(c, 'Europe/Lisbon').hm === '07:30', byZone(c, 'Europe/Lisbon').date);
 
       await run(setConv, '02:30', '2026-03-08', 'America/New_York'); // nonexistent local time (spring forward)
+      let gapErr = await run((() => { const e = document.getElementById('convError'), t = document.getElementById('convTime'); return { text: e.hidden ? '' : e.textContent, invalid: t.getAttribute('aria-invalid'), desc: t.getAttribute('aria-describedby'), field: t.value, copy: document.getElementById('btnCopy').disabled }; }));
+      check('DST gap 02:30 NY is not moved silently: the draft stays with a lasting "doesn’t exist" error row and no copy', /^02:30 doesn’t exist on this date in New York because the clocks change/.test(gapErr.text) && gapErr.invalid === 'true' && gapErr.desc === 'convError' && gapErr.field === '02:30' && gapErr.copy, JSON.stringify(gapErr));
+      await run(setConv, '03:30', '2026-03-08', 'America/New_York'); // the user corrects it
       c = await run(cards);
       const nyGap = byZone(c, 'America/New_York').hm, lisGap = byZone(c, 'Europe/Lisbon').hm;
-      check('DST gap 02:30 NY resolves to 03:30 NY', nyGap === '03:30', nyGap);
+      gapErr = await run((() => { const e = document.getElementById('convError'), t = document.getElementById('convTime'); return { text: e.hidden ? '' : e.textContent, invalid: t.getAttribute('aria-invalid'), desc: t.getAttribute('aria-describedby'), field: t.value, copy: document.getElementById('btnCopy').disabled }; }));
+      check('DST gap corrected to 03:30 NY converts and the error row goes', nyGap === '03:30' && gapErr.text === '' && gapErr.invalid === null && !gapErr.copy, JSON.stringify({ nyGap, gapErr }));
       check('DST gap Lisbon consistent (07:30 GMT)', lisGap === '07:30', lisGap);
       await run(setConv, '01:30', '2026-03-29', 'Europe/Lisbon'); // Lisbon gap
+      gapErr = await run((() => { const e = document.getElementById('convError'), t = document.getElementById('convTime'); return { text: e.hidden ? '' : e.textContent, invalid: t.getAttribute('aria-invalid'), desc: t.getAttribute('aria-describedby'), field: t.value, copy: document.getElementById('btnCopy').disabled }; }));
+      check('DST gap 01:30 Lisbon needs a correction', /^01:30 doesn’t exist on this date in Lisbon/.test(gapErr.text), JSON.stringify(gapErr));
+      await run(setConv, '02:30', '2026-03-29', 'Europe/Lisbon');
       c = await run(cards);
-      check('DST gap 01:30 Lisbon resolves to 02:30', byZone(c, 'Europe/Lisbon').hm === '02:30', byZone(c, 'Europe/Lisbon').hm);
+      check('DST gap Lisbon corrected to 02:30 converts', byZone(c, 'Europe/Lisbon').hm === '02:30', byZone(c, 'Europe/Lisbon').hm);
       await run(setConv, '12:00', '2026-07-01', 'Asia/Kolkata'); // no-DST zone, half-hour offset
       c = await run(cards);
       check('12:00 Kolkata is 06:30 UTC (Lisbon 07:30 WEST)', byZone(c, 'Europe/Lisbon').hm === '07:30', byZone(c, 'Europe/Lisbon').hm);
@@ -206,7 +213,7 @@ module.exports = (w, app) => {
       check('Live restores live mode', c.every((x) => !x.converted) && (await run(() => document.getElementById('convHint').textContent)) === '', '');
 
       // 5b. Smart time input: loose formats, invalid text, slider, arrow nudge, blur normalization
-      const typed = async (txt) => { await run(setConv, txt, '', ''); return run(() => ({ hint: document.getElementById('convHint').textContent, invalid: document.getElementById('convTime').classList.contains('invalid'), slider: document.getElementById('convSlider').value })); };
+      const typed = async (txt) => { await run(setConv, txt, '', ''); return run(() => ({ hint: document.getElementById('convHint').textContent || (document.getElementById('convError').hidden ? '' : document.getElementById('convError').textContent), invalid: document.getElementById('convTime').classList.contains('invalid'), slider: document.getElementById('convSlider').value })); };
       let r5 = await typed('930');
       check('"930" parses as 09:30', /09:30/.test(r5.hint) && !r5.invalid && r5.slider === '570', JSON.stringify(r5));
       r5 = await typed('3pm');
@@ -699,7 +706,7 @@ module.exports = (w, app) => {
         cells: [...document.querySelectorAll('#planner .plan-row')].map((r) => r.querySelectorAll('.plan-cell').length),
         summary: document.getElementById('plannerSummary').textContent,
         overlaps: document.querySelectorAll('#planner .plan-overlap').length,
-        best: !document.getElementById('plannerBest').hidden, bestBands: document.querySelectorAll('#planner .plan-best').length,
+        find: !document.getElementById('planFind').hidden, bestBands: document.querySelectorAll('#planner .plan-best').length,
       });
       // Independent overlap math: default hours (Mon-Fri 09:00-18:00) for every zone; an hour counts when the
       // whole hour is inside working time. Source is Lisbon on 2026-07-01/04 (UTC+1 all day).
@@ -785,7 +792,7 @@ module.exports = (w, app) => {
       let exp = await run(expectOverlap, zs, '2026-07-01');
       check('planner: Lisbon + London report a full overlap band', exp.n === 9 && ps.summary === expectText(exp, lisLabel) && ps.overlaps >= 1, `${ps.summary} | expected ${expectText(exp, lisLabel)} overlaps=${ps.overlaps}`);
       check('planner setting persisted in main', (await run(async () => window.wc.getSettings())).planner === true, '');
-      check('planner: full overlap shows no best-hours button or band', !ps.best && ps.bestBands === 0, JSON.stringify(ps));
+      check('planner: one Find a time action, no best-hours band', ps.find && ps.bestBands === 0, JSON.stringify(ps));
 
       // 14c. Lisbon + Tokyo (8 h apart): short or no overlap, matching the math; London + Lisbon + Tokyo same
       await run(addFirst, 'Tokyo'); await sleep(150);
@@ -797,10 +804,10 @@ module.exports = (w, app) => {
       ps = await run(planState);
       exp = await run(expectOverlap, ['Europe/Lisbon', 'Asia/Tokyo'], '2026-07-01');
       check('planner: Lisbon + Tokyo default hours consistent with the math', JSON.stringify(ps.rows) === JSON.stringify(['Europe/Lisbon', 'Asia/Tokyo']) && ps.summary === expectText(exp, lisLabel) && (exp.n ? ps.overlaps >= 1 : ps.overlaps === 0), `${ps.summary} | expected ${expectText(exp, lisLabel)} overlaps=${ps.overlaps}`);
-      check('planner: two cities that never work at the same time show no best hours', !ps.best && ps.bestBands === 0, JSON.stringify(ps));
+      check('planner: two cities that never work at the same time show no best-hours band', ps.bestBands === 0, JSON.stringify(ps));
       await run(setConv, '10:00', '2026-07-04', 'Europe/Lisbon'); // Saturday
       ps = await run(planState);
-      check('planner: weekend date reports "No overlap" and no best hours', ps.summary === 'No overlap' && ps.overlaps === 0 && !ps.best && ps.bestBands === 0, JSON.stringify(ps));
+      check('planner: weekend date reports "No overlap" and no best-hours band', ps.summary === 'No overlap' && ps.overlaps === 0 && ps.bestBands === 0, JSON.stringify(ps));
 
       // 14d. Clicking a planner cell enters convert mode at that hour; arrows move the focused hour
       await run(() => document.getElementById('convClear').click()); await sleep(100);
@@ -818,25 +825,38 @@ module.exports = (w, app) => {
       pc = await run(() => ({ time: document.getElementById('convTime').value, focus: document.activeElement && document.activeElement.dataset.h, row: document.activeElement && document.activeElement.closest('.plan-row')?.dataset.zone }));
       check('ArrowUp moves focus to the same hour in the row above', pc.time === '15:00' && pc.focus === '15' && pc.row === 'Europe/Lisbon', JSON.stringify(pc));
 
-      // 14d2. No hour works for everyone: the planner points at the best partial hours (dashed band and a "Best" button)
+      // 14d2. No hour works for everyone: Find a time lists labeled compromises (whole-meeting coverage) and searches ahead
       const five = await setZonesUI(['America/Sao_Paulo', 'Europe/Lisbon', 'America/New_York', 'America/Los_Angeles', 'Asia/Singapore'], ['Sao Paulo', 'Lisbon', 'New York', 'Los Angeles', 'Singapore']);
+      await run(() => document.getElementById('convClear').click()); // the slot picked above is a meeting until cleared
       await run(setConv, '10:00', '2026-09-24', 'America/New_York'); await sleep(150); // a Thursday
-      const bestState = () => {
-        const b = document.getElementById('plannerBest');
-        return { summary: document.getElementById('plannerSummary').textContent, hidden: b.hidden, visible: !b.hidden && b.offsetParent !== null, text: b.textContent,
-          title: b.title, label: b.getAttribute('aria-label'), whole: b.scrollWidth <= b.clientWidth + 1,
+      const findState = () => {
+        const p = document.getElementById('planFindPanel'), b = document.getElementById('planFind');
+        return { open: !p.hidden, expanded: b.getAttribute('aria-expanded'), summary: document.getElementById('plannerSummary').textContent,
+          heads: [...p.querySelectorAll('.find-head')].map((n) => n.textContent), intro: (p.querySelector('.find-intro') || {}).textContent || '',
+          items: [...p.querySelectorAll('.find-item')].map((n) => [n.className.replace('find-item ', ''), n.querySelector('.find-main').textContent, n.querySelector('.find-sub').textContent]),
+          focus: document.activeElement && (document.activeElement.id || document.activeElement.className), time: document.getElementById('convTime').value,
           bands: document.querySelectorAll('#planner .plan-best').length, overlaps: document.querySelectorAll('#planner .plan-overlap').length };
       };
-      let bs = await run(bestState);
-      check('planner, 5 cities and no shared hour (New York, Thu Sep 24 2026): "No overlap" and "Best: 12:00 to 13:00 (New York), 4 of 5 working"', five.length === 5 && bs.summary === 'No overlap'
-        && bs.visible && bs.text === 'Best: 12:00 to 13:00 (New York), 4 of 5 working' && bs.whole, JSON.stringify({ five, bs }));
-      check('planner best hours: the title and name list Singapore 00:00 outside its hours; one dashed band, no overlap band', /Singapore 00:00/.test(bs.title) && bs.label === bs.title && bs.bands === 1 && bs.overlaps === 0, JSON.stringify(bs));
-      await run(() => document.getElementById('plannerBest').click()); await sleep(150);
-      const bc = await run(() => ({ time: document.getElementById('convTime').value, zone: document.getElementById('convZone').value, ny: document.querySelector('.card[data-zone="America/New_York"] .hm').textContent }));
-      check('clicking the best hours converts at 12:00 with New York as the source', bc.time === '12:00' && bc.zone === 'America/New_York' && bc.ny === '12:00', JSON.stringify(bc));
+      await run(() => document.getElementById('planFind').click()); await sleep(100);
+      let bs = await run(findState);
+      check('Find a time, 5 cities and no shared hour (New York, Thu Sep 24 2026): "No overlap", compromises labeled as such, first 12:00 to 13:00 with Singapore named as not fully in working hours; no full match in 14 days', five.length === 5 && bs.summary === 'No overlap' && bs.open && bs.expanded === 'true'
+        && bs.heads[0] === 'Compromises: not everyone is in working hours' && bs.items[0][0] === 'partial' && bs.items[0][1] === '12:00 to 13:00 (New York)'
+        && bs.items[0][2] === '4 of 5 in working hours for the whole meeting. Outside working hours for some or all of it: Singapore' && bs.items.every((i) => i[0] === 'partial')
+        && bs.heads.includes('Nothing works for everyone in the next 14 days') && /^For a 1 h meeting on Thu, Sep 24, times in New York$/.test(bs.intro) && bs.time === '10:00' && bs.focus === 'find-item partial' && bs.bands === 0, JSON.stringify(bs));
+      await run(() => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))); await sleep(50);
+      bs = await run(findState);
+      check('Find a time: Escape closes the panel and returns focus to the button; nothing was selected', !bs.open && bs.expanded === 'false' && bs.focus === 'planFind' && bs.time === '10:00', JSON.stringify(bs));
+      await run(() => document.getElementById('planFind').click()); await sleep(100);
+      await run(() => document.querySelector('#planFindPanel .find-item').click()); await sleep(150);
+      const bc = await run(() => ({ time: document.getElementById('convTime').value, zone: document.getElementById('convZone').value, ny: document.querySelector('.card[data-zone="America/New_York"] .hm').textContent,
+        sel: document.getElementById('planSel').textContent, m: window.WCConverter && window.WCConverter.state ? window.WCConverter.state().meeting : null, focus: document.activeElement && document.activeElement.id }));
+      check('picking a compromise commits 12:00 to 13:00 New York as the meeting and converts there', bc.time === '12:00' && bc.zone === 'America/New_York' && bc.ny === '12:00' && bc.sel === 'Thu, Sep 24, 12:00 to 13:00 (New York)' && bc.focus === 'planFind', JSON.stringify(bc));
+      await run(() => document.getElementById('convClear').click());
       await run(setConv, '10:00', '2026-07-04', 'America/New_York'); await sleep(100); // Saturday
-      bs = await run(bestState);
-      check('planner best hours hidden on a weekend', bs.hidden && bs.bands === 0 && bs.summary === 'No overlap', JSON.stringify(bs));
+      await run(() => document.getElementById('planFind').click()); await sleep(100);
+      bs = await run(findState);
+      check('Find a time on a weekend: says no one is in working hours, offers no compromise and no false match', bs.heads[0] === 'No one is in working hours for the whole meeting on this date' && bs.items.length === 0 && bs.summary === 'No overlap', JSON.stringify(bs));
+      await run(() => document.getElementById('planFind').click());
       await setZonesUI(['Europe/Lisbon', 'Asia/Tokyo'], ['Lisbon', 'Tokyo']);
       await run(() => document.getElementById('btnPlanner').click()); await sleep(150);
       ps = await run(planState);
@@ -1246,29 +1266,29 @@ module.exports = (w, app) => {
       const kf = await run(() => { const a = document.getElementById('kofiLink'); return { exists: !!a, visible: !!a && !a.hidden && a.offsetParent !== null, href: a && a.href, text: a && a.textContent.trim(), target: a && a.target }; });
       check('Ko-fi link shown in Settings when store=false', kf.visible && kf.href === 'https://ko-fi.com/joaothecarvalho' && kf.text === 'Support on Ko-fi' && kf.target === '_blank', JSON.stringify(kf));
       check('Ko-fi item in the tray menu when store=false', trayKofi() === true, String(trayKofi()));
-      // 16i2. About row: Website, Report a problem (bug form with this version and build), Check for updates; each opens
-      // the browser through openExternalSafe (hosts already allowed), with no tracking parameters.
+      // 16i2. About row: Website, Report a problem (bug form with this version and build); each opens the browser through
+      // openExternalSafe (hosts already allowed), with no tracking parameters. Check for updates is the Updates group (16u).
       const kofiInHtml = /<a id="kofiLink"[^>]*\shidden[\s>]/.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'renderer', 'index.html'), 'utf8'));
       check('Ko-fi link is hidden in the HTML until main says this is not the Store build', kofiInHtml, String(kofiInHtml));
       const about = await run(() => {
         const g = (id) => { const a = document.getElementById(id); return { href: a.getAttribute('href'), text: a.textContent.trim(), visible: !a.hidden && a.offsetParent !== null, target: a.target }; };
-        return { site: g('siteLink'), report: g('reportLink'), updates: g('updatesLink') };
+        return { site: g('siteLink'), report: g('reportLink'), updatesLink: !!document.getElementById('updatesLink') };
       });
       const wantReport = `https://github.com/joaoCarvalho1000/open-world-clock/issues/new?template=bug.yml&build=Installer&version=v${s0.version}`;
-      check('About row (store=false): exact hrefs, report link carries build and version, all three shown', about.site.href === 'https://openworldclock.com/' && about.report.href === wantReport
-        && about.updates.href === 'https://openworldclock.com/download#new' && about.site.visible && about.report.visible && about.updates.visible
-        && about.site.text === 'Website' && about.report.text === 'Report a problem' && about.updates.text === 'Check for updates'
-        && [about.site, about.report, about.updates].every((a) => a.target === '_blank' && !/utm_|ref=/.test(a.href)), JSON.stringify({ about, wantReport }));
+      check('About row (store=false): exact hrefs, report link carries build and version, both shown, no download-page link posing as a check', about.site.href === 'https://openworldclock.com/' && about.report.href === wantReport
+        && about.site.visible && about.report.visible && !about.updatesLink
+        && about.site.text === 'Website' && about.report.text === 'Report a problem'
+        && [about.site, about.report].every((a) => a.target === '_blank' && !/utm_|ref=/.test(a.href)), JSON.stringify({ about, wantReport }));
       {
         const { shell } = require('electron');
         const openedAbout = [], realOpenA = shell.openExternal;
         let pA = false;
         try { shell.openExternal = async (u) => { openedAbout.push(u); }; pA = shell.openExternal !== realOpenA; } catch { pA = false; }
         if (pA) {
-          await run(() => { for (const id of ['siteLink', 'reportLink', 'updatesLink']) document.getElementById(id).click(); });
+          await run(() => { for (const id of ['siteLink', 'reportLink']) document.getElementById(id).click(); });
           await sleep(250);
           shell.openExternal = realOpenA;
-          check('About links open in the browser through openExternal with their exact URLs', JSON.stringify(openedAbout) === JSON.stringify([about.site.href, about.report.href, about.updates.href]), JSON.stringify(openedAbout));
+          check('About links open in the browser through openExternal with their exact URLs', JSON.stringify(openedAbout) === JSON.stringify([about.site.href, about.report.href]), JSON.stringify(openedAbout));
         } else out.push('SKIP About link openExternal check (shell.openExternal is not patchable)');
       }
       const aboutFit = [];
@@ -1276,7 +1296,7 @@ module.exports = (w, app) => {
         await run((l) => { const o = document.getElementById('optLanguage'); o.value = l; o.dispatchEvent(new Event('change')); }, lang); await sleep(150);
         aboutFit.push(await run((l) => {
           const p = document.getElementById('settingsPanel').getBoundingClientRect();
-          const ids = ['siteLink', 'reportLink', 'updatesLink', 'kofiLink'];
+          const ids = ['siteLink', 'reportLink', 'kofiLink'];
           const bad = ids.filter((id) => { const r = document.getElementById(id).getBoundingClientRect(); return r.width === 0 || r.left < p.left || r.right > p.right + 0.5; });
           return { l, bad, w: Math.round(p.width) };
         }, lang));
@@ -1300,7 +1320,7 @@ module.exports = (w, app) => {
         const toggleSeconds = () => run(() => { const o = document.getElementById('optSeconds'); o.checked = !o.checked; o.dispatchEvent(new Event('change')); });
         await toggleSeconds(); await sleep(200); await toggleSeconds(); await sleep(250);
         const kfStore = await run(() => ({ hidden: document.getElementById('kofiLink').hidden, visible: document.getElementById('kofiLink').offsetParent !== null }));
-        const aboutStore = await run(() => { const v = (id) => { const a = document.getElementById(id); return !a.hidden && a.offsetParent !== null; }; return { site: v('siteLink'), report: v('reportLink'), updates: v('updatesLink'), href: document.getElementById('reportLink').getAttribute('href') }; });
+        const aboutStore = await run(() => { const v = (id) => { const a = document.getElementById(id); return !a.hidden && a.offsetParent !== null; }; return { site: v('siteLink'), report: v('reportLink'), href: document.getElementById('reportLink').getAttribute('href') }; });
         const trayStore = trayKofi();
         const loginStore = await run(loginUi);
         const loginSet = await run(async () => (await window.wc.setSettings({ launchAtLogin: true })).launchAtLogin);
@@ -1327,11 +1347,231 @@ module.exports = (w, app) => {
         check('launch at login back to store=false: switch visible and enabled, note and button hidden', !loginBack.disabled && !loginBack.hidden && !loginBack.note && !loginBack.open && loginBack.desc === null, JSON.stringify(loginBack));
         if (extPatched) check('"Open Startup apps" opens ms-settings:startupapps in the Store build only, and main never opens Ko-fi there (window.open refused)', JSON.stringify(startupOpened) === JSON.stringify(['ms-settings:startupapps']), JSON.stringify(startupOpened));
         else out.push('SKIP Open Startup apps check (shell.openExternal is not patchable)');
-        check('About row (store=true): Website and Report a problem shown, Check for updates hidden, report link says Microsoft Store', aboutStore.site && aboutStore.report && !aboutStore.updates && /[?&]build=Microsoft\+Store(&|$)/.test(aboutStore.href), JSON.stringify(aboutStore));
+        check('About row (store=true): Website and Report a problem shown, report link says Microsoft Store', aboutStore.site && aboutStore.report && /[?&]build=Microsoft\+Store(&|$)/.test(aboutStore.href), JSON.stringify(aboutStore));
       } else {
         out.push('SKIP Ko-fi and launch at login store=true checks (process.windowsStore not writable)');
       }
       await run(() => document.getElementById('panelClose').click()); await sleep(250);
+
+      // 16u. Updates group (src/update-controller.js) with injected backends: fake discovery, fake updater, fake timers.
+      // Never the network, a real feed or an installer. Unpackaged runs are channel 'none' (group hidden) by default.
+      {
+        const T = global.__wcTest, { shell, ipcMain } = require('electron');
+        const updUi = () => {
+          const g = document.getElementById('updGroup'), vis = (id) => { const n = document.getElementById(id); return !n.hidden && n.offsetParent !== null; };
+          const a = document.getElementById('updAction'), b = document.getElementById('updSecondary'), c = document.getElementById('optUpdAuto');
+          const p = document.getElementById('settingsPanel').getBoundingClientRect();
+          const inside = [...g.querySelectorAll('button, label, p')].filter((n) => !n.hidden && n.offsetParent).every((n) => { const r = n.getBoundingClientRect(); return r.left >= p.left - 0.5 && r.right <= p.right + 0.5 && n.scrollWidth <= n.clientWidth + 1; });
+          return { shown: !g.hidden && g.offsetParent !== null, status: document.getElementById('updStatus').textContent, role: document.getElementById('updStatus').getAttribute('role'),
+            action: vis('updAction') ? a.textContent : null, actionDisabled: a.getAttribute('aria-disabled'), second: vis('updSecondary') ? b.textContent : null,
+            auto: vis('updAutoRow') ? { label: document.getElementById('updAutoLabel').textContent, help: document.getElementById('updAutoHelp').textContent, checked: c.checked, desc: c.getAttribute('aria-describedby') } : null,
+            progress: vis('updProgress') ? { value: +document.getElementById('updProgress').value, vt: document.getElementById('updProgress').getAttribute('aria-valuetext'), name: (document.getElementById(document.getElementById('updProgress').getAttribute('aria-labelledby') || '') || {}).textContent || '' } : null, inside, focus: document.activeElement && document.activeElement.id };
+        };
+        const click = (id) => run((id) => document.getElementById(id).click(), id);
+        // WC_UPD_SHOTS=<dir>: screenshots of the mocked states for review (the Updates group scrolled into view)
+        const shot = async (name) => {
+          if (!process.env.WC_UPD_SHOTS) return;
+          await run(() => document.getElementById('updGroup').scrollIntoView({ block: 'center' })); await sleep(120);
+          fs.mkdirSync(process.env.WC_UPD_SHOTS, { recursive: true });
+          fs.writeFileSync(path.join(process.env.WC_UPD_SHOTS, name + '.png'), (await w.webContents.capturePage()).toPNG());
+        };
+        await run(() => document.getElementById('btnSettings').click()); await sleep(200);
+        const dev = await run(updUi);
+        const devState = await run(() => window.wc.updates.get());
+        check('updates: an unpackaged run is channel none and shows no Updates group', !dev.shown && devState && devState.channel === 'none', JSON.stringify({ dev, devState }));
+
+        // fake timers: record what main schedules, fire it by hand
+        const mkTimers = () => { const q = new Map(); let id = 0; return { q, setTimeout: (fn, ms) => { q.set(++id, { fn, ms }); return id; }, clearTimeout: (i) => q.delete(i), fire: () => { const [k, v] = [...q.entries()][0] || []; if (k) { q.delete(k); v.fn(); } } }; };
+        const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
+
+        // discovery (unsigned installer, portable): version number only, automatic checking off by default
+        // always newer than this build, so the check stays "available" after a version bump
+        const newer = app.getVersion().replace(/^(\d+)\.(\d+)\..*$/, (_, ma, mi) => `${ma}.${+mi + 1}.0`);
+        let discoverCalls = 0, answer = () => Promise.resolve(newer);
+        const dt = mkTimers();
+        T.updateSettings({ autoCheck: false });
+        T.startUpdates({ channel: 'discovery', timers: dt, discover: () => { discoverCalls++; return answer(); } });
+        await sleep(150);
+        const d0 = await run(updUi);
+        await shot('discovery-idle-en');
+        check('updates (discovery): Check for updates, "Automatically check" off by default, nothing requested or scheduled at start',
+          d0.shown && d0.role === 'status' && d0.action === 'Check for updates' && /asks openworldclock\.com for the latest version number/.test(d0.status)
+          && d0.auto && d0.auto.label === 'Automatically check for updates' && !d0.auto.checked && /Off by default/.test(d0.auto.help) && d0.auto.desc === 'updAutoHelp'
+          && discoverCalls === 0 && dt.q.size === 0 && d0.inside, JSON.stringify({ d0, discoverCalls, timers: dt.q.size }));
+        await run(() => document.getElementById('updAction').focus());
+        await click('updAction'); await sleep(150);
+        const d1 = await run(updUi);
+        await shot('discovery-available-en');
+        check('updates (discovery): a check finds a newer version, says this copy does not update itself, offers the download page; focus stays on the action',
+          discoverCalls === 1 && d1.status.startsWith(`Version ${newer} is available. This copy doesn’t update itself`) && d1.action === 'Open download page' && d1.second === 'Check for updates' && d1.focus === 'updAction', JSON.stringify({ d1, discoverCalls }));
+        const opened = [], realOpen = shell.openExternal;
+        let patched = false;
+        try { shell.openExternal = async (u) => { opened.push(u); }; patched = shell.openExternal !== realOpen; } catch { patched = false; }
+        if (patched) {
+          await click('updAction'); await sleep(150);
+          shell.openExternal = realOpen;
+          check('updates (discovery): Open download page opens only the fixed page (the metadata never supplies a URL)', JSON.stringify(opened) === JSON.stringify(['https://openworldclock.com/download#new']), JSON.stringify(opened));
+        } else out.push('SKIP updates download page openExternal check (shell.openExternal is not patchable)');
+        // a quick second Check shows the last result (no new request); an error never claims "latest"; Try again works
+        await click('updSecondary'); await sleep(100);
+        check('updates (discovery): a second Check within 10 s makes no new request', discoverCalls === 1, String(discoverCalls));
+        T.startUpdates({ channel: 'discovery', timers: dt, discover: () => { discoverCalls++; return answer(); } });
+        answer = () => Promise.reject(Object.assign(new Error('feed'), { kind: 'feed' }));
+        const slow = deferred();
+        const answerSlow = () => slow.promise;
+        answer = answerSlow;
+        await run(() => { document.getElementById('updAction').click(); document.getElementById('updAction').click(); }); await sleep(100);
+        const dChecking = await run(updUi);
+        slow.reject(Object.assign(new Error('feed'), { kind: 'feed' })); await sleep(150);
+        const dErr = await run(updUi);
+        await shot('discovery-error-en');
+        check('updates (discovery): two clicks make one request; while checking the action is aria-disabled; a failed check is not "up to date"',
+          discoverCalls === 2 && dChecking.status === 'Checking for updates…' && dChecking.actionDisabled === 'true'
+          && /isn’t available right now, so you may not be up to date/.test(dErr.status) && !/latest/.test(dErr.status) && dErr.action === 'Try again' && dErr.second === 'Open download page',
+          JSON.stringify({ discoverCalls, dChecking, dErr }));
+        answer = () => Promise.resolve(app.getVersion());
+        await click('updAction'); await sleep(150);
+        const dCur = await run(updUi);
+        await shot('discovery-current-en');
+        check('updates (discovery): Try again; the same version says which version this is and which is listed, with the date and time', discoverCalls === 3 && /^You have version (\d+\.\d+\.\d+)\. The latest version listed on openworldclock\.com is \1\. Checked [A-Z][a-z]{2} \d{1,2}, \d{1,2}:\d\d/.test(dCur.status), JSON.stringify({ dCur, discoverCalls }));
+        // the preference: on schedules one check 10 s out, off clears it; untrusted values are refused; it persists
+        await click('optUpdAuto'); await sleep(200);
+        const onSched = [...dt.q.values()].map((v) => v.ms);
+        const persisted = await waitFor(() => { try { return JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'settings.json'), 'utf8')).autoCheck === true; } catch { return false; } }, 3000);
+        const reread = await run(async () => (await window.wc.getSettings()).autoCheck);
+        check('updates (discovery): turning automatic checks on saves it and schedules the first check 10 s out', T.settings().autoCheck === true && persisted && reread === true && JSON.stringify(onSched) === '[10000]', JSON.stringify({ onSched, persisted, reread }));
+        dt.fire(); await sleep(150);
+        check('updates (discovery): the scheduled check runs and schedules the next one a day later', discoverCalls === 4 && JSON.stringify([...dt.q.values()].map((v) => v.ms)) === JSON.stringify([86400000]), JSON.stringify({ discoverCalls, q: [...dt.q.values()].map((v) => v.ms) }));
+        await click('optUpdAuto'); await sleep(200);
+        const badPref = await run(async () => { const r = await window.wc.setSettings({ autoCheck: 'true', autoUpdate: 1, updNotified: 'x' }); return [r.autoCheck, r.autoUpdate, 'updNotified' in r]; });
+        check('updates (discovery): off clears the schedule; non-boolean values and main-owned keys are refused', dt.q.size === 0 && T.settings().autoCheck === false && JSON.stringify(badPref) === JSON.stringify([false, true, false]), JSON.stringify({ q: dt.q.size, badPref }));
+        // nothing crosses the bridge but the request: arguments are ignored, untrusted senders get nothing
+        const before = discoverCalls;
+        const argCheck = await run(async () => { const s = await window.wc.updates.check('https://evil.example/x.exe', { provider: 'github' }); return s && s.channel; });
+        // the handlers themselves, called with senders that are not the app page (no frame; another frame and URL)
+        const handlers = ipcMain._invokeHandlers;
+        const reachable = !!(handlers && typeof handlers.get === 'function' && handlers.get('updates:check'));
+        let untrusted = null;
+        if (reachable) {
+          const callsBefore = discoverCalls;
+          const senders = [{ senderFrame: null, sender: {} }, { senderFrame: { url: 'https://evil.example/' }, sender: {} }];
+          const names = ['updates:get', 'updates:check', 'updates:download', 'updates:cancel', 'updates:install', 'updates:openDownloadPage'];
+          const res = [];
+          for (const ev of senders) for (const c of names) res.push([c, await Promise.resolve(handlers.get(c)(ev, 'https://evil.example/x.exe'))]);
+          untrusted = { rejected: res.every(([, r]) => r === null || r === false), noRequest: discoverCalls === callsBefore, res };
+        }
+        check('updates IPC: page arguments are ignored (preload passes none); senders that are not the app page get nothing for all six handlers (exercised, not skipped)',
+          argCheck === 'discovery' && reachable && untrusted.rejected && untrusted.noRequest && discoverCalls <= before + 1, JSON.stringify({ argCheck, reachable, untrusted }));
+
+        // signed installer: Automatic updates on by default; manual check is metadata only; explicit download and restart
+        const fake = { checks: [], downloads: [], installs: 0 };
+        fake.check = () => { const d = deferred(); fake.checks.push(d); return d.promise; };
+        fake.download = (onProgress) => { const d = deferred(), job = { ...d, onProgress, cancelled: false }; job.cancel = () => { job.cancelled = true; d.reject(Object.assign(new Error('cancelled'), { name: 'CancellationError' })); }; fake.downloads.push(job); return { promise: d.promise, cancel: job.cancel }; };
+        fake.install = () => { fake.installs++; };
+        const st = mkTimers();
+        T.updateSettings({ autoUpdate: true });
+        T.startUpdates({ channel: 'signed', updater: fake, timers: st, notify: () => {} });
+        await sleep(150);
+        const s0 = await run(updUi);
+        check('updates (signed): "Automatic updates" on by default, first check scheduled 10 s out, help says installs only on Restart and install',
+          s0.shown && s0.action === 'Check for updates' && s0.auto && s0.auto.label === 'Automatic updates' && s0.auto.checked
+          && /installs only when you choose Restart and install/.test(s0.auto.help) && /never restarts by itself/.test(s0.auto.help) && !/when you quit/.test(s0.auto.help)
+          && JSON.stringify([...st.q.values()].map((v) => v.ms)) === '[10000]', JSON.stringify({ s0, q: [...st.q.values()].map((v) => v.ms) }));
+        await click('updAction'); await sleep(50);
+        fake.checks[0].resolve({ available: true, version: '1.4.0' }); await sleep(150);
+        const s1 = await run(updUi);
+        check('updates (signed): a manual check reads the metadata only: available, Download update, nothing downloaded', s1.status === 'Version 1.4.0 is available.' && s1.action === 'Download update' && fake.downloads.length === 0, JSON.stringify({ s1, downloads: fake.downloads.length }));
+        await click('updAction'); await sleep(50);
+        fake.downloads[0].onProgress(47.5); await sleep(150);
+        const s2 = await run(updUi);
+        // untrusted senders in actionable states: cancel while downloading and install while ready do nothing
+        const unCancel = []; for (const ev of [{ senderFrame: null, sender: {} }, { senderFrame: { url: 'https://evil.example/' }, sender: {} }]) unCancel.push(await Promise.resolve(handlers.get('updates:cancel')(ev)));
+        await sleep(100); const s2b = await run(updUi);
+        check('updates IPC: untrusted Cancel during a download is refused and the download keeps running', unCancel.every((r) => r === null || r === false) && !fake.downloads[0].cancelled && s2b.action === 'Cancel download', JSON.stringify({ unCancel, cancelled: fake.downloads[0].cancelled, s2b }));
+        await shot('signed-downloading-en');
+        fake.downloads[0].resolve([]); await sleep(150);
+        const s3 = await run(updUi);
+        const unInstall = []; for (const ev of [{ senderFrame: null, sender: {} }, { senderFrame: { url: 'https://evil.example/' }, sender: {} }]) unInstall.push(await Promise.resolve(handlers.get('updates:install')(ev)));
+        await sleep(100); const s3b = await run(updUi);
+        check('updates IPC: untrusted Restart and install while ready is refused and installs nothing', unInstall.every((r) => r === null || r === false) && fake.installs === 0 && s3b.action === 'Restart and install', JSON.stringify({ unInstall, installs: fake.installs, s3b }));
+        await shot('signed-ready-en');
+        check('updates (signed): downloading shows named progress and Cancel; ready says it installs only on Restart and install; nothing installed yet',
+          s2.action === 'Cancel download' && s2.progress && s2.progress.value === 47 && s2.progress.vt === '47%' && /^Downloading version 1\.4\.0/.test(s2.status) && s2.progress.name === s2.status
+          && s3.action === 'Restart and install' && /installs only when you choose Restart and install/.test(s3.status) && !s3.progress && fake.installs === 0, JSON.stringify({ s2, s3 }));
+        await click('updAction'); await sleep(100);
+        check('updates (signed): Restart and install asks the (fake) updater to install once; nothing real runs', fake.installs === 1, String(fake.installs));
+        // the updater reports that installing failed (as BaseUpdater does, through its error event): still ready, says so
+        fake.install = (onError) => { fake.installs++; onError(new Error('No update filepath provided')); return false; };
+        await click('updAction'); await sleep(150);
+        const sFail = await run(updUi);
+        await shot('signed-install-error-en');
+        check('updates (signed): a failed install says it was not installed, keeps Restart and install and offers the download page',
+          /^Version 1\.4\.0 could not be installed, and nothing was changed/.test(sFail.status) && sFail.action === 'Restart and install' && sFail.second === 'Open download page' && fake.installs === 2, JSON.stringify(sFail));
+        fake.install = () => { fake.installs++; };
+        // a background download is cancelled when Automatic updates is turned off
+        T.startUpdates({ channel: 'signed', updater: fake, timers: st, notify: () => {} });
+        st.fire(); await sleep(50);
+        fake.checks.at(-1).resolve({ available: true, version: '1.4.0' }); await sleep(150);
+        const bg = await run(updUi);
+        await click('optUpdAuto'); await sleep(200);
+        const off = await run(updUi);
+        check('updates (signed): a scheduled check downloads in the background; turning Automatic updates off cancels it and stops the schedule',
+          bg.action === 'Cancel download' && fake.downloads.at(-1).cancelled && off.action === 'Download update' && !off.auto.checked && T.settings().autoUpdate === false && st.q.size === 0,
+          JSON.stringify({ bg, off, q: st.q.size }));
+        // the trusted counterpart: Cancel download from the page stops a user download
+        await click('updAction'); await sleep(100);
+        const userDl = fake.downloads.at(-1), dl1 = await run(updUi);
+        await click('updAction'); await sleep(150);
+        const dl2 = await run(updUi);
+        check('updates IPC: Cancel download from the app page cancels the running download', dl1.action === 'Cancel download' && userDl.cancelled && dl2.action === 'Download update', JSON.stringify({ dl1, dl2, cancelled: userDl.cancelled }));
+        // a verification failure is reported as such, with Try again
+        await click('updAction'); await sleep(50);
+        fake.downloads.at(-1).reject(new Error('New version 1.4.0 is not signed by the application owner')); await sleep(150);
+        const ver = await run(updUi);
+        check('updates (signed): a download that fails verification says so, never installs, and offers Try again', /failed verification and was not installed/.test(ver.status) && ver.action === 'Try again' && fake.installs === 2, JSON.stringify(ver));
+
+        // Store and a signed copy whose updater configuration failed the publisher check
+        T.startUpdates({ channel: 'store' }); await sleep(150);
+        const so = await run(updUi);
+        T.startUpdates({ channel: 'disabled' }); await sleep(150);
+        const dis = await run(updUi);
+        check('updates (Store): the Store keeps it up to date, no check, no toggle', so.shown && so.status === 'The Microsoft Store keeps this app up to date.' && !so.action && !so.auto, JSON.stringify(so));
+        check('updates (disabled copy): says updates are off, offers the download page only', dis.status === 'Updates are turned off for this copy. Get new versions from the download page.' && dis.action === 'Open download page' && !dis.auto, JSON.stringify(dis));
+        // languages: the group fits the panel in pt and es too
+        T.startUpdates({ channel: 'discovery', timers: mkTimers(), discover: () => Promise.reject(Object.assign(new Error('n'), { kind: 'network' })) });
+        await sleep(100); await click('updAction'); await sleep(150);
+        const langs = [];
+        for (const l of ['pt', 'es', 'en']) { await run((l) => { const o = document.getElementById('optLanguage'); o.value = l; o.dispatchEvent(new Event('change')); }, l); await sleep(150); langs.push({ l, ...(await run(updUi)) }); if (l !== 'en') await shot(`discovery-error-${l}`); }
+        check('updates: localized (pt, es) and inside the settings panel; a network error never claims up to date',
+          /^Não foi possível acessar/.test(langs[0].status) && langs[0].action === 'Tentar novamente' && langs[0].auto.label === 'Procurar atualizações automaticamente'
+          && /^No se pudo conectar/.test(langs[1].status) && langs[1].action === 'Reintentar' && /you may not be up to date/.test(langs[2].status) && langs.every((x) => x.inside),
+          JSON.stringify(langs.map((x) => ({ l: x.l, status: x.status, action: x.action, inside: x.inside }))));
+        // light theme, a narrow window and Windows high contrast (forced colors): the group still fits the panel
+        {
+          const b0 = w.getBounds(), theme0 = T.settings().theme;
+          T.updateSettings({ theme: 'light' }); await sleep(250);
+          await shot('discovery-error-en-light');
+          w.setBounds({ ...b0, width: 320, height: 640 }); await sleep(400);
+          const narrow = await run(updUi);
+          await shot('discovery-error-en-light-320');
+          let forced = null;
+          const dbgU = w.webContents.debugger;
+          try {
+            if (!dbgU.isAttached()) dbgU.attach('1.3');
+            await dbgU.sendCommand('Emulation.setEmulatedMedia', { features: [{ name: 'forced-colors', value: 'active' }, { name: 'prefers-color-scheme', value: 'dark' }] });
+            await sleep(200);
+            forced = await run(updUi);
+            await shot('discovery-error-en-forced-colors-320');
+            await dbgU.sendCommand('Emulation.setEmulatedMedia', { features: [] });
+            dbgU.detach();
+          } catch (e) { out.push('SKIP updates forced-colors screenshot (' + e.message + ')'); }
+          T.updateSettings({ theme: theme0 }); w.setBounds(b0); await sleep(300);
+          check('updates: at 320 px wide (light) and in forced colors the group is inside the panel, nothing clipped', narrow.inside && narrow.action === 'Try again' && (!forced || forced.inside), JSON.stringify({ narrow: narrow.inside, forced: forced && forced.inside }));
+        }
+        T.updateSettings({ autoUpdate: true, autoCheck: false });
+        T.startUpdates(); await sleep(100); // back to this run's real channel ('none')
+        await run(() => document.getElementById('panelClose').click()); await sleep(200);
+      }
 
       // 18. Round 2: 12-hour digits, top bar widths, time field, going back to now, typed places, keyboard
       w.setBounds({ x: 40, y: 40, width: 1160, height: 250 }); await sleep(250);
@@ -1493,7 +1733,7 @@ module.exports = (w, app) => {
         const t = document.getElementById('convTime'); t.value = txt; t.dispatchEvent(new Event('input'));
         const toast = document.getElementById('convToast'), src = document.querySelector('.card.source');
         return { zone: document.getElementById('convZone').value, source: src && src.dataset.zone, hm: src && src.querySelector('.hm').textContent, invalid: t.classList.contains('invalid'),
-          toast: toast.hidden ? '' : toast.textContent, cards: document.querySelectorAll('.card[data-zone]').length };
+          toast: toast.hidden ? (document.getElementById('convError').hidden ? '' : document.getElementById('convError').textContent) : toast.textContent, cards: document.querySelectorAll('.card[data-zone]').length };
       }, txt);
       let tp = await typePlace('3pm tokyo');
       const tpBlur = await run(() => { const t = document.getElementById('convTime'); t.dispatchEvent(new Event('blur')); return t.value; });
@@ -1885,14 +2125,32 @@ module.exports = (w, app) => {
       const icsUn = icsH ? await icsH(untrustedEvt, { startMs: epoch, endMs: epoch + 3600000, title: 'x', description: '' }) : null;
       const icsBad = icsH ? await icsH({ senderFrame: w.webContents.mainFrame, sender: w.webContents }, { startMs: epoch, endMs: epoch, title: 'x', description: '' }) : null;
       global.__wcTest.stubSaveDialog(null);
-      check('Save calendar invite writes one VEVENT: DTSTART 20260701T080000Z, DTEND an hour later, CRLF lines, then says "Invite saved"', !!icsText && icsText.startsWith('BEGIN:VCALENDAR\r\n')
-        && (icsText.match(/BEGIN:VEVENT/g) || []).length === 1 && icsText.includes('\r\nDTSTART:20260701T080000Z\r\n') && icsText.includes('\r\nDTEND:20260701T090000Z\r\n') && icsText.includes('SUMMARY:Meeting') && icsSaid === 'Invite saved',
+      check('Save calendar invite writes one VEVENT: DTSTART 20260701T080000Z, DTEND an hour later, CRLF lines, then says "Calendar file saved"', !!icsText && icsText.startsWith('BEGIN:VCALENDAR\r\n')
+        && (icsText.match(/BEGIN:VEVENT/g) || []).length === 1 && icsText.includes('\r\nDTSTART:20260701T080000Z\r\n') && icsText.includes('\r\nDTEND:20260701T090000Z\r\n') && icsText.includes('SUMMARY:Meeting') && icsSaid === 'Calendar file saved',
         JSON.stringify({ icsText: icsText && icsText.slice(0, 300), icsSaid }));
       if (icsH) check('ics:save refuses untrusted senders and an end that is not after the start', icsUn === false && icsBad === false, JSON.stringify({ icsUn, icsBad }));
+      // canceled, failed and unrepresentable: each said as it is; no file is written for a canceled dialog
+      if (icsH) {
+        const trustedIcs = { senderFrame: w.webContents.mainFrame, sender: w.webContents };
+        const icsMs = await icsH(trustedIcs, { startMs: epoch + 500, endMs: epoch + 3600000, title: 'x', description: '' });
+        const icsNeg = await icsH(trustedIcs, { startMs: -3600000, endMs: 0, title: 'x', description: '' });
+        check('ics:save refuses times it cannot write exactly (milliseconds, before 1970)', icsMs === false && icsNeg === false, JSON.stringify({ icsMs, icsNeg }));
+      }
+      try { fs.unlinkSync(icsFile); } catch { /* gone */ }
+      global.__wcTest.stubSaveDialog(async () => ({ canceled: true }));
+      await run(() => { document.getElementById('btnCopy').click(); document.querySelector('#copyMenu [data-copy="ics"]').click(); });
+      await sleep(300);
+      const icsCancel = { said: await run(() => document.getElementById('convHint').textContent), file: fs.existsSync(icsFile) };
+      global.__wcTest.stubSaveDialog(async () => { throw new Error('disk full'); });
+      await run(() => { document.getElementById('btnCopy').click(); document.querySelector('#copyMenu [data-copy="ics"]').click(); });
+      await sleep(300);
+      const icsFail = await run(() => document.getElementById('convHint').textContent);
+      global.__wcTest.stubSaveDialog(null);
+      check('Calendar file: a canceled dialog says "not saved" and writes nothing; a failed write says it could not', icsCancel.said === 'Calendar file not saved' && !icsCancel.file && icsFail === 'Couldn’t create the calendar file', JSON.stringify({ icsCancel, icsFail }));
       await run(() => document.getElementById('convClear').click()); await sleep(100);
 
       // 20h. Planner slot: Shift+Right twice from New York 12:00 selects 12:00 to 15:00; Copy slot lists each city's own
-      // hours; Best selects its whole run; another date clears it; a pointer drag over three cells gives the same slot.
+      // hours; another date moves it; a pointer drag over three cells gives the same slot.
       await run(setConv, '10:00', '2026-09-24', 'America/New_York'); await sleep(150);
       await run(() => document.getElementById('btnPlanner').click()); await sleep(400);
       const slot = await run(() => {
@@ -1910,7 +2168,25 @@ module.exports = (w, app) => {
       const slotClip = await waitFor(async () => (await clipboard.readText()) || null, 1500);
       const slotLines = (slotClip || '').split('\n');
       check('Copy slot: the slot, then one line per city with its own start and end (Lisbon 17:00 to 20:00, Singapore 00:00 to 03:00 the next day)', slotLines[0] === slot.text
-        && slotLines.includes('Lisbon: 17:00 to 20:00, Thu, Sep 24') && slotLines.includes('New York: 12:00 to 15:00, Thu, Sep 24') && slotLines.some((l) => /^Singapore: 00:00 to 03:00, Fri, Sep 25$/.test(l)), JSON.stringify(slotLines));
+        && slotLines.includes('Lisbon: 17:00 to 20:00, Thu, Sep 24') && slotLines.includes('New York: 12:00 to 15:00, Thu, Sep 24') && slotLines.some((l) => /^Singapore: 00:00 to 03:00, Fri, Sep 25$/.test(l))
+        && slotLines[slotLines.length - 1] === 'UTC: 2026-09-24T16:00:00Z to 2026-09-24T19:00:00Z', JSON.stringify(slotLines));
+      // Copy link (Windows app): the public home page with the exact version 2 meeting; the same interval as the calendar file
+      await clipboard.writeText('');
+      await run(() => document.getElementById('planLink').click());
+      const linkClip = await waitFor(async () => (await clipboard.readText()) || null, 1500);
+      const s16 = Date.UTC(2026, 8, 24, 16) / 1000;
+      check('Copy link: https://openworldclock.com/#v=2 with the meeting\'s exact start and end, cities only (no labels or hours)', linkClip === `https://openworldclock.com/#v=2&c=${(await run(() => window.wc.getSettings())).zones.join(',')}&z=America/New_York&s=${s16}&e=${s16 + 3 * 3600}`, linkClip);
+      const slotIcsFile = path.join(app.getPath('userData'), 'meeting-slot.ics');
+      global.__wcTest.stubSaveDialog(async () => ({ canceled: false, filePath: slotIcsFile }));
+      await run(() => document.getElementById('planIcs').click());
+      const slotIcs = await waitFor(() => { try { return fs.readFileSync(slotIcsFile, 'utf8'); } catch { return null; } }, 3000);
+      global.__wcTest.stubSaveDialog(async () => { throw new Error('denied'); });
+      await run(() => document.getElementById('planIcs').click());
+      await sleep(2200); // past the short status
+      const slotFail = await run(() => { const n = document.getElementById('planStatus'); return n.hidden ? '' : n.textContent; });
+      global.__wcTest.stubSaveDialog(null);
+      check('planner Calendar file: the meeting\'s exact interval; a failure stays said beside the meeting', !!slotIcs && slotIcs.includes('\r\nDTSTART:20260924T160000Z\r\n') && slotIcs.includes('\r\nDTEND:20260924T190000Z\r\n')
+        && slotFail === 'Couldn’t create the calendar file. Select Calendar file to try again.', JSON.stringify({ slotIcs: slotIcs && slotIcs.slice(0, 200), slotFail }));
       const drag = await run(() => {
         const row = document.querySelector('#planner .plan-row[data-zone="America/New_York"] .plan-cells');
         const cell = (h) => row.querySelector(`.plan-cell[data-h="${h}"]`).getBoundingClientRect();
@@ -1927,13 +2203,14 @@ module.exports = (w, app) => {
       });
       check('planner: a pointer drag across 12, 13 and 14 selects the same 12:00 to 15:00 slot and converts at 12:00', drag.before === 'Thu, Sep 24, 10:00 to 11:00 (New York)' && drag.text === slot.text && drag.time === '12:00', JSON.stringify(drag));
       await run(setConv, '10:00', '2026-09-24', 'America/New_York'); await sleep(100);
-      const best = await run(() => { document.getElementById('plannerBest').click(); return { text: document.getElementById('planSel').textContent, bestHidden: getComputedStyle(document.getElementById('plannerBest')).display === 'none' }; });
-      check('planner: Best selects its whole run ("12:00 to 13:00") and gives way to the slot line', best.text === 'Thu, Sep 24, 12:00 to 13:00 (New York)' && best.bestHidden, JSON.stringify(best));
+      await run(() => document.getElementById('convClear').click()); await run(setConv, '10:00', '2026-09-24', 'America/New_York'); await sleep(100);
+      const best = await run(async () => { document.getElementById('planFind').click(); await new Promise((r) => setTimeout(r, 50)); document.querySelector('#planFindPanel .find-item').click(); return { text: document.getElementById('planSel').textContent, findShown: getComputedStyle(document.getElementById('planFind')).display !== 'none' }; });
+      check('planner: a Find a time result becomes the slot ("12:00 to 13:00"); Find a time stays available', best.text === 'Thu, Sep 24, 12:00 to 13:00 (New York)' && best.findShown, JSON.stringify(best));
       await run(setConv, '10:00', '2026-09-25', 'America/New_York'); await sleep(150);
-      const cleared = await run(() => ({ bar: document.getElementById('planSelBar').hidden, band: !!document.querySelector('#planner .plan-sel') }));
+      const movedSel = await run(() => ({ bar: document.getElementById('planSelBar').hidden, band: !!document.querySelector('#planner .plan-sel'), text: document.getElementById('planSel').textContent }));
       await run(() => document.getElementById('convClear').click()); await sleep(100);
-      const clearedNow = await run(() => document.getElementById('planSelBar').hidden);
-      check('planner: another date clears the slot, and so does going back to now', cleared.bar && !cleared.band && clearedNow, JSON.stringify({ cleared, clearedNow }));
+      const clearedNow = await run(() => ({ bar: document.getElementById('planSelBar').hidden, band: !!document.querySelector('#planner .plan-sel') }));
+      check('planner: another date moves the meeting there with its length (one hour, from 10:00); going back to now clears it', !movedSel.bar && movedSel.band && movedSel.text === 'Fri, Sep 25, 10:00 to 11:00 (New York)' && clearedNow.bar && !clearedNow.band, JSON.stringify({ movedSel, clearedNow }));
 
       // 20i. Map and planner open with the short entrance (one animation, no inline style left), unless motion is reduced.
       await run(() => document.getElementById('btnPlanner').click()); await sleep(400); // planner off

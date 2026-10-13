@@ -16,15 +16,17 @@
     btnPin: $('btnPin'), btnSettings: $('btnSettings'), tip: $('tip'), tipText: $('tipText'), tipClose: $('tipClose'),
     announce: $('announce'),
     btnPlanner: $('btnPlanner'), planner: $('planner'), planBody: $('planBody'), plannerSummary: $('plannerSummary'), plannerCaption: $('plannerCaption'),
-    plannerBest: $('plannerBest'),
+    planFind: $('planFind'), planFindPanel: $('planFindPanel'),
     btnDay: $('btnDay'), btnDayText: $('btnDayText'), dateChips: $('dateChips'),
     hoursEditor: $('hoursEditor'), hoursCity: $('hoursCity'), hoursStart: $('hoursStart'), hoursEnd: $('hoursEnd'), hoursDays: $('hoursDays'),
     hoursSave: $('hoursSave'), hoursReset: $('hoursReset'), hoursNote: $('hoursNote'),
     btnMap: $('btnMap'), mapView: $('mapView'),
     layoutWrap: $('layoutWrap'), layoutSwitch: $('layoutSwitch'), btnLayout: $('btnLayout'),
-    convToast: $('convToast'), kofiLink: $('kofiLink'), helpKeys: $('helpKeys'),
-    reportLink: $('reportLink'), updatesLink: $('updatesLink'),
-    copyMenu: $('copyMenu'), planSelBar: $('planSelBar'), planSel: $('planSel'), planCopy: $('planCopy'), planIcs: $('planIcs'),
+    convToast: $('convToast'), convError: $('convError'), kofiLink: $('kofiLink'), helpKeys: $('helpKeys'),
+    reportLink: $('reportLink'),
+    updGroup: $('updGroup'), updStatus: $('updStatus'), updProgress: $('updProgress'), updAction: $('updAction'), updSecondary: $('updSecondary'),
+    updAutoRow: $('updAutoRow'), updAutoLabel: $('updAutoLabel'), updAutoHelp: $('updAutoHelp'), optUpdAuto: $('optUpdAuto'),
+    copyMenu: $('copyMenu'), planStatus: $('planStatus'), planLink: $('planLink'), copyFallback: $('copyFallback'), copyFallbackText: $('copyFallbackText'), copyFallbackClose: $('copyFallbackClose'), planSelBar: $('planSelBar'), planSel: $('planSel'), planCopy: $('planCopy'), planIcs: $('planIcs'),
   };
 
   // Chromium lists some legacy IANA ids; map them to the canonical names used in ZONE_META.
@@ -56,6 +58,14 @@
 
   let settings = null;
   let convert = null; // { zone, epochMs, h, mi } while the converter is active
+  // The selected meeting, { startMs, endMs } in exact UTC ms (end exclusive), or null. Its start is always
+  // convert.epochMs: every selection path and every converter edit goes through applyConvert, which moves it (keeping its
+  // length) or replaces it. Presentation changes (format, language, labels, hours, source city) never touch it.
+  let meeting = null;
+  let nextMeeting = null; // the slot a planner selection asked for, taken by the next applyConvert
+  // While the time field holds something that does not convert (bad syntax, a wall time skipped by a clock change):
+  // a function giving the error text. The draft stays in the field and every copy, invite and share is refused.
+  let convError = null;
   let tick = null;
   let menuZone = null;
   let menuAnchor = null; // the .more button (or card) that opened the menu, for focus return
@@ -299,7 +309,7 @@
     applyStatic();
     structKey = null; // rebuild cards with translated chrome
     planKey = null;
-    if (settings) { syncPanel(); fillConvZones(); renderTip(); refreshHint(); }
+    if (settings) { syncPanel(); fillConvZones(); renderTip(); refreshHint(); showConvError(); }
   }
 
   // ---------- render ----------
@@ -387,6 +397,7 @@
 
   function render() {
     if (!settings) return;
+    if (typeof noteShare === 'function') noteShare();
     const sig = structureSignature();
     if (sig !== structKey) { structKey = sig; buildStructure(); }
     if (el.app.classList.contains('converting') !== !!convert) el.app.classList.toggle('converting', !!convert);
@@ -680,9 +691,20 @@
   // The instant on screen: the converted one, or now to the minute.
   const shownEpoch = () => (convert ? convert.epochMs : Math.floor(Date.now() / 60000) * 60000);
   // Discord shows <t:...> in each reader's own time zone: the full date and time, then "in 3 hours".
-  function discordText() { const sec = Math.floor(shownEpoch() / 1000); return `<t:${sec}:F> (<t:${sec}:R>)`; }
+  // With a selected meeting: its start and end ("<t:START:F> to <t:END:t>").
+  function discordText() {
+    if (meeting) { const a = Math.floor(meeting.startMs / 1000), b = Math.floor(meeting.endMs / 1000); return `<t:${a}:F> to <t:${b}:t> (<t:${a}:R>)`; }
+    const sec = Math.floor(shownEpoch() / 1000); return `<t:${sec}:F> (<t:${sec}:R>)`;
+  }
   // ISO 8601 in UTC (no milliseconds), then the same instant as the clock shows it: "15:00 UTC, Thu, Sep 24".
+  // With a selected meeting: the ISO 8601 interval (start/end), then the start and end as the clock shows them in UTC.
   function utcText() {
+    const iso = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
+    if (meeting) {
+      const a = new Date(meeting.startMs), b = new Date(meeting.endMs);
+      const day = T.fmt('UTC', { weekday: 'short', month: 'short', day: 'numeric' }, locale()).format(a);
+      return `${iso(meeting.startMs)}/${iso(meeting.endMs)}\n${t('plan.range', { start: formatTime(a.getUTCHours(), a.getUTCMinutes()), end: formatTime(b.getUTCHours(), b.getUTCMinutes()) })} UTC, ${day}`;
+    }
     const d = new Date(shownEpoch());
     const day = T.fmt('UTC', { weekday: 'short', month: 'short', day: 'numeric' }, locale()).format(d);
     return `${d.toISOString().replace(/\.\d{3}Z$/, 'Z')}\n${formatTime(d.getUTCHours(), d.getUTCMinutes())} UTC, ${day}`;
@@ -697,28 +719,67 @@
     copiedTimer = setTimeout(refreshHint, 1500);
   }
   function copyOut(payload, onlyZone) {
+    if (convError) return; // the field does not hold a valid time: nothing stale goes out
+    const from = document.activeElement;
+    const plain = typeof payload === 'string' ? payload : payload && payload.text;
+    const failed = () => showCopyFallback(plain, from);
     Promise.resolve(window.wc.copyText(payload)).then((ok) => {
-      if (ok === false) return;
+      if (ok === false) { failed(); return; }
       flashStatus(t('hint.copied'), t('say.copied'));
       emit('copied', { onlyZone });
-    }).catch(onIpcError);
+    }).catch((err) => { failed(); onIpcError(err); });
   }
+  // The clipboard refused: the whole text in a box, selected, to copy by hand (Ctrl+C); Escape or Close returns focus.
+  let copyFallbackFrom = null;
+  function showCopyFallback(text, from) {
+    if (!text) return;
+    copyFallbackFrom = from && from !== document.body ? from : null;
+    el.copyFallbackText.value = text;
+    el.copyFallbackText.rows = Math.min(8, String(text).split('\n').length + 1);
+    el.copyFallback.hidden = false;
+    announce(t('copy.failTitle'));
+    el.copyFallbackText.focus(); el.copyFallbackText.select();
+  }
+  function closeCopyFallback() {
+    if (el.copyFallback.hidden) return;
+    el.copyFallback.hidden = true;
+    const back = copyFallbackFrom; copyFallbackFrom = null;
+    if (back && back.isConnected && typeof back.focus === 'function' && !back.disabled) back.focus(); else if (!el.btnCopy.hidden) el.btnCopy.focus();
+  }
+  el.copyFallbackClose.addEventListener('click', closeCopyFallback);
+  el.copyFallback.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeCopyFallback(); }
+    else if (e.key === 'Tab') { e.preventDefault(); (document.activeElement === el.copyFallbackText ? el.copyFallbackClose : el.copyFallbackText).focus(); }
+  });
   function doCopy(onlyZone) {
     if (!settings || !settings.zones.some(supportsZone)) return; // a header with no cities is not worth copying
     const d = copyData(onlyZone);
+    // with a selected meeting, "Copy times" is the meeting (the same text as the planner's Copy times)
+    if (!onlyZone && meeting) { copyOut(slotText(), null); return; }
     copyOut(onlyZone || settings.web ? d.text : d, onlyZone); // the web app's clipboard takes plain text
   }
   // A calendar invite (.ics) from startMs to endMs; main checks it, asks where to save it and writes the file.
   function saveInvite(startMs, endMs, description) {
-    if (!settings || typeof window.wc.saveIcs !== 'function') return;
+    if (!settings || convError || typeof window.wc.saveIcs !== 'function') return;
     Promise.resolve(window.wc.saveIcs({ startMs, endMs, title: t('ics.title'), description: String(description || '').slice(0, 2000) }))
-      .then((r) => { if (r === 'saved') flashStatus(t('say.icsSaved')); }).catch(onIpcError);
+      // what really happened: saved (desktop, after the save dialog), downloaded (browser), canceled, or refused/failed
+      .then((r) => {
+        if (r === 'saved' || r === 'downloaded' || r === 'canceled') { showPlanStatus(''); flashStatus(t(r === 'saved' ? 'say.icsSaved' : r === 'downloaded' ? 'say.icsDownloaded' : 'say.icsCanceled')); return; }
+        icsFailed();
+      })
+      .catch((err) => { icsFailed(); onIpcError(err); });
+  }
+  function icsFailed() {
+    announce(t('plan.icsFailed'));
+    // with a meeting, the failure stays beside its summary: reveal the planner first when it is closed (a header action)
+    if (meeting) { if (!plannerOn()) el.btnPlanner.click(); showPlanStatus(t('plan.icsFailed')); }
+    else flashStatus(t('say.icsFailed'));
   }
 
   // Copy menu (#btnCopy, shown while converting): the times, a Discord timestamp, UTC, or a calendar invite.
   const copyItems = () => [...el.copyMenu.querySelectorAll('[role="menuitem"]')].filter((b) => !b.hidden && !b.disabled);
   function openCopyMenu() {
-    if (!settings || !settings.zones.some(supportsZone)) return;
+    if (!settings || convError || !settings.zones.some(supportsZone)) return;
     closeMenu(false); closeChips(false); closeHours(false);
     el.copyMenu.querySelector('[data-copy="ics"]').hidden = typeof window.wc.saveIcs !== 'function';
     el.copyMenu.hidden = false;
@@ -743,7 +804,11 @@
     if (what === 'text') doCopy(null);
     else if (what === 'discord') copyOut(discordText(), null);
     else if (what === 'utc') copyOut(utcText(), null);
-    else if (what === 'ics') { const at = shownEpoch(); saveInvite(at, at + 3600000, copyLines(null)); }
+    else if (what === 'ics') {
+      // the selected meeting when there is one, else an hour from the converted instant
+      if (meeting) saveInvite(meeting.startMs, meeting.endMs, slotText());
+      else { const at = shownEpoch(); saveInvite(at, at + 3600000, copyLines(null)); }
+    }
   });
   el.copyMenu.addEventListener('keydown', (e) => {
     const items = copyItems(); if (!items.length) return;
@@ -869,7 +934,7 @@
     settings.zones = z;
     fillConvZones();
     // If the converter's source city was removed, re-run the conversion from the fallback source.
-    if (convert && convert.zone !== el.convZone.value) applyConvert(); else render();
+    if (convert && convert.zone !== el.convZone.value) { if (meeting && !convError) setConvEpoch(meeting.startMs); else applyConvert(); } else render();
     emit('zones-after', { from: prevZones, to: z });
     // Main validates and may drop unknown zones; adopt its copy if it differs. Only the latest reply counts,
     // so a slow reply to an older save cannot clobber newer local changes.
@@ -1033,8 +1098,18 @@
     else el.strip.scrollTo({ left: el.strip.scrollWidth, behavior });
   }
   el.search.addEventListener('input', guard(() => { sel = 0; renderResults(); }));
-  el.search.addEventListener('focus', guard(renderResults));
-  el.search.addEventListener('blur', () => setTimeout(() => { el.results.hidden = true; sayEmpty(''); syncCombo(); searchZones.offsets = null; }, 120));
+  // Leaving the box hides the results a moment later (a click on one still lands); coming back first cancels that, so
+  // the next query's results are not hidden by the previous blur.
+  let searchBlurTimer = null;
+  el.search.addEventListener('focus', guard(() => { clearTimeout(searchBlurTimer); searchBlurTimer = null; renderResults(); }));
+  el.search.addEventListener('blur', () => {
+    clearTimeout(searchBlurTimer);
+    searchBlurTimer = setTimeout(() => {
+      searchBlurTimer = null;
+      if (document.activeElement === el.search) return;
+      el.results.hidden = true; sayEmpty(''); syncCombo(); searchZones.offsets = null;
+    }, 120);
+  });
   el.search.addEventListener('keydown', guard((e) => {
     const n = el.results.querySelectorAll('li').length;
     if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, n - 1); renderResults(); e.preventDefault(); }
@@ -1098,7 +1173,7 @@
     updateOverflow();
     fitPlanner();
     syncLayoutSwitch(); fixLayoutFocus();
-    if (!el.convToast.hidden) el.convToast.hidden = true;
+    if (!el.convToast.hidden) el.convToast.hidden = true; // the error row (#convError) is in the layout and stays
     const narrow = window.innerWidth < 400;
     if (narrow !== lastNarrow) { lastNarrow = narrow; fillConvZones(); }
   });
@@ -1121,13 +1196,14 @@
   function setInvalid(on) {
     el.convTime.classList.toggle('invalid', on);
     // The format hint (#convFormat) is always attached; while invalid, the hint line says the same thing.
-    if (on) { el.convTime.setAttribute('aria-invalid', 'true'); el.convTime.setAttribute('aria-describedby', 'convHint'); }
+    if (on) { el.convTime.setAttribute('aria-invalid', 'true'); el.convTime.setAttribute('aria-describedby', 'convError'); }
     else { el.convTime.removeAttribute('aria-invalid'); el.convTime.setAttribute('aria-describedby', 'convFormat'); }
   }
   function refreshHint() {
     clearTimeout(copiedTimer);
     if (!settings) return;
-    if (convert) {
+    if (convError) el.convHint.textContent = ''; // said by the error row
+    else if (convert) {
       const ymd = el.convDate.value;
       const sh = shownHour(convert.h);
       if (ymd && ymd !== todayIn(convert.zone)) el.convHint.textContent = atTime('hint.whenOn', { time: formatTime(convert.h, convert.mi), city: labelOf(convert.zone), date: ymdLabel(ymd) }, sh);
@@ -1152,6 +1228,46 @@
     if (ms) toastTimer = setTimeout(() => { el.convToast.hidden = true; }, ms);
   }
   let convAnnounceTimer = null;
+  // The persistent inline error: its own row under the bar (#convError, in the layout, no timeout), tied to the field.
+  function showConvError() {
+    if (!convError) return;
+    clearTimeout(copiedTimer); toast('');
+    el.convHint.textContent = '';
+    setText(el.convError, convError());
+    el.convError.hidden = false;
+    setInvalid(true);
+  }
+  function hideConvError() { if (!el.convError.hidden) { el.convError.hidden = true; el.convError.textContent = ''; } }
+  // Copy, invite and share follow the converter: refused while the field holds an error.
+  function syncExports() {
+    const off = !!convError;
+    el.btnCopy.disabled = off;
+    el.planCopy.disabled = off; el.planIcs.disabled = off; el.planLink.disabled = off; el.planFind.disabled = off;
+    if (off) { closeCopyMenu(false); closeFind(false); }
+  }
+  const civilOpts = { ...YMD_OPTS, hourCycle: 'h23', hour: '2-digit', minute: '2-digit' };
+  const civilSecOpts = { ...civilOpts, second: '2-digit' };
+  // Instant `ms` as a wall clock in `zone`, to the second, in UTC-epoch form (Date.UTC of the civil fields).
+  function wallOf(zone, ms) {
+    const p = parts(zone, new Date(ms), civilSecOpts);
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) + (((ms % 1000) + 1000) % 1000);
+  }
+  // Whether instant `ms` reads as y-m-d h:mi on the clocks of `zone` (the visible minute). Its seconds and
+  // milliseconds are not compared, so a pin keeps them (09:44:30Z shows as 09:44 in Monrovia 1971 and stays exact).
+  const civilIs = (zone, ms, y, m, d, h, mi) => Math.floor(wallOf(zone, ms) / 60000) * 60000 === Date.UTC(y, m - 1, d, h, mi);
+  // The first instant that reads y-m-d h:mi:00 in `zone`, or null when the clocks skip it. Starts from zonedToEpoch
+  // (whole-minute offsets) and corrects by the exact civil difference, so an offset with seconds (Monrovia before
+  // 1972, -0:44:30) still lands on the typed time; a skipped wall time never settles and gives null.
+  function exactWall(zone, y, m, d, h, mi) {
+    const want = Date.UTC(y, m - 1, d, h, mi);
+    let e = T.zonedToEpoch(zone, y, m, d, h, mi);
+    for (let i = 0; i < 3; i++) {
+      const diff = want - wallOf(zone, e);
+      if (!diff) return e;
+      e += diff;
+    }
+    return null;
+  }
   // A place typed with the time ("3pm Tokyo", "15:00 EST", "tokyo 3pm"): resolved against the cities on the list first
   // (label, city name in any language, prefix match), then a time zone abbreviation on the list, then an exact city
   // name anywhere. { zone } when it can be the source, { known } for a city that is not on the list, {} otherwise.
@@ -1186,10 +1302,10 @@
   function clearConversion() { el.convTime.value = ''; applyConvert(true); }
   function armConvIdle() {
     clearTimeout(convIdle); convIdle = null;
-    if (!convert) return;
+    if (!convert || meeting || convError) return;
     convIdle = setTimeout(() => {
       convIdle = null;
-      if (!convert) return;
+      if (!convert || meeting || convError) return; // a selected meeting or a draft being fixed is kept
       if (!document.hasFocus()) clearConversion(); else armConvIdle();
     }, convIdleMs());
   }
@@ -1201,7 +1317,7 @@
     const wasConverting = !!convert;
     if (!raw.trim()) {
       closeCopyMenu(false);
-      convert = null; el.convDate.value = ''; delete el.convDate.dataset.auto; setInvalid(false); toast(''); el.convClear.hidden = true; el.btnCopy.hidden = true; refreshHint(); render();
+      convert = null; meeting = null; nextMeeting = null; convError = null; syncExports(); hideConvError(); el.convDate.value = ''; delete el.convDate.dataset.auto; setInvalid(false); toast(''); el.convClear.hidden = true; el.btnCopy.hidden = true; refreshHint(); render();
       armConvIdle();
       if (wasConverting) emit('convert', { on: false });
       if (wasConverting) { clearTimeout(convAnnounceTimer); announce(t('say.now')); }
@@ -1219,14 +1335,8 @@
           parsed = sp.time;
         } else msg = r.known ? t('hint.addFirst', { city: cityOf(r.known) }) : t('hint.noPlace', { place: sp.place });
       }
-      if (!parsed) {
-        setInvalid(true); el.convHint.textContent = msg; toast(msg, 0, true); emit('invalid', { input: el.convTime });
-        clearTimeout(convAnnounceTimer); convAnnounceTimer = setTimeout(() => announce(msg), 700); // debounced while typing
-        return;
-      }
+      if (!parsed) { failConvert(() => msg, msg); return; }
     }
-    setInvalid(false);
-    if (el.convToast.classList.contains('error')) toast('');
     const [h, mi] = parsed;
     const zone = el.convZone.value || LOCAL_ZONE;
     // Pin the date the conversion is for (today in the source zone) so it stays right across midnight. Marked
@@ -1234,9 +1344,21 @@
     if (!el.convDate.value) { el.convDate.value = todayIn(zone); el.convDate.dataset.auto = '1'; }
     const [y, m, d] = el.convDate.value.split('-').map(Number);
     // A typed time takes the first occurrence of a repeated wall time; a scrub step keeps the instant it landed on
-    // (the second 01:30 of a fall-back night) when that is the same wall time, at most an hour from the first.
-    const wallEpoch = T.zonedToEpoch(zone, y, m, d, h, mi);
-    const epochMs = pin !== null && Math.abs(pin - wallEpoch) <= 3600000 ? pin : wallEpoch;
+    // (the second 01:30 of a fall-back night) when that instant reads as the same date and wall time in the zone.
+    // A supplied pin is checked first against the visible date and minute, and kept to the millisecond. A typed time
+    // resolves to hh:mm:00 exactly.
+    const epochMs = pin !== null && civilIs(zone, pin, y, m, d, h, mi) ? pin : exactWall(zone, y, m, d, h, mi);
+    // A wall time the clocks skip (02:30 on a spring-forward night) is not moved silently: the user corrects it.
+    if (epochMs === null) {
+      const gap = () => t('hint.gap', { time: formatTime(h, mi), city: labelOf(zone) });
+      failConvert(gap, gap());
+      return;
+    }
+    if (convError) { convError = null; syncExports(); }
+    setInvalid(false); hideConvError();
+    // The meeting starts at the converted instant: a planner selection sets its length, any other edit keeps it.
+    const want = nextMeeting || meeting; nextMeeting = null;
+    meeting = want && want.endMs > want.startMs ? { startMs: epochMs, endMs: epochMs + (want.endMs - want.startMs) } : null;
     convert = { zone, h, mi, epochMs };
     if (document.activeElement !== el.convSlider) el.convSlider.value = h * 60 + Math.round(mi / 15) * 15;
     el.convClear.hidden = false;
@@ -1255,6 +1377,43 @@
       msg += `. ${labelOf(fc.dataset.zone)}: ${k.ampm ? `${k.hm} ${k.ampm}` : k.hm}`;
     }
     if (announceNow === true) announce(msg); else convAnnounceTimer = setTimeout(() => announce(msg), 800);
+  }
+  // Read-only view of the converter for the web app's share links (web/web.js): the same state copy and invites use.
+  window.WCConverter = Object.freeze({
+    state: () => ({
+      error: convError ? convError() : null,
+      convert: convert ? { zone: convert.zone, epochMs: convert.epochMs } : null,
+      meeting: meeting ? { startMs: meeting.startMs, endMs: meeting.endMs } : null,
+      kind: convError ? 'blocked' : meeting ? 'meeting' : convert ? 'time' : 'cities',
+    }),
+    // A link's exact meeting (web/web.js): source city, then the interval, committed like a planner selection.
+    apply: (zone, startMs, endMs) => {
+      if (!settings || !(endMs > startMs) || ![...el.convZone.options].some((o) => o.value === zone)) return false;
+      if (el.convZone.value !== zone) el.convZone.value = zone;
+      commitInterval(startMs, endMs);
+      return !!meeting && meeting.startMs === startMs && meeting.endMs === endMs;
+    },
+    // Called with state() whenever what a Share would carry changes (the host page's Share label follows it).
+    onChange: (cb) => { if (typeof cb === 'function') shareListeners.add(cb); },
+    linkProblem: () => t('plan.linkFailed'),
+  });
+  const shareListeners = new Set();
+  let shareKey = '';
+  function noteShare() {
+    const st = window.WCConverter.state(), key = JSON.stringify(st);
+    if (key === shareKey) return;
+    shareKey = key;
+    for (const cb of [...shareListeners]) { try { cb(st); } catch (err) { console.error(err); } }
+  }
+  // The field does not convert: keep the draft, show the error until it is fixed, refuse exports.
+  function failConvert(msgFn, msg) {
+    nextMeeting = null;
+    convError = msgFn;
+    showConvError(); syncExports();
+    emit('invalid', { input: el.convTime });
+    clearTimeout(convAnnounceTimer); convAnnounceTimer = setTimeout(() => announce(msg), 700); // debounced while typing
+    clearTimeout(convIdle); convIdle = null;
+    render();
   }
   // A newly typed time means today: an automatic date left over from yesterday (a conversion left open across
   // midnight) is dropped and re-picked. A conversion already on screen keeps its date (slider and scrub paths).
@@ -1278,7 +1437,11 @@
     pendingSlider = v; queueScrub();
   }));
   el.convDate.addEventListener('input', guard(applyConvert));
-  el.convZone.addEventListener('change', guard(() => { if (el.convDate.dataset.auto) el.convDate.value = ''; applyConvert(); }));
+  el.convZone.addEventListener('change', guard(() => {
+    // A selected meeting keeps its exact start and end; the field shows its start in the new source city.
+    if (meeting && !convError) { setConvEpoch(meeting.startMs); return; }
+    if (el.convDate.dataset.auto) el.convDate.value = ''; applyConvert();
+  }));
   el.convClear.addEventListener('click', guard(() => { el.convTime.value = ''; applyConvert(); el.convTime.focus(); }));
 
   // ---------- time scrubber (wheel / arc drag / keys) ----------
@@ -1390,15 +1553,18 @@
   // One row per city; 24 columns = the hours of the converter's date in the SOURCE zone. A cell is "work" when the
   // city is inside its working hours for that whole hour, "night" when its local hour is 22-07, else neutral.
   let planKey = null, planYmd = null, planFocusH = null, planRoving = null;
-  // Selected meeting slot in source hours ({ start, end }, end exclusive): a click (one hour), a drag across cells,
-  // Shift+Left/Right from the focused hour, or the Best button. Cleared when the planner is rebuilt (another day,
-  // source, city list...) and when the conversion goes back to now.
-  let planSel = null, planSelAnchor = null, planCols = null, planSelDrag = null;
+  // The slot shown is the meeting (exact UTC start and end, see `meeting`), placed on the columns by time, not by
+  // column index. A click (one hour), a drag across cells, Shift+Left/Right from the focused hour and a Find a time
+  // result all commit through commitSlot or commitInterval -> setConvEpoch -> applyConvert. planSelAnchor is the hour a Shift+arrow range grows
+  // from; planSelDrag the drag in progress (its preview band is not committed until the pointer is let go).
+  let planSelAnchor = null, planCols = null, planSelDrag = null;
   const plannerOn = () => !!(settings && settings.planner);
   const plannerSource = () => el.convZone.value || LOCAL_ZONE;
   const stripDot = (s) => s.replace(/\.$/, '');
+  // 'work' only when the city is inside its hours for the whole hour from `ms` (exact, WCTime.worksThroughout: an
+  // offset change or a schedule edge inside the hour counts, not just the two ends).
   function cellState(zone, ms) {
-    if (isWorking(zone, new Date(ms)) && isWorking(zone, new Date(ms + 59 * 60000))) return 'work';
+    if (T.worksThroughout(zone, hoursOf(zone), ms, ms + 3600000)) return 'work';
     const h = localWall(zone, new Date(ms + 30 * 60000)).min / 60;
     return h >= 22 || h < 7 ? 'night' : 'off';
   }
@@ -1414,10 +1580,7 @@
     for (let h = 0; h < 24; h++) cols.push({ h, ms: T.zonedToEpoch(src, y, m, d, h, 0) });
     const srcLabel = labelOf(src);
     const allWork = cols.map(() => zones.length > 0);
-    const states = []; // one row of 24 cell states per city, for the best-hours fallback
     const rows = zones.map((zone) => {
-      const rowStates = [];
-      states.push(rowStates);
       const row = document.createElement('div');
       row.className = 'plan-row' + (zone === src ? ' source' : '') + (zone === LOCAL_ZONE ? ' home' : '');
       row.dataset.zone = zone;
@@ -1431,7 +1594,6 @@
       cols.forEach((col, i) => {
         const st = cellState(zone, col.ms);
         if (st !== 'work') allWork[i] = false;
-        rowStates.push(st);
         const p = parts(zone, new Date(col.ms), { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
         const lh = +p.hour % 24, lm = +p.minute;
         const b = document.createElement('button');
@@ -1484,14 +1646,8 @@
     }
     el.planner.classList.toggle('empty', !rows.length); // no summary or legend without cities
     const total = runs.reduce((n, [a, b]) => n + b - a, 0);
-    // No hour works for everyone: point at the hours where the most cities work (the home city and the source first).
-    const bestPart = zones.length && !total ? T.bestHours(states, [...new Set([zones.indexOf(LOCAL_ZONE), zones.indexOf(src)])].filter((i) => i >= 0)) : null;
-    if (bestPart && rows.length) {
-      const o = document.createElement('div'); o.className = 'plan-best';
-      o.style.left = `${(bestPart.start / 24) * 100}%`; o.style.width = `${((bestPart.end - bestPart.start) / 24) * 100}%`;
-      layer.insertBefore(o, now);
-    }
-    renderPlanBest(bestPart, cols, zones, srcLabel);
+    closeFind(false); // its results were for the planner being replaced
+    el.planFind.hidden = !zones.length;
     let summary;
     if (!zones.length) summary = '';
     else if (!total) summary = t('plan.none');
@@ -1504,32 +1660,110 @@
     el.plannerSummary.classList.toggle('none', !total);
     setText(el.plannerCaption, t('plan.caption', { city: srcLabel, date: ymdLabel(ymd) }));
     planRoving = null;
-    planCols = cols; planSel = null; planSelAnchor = null; planSelDrag = null;
+    planCols = cols; planSelAnchor = null; planSelDrag = null;
   }
-  // #plannerBest: "Best: 12:00 to 13:00 (New York), 4 of 5 working"; the title and name add up to three cities outside
-  // their hours with their local times. Hidden with a full overlap, with no cities, or when no two cities ever work together.
-  function renderPlanBest(best, cols, zones, srcLabel) {
-    const b = el.plannerBest;
-    if (!best) { b.hidden = true; b.textContent = ''; b.removeAttribute('title'); b.removeAttribute('aria-label'); delete b.dataset.h; delete b.dataset.end; return; }
-    const text = t('plan.best', { range: t('plan.range', { start: formatTime(best.start, 0), end: formatTime(best.end % 24, 0) }), city: srcLabel, n: best.working, total: best.total });
-    const ms = cols[best.start].ms;
-    const outside = best.out.slice(0, 3).map((i) => {
-      const p = parts(zones[i], new Date(ms), { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-      return `${labelOf(zones[i])} ${formatTime(+p.hour % 24, +p.minute)}`;
-    });
-    let list = outside.join(', ');
-    if (best.out.length > 3) list += ' ' + t('plan.more', { n: best.out.length - 3 });
-    const full = best.out.length ? `${text}. ${t('plan.bestOut', { list })}` : text;
-    setText(b, text);
-    b.title = full; b.setAttribute('aria-label', full);
-    b.dataset.h = String(best.start); b.dataset.end = String(best.end);
-    b.hidden = false;
+  // ---------- Find a time (#planFind, #planFindPanel) ----------
+  // One action for the planner's date and source city. Results come from WCTime.findTimes on whole meetings of the
+  // selected meeting's length (an hour without one), starting on each source hour: "Works for everyone", else the
+  // labeled compromises (every city outside its hours named), else nothing on this date; when nothing works for
+  // everyone the next FIND_DAYS days are searched for the first date that does. The search runs only when the panel
+  // opens (synchronously, bounded by FIND_DAYS), never moves the selection, and the panel closes (dropping its results)
+  // on Escape, a click outside, a planner rebuild (other date, source, cities, hours, format or language) and a
+  // converter error. Picking a result commits it like any selection (commitInterval -> setConvEpoch -> applyConvert).
+  const FIND_DAYS = 14;
+  const findItems = () => [...el.planFindPanel.querySelectorAll('button.find-item, button.find-action')];
+  function durText(ms) {
+    const m = Math.round(ms / 60000), h = Math.floor(m / 60), mi = m % 60;
+    return h && mi ? t('plan.dur.hm', { h, m: mi }) : h ? t('plan.dur.h', { h }) : t('plan.dur.m', { m: mi });
   }
-  el.plannerBest.addEventListener('click', () => {
-    if (!settings || el.plannerBest.hidden || !el.plannerBest.dataset.h) return;
-    planFocusH = +el.plannerBest.dataset.h;
-    planSel = { start: planFocusH, end: +el.plannerBest.dataset.end || planFocusH + 1 }; planSelAnchor = planFocusH; // the whole best run
-    pickHour(planFocusH);
+  const addYmd = (ymd, n) => { const d = new Date(ymdDate(ymd).getTime() + n * 86400000); return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`; };
+  const dayStarts = (src, ymd) => { const [y, m, d] = ymd.split('-').map(Number); return Array.from({ length: 24 }, (_, h) => T.zonedToEpoch(src, y, m, d, h, 0)); };
+  // One date's results: candidates on each source hour and at every minute a city's working time begins that day.
+  const findDay = (src, ymd, zones, hours, dur, prefer, limit) => {
+    const [y, m, d] = addYmd(ymd, 1).split('-').map(Number);
+    return T.findTimes(zones, hours, dayStarts(src, ymd), dur, prefer, limit, T.zonedToEpoch(src, y, m, d, 0, 0));
+  };
+  function closeFind(returnFocus) {
+    if (el.planFindPanel.hidden) return;
+    el.planFindPanel.hidden = true; el.planFindPanel.replaceChildren();
+    el.planFind.setAttribute('aria-expanded', 'false');
+    if (returnFocus) el.planFind.focus({ preventScroll: true }); // the button the panel hung from; a picked result is revealed in the planner, the page stays
+  }
+  function openFind() {
+    if (!settings || convError || !planYmd) return;
+    closeMenu(false); closeChips(false); closeHours(false); closeCopyMenu(false);
+    const src = plannerSource(), zones = settings.zones.filter(supportsZone), hours = zones.map(hoursOf);
+    const dur = meeting ? meeting.endMs - meeting.startMs : 3600000;
+    const prefer = [...new Set([zones.indexOf(LOCAL_ZONE), zones.indexOf(src)])].filter((i) => i >= 0);
+    const hm = (z, ms) => { const p = parts(z, new Date(ms), { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' }); return formatTime(+p.hour % 24, +p.minute); };
+    const range = (r) => t('plan.range', { start: hm(src, r.startMs), end: hm(src, r.endMs) });
+    const nodes = [];
+    const head = (key, vars) => { const h = document.createElement('div'); h.className = 'find-head'; h.textContent = t(key, vars); nodes.push(h); };
+    const item = (r, main, sub, cls) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'find-item ' + cls;
+      b.dataset.start = String(r.startMs); b.dataset.end = String(r.endMs);
+      const a = document.createElement('span'); a.className = 'find-main'; a.textContent = main;
+      const s = document.createElement('span'); s.className = 'find-sub'; s.textContent = sub;
+      b.append(a, s); nodes.push(b);
+    };
+    const action = (text, run) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'find-action'; b.textContent = text;
+      b.addEventListener('click', run); nodes.push(b);
+    };
+    const found = findDay(src, planYmd, zones, hours, dur, prefer, 3);
+    const intro = document.createElement('div'); intro.className = 'find-intro';
+    intro.textContent = t('plan.findFor', { dur: durText(dur), date: ymdLabel(planYmd), city: labelOf(src) }); nodes.push(intro);
+    if (found.full.length) {
+      head('plan.findAll');
+      for (const r of found.full) item(r, `${range(r)} (${labelOf(src)})`, t('plan.findAllN', { total: r.total }), 'full');
+    } else {
+      if (found.partial.length) {
+        head('plan.findSome');
+        for (const r of found.partial) {
+          const list = r.out.map((i) => labelOf(zones[i])).join(', ');
+          item(r, `${range(r)} (${labelOf(src)})`, t('plan.findSomeN', { n: r.working, total: r.total, list }), 'partial');
+        }
+      } else head('plan.findNone');
+      let next = null, nextYmd = null;
+      for (let k = 1; k <= FIND_DAYS && !next; k++) {
+        const ymd = addYmd(planYmd, k), f = findDay(src, ymd, zones, hours, dur, prefer, 1);
+        if (f.full.length) { next = f.full[0]; nextYmd = ymd; }
+      }
+      if (next) { head('plan.findNext'); item(next, `${ymdLabel(nextYmd)}, ${range(next)} (${labelOf(src)})`, t('plan.findAllN', { total: next.total }), 'full next'); }
+      else head('plan.findNoNext', { n: FIND_DAYS });
+      // Ways forward that change nothing by themselves: another date, or a look at each city's working hours.
+      if (!next) {
+        head('plan.findTry');
+        action(t('plan.findDate'), () => { closeFind(false); openChips(); });
+        for (const z of zones) action(t('plan.findHours', { city: labelOf(z) }), () => { closeFind(false); openHours(z, el.planFind); });
+      }
+    }
+    el.planFindPanel.replaceChildren(...nodes);
+    el.planFindPanel.hidden = false;
+    el.planFind.setAttribute('aria-expanded', 'true');
+    const first = findItems()[0];
+    if (first) first.focus(); else el.planFindPanel.focus();
+  }
+  el.planFind.addEventListener('click', () => { if (el.planFindPanel.hidden) openFind(); else closeFind(true); });
+  el.planFindPanel.addEventListener('click', (e) => {
+    const b = e.target.closest('button.find-item');
+    if (!b || !settings) return;
+    const startMs = +b.dataset.start, endMs = +b.dataset.end;
+    closeFind(true);
+    commitInterval(startMs, endMs);
+  });
+  el.planFindPanel.addEventListener('keydown', (e) => {
+    const items = findItems(), i = items.indexOf(document.activeElement);
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeFind(true); }
+    else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && items.length) {
+      e.preventDefault();
+      items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus();
+    }
+    else if (e.key === 'Home' && items.length) { e.preventDefault(); items[0].focus(); }
+    else if (e.key === 'End' && items.length) { e.preventDefault(); items[items.length - 1].focus(); }
+  });
+  document.addEventListener('mousedown', (e) => {
+    if (!el.planFindPanel.hidden && !el.planFindPanel.contains(e.target) && !el.planFind.contains(e.target)) closeFind(false);
   });
   function updatePlanner(date) {
     const src = plannerSource();
@@ -1564,15 +1798,61 @@
     el.app.classList.toggle('plan-narrow', on && layout() === 'vertical' && !!settings.web);
     if (el.planner.hidden === on) el.planner.hidden = !on;
     if (el.btnPlanner.getAttribute('aria-pressed') !== String(on)) el.btnPlanner.setAttribute('aria-pressed', String(on));
-    if (!on) { planKey = null; planFitSent = null; return; }
-    if (!convert && planSel) { planSel = null; planSelAnchor = null; } // back to now: the slot goes too
+    if (!on) { planKey = null; planFitSent = null; revealKey = null; return; } // reopening reveals again
     const src = plannerSource();
     const ymd = el.convDate.value || todayIn(src);
     const zones = settings.zones.filter(supportsZone);
     const key = JSON.stringify([zones, zones.map(labelOf), src, labelOf(src), ymd, !!settings.hour12, I.lang, zones.map(hoursOf)]);
-    if (key !== planKey) { planKey = key; planYmd = ymd; buildPlanner(src, ymd, zones); fitPlanner(); }
+    if (key !== planKey) {
+      // a rebuild (format, labels, cities) keeps the user's scroll; revealPlan moves it only when the target changed
+      const b = el.planBody, keep = [b.scrollLeft, b.scrollTop];
+      planKey = key; planYmd = ymd; buildPlanner(src, ymd, zones); fitPlanner();
+      [b.scrollLeft, b.scrollTop] = keep;
+    }
     updatePlanner(date);
+    revealPlan();
   }
+  // ---------- planner reveal (the phone planner scrolls sideways: #planBody, never the page) ----------
+  // What should be in view: the selected meeting, else the converted time, else the current time in the source city.
+  // It is brought into view only when that target changes (another meeting, time, source or date, or an explicit pick:
+  // revealNonce), never on a tick or a rerender with the same target, so a deliberate sideways scroll stays where the
+  // user left it (format, labels, theme and added cities do not move it). A focused hour cell wins: it is kept in view.
+  // A meeting wider than the view shows its start, with the rest past the edge (the band runs off it; the bar scrolls).
+  let revealKey = null, revealNonce = 0;
+  function revealPlan(force) {
+    const b = el.planBody;
+    if (!planCols || el.planner.hidden) return;
+    const scrolls = b.scrollWidth > b.clientWidth + 1;
+    const tg = meeting ? { a: meeting.startMs, b: meeting.endMs } : convert ? { a: convert.epochMs, b: convert.epochMs } : null;
+    const key = [planYmd, plannerSource(), revealNonce, tg ? tg.a + '/' + tg.b : 'now', scrolls].join('|');
+    if (key === revealKey && !force) return;
+    revealKey = key;
+    if (!scrolls) return;
+    const cells = b.querySelector('.plan-row .plan-cells');
+    if (!cells || cells.children.length < 24) return;
+    const origin = b.getBoundingClientRect().left - b.scrollLeft;
+    const xOf = (fcol) => { const i = Math.max(0, Math.min(23, Math.floor(fcol))), r = cells.children[i].getBoundingClientRect(); return r.left - origin + (Math.min(fcol, 24) - i) * r.width; };
+    const view = b.clientWidth, cw = cells.children[0].getBoundingClientRect().width;
+    const at = tg || { a: Date.now(), b: Date.now() };
+    const xa = xOf(colAt(at.a)), xb = xOf(colAt(at.b));
+    // the interval centred when it fits (a point too); else its start, half a cell in from the left edge
+    const left = xb - xa + cw <= view ? (xa + xb) / 2 - view / 2 : xa - cw / 2;
+    b.scrollLeft = Math.max(0, Math.min(b.scrollWidth - view, Math.round(left)));
+    keepFocusVisible();
+  }
+  // A focused hour cell stays in view inside #planBody (the smallest scroll; the page never moves).
+  function keepFocusVisible() {
+    const c = document.activeElement, b = el.planBody;
+    if (!c || !c.classList || !c.classList.contains('plan-cell') || !b.contains(c)) return;
+    const r = c.getBoundingClientRect(), v = b.getBoundingClientRect(), pad = 6;
+    if (r.left < v.left + pad) b.scrollLeft -= v.left + pad - r.left;
+    else if (r.right > v.left + b.clientWidth - pad) b.scrollLeft += r.right - (v.left + b.clientWidth - pad);
+    // a capped body also scrolls down: a focused later city stays in view (below the sticky hour scale, if any)
+    const top = v.top + pad, bottom = v.top + b.clientHeight - pad;
+    if (r.bottom > bottom) b.scrollTop += r.bottom - bottom;
+    else if (r.top < top) b.scrollTop -= top - r.top;
+  }
+  const focusCell = (c) => { if (!c) return; c.focus({ preventScroll: true }); keepFocusVisible(); };
   // Desktop rows are 24px (the labels' target size); phone rows are taller for readable, scrollable hours.
   // The planner has one natural size: the window is made that size
   // (fitWindow) and a taller one only leaves room below the grid. When the work area caps the window, the body
@@ -1618,7 +1898,7 @@
     const ro = new ResizeObserver(() => { if (settings && plannerOn()) fitWindow(); });
     const watch = () => {
       ro.disconnect();
-      for (const n of [document.querySelector('.bar'), $('tip'), el.planner.querySelector('.plan-head'), el.planBody, ...el.planBody.children]) if (n) ro.observe(n);
+      for (const n of [document.querySelector('.bar'), el.convError, $('tip'), el.planner.querySelector('.plan-head'), el.planBody, ...el.planBody.children]) if (n) ro.observe(n);
     };
     watch();
     new MutationObserver(() => { watch(); if (plannerOn()) fitWindow(); }).observe(el.planBody, { childList: true });
@@ -1629,49 +1909,116 @@
     el.planner.classList.toggle('more-above', b.scrollTop > 2);
   }
   el.planBody.addEventListener('scroll', updatePlanFade, { passive: true });
-  // Converter to hour h (on the planner's date, in the source zone).
-  function pickHour(h) {
-    if (!settings) return;
-    const src = plannerSource();
-    if (!el.convDate.value) { el.convDate.value = todayIn(src); el.convDate.dataset.auto = '1'; }
-    el.convTime.value = formatInput(h, 0);
-    applyConvert(true);
+  // Column edge `i` (0 to 24) as an instant: the start of source hour i, hour 24 the next midnight.
+  const colEdge = (i) => (i < 24 ? planCols[i].ms : planCols[23].ms + 3600000);
+  // An instant as a fractional column position, clipped to [0, 24]. Columns are real hours, so a 30-minute start sits
+  // half way into its column. Known limit: on a clock-change day two columns can read the same hour (see CONTRACT).
+  function colAt(ms) {
+    if (ms <= colEdge(0)) return 0;
+    for (let i = 0; i < 24; i++) {
+      const a = colEdge(i), b = colEdge(i + 1);
+      if (ms < b) return i + (b > a ? (ms - a) / (b - a) : 0);
+    }
+    return 24;
   }
-  // End of the slot: the start of hour `end` in the source zone (hour 24 is the next midnight).
-  const slotEndMs = () => (planSel.end < 24 ? planCols[planSel.end].ms : planCols[23].ms + 3600000);
-  const slotLabel = () => `${ymdLabel(planYmd)}, ${t('plan.range', { start: formatTime(planSel.start, 0), end: formatTime(planSel.end % 24, 0) })} (${labelOf(plannerSource())})`;
-  // The slot as text: "Thu, Sep 24, 12:00 to 14:00 (New York)", then each city with its own start and end.
+  // Select source hours [start, end) and convert at its start: the one way a planner selection becomes the meeting.
+  function commitSlot(start, end) {
+    if (!settings || !planCols) return;
+    commitInterval(colEdge(start), colEdge(end));
+  }
+  // Make [startMs, endMs) the meeting and convert at its start (the date follows, in the source city).
+  function commitInterval(startMs, endMs) {
+    if (!settings || !(endMs > startMs)) return; // never a meeting that ends before it starts
+    revealNonce++; // an explicit pick is brought into view even when it is the meeting already selected
+    nextMeeting = { startMs, endMs };
+    setConvEpoch(startMs);
+  }
+  // The meeting's hours as columns ({ start, end } whole indexes, for the keyboard), or null.
+  function slotCols() {
+    if (!meeting || !planCols) return null;
+    const a = colAt(meeting.startMs), b = colAt(meeting.endMs);
+    return b > a ? { start: Math.floor(a), end: Math.max(Math.floor(a) + 1, Math.ceil(b)) } : null;
+  }
+  const hmIn = (z, ms) => { const p = parts(z, new Date(ms), civilOpts); return { ymd: `${p.year}-${p.month}-${p.day}`, h: +p.hour % 24, mi: +p.minute }; };
+  // Whether the wall time of instant `ms` in `zone` happens twice (a clock set back): then the offset tells them apart.
+  function repeatedAt(zone, ms) {
+    const o = T.offsetMs(zone, ms), wall = ms + o;
+    for (const o2 of [T.offsetMs(zone, ms - 6 * 3600000), T.offsetMs(zone, ms + 6 * 3600000)]) {
+      if (o2 !== o && T.offsetMs(zone, wall - o2) === o2) return true;
+    }
+    return false;
+  }
+  const ymdYear = (ymd) => T.fmt('UTC', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }, locale()).format(ymdDate(ymd));
+  const utcOff = (zone, ms) => `UTC${T.formatOffset(Math.round(T.offsetMs(zone, ms) / 60000))}`;
+  // "Wed, Oct 14, 09:10 to 11:10 (Lisbon)". The end names its own day when it is another day, both dates carry the year
+  // when the year changes, and a repeated wall time (a clock set back) adds the UTC offsets: "(New York, UTC-5 to UTC-5)".
+  const slotLabel = () => {
+    const src = plannerSource(), a = hmIn(src, meeting.startMs), b = hmIn(src, meeting.endMs);
+    const yearChange = a.ymd.slice(0, 4) !== b.ymd.slice(0, 4), day = yearChange ? ymdYear : ymdLabel;
+    const end = a.ymd === b.ymd ? formatTime(b.h, b.mi) : `${day(b.ymd)}, ${formatTime(b.h, b.mi)}`;
+    const where = repeatedAt(src, meeting.startMs) || repeatedAt(src, meeting.endMs) ? `${labelOf(src)}, ${t('plan.range', { start: utcOff(src, meeting.startMs), end: utcOff(src, meeting.endMs) })}` : labelOf(src);
+    return `${day(a.ymd)}, ${t('plan.range', { start: formatTime(a.h, a.mi), end })} (${where})`;
+  };
+  // The meeting as text: the line above, then each city with its own start and end (the end's day when it differs),
+  // then the exact interval in UTC, so the text, the link and the calendar file read the same.
   function slotText() {
-    const a = new Date(planCols[planSel.start].ms), b = new Date(slotEndMs());
+    const a = new Date(meeting.startMs), b = new Date(meeting.endMs);
     const hm = (z, d) => { const k = clock(z, d); return k.ampm ? `${k.hm} ${k.ampm}` : k.hm; };
+    const iso = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
     const lines = settings.zones.filter(supportsZone).map((z) => {
-      const day = T.fmt(z, { weekday: 'short', month: 'short', day: 'numeric' }, locale()).format(a);
-      return `${labelOf(z)}: ${t('plan.range', { start: hm(z, a), end: hm(z, b) })}, ${day}`;
+      const f = T.fmt(z, { weekday: 'short', month: 'short', day: 'numeric' }, locale()), da = f.format(a), db = f.format(b);
+      if (hmIn(z, meeting.startMs).ymd === hmIn(z, meeting.endMs).ymd) return `${labelOf(z)}: ${t('plan.range', { start: hm(z, a), end: hm(z, b) })}, ${da}`;
+      return `${labelOf(z)}: ${t('plan.range', { start: `${hm(z, a)}, ${da}`, end: `${hm(z, b)}, ${db}` })}`;
     });
-    return [slotLabel(), ...lines].join('\n');
+    return [slotLabel(), ...lines, `UTC: ${t('plan.range', { start: iso(meeting.startMs), end: iso(meeting.endMs) })}`].join('\n');
   }
-  // The filled band over the selected hours and the "Copy slot" / "Save invite" line in the planner head.
+  // The filled band over the selected time and the "Copy slot" / "Save invite" line in the planner head. While the time
+  // field holds an error the line says so and both buttons are disabled.
   function syncPlanSel() {
     const layer = el.planBody.querySelector('.plan-layer');
     let band = layer ? layer.querySelector('.plan-sel') : null;
-    const on = !!(planSel && layer && planCols);
-    if (!on) { if (band) band.remove(); }
+    const d = planSelDrag && planSelDrag.moved ? planSelDrag : null;
+    const a = d ? Math.min(d.from, d.to) : meeting && planCols ? colAt(meeting.startMs) : 0;
+    const b = d ? Math.max(d.from, d.to) + 1 : meeting && planCols ? colAt(meeting.endMs) : 0;
+    const on = !!((d || meeting) && planCols);
+    if (!on || !layer || b <= a) { if (band) band.remove(); }
     else {
       if (!band) { band = document.createElement('div'); band.className = 'plan-sel'; layer.insertBefore(band, layer.querySelector('.plan-now')); }
-      const left = `${(planSel.start / 24) * 100}%`, width = `${((planSel.end - planSel.start) / 24) * 100}%`;
+      const left = `${(a / 24) * 100}%`, width = `${((b - a) / 24) * 100}%`;
       if (band.style.left !== left) band.style.left = left;
       if (band.style.width !== width) band.style.width = width;
-      setText(el.planSel, slotLabel());
-      el.planIcs.hidden = typeof window.wc.saveIcs !== 'function';
     }
-    if (el.planSelBar.hidden === on) {
-      el.planSelBar.hidden = !on;
-      el.planner.classList.toggle('has-sel', on);
+    if (on && meeting) {
+      setText(el.planSel, convError ? t('plan.fix') : slotLabel());
+      el.planIcs.hidden = typeof window.wc.saveIcs !== 'function';
+      el.planLink.hidden = !window.WCLink;
+      if (!el.planStatus.hidden && planStatusFor !== meeting.startMs + '/' + meeting.endMs) showPlanStatus('');
+    }
+    const bar = on && !!meeting;
+    if (el.planSelBar.hidden === bar) {
+      el.planSelBar.hidden = !bar;
+      el.planner.classList.toggle('has-sel', bar);
       fitPlanner(); // the head line changed
     }
   }
-  el.planCopy.addEventListener('click', () => { if (settings && planSel && planCols) copyOut(slotText(), null); });
-  el.planIcs.addEventListener('click', () => { if (settings && planSel && planCols) saveInvite(planCols[planSel.start].ms, slotEndMs(), slotText()); });
+  el.planCopy.addEventListener('click', () => { if (settings && meeting && !convError) copyOut(slotText(), null); });
+  // Copy link (web): the version 2 link of this exact meeting, on the page the visitor is on
+  // Copy link: the version 2 link of this exact meeting (src/renderer/share-link.js). On the web, on the page the visitor
+  // is on; in the Windows app, on the public home page, which opens it (nothing is sent anywhere by copying).
+  el.planLink.addEventListener('click', () => {
+    if (!settings || !meeting || convError || !convert) return;
+    if (typeof window.WCShareHash === 'function' && typeof window.wc.shareLink === 'function') { const h = window.WCShareHash(); if (h) copyOut(window.wc.shareLink(h), null); else showPlanStatus(t('plan.linkFailed')); return; }
+    const h = window.WCLink && window.WCLink.build(settings.zones.filter(supportsZone), convert.zone, meeting.startMs, meeting.endMs);
+    if (h) copyOut(window.WCLink.HOME + '#' + h, null); else showPlanStatus(t('plan.linkFailed'));
+  });
+  // A failed calendar file (or a link that cannot be written exactly) stays said beside the meeting until it is retried,
+  // dismissed by another action, or the meeting changes.
+  let planStatusFor = '';
+  function showPlanStatus(text) {
+    planStatusFor = meeting ? meeting.startMs + '/' + meeting.endMs : '';
+    setText(el.planStatus, text); el.planStatus.hidden = !text;
+  }
+  el.planIcs.addEventListener('click', () => { if (settings && meeting && !convError) saveInvite(meeting.startMs, meeting.endMs, slotText()); });
   // Drag across the cells of a row: the slot follows the pointer (captured once it leaves the first hour, so a plain
   // click still reaches its cell), and letting go converts at the slot's first hour.
   el.planBody.addEventListener('pointerdown', (e) => {
@@ -1689,24 +2036,23 @@
     if (h === d.to) return;
     d.to = h;
     if (!d.moved) { d.moved = true; try { el.planBody.setPointerCapture(e.pointerId); } catch { /* not capturable */ } }
-    planSel = { start: Math.min(d.from, h), end: Math.max(d.from, h) + 1 }; planSelAnchor = d.from;
-    syncPlanSel();
+    syncPlanSel(); // preview only: committed when the pointer is let go
   });
   const endSelDrag = (e) => {
     const d = planSelDrag;
     if (!d || e.pointerId !== d.id) return;
     planSelDrag = null;
     try { el.planBody.releasePointerCapture(e.pointerId); } catch { /* not captured */ }
-    if (!d.moved || !settings || e.type === 'pointercancel') return;
-    planFocusH = d.to;
-    pickHour(planSel.start);
+    if (!d.moved || !settings || e.type === 'pointercancel') { syncPlanSel(); return; }
+    planFocusH = d.to; planSelAnchor = d.from;
+    commitSlot(Math.min(d.from, d.to), Math.max(d.from, d.to) + 1);
   };
   el.planBody.addEventListener('pointerup', endSelDrag);
   el.planBody.addEventListener('pointercancel', endSelDrag);
   el.planBody.addEventListener('click', (e) => {
     if (!settings) return;
     const cell = e.target.closest('.plan-cell');
-    if (cell) { planFocusH = +cell.dataset.h; planSel = { start: planFocusH, end: planFocusH + 1 }; planSelAnchor = planFocusH; pickHour(planFocusH); return; }
+    if (cell) { planFocusH = +cell.dataset.h; planSelAnchor = planFocusH; commitSlot(planFocusH, planFocusH + 1); return; }
     const label = e.target.closest('.plan-label');
     if (label) openHours(label.closest('.plan-row').dataset.zone, label);
   });
@@ -1718,13 +2064,13 @@
     // Shift+Left/Right grows or shrinks the slot from where it started (the anchor); focus follows the moving edge.
     if (e.shiftKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
       e.preventDefault();
-      if (!planSel || planSelAnchor === null) planSelAnchor = h;
+      const cur = slotCols();
+      if (!cur || planSelAnchor === null || planSelAnchor < cur.start || planSelAnchor >= cur.end) planSelAnchor = h;
       h = Math.max(0, Math.min(23, h + (e.key === 'ArrowRight' ? 1 : -1)));
-      planSel = { start: Math.min(planSelAnchor, h), end: Math.max(planSelAnchor, h) + 1 };
       planFocusH = h;
-      if (!convert || convert.h !== planSel.start || convert.mi) pickHour(planSel.start); else render();
+      commitSlot(Math.min(planSelAnchor, h), Math.max(planSelAnchor, h) + 1);
       const tc = rows[ri] && rows[ri].querySelector(`.plan-cell[data-h="${h}"]`);
-      if (tc) tc.focus();
+      if (tc) focusCell(tc);
       return;
     }
     if (e.key === 'ArrowLeft') h = Math.max(0, h - 1);
@@ -1736,9 +2082,9 @@
     else return;
     e.preventDefault();
     planFocusH = h;
-    if (pick) { planSel = { start: h, end: h + 1 }; planSelAnchor = h; pickHour(h); } else render();
+    if (pick) { planSelAnchor = h; commitSlot(h, h + 1); } else render();
     const target = rows[ri] && rows[ri].querySelector(`.plan-cell[data-h="${h}"]`);
-    if (target) target.focus();
+    if (target) focusCell(target);
   });
   el.btnPlanner.addEventListener('click', guard(() => {
     closeHours(false);
@@ -2131,9 +2477,8 @@
     applyLayout();
     syncLayoutSwitch();
   }
-  // About row: Website, Report a problem (the bug form with this version and build filled in) and Check for updates
-  // (not in the Store build, which the Store updates, nor in the web app, which is always current). Plain links opened
-  // in the browser through main's openExternalSafe; no tracking parameters, and the app makes no request itself.
+  // About row: Website and Report a problem (the bug form with this version and build filled in). Plain links opened in
+  // the browser through main's openExternalSafe; no tracking parameters.
   const REPORT_URL = 'https://github.com/joaoCarvalho1000/open-world-clock/issues/new?template=bug.yml';
   function syncAbout() {
     const q = new URLSearchParams();
@@ -2142,8 +2487,91 @@
     if (settings.version) q.set('version', `v${settings.version}`);
     const href = `${REPORT_URL}&${q.toString()}`;
     if (el.reportLink.getAttribute('href') !== href) el.reportLink.setAttribute('href', href);
-    const noUpdates = settings.store !== false || !!settings.web;
-    if (el.updatesLink.hidden !== noUpdates) el.updatesLink.hidden = noUpdates;
+    renderUpdates();
+  }
+  // ---------- Updates (main owns the state and every decision: src/update-controller.js) ----------
+  // One status line, one action that fits the state (the same button element throughout, so focus stays on it), an
+  // optional second action, and the automatic preference with what it does. Not in the web app (always current) nor
+  // in unpackaged runs (channel 'none'). The page passes nothing to main but the request itself.
+  const updApi = window.wc && window.wc.updates;
+  let upd = null, updActionFn = null, updSecondaryFn = null;
+  function renderUpdates() {
+    const s = upd, show = !!updApi && !!settings && !settings.web && !!s && s.channel !== 'none';
+    if (el.updGroup.hidden === show) el.updGroup.hidden = !show;
+    if (!show) return;
+    const signed = s.channel === 'signed', checks = signed || s.channel === 'discovery';
+    const v = s.latest || '';
+    // with the date: the app can stay in the tray for days, and an old result must not read as today's
+    const time = s.checkedAt ? new Intl.DateTimeFormat(locale(), { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: !!settings.hour12 }).format(s.checkedAt) : '';
+    let status = '', action = null, second = null;
+    const check = [t('upd.check'), () => updApi.check()], page = [t('upd.openDownload'), () => updApi.openDownloadPage()];
+    switch (s.phase) {
+      case 'idle': status = signed ? t('upd.idle.signed', { v: s.version }) : t('upd.idle.discovery'); action = check; break;
+      case 'checking': status = t('upd.checking'); action = [t('upd.check'), null]; break;
+      // signed: electron-updater may list a newer version this copy is not offered (staged rollout), so it says only
+      // that no update is available for this copy; discovery compared the listed version with this one
+      case 'current': status = signed ? t('upd.current.signed', { v: s.version, time }) : t('upd.current', { cur: s.version, v, time }); action = check; break;
+      case 'available':
+        if (signed) { status = t('upd.available.signed', { v }); action = [t('upd.download'), () => updApi.download()]; }
+        else { status = t('upd.available.manual', { v }); action = page; second = check; }
+        break;
+      case 'downloading': status = t('upd.downloading', { v }); action = [t('upd.cancel'), () => updApi.cancel()]; break;
+      case 'ready':
+        // installing failed (the downloaded file is kept): say so, offer Restart and install again and the download page
+        if (s.errorKind === 'install') { status = t('upd.error.install', { v }); second = page; }
+        else status = t('upd.ready', { v });
+        action = [t('upd.restart'), () => updApi.install()];
+        break;
+      case 'error': status = t(`upd.error.${['network', 'verify'].includes(s.errorKind) ? s.errorKind : 'feed'}`); action = [t('upd.retry'), () => updApi.check()]; second = page; break;
+      case 'disabled': status = t('upd.disabled'); action = page; break;
+      case 'store': status = t('upd.store'); break;
+      default: break;
+    }
+    setText(el.updStatus, status);
+    const failed = s.phase === 'error' || (s.phase === 'ready' && s.errorKind === 'install');
+    if (el.updStatus.classList.contains('upd-error') !== failed) el.updStatus.classList.toggle('upd-error', failed);
+    const downloading = s.phase === 'downloading';
+    if (el.updProgress.hidden === downloading) el.updProgress.hidden = !downloading;
+    if (downloading) {
+      const pct = Math.max(0, Math.min(100, Number(s.percent) || 0));
+      if (+el.updProgress.value !== pct) { el.updProgress.value = pct; el.updProgress.setAttribute('aria-valuetext', `${pct}%`); }
+    }
+    const btn = (node, a) => {
+      if (node.hidden !== !a) node.hidden = !a; // shown only with an action
+      if (!a) return null;
+      setText(node, a[0]);
+      const off = !a[1];
+      if (node.getAttribute('aria-disabled') !== String(off)) node.setAttribute('aria-disabled', String(off));
+      return a[1];
+    };
+    updActionFn = btn(el.updAction, action);
+    updSecondaryFn = btn(el.updSecondary, second);
+    // the automatic preference: signed "Automatic updates" (on unless turned off), others "Automatically check" (off)
+    if (el.updAutoRow.hidden === checks) el.updAutoRow.hidden = !checks;
+    if (checks) {
+      setText(el.updAutoLabel, t(signed ? 'upd.auto.signed' : 'upd.auto.manual'));
+      setText(el.updAutoHelp, t(signed ? 'upd.auto.signed.help' : 'upd.auto.manual.help'));
+      el.optUpdAuto.checked = signed ? settings.autoUpdate !== false : settings.autoCheck === true;
+    }
+  }
+  const runUpd = (fn) => { if (fn) Promise.resolve(fn()).catch(onIpcError); };
+  el.updAction.addEventListener('click', guard(() => runUpd(updActionFn)));
+  el.updSecondary.addEventListener('click', guard(() => runUpd(updSecondaryFn)));
+  el.optUpdAuto.addEventListener('change', guard(() => {
+    if (!upd) return;
+    set(upd.channel === 'signed' ? { autoUpdate: el.optUpdAuto.checked } : { autoCheck: el.optUpdAuto.checked });
+  }));
+  if (updApi) {
+    const adoptUpd = (s) => { if (s && typeof s === 'object') { upd = s; if (settings) renderUpdates(); } };
+    const offUpd = window.wc.onUpdates((s) => adoptUpd(s));
+    updApi.get().then(adoptUpd).catch(() => {});
+    // a tray update notification was clicked: open the settings at Updates (focus on its action)
+    const offReveal = window.wc.onUpdatesReveal(guard(() => {
+      if (el.panel.hidden) openPanel();
+      el.updGroup.scrollIntoView({ block: 'nearest' });
+      if (!el.updAction.hidden) el.updAction.focus();
+    }));
+    window.addEventListener('beforeunload', () => { offUpd(); offReveal(); });
   }
   let setSeq = 0;
   function set(patch) {
@@ -2346,7 +2774,7 @@
       // Back after more than 5 minutes hidden: a conversion left open goes back to now before the first frame.
       const away = hiddenSince ? Date.now() - hiddenSince : 0;
       hiddenSince = 0;
-      if (convert && away > convIdleMs()) clearConversion();
+      if (convert && !meeting && !convError && away > convIdleMs()) clearConversion();
       checkLocalZone(); render(); scheduleTick();
     }
   });

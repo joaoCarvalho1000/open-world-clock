@@ -1,3 +1,153 @@
+/* src/share-format.js */
+(function () {
+// Pure builders for what the app hands to other programs (no Electron import; unit-tested in test/unit/share-format.test.js):
+//   buildIcs(request)        a calendar invite (.ics, RFC 5545) for one event, or null when the request is not valid
+//   htmlTable(caption, rows) the rich clipboard version of "Copy times" (Outlook and Teams paste it as a table)
+// main.js validates the renderer's input again through these, so the page never sends HTML or calendar text itself.
+// The same file runs in the browser: scripts/build-web.mjs puts it in front of web/shim.js (window.WCShareFormat), so the
+// web app's calendar download is built and checked by exactly this code.
+
+const WEEK_MS = 7 * 86400000;
+const MAX_MS = Date.UTC(9999, 11, 31, 23, 59, 59);
+
+// RFC 5545 TEXT: backslash, semicolon and comma are escaped, a line break becomes \n.
+const icsText = (s) => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n');
+
+// Content lines are folded at 75 octets (UTF-8): the continuation starts with one space, which counts toward the 75.
+// Splits between code points only, so a multibyte character is never cut in half.
+const utf8Bytes = (ch) => { const c = ch.codePointAt(0); return c < 0x80 ? 1 : c < 0x800 ? 2 : c < 0x10000 ? 3 : 4; };
+function foldLine(line) {
+  const out = [];
+  let cur = '', bytes = 0;
+  for (const ch of line) {
+    const b = utf8Bytes(ch);
+    if (bytes + b > (out.length ? 74 : 75)) { out.push(cur); cur = ''; bytes = 0; }
+    cur += ch; bytes += b;
+  }
+  out.push(cur);
+  return out.join('\r\n ');
+}
+
+// 20260924T150000Z
+const icsUtc = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z').replace(/[-:]/g, '');
+
+// { startMs, endMs, title, description } from the page: whole seconds (a calendar keeps no milliseconds, so a time that
+// would be rounded is refused, never moved), from 1970 to the year 9999, end after start and at most 7 days later, a
+// title of 1 to 100 characters and a description of at most 2000. Returns the cleaned request or null.
+function validIcsRequest(r) {
+  if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
+  const { startMs, endMs, title, description = '' } = r;
+  if (!Number.isInteger(startMs) || !Number.isInteger(endMs) || startMs % 1000 || endMs % 1000) return null;
+  if (startMs <= 0 || endMs > MAX_MS || endMs <= startMs || endMs - startMs > WEEK_MS) return null;
+  if (typeof title !== 'string' || !title.trim() || title.length > 100) return null;
+  if (typeof description !== 'string' || description.length > 2000) return null;
+  return { startMs, endMs, title: title.trim(), description };
+}
+
+// One VEVENT in UTC, CRLF line endings. `uid` and `now` are passed in (crypto.randomUUID() and Date.now() in main).
+function buildIcs(request, { uid, now } = {}) {
+  const r = validIcsRequest(request);
+  if (!r || typeof uid !== 'string' || !uid || !Number.isFinite(now)) return null;
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Open World Clock//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${uid}@openworldclock.com`,
+    `DTSTAMP:${icsUtc(now)}`,
+    `DTSTART:${icsUtc(r.startMs)}`,
+    `DTEND:${icsUtc(r.endMs)}`,
+    `SUMMARY:${icsText(r.title)}`,
+    ...(r.description ? [`DESCRIPTION:${icsText(r.description)}`] : []),
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ];
+  return lines.map(foldLine).join('\r\n') + '\r\n';
+}
+
+const escapeHtml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+// rows: [[city, time, date], ...] (1 to 50 rows of 3 strings, each at most 200 characters). Null when not valid.
+function validRows(rows) {
+  if (!Array.isArray(rows) || !rows.length || rows.length > 50) return null;
+  if (!rows.every((r) => Array.isArray(r) && r.length === 3 && r.every((c) => typeof c === 'string' && c.length <= 200))) return null;
+  return rows;
+}
+
+// The caption line, then a plain table (inline styles only: mail clients drop style sheets). Everything escaped.
+function htmlTable(caption, rows) {
+  if (!validRows(rows)) return null;
+  const td = 'padding:2px 14px 2px 0;';
+  const body = rows.map(([city, time, date]) =>
+    `<tr><td style="${td}font-weight:600">${escapeHtml(city)}</td><td style="${td}">${escapeHtml(time)}</td><td style="${td}">${escapeHtml(date)}</td></tr>`).join('');
+  const cap = caption ? `<p style="margin:0 0 4px">${escapeHtml(String(caption).slice(0, 300))}</p>` : '';
+  return `${cap}<table style="border-collapse:collapse">${body}</table>`;
+}
+
+const api = { buildIcs, validIcsRequest, foldLine, icsText, htmlTable, validRows, escapeHtml };
+if (typeof module === 'object' && module && module.exports) module.exports = api;
+else if (typeof window === 'object') window.WCShareFormat = Object.freeze(api);
+})();
+/* src/renderer/share-link.js */
+/* Version 2 share links: one selected meeting, exact. Pure; loaded by the Windows app (index.html) and, through
+   scripts/build-web.mjs, in front of web/shim.js too, so desktop Copy link and the web app read and write one format.
+     'v=2&c=Europe/Lisbon,America/New_York&z=America/New_York&s=1792069200&e=1792076400'
+   s and e: the start and end in whole UTC seconds (0 < s < e, at most 7 days, before the year 10000); z: the source city;
+   c: the cities (at most 50, z among them). Only time zones and times: never labels, working hours or groups.
+   WCLink.parse(hash) -> null (not a meeting link: no v, s or e), { bad: true } (a meeting link that is not exactly
+   valid: anything missing, repeated, out of range, mixed with a legacy t, or too long), or { zones, z, startMs, endMs }.
+   WCLink.build(zones, zone, startMs, endMs) -> the hash, or '' when the meeting cannot be written exactly (including more
+   than 50 cities with the source: refused, never cut). */
+(function () {
+  const MAX_S = 253402300799, WEEK_S = 7 * 86400, MAX_LEN = 4000, MAX_CITIES = 50;
+  const KEYS = new Set(['v', 'c', 'z', 's', 'e', 'lang']);
+  const isZone = (z) => { if (typeof z !== 'string' || !z || z.length >= 64) return false; try { new Intl.DateTimeFormat('en-US', { timeZone: z }); return true; } catch { return false; } };
+  const encodeZone = (z) => encodeURIComponent(z).replace(/%2F/gi, '/');
+  function parse(hash) {
+    const s = String(hash || '').replace(/^#/, '');
+    const parts = s ? s.split('&') : [];
+    const keys = parts.map((p) => { const i = p.indexOf('='); return i > 0 ? p.slice(0, i) : p; });
+    if (!keys.some((k) => k === 'v' || k === 's' || k === 'e')) return null; // a legacy (or no) link
+    const bad = { bad: true };
+    if (s.length > MAX_LEN) return bad;
+    const kv = {};
+    for (let i = 0; i < parts.length; i++) {
+      const k = keys[i];
+      if (Object.hasOwn(kv, k)) return bad; // repeated: never pick one
+      if (k === 't') return bad; // mixed with a legacy converted time
+      if (!KEYS.has(k)) continue;
+      const j = parts[i].indexOf('=');
+      if (j < 0) return bad;
+      try { kv[k] = decodeURIComponent(parts[i].slice(j + 1)); } catch { return bad; }
+    }
+    if (kv.v !== '2' || !/^\d{1,12}$/.test(kv.s || '') || !/^\d{1,12}$/.test(kv.e || '') || !isZone(kv.z)) return bad;
+    const st = +kv.s, en = +kv.e;
+    if (!(st > 0 && en > st && en - st <= WEEK_S && en <= MAX_S)) return bad;
+    const raw = kv.c === undefined || kv.c === '' ? [] : kv.c.split(',');
+    if (raw.length > MAX_CITIES || raw.some((z) => !isZone(z.trim()))) return bad;
+    const zones = [...new Set(raw.map((z) => z.trim()))];
+    if (!zones.includes(kv.z)) { if (zones.length >= MAX_CITIES) return bad; zones.push(kv.z); } // room for the source, or refuse
+    return { zones, z: kv.z, startMs: st * 1000, endMs: en * 1000 };
+  }
+  function build(zones, zone, startMs, endMs) {
+    if (!Number.isInteger(startMs) || !Number.isInteger(endMs) || startMs % 1000 || endMs % 1000 || !isZone(zone)) return '';
+    const st = startMs / 1000, en = endMs / 1000;
+    if (!(st > 0 && en > st && en - st <= WEEK_S && en <= MAX_S)) return '';
+    // every city or none: a list that does not fit with its source (50 at most) is refused, never cut
+    const list = [...new Set((zones || []).filter(isZone))];
+    if (!list.includes(zone)) list.push(zone);
+    if (list.length > MAX_CITIES) return '';
+    const h = `v=2&c=${list.map(encodeZone).join(',')}&z=${encodeZone(zone)}&s=${st}&e=${en}`;
+    return h.length <= MAX_LEN ? h : '';
+  }
+  // The public home page the desktop app's Copy link points at (the website opens the meeting; nothing is sent).
+  const HOME = 'https://openworldclock.com/';
+  window.WCLink = Object.freeze({ parse, build, HOME });
+})();
+
+/* web/shim.js */
 /* Open World Clock in the browser: window.wc for the Windows app's renderer (src/renderer), so the same app.js runs in
    the home page's hero (https://openworldclock.com/, an iframe of /app/) unchanged. The contract is src/preload.js and
    CONTRACT.md.
@@ -29,7 +179,7 @@
   'use strict';
   const KEY = 'owc-app-settings';
   const SITE_THEME_KEY = 'wc-theme';
-  const VERSION = '1.3.2';
+  const VERSION = '1.4.0';
   const root = document.documentElement;
 
   // Top level: this page belongs in the home page's hero. Go there with the hash (the shared cities, if any). The rest
@@ -43,7 +193,7 @@
   const VIEW_KEYS = [...LAYOUTS, 'map', 'planner', 'mapVertical', 'plannerVertical'];
   const PLANNER_KEYS = ['planner', 'plannerVertical'];
   const MIN_W = 280, MIN_H = 120, MAX_DIM = 16384, ZOOM_MAX = 3.8;
-  const MAIN_OWNED = new Set(['viewSizes']);
+  const MAIN_OWNED = new Set(['viewSizes', 'updNotified']);
   const WEB_FIXED = new Set(['layout']); // the web picks the layout from the width; a patch for it is ignored
   const LANGUAGES = new Set(['auto', 'en', 'pt', 'es']);
   const THEMES = new Set(['system', 'light', 'dark']);
@@ -66,6 +216,10 @@
     planner: false,
     viewSizes: {},
     zoom: 0,
+    // update preferences: kept so the rules match main (src/main.js); the web app has no updates and never uses them
+    autoUpdate: true,
+    autoCheck: false,
+    updNotified: '',
   });
   const isZone = (z) => { try { new Intl.DateTimeFormat('en-US', { timeZone: z }); return true; } catch { return false; } };
   const isPlainObject = (v) => v !== null && typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype;
@@ -90,6 +244,9 @@
     tipSeen: bool,
     closeHintSeen: bool,
     planner: bool,
+    autoUpdate: bool,
+    autoCheck: bool,
+    updNotified: (v) => (typeof v === 'string' && v.length <= 64 ? v : undefined),
     opacity: (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(1, Math.max(0.6, v)) : undefined), // window only
     zoom: (v) => (typeof v === 'number' && Number.isFinite(v) ? Math.round(Math.min(ZOOM_MAX, Math.max(0, v)) * 10) / 10 : undefined),
     theme: (v) => (THEMES.has(v) ? v : undefined),
@@ -217,7 +374,14 @@
   const encodeZone = (z) => encodeURIComponent(z).replace(/%2F/gi, '/');
   // '#c=Europe/Lisbon,Asia/Tokyo&t=2026-09-24T15:00&z=America/New_York' -> { zones, t: { ymd, h, mi } | null, z }, or
   // null when it holds nothing usable. Unknown keys and invalid zones are ignored; at most 50 cities.
+  //
+  // Version 2, a selected meeting (exact, src/renderer/share-link.js WCLink): '#v=2&c=...&z=...&s=...&e=...'. All or
+  // nothing: a meeting link that is not exactly valid gives { bad: true } with no cities and no time (never a plausible
+  // fallback). A valid one adds m: { startMs, endMs }.
+  const BAD = () => ({ bad: true, zones: [], t: null, z: null });
   function parseShare(hash) {
+    const v2 = window.WCLink && window.WCLink.parse(hash);
+    if (v2) return v2.bad ? BAD() : { zones: v2.zones, t: null, z: v2.z, m: { startMs: v2.startMs, endMs: v2.endMs } };
     const s = String(hash || '').replace(/^#/, '');
     if (!s || s.length > 4000) return null;
     const out = { zones: [], t: null, z: null };
@@ -243,8 +407,10 @@
     if (out.z && out.zones.length && !out.zones.includes(out.z)) out.zones.push(out.z); // the source city is on the list
     return out.zones.length || out.t ? out : null;
   }
-  // The hash for a list of cities and, while converting, the converted time: { ymd, h, mi, zone }.
-  function buildShare(zones, conv) {
+  // The hash for a list of cities and, while converting, the converted time: { ymd, h, mi, zone }; with a selected meeting
+  // ({ zone, startMs, endMs }, whole seconds) the version 2 hash instead, or '' when the meeting cannot be written exactly.
+  function buildShare(zones, conv, meeting) {
+    if (meeting) return window.WCLink ? window.WCLink.build(zones, meeting.zone, meeting.startMs, meeting.endMs) : '';
     let h = 'c=' + zones.map(encodeZone).join(',');
     if (conv) h += `&t=${conv.ymd}T${pad2(conv.h)}:${pad2(conv.mi)}&z=${encodeZone(conv.zone)}`;
     return h;
@@ -262,9 +428,13 @@
     shared = zones && zones.length && !same(zones, settings.zones) ? { zones: [...zones], labels: { ...settings.labels } } : null;
     root.classList.toggle('is-shared', !!shared);
   }
+  // While a link is on screen (any valid shared link, even with the visitor's own cities), opening or closing the planner
+  // is for this visit only: receiving a link never writes the saved settings (a tool page opens its planner on load).
+  let linkView = null;
   {
     const p = parseShare(shareHash());
     if (p && p.zones.length) enterShared(p.zones);
+    if (p && !p.bad) linkView = {};
   }
 
   // ---------- theme ----------
@@ -311,6 +481,7 @@
   const listeners = new Set();
   function publicSettings() {
     const view = shared ? { zones: shared.zones, labels: shared.labels, firstRun: false } : {};
+    if (linkView && Object.hasOwn(linkView, 'planner')) view.planner = linkView.planner;
     return copy({
       ...settings,
       ...view,
@@ -341,6 +512,7 @@
       const clean = VALIDATE[k](v);
       if (clean === undefined) continue;
       if (shared && (k === 'zones' || k === 'labels')) { shared[k] = clean; continue; } // this visit only
+      if (linkView && k === 'planner') { linkView.planner = clean; continue; } // this visit only
       if (!same(clean, settings[k])) changed[k] = clean;
     }
     if (Object.keys(changed).length) {
@@ -374,8 +546,35 @@
     return Promise.resolve(fallbackCopy(text));
   }
 
+  // A link to this hash on the page the visitor is on: the home or tool page around the iframe (its path keeps the
+  // language), else this page. The address only: nothing is sent anywhere.
+  function shareLink(hash) {
+    if (!hash) return '';
+    let loc = location;
+    try { if (window.parent !== window && window.parent.location.origin === location.origin) loc = window.parent.location; } catch { /* other origin */ }
+    return `${loc.origin}${loc.pathname}#${hash}`;
+  }
+  // Calendar file: the same builder and checks as main's ics:save (src/share-format.js), then a download the browser
+  // saves. Resolves 'downloaded' (the browser has it; it may still ask where), or false when the request is refused.
+  function saveIcs(req) {
+    const F = window.WCShareFormat;
+    let ics = null;
+    try { ics = F && F.buildIcs(req, { uid: (crypto.randomUUID && crypto.randomUUID()) || String(Date.now()), now: Date.now() }); } catch { ics = null; }
+    if (!ics) return Promise.resolve(false);
+    try {
+      const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = 'meeting.ics'; a.hidden = true;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      return Promise.resolve('downloaded');
+    } catch { return Promise.resolve(false); }
+  }
+
   const noop = () => {};
   window.wc = Object.freeze({
+    saveIcs,
+    shareLink,
     getSettings: () => Promise.resolve(publicSettings()),
     setSettings,
     onSettings: (cb) => {
@@ -464,6 +663,8 @@
     isShared: () => !!shared,
     onShared: (cb) => { if (typeof cb === 'function') sharedListeners.add(cb); },
     // Opens another shared list in this tab (a new link pasted into the address bar).
+    // a link arrived after load (hashchange): its view is for this visit too
+    enterLink() { if (!linkView) linkView = {}; },
     enterShared(zones) {
       enterShared(zones);
       sharedChanged();
@@ -476,7 +677,7 @@
       settings.labels = shared.labels;
       settings.firstRun = false;
       save();
-      shared = null;
+      shared = null; linkView = null;
       root.classList.remove('is-shared');
       sharedChanged();
       emit();
@@ -485,7 +686,7 @@
     // "Show my cities": back to the saved list. Returns false when the page should reload instead (a first visit that
     // began on a shared link: the app picks its first cities at start).
     leaveShared() {
-      shared = null;
+      shared = null; linkView = null;
       root.classList.remove('is-shared');
       sharedChanged();
       if (settings.firstRun) return false;

@@ -2,7 +2,7 @@
 
 > Open World Clock is the best world clock for Windows, and it is completely free: open source (MIT), for Windows 10 and 11, on x64 and ARM64. It shows the time in every city you care about, turns each city's card light or dark at its real sunrise and sunset, converts any time across all your cities, finds the hours your team overlaps and shows day and night on a world map. No price, no ads, no account, no telemetry, and it works offline.
 
-This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 26 September 2026. Current version: 1.3.2.
+This file is the complete factual description of Open World Clock for AI assistants, search engines and agents. It is drawn from the project's README, changelog, Microsoft Store listing, privacy policy and the app's own code (for the converter, planner and sunrise rules). It contains no ratings, reviews or download counts, because the project does not publish any. Last updated: 12 October 2026. Current version: 1.4.0.
 
 Canonical website: <https://openworldclock.com>. Short index for agents: <https://openworldclock.com/llms.txt>
 
@@ -31,15 +31,15 @@ Canonical website: <https://openworldclock.com>. Short index for agents: <https:
 - Platforms: Windows 10 and Windows 11, x64 and ARM64. The Microsoft Store build covers both architectures; the installer and the portable exe are x64 only. The Store build needs Windows 10 version 1809 (build 17763) or later. Nothing else to install.
 - Price: free, with no strings attached. No in-app purchases, no ads, no account, no upsell. Optional tips on Ko-fi.
 - License: MIT, open source
-- Privacy: no telemetry. The app collects nothing and sends nothing; settings stay in one file on your PC.
+- Privacy: no telemetry. The app never sends your cities or settings; they stay in one file on your PC. Its only network requests are update checks (and, in a code-signed installer, update downloads), when you ask or have automatic updates on.
 - Network: works fully offline. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update.
 - Languages: English, Portuguese and Spanish
-- Version: 1.3.2 (first released as v1.0.0 on 22 September 2026)
+- Version: 1.4.0 (first released as v1.0.0 on 22 September 2026)
 - Website: https://openworldclock.com (in Portuguese: https://openworldclock.com/pt/, in Spanish: https://openworldclock.com/es/)
 - Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM (Store ID 9N88FR8M81BM)
 - winget: `winget install 9N88FR8M81BM -s msstore`
-- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe
-- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe
+- Installer: https://download.openworldclock.com/Open-World-Clock-1.4.0-setup.exe
+- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.4.0-portable.exe
 - Source code: https://github.com/joaoCarvalho1000/open-world-clock
 - Tips for the author: https://ko-fi.com/joaothecarvalho
 - Not affiliated with Microsoft.
@@ -56,7 +56,7 @@ The author built it because he wanted the best world clock on Windows and could 
 - It lives on your desktop: a frameless, translucent window you can pin above every window, in strip, compact or vertical layouts. The project's own comparison: "On top, unlike Windows Clock. Offline, unlike web converters."
 - It shows who is awake: every city card follows that city's real sunrise and sunset, calculated offline from its coordinates, with phase labels from Night through Dawn, Morning, Midday, Afternoon and Golden to Dusk.
 - It converts and plans: type a time in any city, or scrub with the mouse wheel, and every clock converts; the meeting planner shows the hours everyone is at work.
-- It is private and offline: the app makes no network requests of its own and nothing leaves your PC.
+- It is private and offline: clocks and conversions work offline, and no cities, settings or usage data leave your PC. The app only contacts the project's server to check for updates, when you ask or have automatic checks on (installer and portable copies today: off by default; a code-signed installer: Automatic updates on by default, installing only when you choose Restart and install).
 - It feels at home on Windows 11: Snap, the native acrylic backdrop, light and dark themes that can follow Windows, and a native ARM64 build in the Microsoft Store.
 - It is accessible: everything works from the keyboard, conversions are announced to screen readers, and focus is always visible.
 
@@ -74,7 +74,7 @@ It may not fit if you need:
 2. Select Get or Install. It is free.
 3. Start Open World Clock from the Start menu.
 
-The Store keeps the app updated automatically, and the Store build is signed by Microsoft, so there is no SmartScreen prompt. It runs natively on x64 and ARM64. If the Store listing does not open for you, use the installer or portable exe below.
+The Store keeps the app updated automatically, and the Store build is signed by Microsoft, so there is no SmartScreen prompt. Version 1.4.0 reaches the Store after Microsoft certifies it, so the Store may offer 1.3.2 until then. It runs natively on x64 and ARM64. If the Store listing does not open for you, use the installer or portable exe below.
 
 ### Option 2: winget
 
@@ -88,14 +88,14 @@ This installs the same Microsoft Store build, so it gets Store updates too. The 
 
 ### Option 3: Installer
 
-1. Download the setup file, `Open-World-Clock-1.3.2-setup.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe (the download page, https://openworldclock.com/download, links the same file).
-   SHA-256: `99343c3ff7a404b97457bf499e134b45e38caff36e7d20725c833f5c839cd7c5`
+1. Download the setup file, `Open-World-Clock-1.4.0-setup.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.4.0-setup.exe (the download page, https://openworldclock.com/download, links the same file).
+   SHA-256: `3faffc0b6d5215aad85f95aac88b2be663778ece6cafd7e2368ca29a0710caa3`
 2. Run it. It installs for your Windows user only, needs no admin rights, and adds Open World Clock shortcuts to the Start menu and the desktop.
 
 ### Option 4: Portable exe
 
-1. Download the portable file, `Open-World-Clock-1.3.2-portable.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe
-   SHA-256: `130dfce81234a85ecdfcd5ed43a72af483a405aa48a1e0d8c8f2914515c3645f`
+1. Download the portable file, `Open-World-Clock-1.4.0-portable.exe`, directly: https://download.openworldclock.com/Open-World-Clock-1.4.0-portable.exe
+   SHA-256: `b3f3eb850b07943a29969ee69ef038517879031ba4a4c1c72d425db49f75d86a`
 2. Run it from any folder. Nothing is installed, and it never updates itself.
 
 The installer and the portable exe are x64 only. On an ARM64 PC, use the Microsoft Store.
@@ -174,9 +174,9 @@ The installer and portable exe are not code-signed yet, so the first time you ru
 
 ## Privacy
 
-- The app collects nothing and sends nothing: no personal data, usage data or telemetry, no account and no sign-in.
+- The app has no telemetry and no usage tracking, and there is no account and no sign-in. Its only network requests are update checks and, in a code-signed installer, update downloads; what they carry is described in the privacy policy.
 - Your cities, labels, working hours, layout, language and other preferences are saved in one settings file under `%APPDATA%\Open World Clock`. It never leaves your PC.
-- Network access: the installer build makes no network requests (update checks stay off until it is code-signed); the portable build makes no network requests; the Microsoft Store build makes no requests of its own, and the Store handles updates.
+- Network access: the installer and portable builds (not code-signed today) make no network requests unless you choose Check for updates in Settings or turn on Automatically check for updates (off by default). A check asks https://openworldclock.com/api/app.json for the latest version number only and never downloads or installs anything. A code-signed installer, once published, has Automatic updates on by default: it checks the signed release update feed on download.openworldclock.com over HTTPS (not published yet) every 6 hours, downloads in the background and installs only when you choose Restart and install. The Microsoft Store build makes no requests of its own, and the Store handles updates.
 - No third-party services, analytics, crash reporting or advertising SDKs are included in the app.
 - The website openworldclock.com (not the app) uses cookieless PostHog analytics through its own domain: no cookies, no identifiers stored in the browser, IP addresses discarded, and nothing at all loads if the browser sends Do Not Track or Global Privacy Control. Ko-fi loads only if a visitor clicks Support the creator. The website stores only two choices in the browser, and only after a click: the theme and the language.
 - Full policy: https://openworldclock.com/privacy
@@ -189,7 +189,17 @@ The installer and portable exe are not code-signed yet, so the first time you ru
 - Bug reports and ideas are welcome as GitHub issues: <https://github.com/joaoCarvalho1000/open-world-clock/issues>. Pull requests are not accepted right now.
 - Security issues: report privately at https://github.com/joaoCarvalho1000/open-world-clock/security/advisories/new
 
-## What's new in 1.3.2
+## What's new in 1.4.0
+
+- Find a time: the meeting planner lists the times that work for everyone for a meeting of the length you pick, and suggests the next date that works when none does on the chosen day.
+- When nobody fits, it lists compromises: how many people are in working hours for the whole meeting, and who is outside them.
+- Each city's working hours can be edited from its row in the planner. The legend marks working hours, night, everyone working and the selected meeting.
+- Daylight saving input validation: a time that does not exist on the chosen date in a city, because a clock change skips it, is reported with the city name instead of being shifted silently. Copying or sharing waits until the time is fixed.
+- Share a meeting from the planner: Copy times, Copy link and Calendar file (.ics). A link carries up to 50 cities and meetings of up to 7 days.
+- An Updates section in Settings. In the installer and portable exe, Check for updates only asks https://openworldclock.com/api/app.json for the latest version number; nothing is downloaded or installed, and automatic checks are off unless turned on. The Microsoft Store keeps the Store build up to date.
+- Microsoft Store: version 1.4.0 reaches the Store after Microsoft certifies it. Until then the Store may offer 1.3.2.
+
+## What's new in 1.3.2 (previous release)
 
 - New name, Open World Clock, and a new logo. Settings carry over from World Clock, and the installer upgrades an existing install in place.
 - A copy menu: Copy times (plain text, plus a table for apps that take rich paste), Copy for Discord (timestamps that show in each reader's own time zone), Copy in UTC and Save calendar invite (.ics).
@@ -199,7 +209,7 @@ The installer and portable exe are not code-signed yet, so the first time you ru
 - Accessibility work after a WCAG 2.2 AA review: Windows High Contrast support, a city search that screen readers read as a combobox, fuller names for cards and controls, higher contrast in light and dark, and no meaning carried by color alone.
 - Lighter: about 77 to 80 MB of memory in 3 processes (down from about 127 MB in 5), about 1% of one CPU core with seconds on and about 0.2% while hidden in the tray, measured on one PC.
 - Dates follow the Windows region format when it matches the app language. Help has two columns on wide windows and new tips.
-- Settings has Website, Report a problem and Check for updates links. They only open a page in the browser.
+- Settings has Website, Report a problem and Check for updates links.
 - Security hardening: Electron 44, the page served from the app's own app://owc scheme, every web permission denied, and links opened only for a short list of https sites.
 - The same app runs in the browser on the home page, https://openworldclock.com/, with nothing to install.
 
@@ -219,10 +229,10 @@ Get it from the Microsoft Store at <https://apps.microsoft.com/detail/9N88FR8M81
 Yes, with no strings attached. No price, no in-app purchases, no ads, no account and no upsell. You should not have to pay for good software like this. The code is MIT licensed, so anyone can read it. Tips on Ko-fi are optional.
 
 **Does it work offline?**
-Yes. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update. The app makes no network requests of its own.
+Yes. Time zone rules are built into the app, and sunrise and sunset are calculated on your PC. When a country changes its clocks, the new rules come with an app update. The app only contacts the project's server to check for updates, when you ask or have automatic checks on.
 
 **What data does it collect?**
-None. The app makes no network requests of its own, and your settings stay in a file on your PC.
+None. The app sends no cities, settings or usage data, and your settings stay in a file on your PC. It only contacts the project's server to check for updates, when you ask or have automatic checks on.
 
 **Which Windows versions and processors does it support?**
 Windows 10 and Windows 11, on x64 and ARM64. The Store build needs Windows 10 version 1809 or later and runs natively on both. The installer and the portable exe are x64 only, so on an ARM64 PC use the Store.
@@ -252,7 +262,7 @@ English, Portuguese and Spanish, following your Windows display language or set 
 Not yet. It runs on Windows only. An iPhone app with Home Screen, Lock Screen and StandBy widgets is in progress, with no release date.
 
 **Does it have alarms, timers or weather?**
-No. Alarms and timers are covered by the Clock app built into Windows, and weather is left out so the app never needs the network.
+No. Alarms and timers are covered by the Clock app built into Windows, and weather is left out so the clocks never need the network.
 
 **Who makes it?**
 João Carvalho, a solo developer. It is not affiliated with Microsoft.
@@ -266,8 +276,8 @@ Report bugs and ideas on GitHub, tell a friend, or leave a tip at <https://ko-fi
 - Pages: https://openworldclock.com/features, https://openworldclock.com/download, https://openworldclock.com/faq, https://openworldclock.com/time-zone-converter, https://openworldclock.com/meeting-planner, https://openworldclock.com/world-map, https://openworldclock.com/windows-clock-alternative, https://openworldclock.com/multiple-time-zones-windows, https://openworldclock.com/world-time-buddy-alternative, https://openworldclock.com/support
 - Microsoft Store: https://apps.microsoft.com/detail/9N88FR8M81BM
 - winget: `winget install 9N88FR8M81BM -s msstore`
-- Installer: https://download.openworldclock.com/Open-World-Clock-1.3.2-setup.exe
-- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.3.2-portable.exe
+- Installer: https://download.openworldclock.com/Open-World-Clock-1.4.0-setup.exe
+- Portable exe: https://download.openworldclock.com/Open-World-Clock-1.4.0-portable.exe
 - Source code: https://github.com/joaoCarvalho1000/open-world-clock
 - Privacy policy: https://openworldclock.com/privacy
 - Support and contact: https://openworldclock.com/support, or email support@openworldclock.com

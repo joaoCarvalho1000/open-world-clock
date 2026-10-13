@@ -1,7 +1,7 @@
 {
   "name": "world-clock-widget",
   "productName": "Open World Clock",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "The best world clock for Windows. Completely free, no strings attached.",
   "main": "src/main.js",
   "author": "João Carvalho",
@@ -46,6 +46,7 @@
       "!test/**"
     ],
     "afterPack": "scripts/after-pack.js",
+    "afterSign": "scripts/after-sign.js",
     "win": {
       "icon": "build/icon.ico",
       "artifactName": "Open-World-Clock-${version}-${arch}.${ext}",

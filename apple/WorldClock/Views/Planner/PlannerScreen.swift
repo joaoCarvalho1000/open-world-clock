@@ -35,7 +35,7 @@ struct PlannerScreen: View {
         let plan = Planner.plan(source: source, year: day.year, month: day.month, day: day.day,
                                 zones: zones, hours: model.settings.hours)
         // No hour where everyone works: show the hours where the most cities do (dashed band), not a bare "No overlap".
-        // Ties go to the hours where home and the source work, then to fewer cities at night (Windows bestHours).
+        // Ties go to the hours where home and the source work, then to fewer cities at night (the former Windows bestHours scoring).
         let partial = Planner.partial(plan, prefer: [model.homeZone, source])
         let accent = Color(Palette.accent(dark: scheme == .dark))
         let accentText = Color(Palette.accentText(dark: scheme == .dark, night: false))
