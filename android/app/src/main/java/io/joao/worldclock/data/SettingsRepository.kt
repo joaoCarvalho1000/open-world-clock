@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.text.format.DateFormat
 import io.joao.worldclock.core.*
+import io.joao.worldclock.widget.WidgetKind
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,8 +45,12 @@ class SettingsRepository(context: Context) {
             prefs.edit().putString("settings", SettingsCodec.encode(next)).apply()
             flow.value = next
             val manager = AppWidgetManager.getInstance(context)
-            listOf("SingleClockWidgetProvider", "WorldClockWidgetProvider", "MeetingWidgetProvider").forEach { provider ->
-                val component = ComponentName(context.packageName, "io.joao.worldclock.widget.$provider")
+            // Every kind, taken from the registry rather than named here. A hardcoded subset stops
+            // refreshing the kinds added after it was written, which is how the ten premium widgets
+            // came to miss reference city, language and city changes until a periodic refresh.
+            // This only asks each provider to redraw; what it then draws stays its own business.
+            WidgetKind.entries.forEach { kind ->
+                val component = ComponentName(context, kind.providerClass)
                 val ids = manager.getAppWidgetIds(component)
                 if (ids.isNotEmpty()) context.sendBroadcast(Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).setComponent(component).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids))
             }

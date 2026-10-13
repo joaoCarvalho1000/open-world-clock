@@ -95,4 +95,38 @@ class SettingsAndSearchTest {
         // A zone that passed validation when stored but no longer resolves falls back, never throws.
         assertEquals(java.time.ZoneId.systemDefault(), fallback.copy(homeZone = "Mars/Olympus").homeZoneId())
     }
+
+    /** `data/SettingsRepository.kt`, found by walking up from the module directory. */
+    private fun settingsRepositorySource(): java.io.File {
+        var dir: java.io.File? = java.io.File(".").absoluteFile
+        while (dir != null) {
+            val candidate = java.io.File(dir, "app/src/main/java/io/joao/worldclock/data/SettingsRepository.kt")
+            if (candidate.isFile) return candidate
+            dir = dir.parentFile
+        }
+        throw AssertionError("SettingsRepository.kt not found walking up from ${java.io.File(".").absolutePath}")
+    }
+
+    /**
+     * A settings change must reach every widget kind, not a subset written down by hand. The
+     * broadcast once named three providers literally, so the ten premium kinds added later never
+     * refreshed when the reference city, language or city list changed; Date Line kept showing the
+     * old reference date until a periodic refresh happened to fire.
+     *
+     * Unit tests here run on the JVM with no `AppWidgetManager`, so this guards the drift itself:
+     * the registry must be the source of the list. `SkyTest` reads `sky.css` the same way.
+     */
+    @Test fun everyWidgetKindIsRefreshedWhenSettingsChange() {
+        val source = settingsRepositorySource().readText()
+        assertTrue(
+            "SettingsRepository must broadcast over WidgetKind.entries so new widget kinds refresh",
+            source.contains("WidgetKind.entries"),
+        )
+        // The old shape: provider class names spelled out as strings next to the broadcast.
+        val hardcoded = Regex("\"\\w*WidgetProvider\"").findAll(source).map { it.value }.toList()
+        assertTrue(
+            "provider names are hardcoded in SettingsRepository and will drift from WidgetKind: $hardcoded",
+            hardcoded.isEmpty(),
+        )
+    }
 }

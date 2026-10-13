@@ -41,8 +41,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
- * Single entry point for UI mutations. The repository already broadcasts a widget refresh
- * on every change, so this stays a thin pass-through that screens can share.
+ * Single entry point for UI mutations. The repository broadcasts a refresh to every widget kind
+ * in `WidgetKind.entries` on every change, so this stays a thin pass-through that screens can
+ * share. If that ever narrows to a subset again, this pass-through stops being safe.
  */
 class AppServices(private val context: Context, val catalog: CityCatalog, val repository: SettingsRepository) {
     private inline fun after(block: () -> Unit) = block()
