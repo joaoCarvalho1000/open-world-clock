@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher picker preview. It is `widget_map.xml` with sample text in place of the
+     renderer's bindings, and it is kept structurally identical to it on purpose, down to the
+     weights and the scale type, so the picker cannot promise a shape the widget does not draw.
+     The map bitmap itself cannot appear here: a previewLayout is inflated with no renderer, so
+     `px_image` stays empty until the widget is placed. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- fitCenter, as in the widget: the world outline has a fixed aspect ratio and keeps it
+             at every size. The image holds all the leftover height. -->
+        <ImageView
+            android:id="@+id/px_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/widget_atlas_a11y"
+            android:scaleType="fitCenter" />
+
+        <!-- The legend. Secondary ink here because that is the colour the renderer writes. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/px_name0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_time0"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:text="Lisbon"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/px_name1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_time1"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:text="Tokyo"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/px_name2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:accessibilityTraversalBefore="@+id/px_time2"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:text="New York"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Baseline aligned, so three columns that autosize separately still share one line. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/px_time0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_name1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:text="14:32"
+                android:textColor="@color/widget_ink"
+                android:textSize="18sp" />
+            <TextClock
+                android:id="@+id/px_time1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_name2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:text="22:32"
+                android:textColor="@color/widget_ink"
+                android:textSize="18sp" />
+            <TextClock
+                android:id="@+id/px_time2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:text="09:32"
+                android:textColor="@color/widget_ink"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

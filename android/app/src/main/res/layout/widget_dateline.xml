@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <!-- The body is padded vertically only. The 14dp side inset is carried by the text blocks
+         instead, so the day seams run edge to edge: a rule that stops short of the card reads as
+         a list divider, and this one is the subject of the widget, not a separator. -->
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
+
+        <TextView
+            android:id="@+id/px_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <!-- Rows are wrap_content plus weight, not 0dp plus weight. Equal slots gave a group whose
+             city list wrapped to two lines exactly the same height as a group that fits on one, so
+             the wrapped line was clipped while the other rows held empty space. Measured heights
+             plus an equal share of what is left over keeps the three groups evenly spaced and lets
+             the wrapped row take the room the others do not need. Budget at the declared floor
+             (220dp) and 1.5x text, worst case of three groups with one two line list:
+             title 21.5 + 4, three 9sp labels 57.9, three 1dp margins, two seams, two one line
+             lists 51.4 and one two line list 46.8 = 186.6dp inside 192dp. -->
+        <!-- The earliest date carries no seam: nothing turns over above the first group. -->
+        <LinearLayout
+            android:id="@+id/px_row0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                android:id="@+id/px_name0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/px_meta0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/widget_ink2"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- The day seam. It sits at the top edge of the group it begins, so it lands exactly on
+             the boundary between two slots, and because it is a child of the row the renderer
+             already hides, a seam can never be left behind by a group that is not there. The text
+             below it is centred in what remains, which puts the same air above and below the
+             hairline. 1dp of ink at 40%, the same seam the hour ruler draws. -->
+        <LinearLayout
+            android:id="@+id/px_row1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/px_seam1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.4"
+                android:background="@color/widget_ink"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <TextView
+                    android:id="@+id/px_name1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/px_meta1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/px_row2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/px_seam2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.4"
+                android:background="@color/widget_ink"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <TextView
+                    android:id="@+id/px_name2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/px_meta2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

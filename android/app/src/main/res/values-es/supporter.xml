@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget appearance -->
+    <string name="wc_theme_paper">Papel</string>
+    <string name="wc_theme_forest">Bosque</string>
+    <string name="wc_theme_ink">Tinta</string>
+    <string name="wc_font">Fuente del reloj</string>
+    <string name="wc_font_system">Sistema</string>
+    <string name="wc_font_serif">Serif</string>
+    <string name="wc_font_mono">Mono</string>
+    <string name="wc_font_condensed">Condensada</string>
+    <string name="wc_preview_only">Solo vista previa</string>
+    <string name="wc_locked_note">%1$s viene con el Paquete de Apoyo.</string>
+    <string name="wc_theme_note_premium">Una paleta fija, igual a cualquier hora.</string>
+    <string name="wc_locked_save">Tu widget conserva su estilo gratis.</string>
+
+    <!-- Saved looks -->
+    <string name="wc_presets">Estilos guardados</string>
+    <string name="wc_preset_save">Guardar este estilo</string>
+    <string name="wc_preset_name">Nombre</string>
+    <string name="wc_preset_hint">Solo tema y fuente. Tus ciudades quedan como están.</string>
+    <string name="wc_preset_empty">Guarda un tema y una fuente para reutilizar en cualquier widget.</string>
+    <string name="wc_preset_full">Puedes guardar %1$d estilos. Elimina uno para guardar otro.</string>
+    <string name="wc_preset_delete">Eliminar %1$s</string>
+    <string name="wc_preset_apply_a11y">Aplicar %1$s</string>
+    <string name="wc_presets_locked">Los estilos guardados vienen con el Paquete de Apoyo. Los tuyos se conservan aquí.</string>
+
+    <!-- Supporter Pack -->
+    <string name="supporter_title">Paquete de Apoyo</string>
+    <string name="supporter_pitch">Temas de widget, fuentes de reloj y estilos guardados.</string>
+    <string name="supporter_free_note">Relojes, conversión, planificación, los widgets originales y los tres idiomas siguen gratis.</string>
+    <string name="supporter_open">Ver qué incluye</string>
+    <string name="supporter_unlock">Desbloquear</string>
+    <string name="supporter_included_presets">Estilos guardados para aplicar en cualquier widget.</string>
+    <string name="supporter_try">Toca un estilo para verlo aquí.</string>
+    <string name="supporter_yearly">%1$s al año</string>
+    <string name="supporter_yearly_note">Acceso durante la suscripción. Se renueva cada año. Cancela cuando quieras en Google Play. Requiere una verificación diaria por internet.</string>
+    <string name="supporter_monthly">%1$s al mes</string>
+    <string name="supporter_monthly_note">Acceso durante la suscripción. Se renueva cada mes. Cancela cuando quieras en Google Play. Requiere una verificación diaria por internet.</string>
+    <string name="supporter_restore">Restaurar compras</string>
+    <string name="supporter_manage">Gestionar suscripción</string>
+    <string name="supporter_active_yearly">Tu apoyo anual está activo. Gracias.</string>
+    <string name="supporter_active_monthly">Tu apoyo mensual está activo. Gracias.</string>
+    <string name="supporter_loading">Consultando Google Play.</string>
+    <string name="supporter_unavailable">Las compras no están disponibles ahora.</string>
+    <string name="supporter_error">No se pudo completar la compra.</string>
+    <string name="supporter_pending">Google Play está confirmando tu pago.</string>
+    <string name="supporter_restored">Compras restauradas.</string>
+    <string name="supporter_nothing">No hay compras en esta cuenta de Google.</string>
+    <string name="supporter_retry">Reintentar</string>
+
+    <!-- Catalog palettes -->
+    <string name="wc_theme_linen">Lino</string>
+    <string name="wc_theme_daybreak">Amanecer</string>
+    <string name="wc_theme_mist">Niebla</string>
+    <string name="wc_theme_sage">Salvia</string>
+    <string name="wc_theme_blossom">Flor</string>
+    <string name="wc_theme_chalk">Tiza</string>
+    <string name="wc_theme_midnight">Medianoche</string>
+    <string name="wc_theme_espresso">Espresso</string>
+    <string name="wc_theme_plum">Ciruela</string>
+    <string name="wc_theme_slate">Pizarra</string>
+    <string name="wc_theme_ember">Brasa</string>
+    <string name="wc_theme_cobalt">Cobalto</string>
+    <string name="wc_theme_rust">Óxido</string>
+
+    <!-- Catalog clock faces -->
+    <string name="wc_font_light">Fina</string>
+    <string name="wc_font_medium">Media</string>
+    <string name="wc_font_black">Negra</string>
+
+    <!-- Catalog shelves -->
+    <string name="wc_group_free">Gratis</string>
+    <string name="wc_group_light">Claros</string>
+    <string name="wc_group_dark">Oscuros</string>
+    <string name="wc_group_vivid">Vivos</string>
+
+    <!-- Looks that are not simply their palette -->
+    <string name="wc_look_newsprint">Periódico</string>
+    <string name="wc_look_awning">Toldo</string>
+    <string name="wc_look_station">Estación</string>
+    <string name="wc_look_receipt">Recibo</string>
+    <string name="wc_look_headline">Titular</string>
+    <string name="wc_look_almanac">Almanaque</string>
+    <string name="wc_look_canopy">Dosel</string>
+    <string name="wc_look_terminal">Terminal</string>
+
+    <string name="supporter_included_looks">%1$d estilos y %2$d fuentes de reloj.</string>
+
+    <!-- Looks catalog -->
+    <string name="wc_looks">Estilos</string>
+    <string name="wc_looks_browse">Ver estilos</string>
+    <string name="wc_looks_apply">Aplicar %1$s</string>
+    <string name="wc_looks_applied">Aplicado</string>
+    <string name="wc_looks_a11y">Estilo %1$s, %2$s</string>
+    <string name="wc_looks_count">%1$d estilos</string>
+    <string name="wc_looks_free_note">Los tres estilos gratis. Tu widget conserva estos siempre.</string>
+    <string name="wc_looks_locked_note">Prueba cualquier estilo aquí. Aplicar uno necesita el Paquete de Apoyo.</string>
+</resources>

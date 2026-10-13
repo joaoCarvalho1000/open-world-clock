@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher picker's preview: the same row lockup as widget_world.xml, with the four sample
+     cities bound to their real zones so the picker shows four different live times instead of one
+     time repeated four down. Keep this file and widget_world.xml in step. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:id="@+id/row0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_day"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="11dp">
+
+        <ImageView
+            android:id="@+id/icon0"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:contentDescription="@string/widget_daytime"
+            android:src="@drawable/ic_widget_sun" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="Lisbon"
+                android:textColor="@color/wc_day_ink"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/meta0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="Same time"
+                android:textColor="@color/wc_day_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- The readout is one lockup, so AM/PM sits on the digits' baseline instead of
+             floating at the row's centre. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/time0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="Europe/Lisbon"
+                android:textColor="@color/wc_day_ink"
+                android:textSize="22sp" />
+
+            <TextClock
+                android:id="@+id/ampm0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:format12Hour="a"
+                android:format24Hour="a"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="Europe/Lisbon"
+                android:textColor="@color/wc_day_ink2"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_day"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="11dp">
+
+        <ImageView
+            android:id="@+id/icon1"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:contentDescription="@string/widget_daytime"
+            android:src="@drawable/ic_widget_sun" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="New York"
+                android:textColor="@color/wc_day_ink"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/meta1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="5h behind"
+                android:textColor="@color/wc_day_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- The readout is one lockup, so AM/PM sits on the digits' baseline instead of
+             floating at the row's centre. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/time1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="America/New_York"
+                android:textColor="@color/wc_day_ink"
+                android:textSize="22sp" />
+
+            <TextClock
+                android:id="@+id/ampm1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:format12Hour="a"
+                android:format24Hour="a"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="America/New_York"
+                android:textColor="@color/wc_day_ink2"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_night"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="11dp">
+
+        <ImageView
+            android:id="@+id/icon2"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:contentDescription="@string/widget_daytime"
+            android:src="@drawable/ic_widget_moon" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="Tokyo"
+                android:textColor="@color/wc_night_ink"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/meta2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="8h ahead"
+                android:textColor="@color/wc_night_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- The readout is one lockup, so AM/PM sits on the digits' baseline instead of
+             floating at the row's centre. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/time2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="Asia/Tokyo"
+                android:textColor="@color/wc_night_ink"
+                android:textSize="22sp" />
+
+            <TextClock
+                android:id="@+id/ampm2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:format12Hour="a"
+                android:format24Hour="a"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="Asia/Tokyo"
+                android:textColor="@color/wc_night_ink2"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_night"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="11dp">
+
+        <ImageView
+            android:id="@+id/icon3"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:contentDescription="@string/widget_daytime"
+            android:src="@drawable/ic_widget_moon" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="Sydney"
+                android:textColor="@color/wc_night_ink"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/meta3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+            android:text="10h ahead"
+                android:textColor="@color/wc_night_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- The readout is one lockup, so AM/PM sits on the digits' baseline instead of
+             floating at the row's centre. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/time3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="Australia/Sydney"
+                android:textColor="@color/wc_night_ink"
+                android:textSize="22sp" />
+
+            <TextClock
+                android:id="@+id/ampm3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:format12Hour="a"
+                android:format24Hour="a"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:timeZone="Australia/Sydney"
+                android:textColor="@color/wc_night_ink2"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <!-- Picker preview. Same structure and same metrics as widget_ruler.xml, with sample text
+         in the views the renderer fills: three cities, and the reference city's hours three
+         hours apart on the axis, which is what the live widget shows. -->
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/px_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Lisbon · 14:00"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="6dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="64dp"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/px_name0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:maxLines="1"
+                    android:maxWidth="72dp"
+                    android:minWidth="40dp"
+                    android:text="Lisbon"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/px_name1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:maxLines="1"
+                    android:maxWidth="72dp"
+                    android:minWidth="40dp"
+                    android:text="Tokyo"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/px_name2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:maxLines="1"
+                    android:maxWidth="72dp"
+                    android:minWidth="40dp"
+                    android:text="New York"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:importantForAccessibility="no"
+                    android:maxLines="1"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/px_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/widget_ruler_a11y"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/widget_bar_placeholder" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/px_axis0"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:text="14"
+                        android:textColor="@color/widget_ink2"
+                        android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/px_axis1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:text="17"
+                        android:textColor="@color/widget_ink2"
+                        android:textSize="10sp" />
+                    <TextView
+                        android:id="@+id/px_axis2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:text="20"
+                        android:textColor="@color/widget_ink2"
+                        android:textSize="10sp" />
+                    <!-- The renderer hides these two; the preview matches it. -->
+                    <TextView
+                        android:id="@+id/px_axis3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:textColor="@color/widget_ink2"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/px_axis4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:textColor="@color/widget_ink2"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

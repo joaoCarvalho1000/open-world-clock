@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher picker preview for the Clock change widget. Same composition as widget_change.xml
+     with sample content, so the picker shows the real silhouette: eyebrow, one sentence, air, and
+     one labelled readout on the bottom edge. The sample is the full state, because that is the
+     question the widget is chosen for; the empty state uses the identical slots.
+     The sample sentence assumes the renderer writes an answer sentence into px_summary. If that
+     Kotlin change is not taken, set the sample to "Lisbon, Sun 26 Oct 02:00" so the picker does
+     not promise wording the widget cannot produce. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/px_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:letterSpacing="0.04"
+            android:maxLines="1"
+            android:text="Clock change"
+            android:textColor="@color/widget_accent"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/px_summary"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="top"
+            android:lineSpacingMultiplier="1.05"
+            android:maxLines="2"
+            android:text="Lisbon changes its clocks in 9 days"
+            android:textColor="@color/widget_ink"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/px_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:fontFeatureSettings="tnum"
+            android:maxLines="1"
+            android:text="Sun 26 Oct 02:00 · UTC+1 to UTC+0"
+            android:textColor="@color/widget_ink"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/px_meta0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:fontFeatureSettings="tnum"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</FrameLayout>

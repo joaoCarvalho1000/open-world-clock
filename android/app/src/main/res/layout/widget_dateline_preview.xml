@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <!-- Picker preview. Same structure, sizes and colours as widget_dateline, with the sample a
+         real instant produces: at 00:30 in Lisbon on Monday the 12th, London has turned over and
+         New York and Los Angeles are still on Sunday. Four cities is the configured maximum, and
+         two groups is what four cities almost always make, because three local dates at once need
+         the saved cities to span more than 24 hours of offset. The third group is kept here, laid
+         out and hidden, so this file stays the same composition the renderer fills. -->
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
+
+        <TextView
+            android:id="@+id/px_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text="Local dates"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/px_row0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                android:id="@+id/px_name0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="Yesterday · Sun 11 Oct"
+                android:textColor="@color/widget_ink"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/px_meta0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Los Angeles, New York"
+                android:textColor="@color/widget_ink2"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/px_row1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/px_seam1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.4"
+                android:background="@color/widget_ink"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <TextView
+                    android:id="@+id/px_name1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="Today · Mon 12 Oct"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/px_meta1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Lisbon, London"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/px_row2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/px_seam2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.4"
+                android:background="@color/widget_ink"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <TextView
+                    android:id="@+id/px_name2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="Tomorrow · Tue 13 Oct"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/px_meta2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Kiritimati"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

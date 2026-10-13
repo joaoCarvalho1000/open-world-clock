@@ -1,0 +1,204 @@
+# Builds a signed Android App Bundle and publishes it to a Google Play track.
+#
+# Nothing here can run without repository secrets, and every one of them is checked with a readable
+# error before any build work starts. Add them under
+# Settings > Secrets and variables > Actions > Repository secrets:
+#
+#   ANDROID_UPLOAD_KEYSTORE_BASE64   the upload keystore (.jks), base64 encoded:
+#                                      base64 -w0 upload.jks        (Linux)
+#                                      certutil -encode upload.jks out.txt   (Windows, strip headers)
+#                                    This must be the SAME upload key that signed version code 1.
+#                                    Play rejects a bundle signed with any other key.
+#   ANDROID_UPLOAD_KEY_ALIAS         the alias inside that keystore
+#   ANDROID_UPLOAD_STORE_PASSWORD    the keystore password
+#   ANDROID_UPLOAD_KEY_PASSWORD      optional, defaults to the store password
+#   WORLD_CLOCK_PLAY_PUBLIC_KEY      the app's public Play licensing key (never a private key)
+#   GOOGLE_PLAY_SERVICE_ACCOUNT_JSON the service account key, raw JSON or base64 of it.
+#                                    Create it in Google Cloud, enable the Google Play Android
+#                                    Developer API for its project, then in Play Console open
+#                                    Users and permissions, invite the service account email and
+#                                    grant it "Release to testing tracks" on this app.
+#
+# The version code is not kept anywhere by hand. Before building, this asks Play for the highest
+# code it has ever accepted and uses the next one, so a release can never collide with what is
+# already published.
+
+name: Android Play
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Play track to release to
+        type: choice
+        default: internal
+        options: [internal, alpha, beta, production]
+      status:
+        description: Release status
+        type: choice
+        default: completed
+        options: [completed, draft]
+      dry_run:
+        description: Check credentials and build, but upload nothing
+        type: boolean
+        default: false
+  push:
+    tags: ["android-v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-play
+  cancel-in-progress: false # never cancel a run halfway through an upload
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      TRACK: ${{ inputs.track || 'internal' }}
+      STATUS: ${{ inputs.status || 'completed' }}
+      DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check secrets
+        env:
+          ANDROID_UPLOAD_KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          ANDROID_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          ANDROID_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          WORLD_CLOCK_PLAY_PUBLIC_KEY: ${{ secrets.WORLD_CLOCK_PLAY_PUBLIC_KEY }}
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          missing=""
+          for name in ANDROID_UPLOAD_KEYSTORE_BASE64 ANDROID_UPLOAD_KEY_ALIAS \
+                      ANDROID_UPLOAD_STORE_PASSWORD WORLD_CLOCK_PLAY_PUBLIC_KEY \
+                      GOOGLE_PLAY_SERVICE_ACCOUNT_JSON; do
+            if [ -z "${!name:-}" ]; then missing="$missing $name"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secret(s):$missing. Add them under Settings > Secrets and variables > Actions > Repository secrets. The header of this workflow file explains each one."
+            exit 1
+          fi
+          case "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" in
+            *'"private_key"'*) ;;
+            *) if ! printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" | tr -d '\r\n ' | base64 -d 2>/dev/null | grep -q private_key; then
+                 echo "::error::GOOGLE_PLAY_SERVICE_ACCOUNT_JSON does not look like a service account key. Paste the whole downloaded JSON file, or base64 of it."
+                 exit 1
+               fi ;;
+          esac
+          if printf '%s' "$WORLD_CLOCK_PLAY_PUBLIC_KEY" | grep -q "PRIVATE KEY"; then
+            echo "::error::WORLD_CLOCK_PLAY_PUBLIC_KEY contains a private key. It must be the app's public licensing key from Play Console."
+            exit 1
+          fi
+
+      - name: Select JDK 17
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_17_X64/bin" >> "$GITHUB_PATH"
+
+      - name: Verify Gradle wrapper
+        working-directory: android
+        run: |
+          echo "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f  gradle/wrapper/gradle-wrapper.jar" | sha256sum --check
+
+      - name: Install Android SDK components
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Write upload keystore
+        env:
+          ANDROID_UPLOAD_KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/signing"
+          mkdir -p "$dir"
+          chmod 700 "$dir"
+          printf '%s' "$ANDROID_UPLOAD_KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > "$dir/upload.jks"
+          if [ ! -s "$dir/upload.jks" ]; then
+            echo "::error::ANDROID_UPLOAD_KEYSTORE_BASE64 did not decode to a file. Re-encode the .jks with base64 -w0 and paste the whole single line."
+            exit 1
+          fi
+          echo "UPLOAD_KEYSTORE=$dir/upload.jks" >> "$GITHUB_ENV"
+
+      - name: Verify release configuration
+        working-directory: android
+        env:
+          ORG_GRADLE_PROJECT_WORLD_CLOCK_PLAY_PUBLIC_KEY: ${{ secrets.WORLD_CLOCK_PLAY_PUBLIC_KEY }}
+          WORLD_CLOCK_UPLOAD_KEYSTORE: ${{ env.UPLOAD_KEYSTORE }}
+          WORLD_CLOCK_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          WORLD_CLOCK_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          WORLD_CLOCK_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: bash gradlew --no-daemon :app:verifyInternalTestingConfiguration
+
+      - name: Translations, tests and lint
+        working-directory: android
+        run: |
+          set -euo pipefail
+          node scripts/check-translations.mjs
+          bash gradlew --no-daemon testDebugUnitTest lintDebug
+
+      - name: Ask Play for the next version code
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          code="$(node android/scripts/play-deploy.mjs --print-next-version-code)"
+          if ! [[ "$code" =~ ^[0-9]+$ ]]; then
+            echo "::error::Could not read the next version code from Play. Got: $code"
+            exit 1
+          fi
+          echo "VERSION_CODE=$code" >> "$GITHUB_ENV"
+          echo "Next version code: $code"
+
+      - name: Build signed bundle
+        working-directory: android
+        env:
+          ORG_GRADLE_PROJECT_WORLD_CLOCK_PLAY_PUBLIC_KEY: ${{ secrets.WORLD_CLOCK_PLAY_PUBLIC_KEY }}
+          WORLD_CLOCK_UPLOAD_KEYSTORE: ${{ env.UPLOAD_KEYSTORE }}
+          WORLD_CLOCK_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          WORLD_CLOCK_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_UPLOAD_STORE_PASSWORD }}
+          WORLD_CLOCK_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: bash gradlew --no-daemon :app:bundleRelease "-PWORLD_CLOCK_VERSION_CODE=$VERSION_CODE"
+
+      - name: Confirm the bundle is signed with the upload key
+        run: |
+          set -euo pipefail
+          aab="android/app/build/outputs/bundle/release/app-release.aab"
+          [ -f "$aab" ] || { echo "::error::No bundle at $aab"; exit 1; }
+          echo "AAB=$aab" >> "$GITHUB_ENV"
+          # An unsigned bundle here means the signing inputs did not reach Gradle, and Play would
+          # reject it after a long upload. Fail now instead.
+          if ! unzip -l "$aab" | grep -qE "META-INF/.*\.(RSA|EC|DSA)"; then
+            echo "::error::The bundle is not signed. Check the keystore secrets reached the build step."
+            exit 1
+          fi
+          ls -la "$aab"
+
+      - name: Publish to Play
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Dry run: validating credentials and permissions, uploading nothing."
+            node android/scripts/play-deploy.mjs --dry-run --track "$TRACK"
+          else
+            node android/scripts/play-deploy.mjs \
+              --aab "$AAB" \
+              --track "$TRACK" \
+              --status "$STATUS" \
+              --notes store/android/fastlane/metadata/android
+          fi
+
+      - name: Upload bundle as a build artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: ignore
+          retention-days: 14

@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navegación -->
+    <string name="nav_clocks">Relojes</string>
+    <string name="nav_convert">Convertir</string>
+    <string name="nav_plan">Planificar</string>
+    <string name="nav_widgets">Widgets</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="nav_map">Mapa</string>
+
+    <!-- Acciones y estados comunes -->
+    <string name="action_done">Listo</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_ok">Aceptar</string>
+    <string name="action_remove">Quitar</string>
+    <string name="work_status_working">Trabajando</string>
+    <string name="work_status_off">Fuera de horario</string>
+    <string name="day_phase_daytime">Día</string>
+    <string name="day_phase_night">Noche</string>
+    <string name="hours_range">%1$s a %2$s</string>
+
+    <!-- Relojes -->
+    <string name="clocks_here">Aquí · %1$s</string>
+    <string name="clocks_here_a11y">Tu hora en %1$s. %2$s, %3$s</string>
+    <string name="clocks_map">Mapa mundial</string>
+    <string name="clocks_reorder">Reordenar ciudades</string>
+    <string name="clocks_add">Agregar ciudad</string>
+    <string name="clocks_add_title">Agregar ciudad</string>
+    <string name="clocks_empty_title">Todavía no hay ciudades</string>
+    <string name="clocks_empty_body">Cada tarjeta sigue el amanecer y el atardecer reales de la ciudad.</string>
+    <string name="clocks_widget_nudge">Deja estos relojes en tu pantalla de inicio</string>
+    <string name="clocks_lifted">Levantada. Arrastra para reordenar.</string>
+    <string name="card_convert_from">Convertir desde %1$s</string>
+    <string name="card_options">Opciones de %1$s</string>
+    <string name="card_move_up">Subir</string>
+    <string name="card_move_down">Bajar</string>
+    <string name="card_move_up_of">Subir %1$s</string>
+    <string name="card_move_down_of">Bajar %1$s</string>
+    <string name="menu_convert">Convertir desde aquí</string>
+    <string name="menu_edit">Editar nombre y horario</string>
+
+    <!-- Búsqueda de ciudades -->
+    <string name="search_hint">Ciudad, país o UTC+5:30</string>
+    <string name="search_clear">Borrar búsqueda</string>
+    <string name="search_none">Sin resultados</string>
+    <string name="search_none_hint">Prueba con un país o una diferencia como UTC-3.</string>
+    <string name="search_added">Ya agregada</string>
+    <string name="search_choose">Elegir %1$s</string>
+
+    <!-- Editar ciudad -->
+    <string name="edit_title">Editar %1$s</string>
+    <string name="edit_display_name">Nombre visible</string>
+    <string name="edit_name_hint">Déjalo vacío para usar %1$s</string>
+    <string name="edit_working_hours">Horario laboral</string>
+    <string name="edit_starts">Inicio</string>
+    <string name="edit_ends">Fin</string>
+    <string name="edit_hour_a11y">Hora de %1$s</string>
+    <string name="edit_overnight">Termina al día siguiente</string>
+    <string name="edit_same_hours">Inicio y fin iguales: sin horario laboral</string>
+    <string name="edit_working_days">Días laborales</string>
+    <string name="edit_remove">Quitar ciudad</string>
+
+    <!-- Convertir -->
+    <string name="convert_title">Convertir</string>
+    <string name="convert_source">En %1$s</string>
+    <string name="convert_pick_city">Convertir desde</string>
+    <string name="convert_set_time">Elegir hora</string>
+    <string name="convert_time_in">Hora en %1$s</string>
+    <string name="convert_now">Ahora</string>
+    <string name="convert_minus_hour_a11y">Una hora antes</string>
+    <string name="convert_minus_quarter_a11y">15 minutos antes</string>
+    <string name="convert_plus_quarter_a11y">15 minutos después</string>
+    <string name="convert_plus_hour_a11y">Una hora después</string>
+    <string name="convert_targets">El mismo momento en</string>
+    <string name="convert_targets_empty">Agrega ciudades en Relojes para comparar</string>
+    <string name="convert_gap">%1$s no existe en %2$s. Los relojes se adelantan, así que esto es %3$s.</string>
+    <string name="convert_fold">%1$s ocurre dos veces en %2$s. Elige cuál.</string>
+    <string name="convert_first">Primera (%1$s)</string>
+    <string name="convert_second">Segunda (%1$s)</string>
+    <string name="day_next">Día siguiente</string>
+    <string name="day_previous">Día anterior</string>
+    <string name="day_plus">+%1$d días</string>
+    <string name="day_minus">%1$d días</string>
+    <string name="convert_card_a11y">%1$s: %2$s, %3$s. %4$s</string>
+
+    <!-- Planificar -->
+    <string name="plan_title">Planificar</string>
+    <string name="plan_need_cities">Agrega dos ciudades en Relojes para comparar horarios.</string>
+    <string name="plan_previous_day">Día anterior</string>
+    <string name="plan_next_day">Día siguiente</string>
+    <string name="plan_today">Hoy</string>
+    <string name="plan_hours_in">Horas en</string>
+    <string name="plan_all">Todos trabajan de %1$s a %2$s</string>
+    <string name="plan_partial">Mejor: %1$s a %2$s · %3$d de %4$d trabajando</string>
+    <string name="plan_none">Hoy no hay horario laboral en común</string>
+    <string name="plan_selected">%1$s en %2$s · %3$d de %4$d trabajando</string>
+    <string name="plan_slider">Hora de la reunión en %1$s</string>
+    <string name="plan_slider_state">%1$s, %2$d de %3$d trabajando</string>
+    <string name="plan_overlap_bar">Horas en común a lo largo del día</string>
+    <string name="plan_row_a11y">%1$s: %2$s, %3$s. Abre el conversor.</string>
+
+    <!-- Mapa -->
+    <string name="map_title">Mapa</string>
+    <string name="map_subtitle">Día y noche, en vivo. Toca un punto para convertir.</string>
+    <string name="map_back">Volver a los relojes</string>
+    <string name="map_a11y">Mapa mundial. %1$d de %2$d ciudades con luz de día.</string>
+    <string name="map_a11y_empty">Mapa mundial. No hay ciudades guardadas.</string>
+    <string name="map_unavailable">El contorno del mapa no está disponible. Las horas de abajo siguen en vivo.</string>
+    <string name="map_row_a11y">%1$s, %2$s, %3$s. Abre el conversor.</string>
+
+    <!-- Widgets -->
+    <string name="widgets_title">Widgets</string>
+    <string name="widgets_intro">Relojes para la pantalla de inicio que siguen andando con la app cerrada.</string>
+    <string name="widgets_no_pin">Tu pantalla de inicio no agrega widgets desde la app. Mantén presionada la pantalla, toca Widgets y elige Open World Clock.</string>
+    <string name="widgets_pin_confirm">Confirma en tu pantalla de inicio para colocarlo.</string>
+    <string name="widgets_pin_failed">Tu pantalla de inicio no respondió. Agrégalo desde ahí.</string>
+    <string name="widgets_size">%1$s · redimensionable</string>
+    <string name="widgets_customize">Personalizar</string>
+    <string name="widgets_add">Agregar widget</string>
+    <string name="widgets_placed">En tu pantalla de inicio</string>
+    <string name="widgets_following">Sigue tu lista: %1$s</string>
+    <string name="widget_preview_a11y">Vista previa de %1$s: %2$s</string>
+
+    <!-- Configurar widget -->
+    <string name="wc_city">Ciudad</string>
+    <string name="wc_cities">Ciudades</string>
+    <string name="wc_follow">Seguir mi lista de relojes</string>
+    <string name="wc_follow_body">Tus primeras %1$d ciudades, siempre al día.</string>
+    <string name="wc_selected">%1$d de %2$d, en el orden que elijas.</string>
+    <string name="wc_pick">Elegir otra ciudad</string>
+    <string name="wc_choose_city">Elegir ciudad</string>
+    <string name="wc_style_auto">Luz de día</string>
+    <string name="wc_style_light">Claro</string>
+    <string name="wc_style_dark">Oscuro</string>
+    <string name="wc_style_note_fixed">Siempre %1$s, a cualquier hora.</string>
+    <string name="wc_style_note_system">Sigue el tema del teléfono.</string>
+    <string name="wc_style_note_single">Se aclara u oscurece con el sol de esta ciudad.</string>
+    <string name="wc_style_note_rows">Cada fila sigue el sol de su propia ciudad.</string>
+    <string name="wc_setup_title">Configurar %1$s</string>
+    <string name="wc_save">Guardar widget</string>
+
+    <!-- Ajustes -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_reference">Ciudad de referencia</string>
+    <string name="settings_reference_note">El reloj al inicio de Relojes, la zona desde la que se mide cada diferencia y el lugar en el que se centra el fondo.</string>
+    <string name="settings_reference_device">Usar la zona horaria del dispositivo</string>
+    <string name="clocks_home_title">Elegir ciudad de referencia</string>
+    <string name="clocks_home_change">Ciudad de referencia, %1$s. Cambiar</string>
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_note">Las tarjetas siempre siguen la luz real del sol. Esto cambia el resto de la app.</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="settings_language">Idioma</string>
+    <string name="language_system">Sistema</string>
+    <string name="settings_24h">Reloj de 24 horas</string>
+    <string name="settings_24h_sample">Muestra %1$s</string>
+    <string name="settings_privacy">Privacidad</string>
+    <string name="privacy_offline">Funciona sin conexión</string>
+    <string name="privacy_offline_body">Los relojes y la planificación funcionan sin conexión. Las compras usan Google Play.</string>
+    <string name="privacy_tracking">Sin rastreo</string>
+    <string name="privacy_tracking_body">Sin anuncios, analítica, cuentas ni ubicación.</string>
+    <string name="privacy_local">Se queda en este dispositivo</string>
+    <string name="privacy_local_body">Las ciudades y los widgets nunca se respaldan.</string>
+    <string name="action_share">Compartir</string>
+    <string name="settings_share">Compartir con amigos</string>
+    <string name="settings_feedback">Enviar comentarios</string>
+    <string name="settings_rate">Calificar la app</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="about_body">Libre y de código abierto con licencia MIT. openworldclock.com</string>
+    <string name="about_version">Versión %1$s</string>
+    <string name="about_license">Licencia de la app (MIT)</string>
+    <string name="about_notices">Avisos de terceros</string>
+    <string name="license_title">Licencia de la app</string>
+    <string name="license_unavailable">No se pudo cargar este aviso.</string>
+
+    <!-- Widgets de la pantalla de inicio -->
+    <string name="widget_single_label">Reloj de ciudad</string>
+    <string name="widget_world_label">Reloj mundial</string>
+    <string name="widget_meeting_label">Planificador de reuniones</string>
+    <string name="widget_single_description">Una ciudad, grande y en vivo. La tarjeta se aclara u oscurece con su amanecer y atardecer.</string>
+    <string name="widget_world_description">Hasta cuatro ciudades con horas en vivo, cada fila iluminada por su propio sol.</string>
+    <string name="widget_meeting_description">Las mejores horas laborales en común de hoy y quién está trabajando ahora.</string>
+    <string name="widget_single_blurb">Una ciudad, iluminada por su propio sol.</string>
+    <string name="widget_world_blurb">Cuatro ciudades, cada fila con su propio sol.</string>
+    <string name="widget_meeting_blurb">Las horas en común de hoy y quién está trabajando.</string>
+    <string name="widget_daytime">Día</string>
+    <string name="widget_night">Noche</string>
+    <string name="widget_daylight">Luz de día</string>
+    <string name="widget_meeting_heading">Mejor coincidencia de hoy</string>
+    <string name="widget_overlap_bar">Horas laborales en común a lo largo de hoy</string>
+    <string name="widget_meeting_everyone">Todos trabajan de %1$s a %2$s</string>
+    <string name="widget_meeting_partial">%1$d de %2$d trabajan de %3$s a %4$s</string>
+    <string name="widget_meeting_none">Hoy no hay horas laborales en común</string>
+    <string name="widget_meeting_bar_a11y">%1$s. Horas en el huso de %2$s.</string>
+    <string name="widget_configure_title">Configurar widget</string>
+
+
+    <!-- Premium widget names -->
+    <string name="widget_duo_label">Dúo</string>
+    <string name="widget_board_label">Panel</string>
+    <string name="widget_workday_label">Jornada</string>
+    <string name="widget_map_label">Atlas</string>
+    <string name="widget_daylight_label">Arco solar</string>
+    <string name="widget_next_label">Próxima ventana</string>
+    <string name="widget_week_label">Semana</string>
+    <string name="widget_ruler_label">Regla de horas</string>
+    <string name="widget_dateline_label">Línea de fecha</string>
+    <string name="widget_change_label">Cambio de hora</string>
+
+    <!-- Premium widget blurbs -->
+    <string name="widget_duo_blurb">Dos ciudades, lado a lado.</string>
+    <string name="widget_board_blurb">Cuatro ciudades, fechas y quién está trabajando.</string>
+    <string name="widget_workday_blurb">Tu día como una línea de tiempo numerada.</string>
+    <string name="widget_map_blurb">La luz del día en el mundo, con tus ciudades.</string>
+    <string name="widget_daylight_blurb">Amanecer, atardecer y dónde está el sol ahora.</string>
+    <string name="widget_next_blurb">Cuándo podrán hablar todos.</string>
+    <string name="widget_week_blurb">Qué día le sirve a todos.</string>
+    <string name="widget_ruler_blurb">Cada hora, alineada entre las ciudades.</string>
+    <string name="widget_dateline_blurb">Quién está en qué fecha ahora.</string>
+    <string name="widget_change_blurb">El próximo cambio de hora que te afecta.</string>
+
+    <!-- Picker descriptions. The Supporter Pack is named before anything is placed. -->
+    <string name="widget_duo_description">Dos ciudades lado a lado. Paquete de Apoyo.</string>
+    <string name="widget_board_description">Cuatro relojes con fechas y estado de trabajo. Paquete de Apoyo.</string>
+    <string name="widget_workday_description">Un reloj sobre una línea de tiempo numerada. Paquete de Apoyo.</string>
+    <string name="widget_map_description">Un mapa de día y noche sin conexión con tus ciudades. Paquete de Apoyo.</string>
+    <string name="widget_daylight_description">Un arco de luz con amanecer y atardecer. Paquete de Apoyo.</string>
+    <string name="widget_next_description">Las próximas horas que comparten tus ciudades. Paquete de Apoyo.</string>
+    <string name="widget_week_description">Siete días de horas de trabajo en común. Paquete de Apoyo.</string>
+    <string name="widget_ruler_description">Franjas de horas numeradas, alineadas entre ciudades. Paquete de Apoyo.</string>
+    <string name="widget_dateline_description">Tus ciudades agrupadas por su fecha local. Paquete de Apoyo.</string>
+    <string name="widget_change_description">El próximo cambio de horario de verano. Paquete de Apoyo.</string>
+
+    <!-- Premium widget content, written by the renderer -->
+    <string name="widget_solar_rise">Amanecer %1$s</string>
+    <string name="widget_solar_set">Atardecer %1$s</string>
+    <string name="widget_solar_no_rise">Sin amanecer hoy</string>
+    <string name="widget_solar_no_set">Sin atardecer hoy</string>
+    <string name="widget_solar_polar_day">Sol sobre el horizonte todo el día</string>
+    <string name="widget_solar_polar_night">Sol bajo el horizonte todo el día</string>
+    <string name="widget_sampled">Se actualiza cada 30 min</string>
+    <string name="widget_window_now">Trabajando juntos ahora</string>
+    <string name="widget_window_next">Próxima ventana en común</string>
+    <string name="widget_window_none">Sin coincidencia en 8 días</string>
+    <string name="widget_week_none">Sin coincidencia esta semana</string>
+    <string name="widget_week_best">Mejor: %1$s</string>
+    <string name="widget_date_yesterday">Ayer</string>
+    <string name="widget_date_today">Hoy</string>
+    <string name="widget_date_tomorrow">Mañana</string>
+    <string name="widget_change_none">Sin cambio de hora en el próximo año</string>
+    <string name="widget_change_detail">%1$s a %2$s</string>
+    <string name="widget_workday_starts">Empieza %1$s</string>
+    <string name="widget_workday_ends">Termina %1$s</string>
+    <string name="widget_workday_no_schedule">Sin horas de trabajo definidas</string>
+    <string name="widget_workday_timeline_a11y">Horas de trabajo de %1$s</string>
+    <string name="widget_atlas_a11y">Mapa de día y noche con tus ciudades</string>
+    <string name="widget_solar_arc_a11y">Arco de luz de %1$s</string>
+    <string name="widget_window_bar_a11y">Horas de trabajo en común</string>
+    <string name="widget_week_a11y">Horas de trabajo en común en cada día de la semana</string>
+    <string name="widget_ruler_a11y">Horas alineadas entre tus ciudades</string>
+</resources>
