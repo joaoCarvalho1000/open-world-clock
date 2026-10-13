@@ -32,7 +32,19 @@ jobs:
         run: |
           echo "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f  gradle/wrapper/gradle-wrapper.jar" | sha256sum --check
       - name: Install Android SDK components
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+        run: |
+          # sdkmanager ships with the runner image but is not on PATH there.
+          root="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          sdkmanager="$root/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$sdkmanager" ]; then
+            sdkmanager="$(find "$root/cmdline-tools" -name sdkmanager -type f 2>/dev/null | head -1)"
+          fi
+          if [ -z "$sdkmanager" ] || [ ! -x "$sdkmanager" ]; then
+            echo "::error::sdkmanager not found under $root"
+            exit 1
+          fi
+          yes 2>/dev/null | "$sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$sdkmanager" "platforms;android-36" "build-tools;36.0.0"
       - name: Tests, lint, debug APK and optimized release
         working-directory: android
         run: |
