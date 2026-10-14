@@ -129,4 +129,34 @@ class SettingsAndSearchTest {
             hardcoded.isEmpty(),
         )
     }
+
+    /** Any app source file, found by walking up from the module directory. */
+    private fun appSource(relative: String): java.io.File {
+        var dir: java.io.File? = java.io.File(".").absoluteFile
+        while (dir != null) {
+            val candidate = java.io.File(dir, "app/src/main/java/io/joao/worldclock/$relative")
+            if (candidate.isFile) return candidate
+            dir = dir.parentFile
+        }
+        throw AssertionError("$relative not found walking up from ${java.io.File(".").absolutePath}")
+    }
+
+    /**
+     * Every surface that measures a difference must measure it from the reference city. Converter
+     * and Planner each defaulted to `cities.first()`, so the app shipped a setting described as
+     * "the zone every difference is measured from" that two of its four screens ignored: with Tokyo
+     * chosen, Convert still read "In Sao Paulo" and Plan still anchored "Meeting hour in Sao Paulo".
+     *
+     * Compose state cannot be exercised from a JVM unit test, so this guards the wiring: both
+     * screens must derive their anchor from `homeZoneId()`. `SkyTest` reads `sky.css` the same way.
+     */
+    @Test fun converterAndPlannerMeasureFromTheReferenceCity() {
+        for (relative in listOf("ui/converter/ConverterScreen.kt", "ui/planner/PlannerScreen.kt")) {
+            val source = appSource(relative).readText()
+            assertTrue(
+                "$relative must take its default zone from homeZoneId(), not the first saved city",
+                source.contains("homeZoneId()"),
+            )
+        }
+    }
 }

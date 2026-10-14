@@ -57,6 +57,7 @@ import io.joao.worldclock.R
 import io.joao.worldclock.core.ClockEngine
 import io.joao.worldclock.core.ClockSettings
 import io.joao.worldclock.core.SavedCity
+import io.joao.worldclock.core.homeZoneId
 import io.joao.worldclock.engagement.MeetingShare
 import io.joao.worldclock.i18n.LocalStrings
 import io.joao.worldclock.ui.clocks.CitySearchSheet
@@ -80,9 +81,12 @@ fun ConverterScreen(settings: ClockSettings, requestedZone: String?, requestedIn
     val t = LocalStrings.current
     val locale = t.locale
     val services = LocalServices.current
-    val defaultZone = requestedZone ?: settings.cities.firstOrNull()?.zoneId ?: ZoneId.systemDefault().id
+    // Measure from the reference city, the same "here" the clocks and widgets use. It defaulted to
+    // the first saved city, so the converter kept its own idea of here and disagreed with them.
+    val defaultZone = requestedZone ?: settings.homeZoneId().id
     val initialTime = remember(defaultZone) { Instant.now().truncatedTo(ChronoUnit.MINUTES).atZone(ZoneId.of(defaultZone)) }
-    var zone by rememberSaveable { mutableStateOf(defaultZone) }
+    // Keyed on the reference city so changing it resets the base, rather than leaving a stale pick.
+    var zone by rememberSaveable(settings.homeZone) { mutableStateOf(defaultZone) }
     var dateText by rememberSaveable { mutableStateOf(initialTime.toLocalDate().toString()) }
     var timeText by rememberSaveable { mutableStateOf(initialTime.toLocalTime().toString()) }
     var later by rememberSaveable { mutableStateOf(isSecondOccurrence(initialTime)) }

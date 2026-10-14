@@ -78,6 +78,7 @@ import io.joao.worldclock.core.ClockEngine
 import io.joao.worldclock.core.ClockSettings
 import io.joao.worldclock.core.PlanSlot
 import io.joao.worldclock.core.SavedCity
+import io.joao.worldclock.core.homeZoneId
 import io.joao.worldclock.engagement.MeetingShare
 import io.joao.worldclock.i18n.LocalStrings
 import io.joao.worldclock.ui.components.LocalServices
@@ -121,7 +122,11 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
     val services = LocalServices.current
     val now by rememberNow(60_000)
     val cities = settings.cities
-    var chosenZone by rememberSaveable { mutableStateOf(cities.firstOrNull()?.zoneId ?: ZoneId.systemDefault().id) }
+    // Anchor on the reference city, the same "here" the clocks and widgets use. It defaulted to the
+    // first saved city, so the planner measured from somewhere else. Keyed on the reference city so
+    // changing it moves the anchor instead of leaving a stale pick.
+    var chosenZone by rememberSaveable(settings.homeZone) { mutableStateOf(settings.homeZoneId().id) }
+    // The grid's columns are the saved cities, so an anchor outside that list cannot be drawn.
     val referenceZone = if (cities.isNotEmpty() && cities.none { it.zoneId == chosenZone }) cities.first().zoneId else chosenZone
     val refZone = ZoneId.of(referenceZone)
     var dateText by rememberSaveable { mutableStateOf(LocalDate.now(refZone).toString()) }
