@@ -278,9 +278,20 @@ if (invokedDirectly) {
   // different rules, so it can fail contrast while every in-app screen passes. Measuring only the
   // app would have missed a City clock rendering day ink onto a night sky at 1.7:1.
   if (args.widgets !== false && args['no-widgets'] === undefined) {
+    // KEYCODE_HOME lands on the launcher's first page, and a pinned widget is routinely on the
+    // second. Walk right until ours shows up, or the pages run out.
     adb(['shell', 'input', 'keyevent', 'KEYCODE_HOME']); sleep(3000)
-    const xml = (adb(['shell', 'uiautomator', 'dump', '/sdcard/qa.xml']),
-      adb(['shell', 'cat', '/sdcard/qa.xml']))
+    let xml = ''
+    for (let page = 0; page < 4; page++) {
+      if (page > 0) {
+        adb(['shell', 'input', 'swipe', String(Math.round(size.w * 0.83)), String(Math.round(size.h * 0.5)),
+          String(Math.round(size.w * 0.18)), String(Math.round(size.h * 0.5)), '300'])
+        sleep(2500)
+      }
+      adb(['shell', 'uiautomator', 'dump', '/sdcard/qa.xml'])
+      xml = adb(['shell', 'cat', '/sdcard/qa.xml'])
+      if (xml.includes(PKG)) { if (page) console.log(`  (widgets found on launcher page ${page})`); break }
+    }
     const boxes = []
     for (const node of xml.match(/<node[^>]*>/g) || []) {
       if (!node.includes(PKG)) continue
