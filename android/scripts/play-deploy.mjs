@@ -14,12 +14,13 @@
 //                                [--notes store/android/fastlane/metadata/android]
 //                                [--package io.joao.worldclock] [--dry-run]
 //
-// --dry-run authenticates, opens an edit and deletes it again. It proves the key, the package name
-// and the permissions without changing anything a tester could see.
+// --dry-run authenticates, opens an edit and deletes it again. It checks authentication, the package name
+// and edit access only without changing anything a tester could see.
 
 import { createSign } from 'node:crypto'
 import { readFile, stat, readdir } from 'node:fs/promises'
 import { basename, join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const API = 'https://androidpublisher.googleapis.com/androidpublisher/v3'
 const UPLOAD = 'https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
@@ -79,7 +80,7 @@ Publish a signed .aab to a Google Play track.
   --status <state>  completed (default), draft, inProgress
   --package <id>    application id, default io.joao.worldclock
   --notes <dir>     fastlane metadata root holding <locale>/changelogs/<versionCode>.txt
-  --dry-run         check credentials and permissions, change nothing
+  --dry-run         check authentication and edit access; no upload or commit
   --print-next-version-code
                     print one more than the highest code Play has ever seen, and nothing else,
                     so a build can be stamped without anyone remembering the last number
@@ -222,7 +223,7 @@ async function nextVersionCode (token, packageName) {
   }
 }
 
-async function main () {
+export async function main () {
   const options = parseArgs(process.argv.slice(2))
   const key = readServiceAccount()
 
@@ -246,7 +247,7 @@ async function main () {
 
   if (options.dryRun) {
     await call(token, `${edits}/${edit.id}`, { method: 'DELETE' })
-    console.log('\n  Dry run complete. Credentials, application id and permissions are all good.')
+    console.log('\n  Dry run complete. Authentication and edit access verified. Upload and track permissions were not tested.')
     console.log('  Nothing was uploaded and no edit was committed.\n')
     return
   }
@@ -296,7 +297,7 @@ async function main () {
   console.log(`  Assigned to the ${options.track} track as ${options.status}.`)
 
   await call(token, `${edits}/${edit.id}:commit`, { method: 'POST' })
-  console.log(`\n  Done. Version code ${versionCode} is live on ${options.track}.`)
+  console.log(`\n  Submitted version code ${versionCode} to ${options.track} with status ${options.status}. Store availability is not verified.`)
 
   if (process.env.GITHUB_STEP_SUMMARY) {
     const { appendFile } = await import('node:fs/promises')
@@ -311,7 +312,7 @@ async function main () {
   }
 }
 
-main().catch(error => {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(error => {
   if (error instanceof Stop) return
   console.error(`\n  Deployment stopped: ${error?.stack ?? String(error)}\n`)
   process.exitCode = 1

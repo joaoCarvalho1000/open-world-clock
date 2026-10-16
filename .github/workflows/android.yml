@@ -3,10 +3,11 @@ name: Android
 on:
   push:
     branches: [main]
-    paths: ["android/**", "shared/**", ".github/workflows/android.yml"]
+    paths: ["android/**", "shared/**", ".github/workflows/android.yml", ".github/workflows/android-play.yml"]
   pull_request:
-    paths: ["android/**", "shared/**", ".github/workflows/android.yml"]
+    paths: ["android/**", "shared/**", ".github/workflows/android.yml", ".github/workflows/android-play.yml"]
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -48,5 +49,6 @@ jobs:
       - name: Tests, lint, debug APK and optimized release
         working-directory: android
         run: |
+          node --test scripts/review-regressions.test.mjs
           node scripts/check-translations.mjs
           bash gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug assembleRelease

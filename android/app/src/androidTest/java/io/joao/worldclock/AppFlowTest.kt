@@ -41,6 +41,27 @@ class AppFlowTest {
         }
     }
 
+    @Test fun plannerUsesReferenceCityOutsideSavedCities() {
+        val repository = SettingsRepository(compose.activity)
+        val original = repository.settings.value
+        val reference = listOf("Asia/Kathmandu", "Pacific/Chatham", "Africa/Nairobi")
+            .first { zone -> original.cities.none { it.zoneId == zone } }
+        val name = CityCatalog(compose.activity).find(reference, java.util.Locale.US).name
+        try {
+            compose.runOnUiThread {
+                repository.setHomeZone(reference)
+            }
+            compose.waitForIdle()
+            compose.onNodeWithText("Plan", useUnmergedTree = true).performClick()
+            compose.onNode(hasScrollToIndexAction()).performScrollToNode(
+                hasContentDescription("Meeting hour in $name")
+            )
+            compose.onNodeWithContentDescription("Meeting hour in $name").assertExists()
+        } finally {
+            compose.runOnUiThread { repository.setHomeZone(original.homeZone) }
+        }
+    }
+
     @Test fun addRenameAndRemoveCityPersistsAcrossActivityRecreation() {
         compose.runOnUiThread { SettingsRepository(compose.activity).removeCity("Asia/Kathmandu") }
         compose.onNodeWithText("Add city", useUnmergedTree = true).performClick()

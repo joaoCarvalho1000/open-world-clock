@@ -71,3 +71,21 @@ The implemented premium catalog and separate proposals are documented in [PREMIU
 ## Current scope
 
 This Android version supports the same three interface languages as the website. Desktop-specific window/tray features do not apply. Import/export and app-store publication are not implemented in this initial Android version. The offline map uses a fixed world view without pan or zoom.
+
+## Protected Play publishing
+
+Android Play accepts manual dispatch from main only and remains disabled unless
+`ANDROID_PLAY_ENABLED` is `true`. Its validation job runs Android tests, lint and
+builds without release secrets before publishing can start.
+
+Before enabling it, a maintainer must create the `android-production` environment,
+require an independent reviewer, disable administrator bypass, and allow only the
+main branch. Move the signing and Play service-account secrets into that environment
+and remove repository-level copies. These settings are required setup, not something
+a workflow file can enforce by itself. Keep the enable switch off until setup is verified.
+No tag triggers publishing. A successful submission does not prove store availability;
+draft releases remain drafts. Dry runs verify authentication and edit access only.
+
+Device QA exits nonzero for incomplete contrast or widget coverage, including explicitly
+skipped widgets. Its regional contrast heuristic detects gross contrast failures; it does
+not certify text-level accessibility. Importing its PNG helpers does not discover devices.

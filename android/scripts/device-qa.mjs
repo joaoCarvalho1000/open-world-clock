@@ -34,7 +34,7 @@ const NAV_LABELS = {
 }
 
 const args = parseArgs(process.argv.slice(2))
-const serial = args.serial || firstDevice()
+let serial
 const locales = (args.locales || 'EN,PT,ES').split(',')
 const themes = (args.themes || 'LIGHT,DARK').split(',')
 const screens = (args.screens || 'clocks,convert,plan,widgets,settings').split(',')
@@ -215,12 +215,14 @@ export function contrastIn(png, box) {
 import { pathToFileURL } from 'node:url'
 const invokedDirectly = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href
 if (invokedDirectly) {
+  serial = args.serial || firstDevice()
 
   mkdirSync(join(outDir, 'shots'), { recursive: true })
   mkdirSync(join(outDir, 'dumps'), { recursive: true })
 
   const size = screenSize()
   const failures = []
+  const incomplete = []
   const rows = []
 
   console.log(`device ${serial}  ${size.w}x${size.h}`)
@@ -258,11 +260,12 @@ if (invokedDirectly) {
             Math.round(size.w * 0.05), Math.round(size.h * 0.10),
             Math.round(size.w * 0.95), Math.round(size.h * 0.55),
           ])
+          if (!contrast) incomplete.push(`${tag}: insufficient pixels for contrast analysis`)
           if (contrast && contrast.ratio < 3.0) {
             failures.push(`${tag}: contrast ${contrast.ratio.toFixed(2)}:1 is below the WCAG AA large-text floor of 3.0`)
           }
         } catch (e) {
-          console.log(`  (contrast skipped for ${tag}: ${e.message})`)
+          incomplete.push(`${tag}: contrast analysis failed: ${e.message}`)
         }
 
         rows.push({ tag, locale, theme, screen, strings: texts.length, contrast })
@@ -309,7 +312,7 @@ if (invokedDirectly) {
       if (boxes.some((o, j) => j !== i && inside(boxes[i], o))) boxes.splice(i, 1)
     }
     if (!boxes.length) {
-      console.log('\nno pinned widgets found on the home screen (skipping widget checks)')
+      incomplete.push('No pinned widgets found; required widget coverage is missing')
     } else {
       const shot = join(outDir, 'shots', 'HOME_widgets.png')
       screenshot(shot)
@@ -317,7 +320,7 @@ if (invokedDirectly) {
       const png = readPng(shot)
       boxes.forEach((box, i) => {
         const c = contrastIn(png, box)
-        if (!c) return
+        if (!c) { incomplete.push(`widget${i + 1}: insufficient pixels for contrast analysis`); return }
         const tag = `widget${i + 1}`
         rows.push({ tag: `HOME_${tag}`, locale: '-', theme: '-', screen: 'widget', strings: 0, contrast: c, img: 'HOME_widgets.png' })
         console.log(`  ${tag} ${JSON.stringify(box)}  contrast ${c.ratio.toFixed(2)}:1`)
@@ -327,7 +330,9 @@ if (invokedDirectly) {
         }
       })
     }
-  }
+  } else { incomplete.push('Widget coverage explicitly disabled') }
+
+  failures.push(...incomplete.map(reason => `INCOMPLETE: ${reason}`))
 
   // ---- string-count parity across locales, per screen and theme
   for (const screen of screens) {

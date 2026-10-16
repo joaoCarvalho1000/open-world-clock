@@ -85,16 +85,19 @@ Run `gradlew.bat :app:verifyInternalTestingConfiguration` first, then `gradlew.b
 ## Automated deployment
 
 `.github/workflows/android-play.yml` builds a signed bundle and publishes it to a Play track without
-anyone touching the Console. Run it from Actions > Android Play > Run workflow, or push a tag
-matching `android-v*`. It takes a track (internal, alpha, beta, production), a status (completed or
+anyone uploading a bundle in the Console. After protected release setup, run it from
+Actions > Android Play > Run workflow on main. Tags do not trigger publishing. It takes a track (internal, alpha, beta, production), a status (completed or
 draft) and a dry run switch.
 
-The workflow checks every secret before it builds, runs the translation gate, the unit tests and
-lint, asks Play for the next free version code, builds a signed bundle stamped with it, verifies the
+The workflow first runs Android validation without release secrets. The publishing job then
+requires the protected android-production environment, checks its secrets before signing, runs
+the translation gate, unit tests and lint, asks Play for the next free version code, builds a signed bundle stamped with it, verifies the
 bundle really is signed, and only then uploads. The bundle is also kept as a build artifact for 14
 days whether or not the upload succeeds.
 
-Required repository secrets, under Settings > Secrets and variables > Actions:
+Keep `ANDROID_PLAY_ENABLED` unset until the `android-production` environment requires an
+independent reviewer, forbids administrator bypass and allows only main. Store these secrets
+in that environment, removing any repository-level copies:
 
 - `ANDROID_UPLOAD_KEYSTORE_BASE64`: the upload keystore as base64 (`base64 -w0 upload.jks`). This
   must be the same upload key that signed version code 1; Play rejects anything else.
@@ -123,6 +126,6 @@ node android/scripts/play-deploy.mjs --aab android/app/build/outputs/bundle/rele
   --track internal --notes store/android/fastlane/metadata/android
 ```
 
-`--dry-run` authenticates, opens a Play edit and deletes it again. It proves the key, the
-application id and the permissions while changing nothing a tester can see. Run it first after
-adding or rotating credentials.
+`--dry-run` authenticates, opens a Play edit and deletes it again. It verifies authentication
+and edit access only; upload and track permissions remain untested. A submitted release
+is not proof of store availability, and a draft remains a draft.

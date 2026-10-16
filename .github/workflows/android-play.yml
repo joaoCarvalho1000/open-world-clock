@@ -1,8 +1,8 @@
 # Builds a signed Android App Bundle and publishes it to a Google Play track.
 #
-# Nothing here can run without repository secrets, and every one of them is checked with a readable
-# error before any build work starts. Add them under
-# Settings > Secrets and variables > Actions > Repository secrets:
+# Publishing requires environment secrets, checked before signed build work starts.
+# Configure them in
+# the protected android-production environment (never repository secrets):
 #
 #   ANDROID_UPLOAD_KEYSTORE_BASE64   the upload keystore (.jks), base64 encoded:
 #                                      base64 -w0 upload.jks        (Linux)
@@ -18,6 +18,10 @@
 #                                    Developer API for its project, then in Play Console open
 #                                    Users and permissions, invite the service account email and
 #                                    grant it "Release to testing tracks" on this app.
+#
+# Publishing is disabled until ANDROID_PLAY_ENABLED=true and android-production is configured.
+# Require a reviewer, disallow administrator bypass, allow only main, and store release secrets
+# only in that environment. Dispatch from main after the reviewed changes have merged.
 #
 # The version code is not kept anywhere by hand. Before building, this asks Play for the highest
 # code it has ever accepted and uses the next one, so a release can never collide with what is
@@ -42,8 +46,6 @@ on:
         description: Check credentials and build, but upload nothing
         type: boolean
         default: false
-  push:
-    tags: ["android-v*"]
 
 permissions:
   contents: read
@@ -53,7 +55,14 @@ concurrency:
   cancel-in-progress: false # never cancel a run halfway through an upload
 
 jobs:
+  validate:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && vars.ANDROID_PLAY_ENABLED == 'true'
+    uses: ./.github/workflows/android.yml
+
   publish:
+    needs: validate
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && vars.ANDROID_PLAY_ENABLED == 'true'
+    environment: android-production
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -81,7 +90,7 @@ jobs:
             if [ -z "${!name:-}" ]; then missing="$missing $name"; fi
           done
           if [ -n "$missing" ]; then
-            echo "::error::Missing repository secret(s):$missing. Add them under Settings > Secrets and variables > Actions > Repository secrets. The header of this workflow file explains each one."
+            echo "::error::Missing release environment secret(s):$missing. Configure the protected android-production environment. The header of this workflow file explains each one."
             exit 1
           fi
           case "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" in
@@ -107,7 +116,15 @@ jobs:
           echo "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f  gradle/wrapper/gradle-wrapper.jar" | sha256sum --check
 
       - name: Install Android SDK components
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+        run: |
+          set -euo pipefail
+          root="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          sdkmanager="$root/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$sdkmanager" ]; then
+            echo "::error::sdkmanager not found at $sdkmanager"
+            exit 1
+          fi
+          "$sdkmanager" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Write upload keystore
         env:

@@ -126,8 +126,8 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
     // first saved city, so the planner measured from somewhere else. Keyed on the reference city so
     // changing it moves the anchor instead of leaving a stale pick.
     var chosenZone by rememberSaveable(settings.homeZone) { mutableStateOf(settings.homeZoneId().id) }
-    // The grid's columns are the saved cities, so an anchor outside that list cannot be drawn.
-    val referenceZone = if (cities.isNotEmpty() && cities.none { it.zoneId == chosenZone }) cities.first().zoneId else chosenZone
+    // The anchor controls the instant grid; its zone need not be a saved-city column.
+    val referenceZone = chosenZone
     val refZone = ZoneId.of(referenceZone)
     var dateText by rememberSaveable { mutableStateOf(LocalDate.now(refZone).toString()) }
     val date = LocalDate.parse(dateText)
@@ -185,7 +185,9 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(t.get(R.string.plan_hours_in), style = MaterialTheme.typography.labelLarge)
-                cities.forEach { c ->
+                val home = settings.homeZoneId().id
+                val anchors = if (cities.any { it.zoneId == home }) cities else listOf(SavedCity(home)) + cities
+                anchors.forEach { c ->
                     FilterChip(
                         selected = c.zoneId == referenceZone,
                         onClick = { chosenZone = c.zoneId; selected = -1 },
