@@ -49,7 +49,7 @@
 
     <!-- Supporter Pack -->
     <string name="supporter_title">Supporter Pack</string>
-    <string name="supporter_pitch">Widget themes, clock faces and saved looks.</string>
+    <string name="supporter_pitch">More widgets for your home screen, with palettes, clock faces and saved looks to dress them in.</string>
     <string name="supporter_free_note">Clocks, conversion, planning, the original widgets and all three languages stay free.</string>
     <string name="supporter_open">See what is included</string>
     <string name="supporter_unlock">Unlock</string>
@@ -118,4 +118,7 @@
     <string name="wc_looks_count">%1$d looks</string>
     <string name="wc_looks_free_note">The three free styles. Your widget keeps these whatever happens.</string>
     <string name="wc_looks_locked_note">Try any look here. Applying one needs the Supporter Pack.</string>
+    <string name="supporter_included_widgets">%1$d more widgets, including a world map, a week grid, a date line board and a daylight arc.</string>
+    <string name="supporter_try_widget">Tap a widget to see it drawn from your own cities.</string>
+    <string name="supporter_yearly_saving">Saves %1$d%% against twelve monthly payments.</string>
 </resources>

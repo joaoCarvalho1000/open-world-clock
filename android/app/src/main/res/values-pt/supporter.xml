@@ -27,7 +27,7 @@
 
     <!-- Supporter Pack -->
     <string name="supporter_title">Pacote de Apoio</string>
-    <string name="supporter_pitch">Temas de widget, fontes de relógio e estilos salvos.</string>
+    <string name="supporter_pitch">Mais widgets para a tela de início, com paletas, mostradores e estilos salvos para vesti-los.</string>
     <string name="supporter_free_note">Relógios, conversão, planejamento, os widgets originais e os três idiomas continuam gratuitos.</string>
     <string name="supporter_open">Ver o que inclui</string>
     <string name="supporter_unlock">Desbloquear</string>
@@ -96,4 +96,7 @@
     <string name="wc_looks_count">%1$d estilos</string>
     <string name="wc_looks_free_note">Os três estilos gratuitos. Seu widget mantém estes sempre.</string>
     <string name="wc_looks_locked_note">Experimente qualquer estilo aqui. Aplicar um precisa do Pacote de Apoio.</string>
+    <string name="supporter_included_widgets">%1$d widgets a mais, entre eles um mapa-múndi, uma grade semanal, um quadro da linha de data e um arco de luz do dia.</string>
+    <string name="supporter_try_widget">Toque num widget para vê-lo desenhado com as suas cidades.</string>
+    <string name="supporter_yearly_saving">Economiza %1$d%% em relação a doze pagamentos mensais.</string>
 </resources>

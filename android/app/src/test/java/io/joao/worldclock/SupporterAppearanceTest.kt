@@ -1,5 +1,6 @@
 package io.joao.worldclock
 
+import io.joao.worldclock.billing.SupporterState
 import io.joao.worldclock.core.ClockSettings
 import io.joao.worldclock.core.SavedCity
 import io.joao.worldclock.widget.AppearanceCodec
@@ -99,5 +100,28 @@ class SupporterAppearanceTest {
         assertEquals(16, PremiumCatalog.themes.size)
         assertEquals(PremiumCatalog.theme("paper"), io.joao.worldclock.widget.WidgetConfigCodec.decode(null, null, "PAPER", null).theme)
         assertNull(PremiumCatalog.theme("unknown"))
+    }
+
+    /**
+     * The sheet tells people a yearly subscription is cheaper than twelve monthly ones. That claim
+     * is only safe when Play quoted both plans, in one currency, and yearly really is cheaper.
+     * Every other case has to say nothing rather than guess, because a wrong saving on a store
+     * listing is the kind of mistake that gets an app pulled.
+     */
+    @Test fun yearlySavingIsClaimedOnlyWhenItIsTrueAndComparable() {
+        fun state(year: Long?, month: Long?, currency: String? = "USD") =
+            SupporterState(yearlyMicros = year, monthlyMicros = month, currency = currency)
+
+        // US$5 a year against US$1 a month is US$5 versus US$12, a saving of 58 percent.
+        assertEquals(58, state(5_000_000, 1_000_000).yearlySavingPercent)
+
+        // Nothing to claim, so nothing is said.
+        assertNull("yearly dearer than monthly", state(20_000_000, 1_000_000).yearlySavingPercent)
+        assertNull("yearly identical to twelve months", state(12_000_000, 1_000_000).yearlySavingPercent)
+        assertNull("yearly not quoted", state(null, 1_000_000).yearlySavingPercent)
+        assertNull("monthly not quoted", state(5_000_000, null).yearlySavingPercent)
+        assertNull("currencies differ, so the two are not comparable",
+            state(5_000_000, 1_000_000, currency = null).yearlySavingPercent)
+        assertNull("nonsense amounts", state(0, 0).yearlySavingPercent)
     }
 }

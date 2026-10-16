@@ -41,7 +41,8 @@ class SupporterBilling private constructor(context: Context) {
     private var purchaseInFlight = false
     private val offers = mutableMapOf<SupporterPlan, Offer>()
     private var offersAt = 0L
-    private data class Offer(val details: ProductDetails, val token: String?, val price: String)
+    private data class Offer(val details: ProductDetails, val token: String?, val price: String,
+        val micros: Long, val currency: String)
 
     private val client = BillingClient.newBuilder(app)
         .setListener { result, purchases ->
@@ -77,7 +78,7 @@ class SupporterBilling private constructor(context: Context) {
                 publish(BillingStatus.LOADING, true)
                 if (!store.verifier.configured || !hasNetwork() || !connect()) {
                     offers.clear()
-                    flow.update { it.copy(yearlyPrice = null, monthlyPrice = null) }
+                    flow.update { it.copy(yearlyPrice = null, monthlyPrice = null, yearlyMicros = null, monthlyMicros = null, currency = null) }
                     publish(BillingStatus.UNAVAILABLE, false)
                     return@withLock
                 }
@@ -245,10 +246,24 @@ class SupporterBilling private constructor(context: Context) {
                             phase.recurrenceMode == ProductDetails.RecurrenceMode.INFINITE_RECURRING
                     }
                 }
-            if (option != null) offers[plan] = Offer(details, option.offerToken, option.pricingPhases.pricingPhaseList.single().formattedPrice)
+            if (option != null) {
+                val phase = option.pricingPhases.pricingPhaseList.single()
+                offers[plan] = Offer(details, option.offerToken, phase.formattedPrice,
+                    phase.priceAmountMicros, phase.priceCurrencyCode)
+            }
         }
         offersAt = System.currentTimeMillis()
-        flow.update { it.copy(yearlyPrice = offers[SupporterPlan.YEARLY]?.price, monthlyPrice = offers[SupporterPlan.MONTHLY]?.price) }
+        val yearly = offers[SupporterPlan.YEARLY]
+        val monthly = offers[SupporterPlan.MONTHLY]
+        // Only carry a currency when both plans quote the same one, so the sheet never compares
+        // two different currencies against each other.
+        val shared = yearly?.currency?.takeIf { it == monthly?.currency }
+        flow.update {
+            it.copy(
+                yearlyPrice = yearly?.price, monthlyPrice = monthly?.price,
+                yearlyMicros = yearly?.micros, monthlyMicros = monthly?.micros, currency = shared,
+            )
+        }
     }
 
     private fun publish(status: BillingStatus, busy: Boolean) {

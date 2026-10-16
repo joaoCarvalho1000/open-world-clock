@@ -90,6 +90,9 @@ private fun SupporterPanel(settings: ClockSettings, onClose: () -> Unit, modifie
     // A few looks that show the range, not the whole catalog: this is the offer, not the browser.
     val highlights = remember { Highlights.mapNotNull(PremiumCatalog::look) }
     var picked by remember { mutableStateOf(highlights.first().spec()) }
+    // The ten widgets are the largest part of the pack and the sheet used to never mention them,
+    // let alone show one. Previewing the real provider is the honest version of a sales pitch.
+    var kind by remember { mutableStateOf(Showcase.first()) }
 
     LaunchedEffect(Unit) { billing.refresh() }
 
@@ -108,11 +111,29 @@ private fun SupporterPanel(settings: ClockSettings, onClose: () -> Unit, modifie
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         ) {
             Box(Modifier.padding(20.dp), contentAlignment = Alignment.Center) {
-                NativeWidgetPreview(WidgetKind.SINGLE, WidgetConfig().applyLook(picked), settings, services.catalog)
+                NativeWidgetPreview(kind, WidgetConfig().applyLook(picked), settings, services.catalog)
+            }
+        }
+        // Counted from the registry, so adding a kind cannot leave this claim behind.
+        Text(
+            t.get(R.string.supporter_included_widgets, WidgetKind.entries.count { it.premium }),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 12.dp),
+        )
+        Text(t.get(R.string.supporter_try_widget), style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
+            Showcase.forEach { candidate ->
+                LookChip(
+                    label = t.get(candidate.titleRes),
+                    selected = kind == candidate,
+                    onClick = { kind = candidate },
+                )
             }
         }
         Text(t.get(R.string.supporter_try), style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+            color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 12.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 4.dp)) {
             highlights.forEach { look ->
                 val spec = look.spec()
@@ -148,6 +169,12 @@ private fun SupporterPanel(settings: ClockSettings, onClose: () -> Unit, modifie
 /** Eight looks spanning light, dark and vivid, so the sheet shows range rather than a list. */
 private val Highlights = listOf("newsprint", "mist", "chalk", "ink", "forest", "midnight", "ember", "cobalt")
 
+/**
+ * Four of the ten paid widgets, chosen because they look nothing like each other: a map, a week
+ * grid, a date board and a daylight arc. Enough to show the pack is widgets and not just colours.
+ */
+private val Showcase = listOf(WidgetKind.MAP, WidgetKind.WEEK, WidgetKind.DATELINE, WidgetKind.DAYLIGHT)
+
 enum class SupporterAction { YEARLY, MONTHLY, MANAGE, RESTORE, RETRY }
 
 /**
@@ -178,6 +205,11 @@ fun Purchases(state: SupporterState, modifier: Modifier = Modifier, onAction: (S
                     Button(onClick = { onAction(SupporterAction.YEARLY) }, enabled = canBuy, modifier = Modifier.fillMaxWidth()) {
                         // Long local prices and large font scales wrap rather than truncate.
                         Text(t.get(R.string.supporter_yearly, state.yearlyPrice), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                    }
+                    // Only when Play quoted both plans in one currency and yearly really is cheaper.
+                    state.yearlySavingPercent?.let { percent ->
+                        Text(t.get(R.string.supporter_yearly_saving, percent), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Text(t.get(R.string.supporter_yearly_note), style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
