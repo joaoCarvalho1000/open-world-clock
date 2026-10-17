@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.MailOutline
+import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.StarRate
 import androidx.compose.material.icons.rounded.VisibilityOff
@@ -176,6 +177,8 @@ fun SettingsScreen(settings: ClockSettings) {
             PrivacyLine(Icons.Rounded.CloudOff, t.get(R.string.privacy_offline), t.get(R.string.privacy_offline_body))
             PrivacyLine(Icons.Rounded.VisibilityOff, t.get(R.string.privacy_tracking), t.get(R.string.privacy_tracking_body))
             PrivacyLine(Icons.Rounded.Lock, t.get(R.string.privacy_local), t.get(R.string.privacy_local_body))
+            Spacer(Modifier.size(4.dp))
+            ActionRow(Icons.Rounded.OpenInNew, t.get(R.string.settings_privacy_policy)) { engagement.openPrivacyPolicy(t.locale) }
         }
         SectionHeader(t.get(R.string.settings_about))
         Group {

@@ -161,6 +161,7 @@
     <string name="settings_24h">Reloj de 24 horas</string>
     <string name="settings_24h_sample">Muestra %1$s</string>
     <string name="settings_privacy">Privacidad</string>
+    <string name="settings_privacy_policy">Política de privacidad</string>
     <string name="privacy_offline">Funciona sin conexión</string>
     <string name="privacy_offline_body">Los relojes, la conversión, la planificación y los widgets funcionan sin conexión. Las compras usan Google Play.</string>
     <string name="privacy_tracking">Sin rastreo</string>

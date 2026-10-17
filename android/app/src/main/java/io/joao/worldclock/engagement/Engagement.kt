@@ -86,6 +86,14 @@ class Engagement(private val context: Context) {
         catch (_: ActivityNotFoundException) { openWeb("https://openworldclock.com/support.html") }
     }
 
+    /**
+     * Play expects the policy a buyer agrees to be reachable from the app, not only the listing.
+     * The site carries all three languages, so follow the app's own rather than the browser's.
+     */
+    fun openPrivacyPolicy(locale: Locale) = openWeb(
+        "https://openworldclock.com/" + when (locale.language) { "pt" -> "pt/privacy"; "es" -> "es/privacy"; else -> "privacy" }
+    )
+
     private fun localized(locale: Locale) = AppStrings(context, when (locale.language) { "pt" -> AppLanguage.PT; "es" -> AppLanguage.ES; else -> AppLanguage.EN })
     private fun strings() = AppStrings(context, SettingsRepository(context).settings.value.language)
     private fun openWeb(url: String) = launch(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
