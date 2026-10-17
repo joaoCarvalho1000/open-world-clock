@@ -137,7 +137,7 @@
     <string name="wc_style_dark">Oscuro</string>
     <string name="wc_style_note_fixed">Siempre %1$s, a cualquier hora.</string>
     <string name="wc_style_note_system">Sigue el tema del teléfono.</string>
-    <string name="wc_style_note_single">Se aclara u oscurece con el sol de esta ciudad.</string>
+    <string name="wc_style_note_single">El color del cielo y el sol o la luna siguen a esta ciudad.</string>
     <string name="wc_style_note_rows">Cada fila sigue el sol de su propia ciudad.</string>
     <string name="wc_setup_title">Configurar %1$s</string>
     <string name="wc_save">Guardar widget</string>
@@ -161,7 +161,7 @@
     <string name="settings_24h_sample">Muestra %1$s</string>
     <string name="settings_privacy">Privacidad</string>
     <string name="privacy_offline">Funciona sin conexión</string>
-    <string name="privacy_offline_body">Los relojes y la planificación funcionan sin conexión. Las compras usan Google Play.</string>
+    <string name="privacy_offline_body">Los relojes, la conversión, la planificación y los widgets funcionan sin conexión. Las compras usan Google Play.</string>
     <string name="privacy_tracking">Sin rastreo</string>
     <string name="privacy_tracking_body">Sin anuncios, analítica, cuentas ni ubicación.</string>
     <string name="privacy_local">Se queda en este dispositivo</string>
@@ -182,11 +182,11 @@
     <string name="widget_single_label">Reloj de ciudad</string>
     <string name="widget_world_label">Reloj mundial</string>
     <string name="widget_meeting_label">Planificador de reuniones</string>
-    <string name="widget_single_description">Una ciudad, grande y en vivo. La tarjeta se aclara u oscurece con su amanecer y atardecer.</string>
-    <string name="widget_world_description">Hasta cuatro ciudades con horas en vivo, cada fila iluminada por su propio sol.</string>
+    <string name="widget_single_description">Una ciudad, grande y en vivo. El color del cielo y su sol o su luna siguen la hora de allí.</string>
+    <string name="widget_world_description">Hasta cuatro ciudades con horas en vivo. Cada fila lleva el color del cielo y el sol o la luna de su propia ciudad.</string>
     <string name="widget_meeting_description">Las mejores horas laborales en común de hoy y quién está trabajando ahora.</string>
-    <string name="widget_single_blurb">Una ciudad, iluminada por su propio sol.</string>
-    <string name="widget_world_blurb">Cuatro ciudades, cada fila con su propio sol.</string>
+    <string name="widget_single_blurb">Una ciudad, grande y en vivo, bajo su propio cielo.</string>
+    <string name="widget_world_blurb">Cuatro ciudades, cada fila bajo su propio cielo.</string>
     <string name="widget_meeting_blurb">Las horas en común de hoy y quién está trabajando.</string>
     <string name="widget_daytime">Día</string>
     <string name="widget_night">Noche</string>

@@ -137,7 +137,7 @@
     <string name="wc_style_dark">Escuro</string>
     <string name="wc_style_note_fixed">Sempre %1$s, a qualquer hora.</string>
     <string name="wc_style_note_system">Segue o tema do aparelho.</string>
-    <string name="wc_style_note_single">Fica claro ou escuro com o sol desta cidade.</string>
+    <string name="wc_style_note_single">A cor do céu e o sol ou a lua seguem esta cidade.</string>
     <string name="wc_style_note_rows">Cada linha segue o sol da própria cidade.</string>
     <string name="wc_setup_title">Configurar %1$s</string>
     <string name="wc_save">Salvar widget</string>
@@ -161,7 +161,7 @@
     <string name="settings_24h_sample">Mostra %1$s</string>
     <string name="settings_privacy">Privacidade</string>
     <string name="privacy_offline">Funciona offline</string>
-    <string name="privacy_offline_body">Relógios e planejamento funcionam offline. Compras usam o Google Play.</string>
+    <string name="privacy_offline_body">Relógios, conversão, planejamento e widgets funcionam offline. Compras usam o Google Play.</string>
     <string name="privacy_tracking">Sem rastreamento</string>
     <string name="privacy_tracking_body">Sem anúncios, análises, cadastro ou localização.</string>
     <string name="privacy_local">Fica neste aparelho</string>
@@ -182,11 +182,11 @@
     <string name="widget_single_label">Relógio da cidade</string>
     <string name="widget_world_label">Relógio mundial</string>
     <string name="widget_meeting_label">Planejador de reuniões</string>
-    <string name="widget_single_description">Uma cidade, grande e ao vivo. O cartão fica claro ou escuro com o nascer e o pôr do sol.</string>
-    <string name="widget_world_description">Até quatro cidades com horários ao vivo, cada linha iluminada pelo próprio sol.</string>
+    <string name="widget_single_description">Uma cidade, grande e ao vivo. A cor do céu e o sol ou a lua acompanham a hora de lá.</string>
+    <string name="widget_world_description">Até quatro cidades com horários ao vivo. Cada linha leva a cor do céu e o sol ou a lua da própria cidade.</string>
     <string name="widget_meeting_description">Os melhores horários de trabalho em comum hoje e quem está no expediente agora.</string>
-    <string name="widget_single_blurb">Uma cidade, iluminada pelo próprio sol.</string>
-    <string name="widget_world_blurb">Quatro cidades, cada linha com o próprio sol.</string>
+    <string name="widget_single_blurb">Uma cidade, grande e ao vivo, sob o próprio céu.</string>
+    <string name="widget_world_blurb">Quatro cidades, cada linha sob o próprio céu.</string>
     <string name="widget_meeting_blurb">Os horários em comum de hoje e quem está no expediente.</string>
     <string name="widget_daytime">Dia</string>
     <string name="widget_night">Noite</string>
