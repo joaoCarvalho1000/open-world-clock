@@ -89,8 +89,25 @@ abstract class BaseWidgetProvider(private val kind: WidgetKind) : AppWidgetProvi
             // Mutable so the system can attach EXTRA_APPWIDGET_ID to the callback.
             val flags = PendingIntent.FLAG_ONE_SHOT or if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_MUTABLE else 0
             val pending = PendingIntent.getBroadcast(context, 0, callback, flags)
+            // The launcher's confirmation dialog shows whatever is drawn here, and build() falls
+            // back to a generic size table when handed no options. Sun arc, Next window and Date
+            // line all declare minima above that table, so the first sight of a paid widget was a
+            // cropped one. Ask the provider what it actually asks for.
+            val info = manager.installedProviders.firstOrNull { it.provider.className == kind.providerClass.name }
+            val density = context.resources.displayMetrics.density
+            val sizing = info?.takeIf { it.minWidth > 0 && it.minHeight > 0 && density > 0f }?.let {
+                // The provider declares pixels; these options are read back as dp.
+                val wDp = (it.minWidth / density).toInt()
+                val hDp = (it.minHeight / density).toInt()
+                Bundle().apply {
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, wDp)
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, wDp)
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, hDp)
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, hDp)
+                }
+            }
             val preview = WidgetRenderer.build(context, kind, 0, config,
-                SettingsRepository(context).settings.value, CityCatalog(context), null)
+                SettingsRepository(context).settings.value, CityCatalog(context), sizing)
             val extras = Bundle().apply { putParcelable(AppWidgetManager.EXTRA_APPWIDGET_PREVIEW, preview) }
             return manager.requestPinAppWidget(ComponentName(context, kind.providerClass), extras, pending)
         }
