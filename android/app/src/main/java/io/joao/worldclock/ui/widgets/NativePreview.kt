@@ -2,12 +2,15 @@ package io.joao.worldclock.ui.widgets
 
 import android.appwidget.AppWidgetManager
 import android.os.Bundle
+import android.view.View
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -51,6 +54,12 @@ private fun minimumSize(kind: WidgetKind): Pair<Dp, Dp> {
  * was a second implementation that could drift, and at ten premium kinds it would have become
  * ten more. Every preview in the app now comes through here, so what the gallery, the catalog
  * and the configure screen show is what the launcher will draw, by construction.
+ *
+ * Accessibility is the price of inflating the real thing. The tree below is a working widget:
+ * every TextClock and TextView in it is its own node, so a screen reader walking a screenful of
+ * previews hears dozens of loose times and labels with nothing tying them together. A preview is
+ * a picture of a widget, not a widget, so the whole hosted tree is hidden from accessibility and
+ * [description], when a caller supplies one, speaks for it as a single node.
  */
 @Composable
 fun NativeWidgetPreview(
@@ -59,6 +68,7 @@ fun NativeWidgetPreview(
     settings: ClockSettings,
     catalog: CityCatalog,
     modifier: Modifier = Modifier,
+    description: String? = null,
 ) {
     val context = LocalContext.current
     val locale = LocalStrings.current.locale
@@ -73,9 +83,21 @@ fun NativeWidgetPreview(
         )
     }
 
+    // Deliberately not part of the remember key above: the description does not change what is
+    // drawn, and folding it in would rebuild every preview whenever the sentence was recomputed.
+    val spoken = description
+
     AndroidView(
-        modifier = modifier.size(width, height),
-        factory = { FrameLayout(it) },
+        modifier = modifier
+            .size(width, height)
+            .then(if (spoken == null) Modifier else Modifier.semantics { contentDescription = spoken }),
+        factory = {
+            FrameLayout(it).apply {
+                // Hides this root and everything inflated under it, so the one node a screen
+                // reader sees for a preview is the Compose node carrying the description.
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+            }
+        },
         update = { frame ->
             // Re-inflating on every tick would throw the real clocks away each second, so the
             // host only rebuilds when the look it was given actually changed.

@@ -86,12 +86,22 @@ fun WidgetsScreen(settings: ClockSettings) {
     val now by rememberNow()
     val canPin = remember { BaseWidgetProvider.canPin(context) }
     var resumeTick by remember { mutableIntStateOf(0) }
-    LifecycleResumeEffect(Unit) { resumeTick++; onPauseOrDispose { } }
+    var status by rememberSaveable { mutableStateOf<String?>(null) }
+    // The resume the status was written on. A pin message speaks to that moment ("confirm on
+    // your home screen"), so once the person has been away and come back it is describing
+    // something that has already happened, and it goes instead of sitting there for the rest of
+    // the session. Clearing on the next resume rather than on pause leaves it on screen, and in
+    // the live region, for as long as the sentence is still true.
+    var statusTick by rememberSaveable { mutableIntStateOf(0) }
+    LifecycleResumeEffect(Unit) {
+        resumeTick++
+        if (statusTick != resumeTick) status = null
+        onPauseOrDispose { }
+    }
     val placed = remember(resumeTick, settings) {
         val manager = AppWidgetManager.getInstance(context)
         WidgetKind.entries.flatMap { kind -> manager.getAppWidgetIds(ComponentName(context, kind.providerClass)).map { kind to it } }
     }
-    var status by rememberSaveable { mutableStateOf<String?>(null) }
     val supporter by services.supporter.state.collectAsStateWithLifecycle()
 
     LazyVerticalGrid(
@@ -125,6 +135,7 @@ fun WidgetsScreen(settings: ClockSettings) {
                 // Pinning never carries a look the person has not unlocked, so a preview stays a preview.
                 val pinned = BaseWidgetProvider.requestPin(context, kind, config.forAccess(supporter.hasAccess))
                 status = t.get(if (pinned) R.string.widgets_pin_confirm else R.string.widgets_pin_failed)
+                statusTick = resumeTick
             }
         }
         if (placed.isNotEmpty()) {
@@ -149,6 +160,10 @@ fun WidgetsScreen(settings: ClockSettings) {
                                         }) { Icon(Icons.Rounded.Edit, null, Modifier.size(18.dp)); Spacer(Modifier.width(6.dp)); Text(t.get(R.string.action_edit)) }
                                     },
                                     colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                                    // One node for the row, so the kind and the cities it follows
+                                    // are read as one placed widget instead of two loose lines.
+                                    // Edit keeps its own node: a clickable child is not merged in.
+                                    modifier = Modifier.semantics(mergeDescendants = true) { },
                                 )
                                 if (i < placed.lastIndex) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
                             }
@@ -189,7 +204,13 @@ private fun GalleryCard(kind: WidgetKind, settings: ClockSettings, now: java.tim
             // Wallpaper-like stage so light and dark widgets both read clearly.
             Surface(shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = Modifier.fillMaxWidth()) {
                 Box(Modifier.padding(20.dp), contentAlignment = Alignment.Center) {
-                    NativeWidgetPreview(kind, config, settings, services.catalog)
+                    // Thirteen live RemoteViews trees on one tab. Without a description each
+                    // would spill its clocks and labels into the reading order, so the preview
+                    // is named once, by the same title and blurb the card shows below it.
+                    NativeWidgetPreview(
+                        kind, config, settings, services.catalog,
+                        description = t.get(R.string.widget_preview_a11y, t.get(kind.titleRes), t.get(kind.blurbRes)),
+                    )
                 }
             }
             Spacer(Modifier.height(16.dp))
