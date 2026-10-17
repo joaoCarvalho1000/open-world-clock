@@ -118,14 +118,7 @@ class SingleClockWidgetProvider : BaseWidgetProvider(WidgetKind.SINGLE)
 
 class MeetingWidgetProvider : BaseWidgetProvider(WidgetKind.MEETING)
 
-class WorldClockWidgetProvider : BaseWidgetProvider(WidgetKind.WORLD) {
-    companion object {
-        /** Re-renders every placed widget of every kind. Safe to call from any settings change. */
-        fun refreshAll(context: Context) {
-            WidgetKind.entries.forEach { BaseWidgetProvider.refresh(context, it) }
-        }
-    }
-}
+class WorldClockWidgetProvider : BaseWidgetProvider(WidgetKind.WORLD)
 
 class DuoWidgetProvider : BaseWidgetProvider(WidgetKind.DUO)
 class WorldBoardWidgetProvider : BaseWidgetProvider(WidgetKind.BOARD)
