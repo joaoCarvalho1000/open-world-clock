@@ -241,7 +241,7 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
                         )
                     }) { Icon(Icons.Rounded.Share, t.get(R.string.action_share)) }
                 }
-                OverviewBar(slots, selectedIndex, nowIndex, t.get(R.string.plan_overlap_bar)) { selected = it }
+                OverviewBar(slots, selectedIndex, nowIndex) { selected = it }
                 Slider(
                     value = selectedIndex.toFloat(),
                     onValueChange = { selected = it.roundToInt().coerceIn(0, slots.lastIndex) },
@@ -277,7 +277,7 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
 
 /** Whole-day overview: one cell per hour, opacity tracking how many cities are at work. */
 @Composable
-private fun OverviewBar(slots: List<PlanSlot>, selected: Int, nowIndex: Int, description: String, onSelect: (Int) -> Unit) {
+private fun OverviewBar(slots: List<PlanSlot>, selected: Int, nowIndex: Int, onSelect: (Int) -> Unit) {
     val accent = MaterialTheme.colorScheme.primary
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val outline = MaterialTheme.colorScheme.onSurface
@@ -285,7 +285,11 @@ private fun OverviewBar(slots: List<PlanSlot>, selected: Int, nowIndex: Int, des
         Modifier.fillMaxWidth().height(24.dp)
             .pointerInput(slots.size) { detectTapGestures { onSelect((it.x / size.width * slots.size).toInt().coerceIn(0, slots.lastIndex)) } }
             .pointerInput(slots.size) { detectHorizontalDragGestures { change, _ -> onSelect((change.position.x / size.width * slots.size).toInt().coerceIn(0, slots.lastIndex)) } }
-            .semantics { contentDescription = description },
+            // Hidden from screen readers on purpose. The slider below drives the same hour and
+            // already announces it with a state description; this canvas only had a label, so
+            // TalkBack read it as static text and then a double tap fired the tap gesture at an
+            // arbitrary x and moved the selection.
+            .clearAndSetSemantics { },
     ) {
         val cell = size.width / slots.size
         slots.forEachIndexed { i, s ->
