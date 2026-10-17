@@ -159,4 +159,28 @@ class SettingsAndSearchTest {
             )
         }
     }
+
+    /**
+     * Relaunching a running app must resume where it was. `onNewIntent` used to fall back to
+     * `DeepLink(AppDestination.Clocks)` whenever the new intent carried no `worldclock://` URI, so
+     * tapping the launcher icon while comparing the planner against a calendar threw the Plan tab
+     * away every time. Nothing reaches the activity without a URI on purpose: the launcher and the
+     * widget pin confirmation are the only such paths, and a widget tap always carries one.
+     *
+     * The activity cannot be driven from a JVM unit test, so this guards the shape: the only
+     * `DeepLink` the activity may hand to navigation is one it parsed, never one it invented.
+     * `SkyTest` reads `sky.css` the same way.
+     */
+    @Test fun relaunchWithoutADeepLinkKeepsTheCurrentTab() {
+        val source = appSource("MainActivity.kt").readText()
+        val onNewIntent = source.substringAfter("override fun onNewIntent(").substringBefore("override fun ")
+        assertTrue("onNewIntent must still parse the data URI", onNewIntent.contains("DeepLink.parse(intent.data)"))
+        // The old shape: a destination constructed in the activity as the fallback for a null parse.
+        val invented = Regex("DeepLink\\(\\s*AppDestination\\.").find(onNewIntent)?.value
+        assertNull("onNewIntent invents a destination ($invented), so a relaunch with no link loses the current tab", invented)
+        // Narrower than banning every elvis in the method: what must not come back is an
+        // assignment that always writes, whatever the parse returned.
+        val unguarded = onNewIntent.lines().firstOrNull { it.contains("pendingLink.value =") && it.contains("?:") }
+        assertNull("onNewIntent assigns pendingLink unconditionally ($unguarded)", unguarded)
+    }
 }

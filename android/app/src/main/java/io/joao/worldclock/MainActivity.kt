@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.joao.worldclock.data.CityCatalog
 import io.joao.worldclock.data.SettingsRepository
-import io.joao.worldclock.ui.AppDestination
 import io.joao.worldclock.ui.DeepLink
 import io.joao.worldclock.ui.WorldClockApp
 import io.joao.worldclock.ui.components.AppServices
@@ -54,7 +53,9 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        pendingLink.value = DeepLink.parse(intent.data) ?: DeepLink(AppDestination.Clocks)
+        // A launcher tap on a running app carries no URI. Falling back to Clocks here threw away
+        // the tab the person was on; a relaunch must resume where it was, like any Android app.
+        DeepLink.parse(intent.data)?.let { pendingLink.value = it }
     }
 
     override fun onResume() {
