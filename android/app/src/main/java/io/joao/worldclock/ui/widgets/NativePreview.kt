@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -88,24 +86,26 @@ fun NativeWidgetPreview(
     val spoken = description
 
     AndroidView(
-        modifier = modifier
-            .size(width, height)
-            .then(if (spoken == null) Modifier else Modifier.semantics { contentDescription = spoken }),
-        factory = {
-            FrameLayout(it).apply {
-                // Hides this root and everything inflated under it, so the one node a screen
-                // reader sees for a preview is the Compose node carrying the description.
-                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
-            }
-        },
+        modifier = modifier.size(width, height),
+        factory = { FrameLayout(it) },
         update = { frame ->
             // Re-inflating on every tick would throw the real clocks away each second, so the
             // host only rebuilds when the look it was given actually changed.
             if (frame.tag !== views) {
                 frame.removeAllViews()
-                frame.addView(views.apply(frame.context, frame))
+                val hosted = views.apply(frame.context, frame)
+                // The hidden half goes on the inflated tree, not on the host. A host marked
+                // NO_HIDE_DESCENDANTS hides itself too, which left the preview silent rather
+                // than named, and a semantics modifier cannot speak for it either: the hosted
+                // View owns this node, so Compose semantics on an AndroidView never surface.
+                hosted.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                frame.addView(hosted)
                 frame.tag = views
             }
+            frame.contentDescription = spoken
+            frame.importantForAccessibility =
+                if (spoken == null) View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                else View.IMPORTANT_FOR_ACCESSIBILITY_YES
         },
     )
 }
