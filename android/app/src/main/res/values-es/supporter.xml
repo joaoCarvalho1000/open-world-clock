@@ -20,7 +20,7 @@
     <string name="wc_preset_save">Guardar este estilo</string>
     <string name="wc_preset_name">Nombre</string>
     <string name="wc_preset_hint">El estilo completo, incluidos Luz de día, Claro u Oscuro. Tus ciudades quedan como están.</string>
-    <string name="wc_preset_empty">Guarda un tema y una fuente para reutilizar en cualquier widget.</string>
+    <string name="wc_preset_empty">Guarda un estilo para reutilizar en cualquier widget.</string>
     <string name="wc_preset_full">Puedes guardar %1$d estilos. Elimina uno para guardar otro.</string>
     <string name="wc_preset_delete">Eliminar %1$s</string>
     <string name="wc_preset_apply_a11y">Aplicar %1$s</string>

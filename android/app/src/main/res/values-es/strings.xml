@@ -137,7 +137,7 @@
     <string name="wc_style_note_fixed">Siempre %1$s, a cualquier hora.</string>
     <string name="wc_style_note_system">El color del cielo sigue a tu ciudad de referencia.</string>
     <string name="wc_style_note_single">El color del cielo y el sol o la luna siguen a esta ciudad.</string>
-    <string name="wc_style_note_rows">Cada fila sigue el sol de su propia ciudad.</string>
+    <string name="wc_style_note_rows">Cada ciudad sigue su propio sol.</string>
     <string name="wc_style_note_first">El color del cielo sigue a la primera ciudad.</string>
     <string name="wc_style_note_change">El color del cielo sigue a la ciudad del próximo cambio.</string>
     <string name="wc_setup_title">Configurar %1$s</string>

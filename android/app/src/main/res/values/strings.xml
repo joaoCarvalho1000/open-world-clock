@@ -144,7 +144,7 @@
     <string name="wc_style_note_fixed">Always %1$s, whatever the time.</string>
     <string name="wc_style_note_system">The sky colour follows your reference city.</string>
     <string name="wc_style_note_single">The sky colour and the sun or moon follow this city.</string>
-    <string name="wc_style_note_rows">Each row follows its own city\'s sun.</string>
+    <string name="wc_style_note_rows">Each city follows its own sun.</string>
     <string name="wc_style_note_first">The sky colour follows the first city.</string>
     <string name="wc_style_note_change">The sky colour follows the city that changes next.</string>
     <string name="wc_setup_title">Set up %1$s</string>

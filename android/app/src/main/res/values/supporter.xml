@@ -42,7 +42,7 @@
     <string name="wc_preset_save">Save this look</string>
     <string name="wc_preset_name">Name</string>
     <string name="wc_preset_hint">The whole look, including Daylight, Light or Dark. Your cities stay as they are.</string>
-    <string name="wc_preset_empty">Save a theme and face to reuse on any widget.</string>
+    <string name="wc_preset_empty">Save a look to reuse on any widget.</string>
     <string name="wc_preset_full">You can keep %1$d saved looks. Delete one to save another.</string>
     <string name="wc_preset_delete">Delete %1$s</string>
     <string name="wc_preset_apply_a11y">Apply %1$s</string>
