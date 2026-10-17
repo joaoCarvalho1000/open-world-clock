@@ -22,6 +22,23 @@ class WidgetRenderingTest {
     private val context: Context get() = instrumentation.targetContext
     private val settings = ClockSettings(listOf(SavedCity("Asia/Kathmandu"),SavedCity("America/New_York"),SavedCity("Asia/Tokyo"),SavedCity("Europe/Lisbon")))
 
+    @Test fun meetingWidgetAxisSpansTheActualDstDay() {
+        instrumentation.runOnMainSync {
+            val zone = java.time.ZoneId.of("America/New_York")
+            val catalog = CityCatalog(context)
+            val chosen = settings.copy(homeZone = zone.id, use24Hour = true, language = AppLanguage.EN)
+            listOf(java.time.LocalDate.of(2026, 3, 8), java.time.LocalDate.of(2026, 11, 1)).forEach { date ->
+                val start = date.atStartOfDay(zone).toInstant()
+                val end = date.plusDays(1).atStartOfDay(zone).toInstant()
+                val view = WidgetRenderer.build(context, WidgetKind.MEETING, 42, WidgetConfig(),
+                    chosen, catalog, null, false, end.minusSeconds(60)).apply(context, FrameLayout(context))
+                val expected = start.plusSeconds((end.epochSecond - start.epochSecond) * 7 / 8)
+                    .atZone(zone).format(java.time.format.DateTimeFormatter.ofPattern("H:mm", java.util.Locale.US))
+                assertEquals(expected, view.findViewById<android.widget.TextView>(R.id.axis7).text.toString())
+            }
+        }
+    }
+
     @Test fun originalClockDigitsAndPeriodsFitAtLargeText() {
         instrumentation.runOnMainSync {
             val enlarged = context.createConfigurationContext(android.content.res.Configuration(context.resources.configuration).apply { fontScale = 1.5f })

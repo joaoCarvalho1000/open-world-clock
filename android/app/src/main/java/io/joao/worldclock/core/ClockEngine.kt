@@ -52,8 +52,11 @@ object ClockEngine {
     }
 
     fun plan(date: LocalDate, referenceZone: String, cities: List<SavedCity>): List<PlanSlot> {
-        val midnight = date.atStartOfDay(ZoneId.of(referenceZone)).toInstant()
-        return (0..23).map { h -> midnight.plusSeconds(h * 3600L).let { PlanSlot(it, cities.count { city -> isWorking(it, city) }, cities.size) } }
+        val zone = ZoneId.of(referenceZone)
+        val midnight = date.atStartOfDay(zone).toInstant()
+        val end = date.plusDays(1).atStartOfDay(zone).toInstant()
+        return generateSequence(midnight) { it.plusSeconds(3600) }.takeWhile { it < end }
+            .map { at -> PlanSlot(at, cities.count { isWorking(at, it) }, cities.size) }.toList()
     }
 
     fun offsetLabel(minutes: Int): String = "UTC" + signedDuration(minutes)

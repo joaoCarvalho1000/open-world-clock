@@ -62,7 +62,6 @@ object WidgetRenderer {
 
     /** One mark every three hours, each sitting at the left edge of its cell in the overlap bar. */
     private val Axis = listOf(R.id.axis0, R.id.axis1, R.id.axis2, R.id.axis3, R.id.axis4, R.id.axis5, R.id.axis6, R.id.axis7)
-    private val AxisSlots = (0 until 24 step 3).toList()
 
     private data class RowIds(val row: Int, val icon: Int, val name: Int, val meta: Int, val time: Int, val ampm: Int)
     private data class MeetingIds(val row: Int, val dot: Int, val name: Int, val status: Int, val time: Int)
@@ -383,6 +382,9 @@ object WidgetRenderer {
         val home = settings.homeZoneId()
         val today = now.atZone(home).toLocalDate()
         val slots = ClockEngine.plan(today, home.id, cities)
+        val dayStart = today.atStartOfDay(home).toInstant()
+        val dayEnd = today.plusDays(1).atStartOfDay(home).toInstant()
+        val daySeconds = dayEnd.epochSecond - dayStart.epochSecond
         val best = slots.maxOfOrNull { it.workingCount } ?: 0
         val use24 = settings.use24Hour
         val fmt = DateTimeFormatter.ofPattern(if (use24) "HH:mm" else "h a", t.locale)
@@ -391,7 +393,7 @@ object WidgetRenderer {
             var end = start
             while (end + 1 < slots.size && slots[end + 1].workingCount == best) end++
             val from = slots[start].instant.atZone(home).format(fmt)
-            val to = slots[end].instant.plusSeconds(3600).atZone(home).format(fmt)
+            val to = minOf(slots[end].instant.plusSeconds(3600), dayEnd).atZone(home).format(fmt)
             if (best == cities.size) t.get(R.string.widget_meeting_everyone, from, to)
             else t.get(R.string.widget_meeting_partial, best, cities.size, from, to)
         }
@@ -410,7 +412,7 @@ object WidgetRenderer {
         val nowIndex = slots.indexOfLast { !it.instant.isAfter(now) }
         val bar = overlapBitmap(slots.map { if (it.totalCount == 0) 0f else it.workingCount.toFloat() / it.totalCount }, nowIndex, accent, track,
             p.marker ?: context.getColor(R.color.wc_sun), p.ink2 ?: context.getColor(R.color.widget_ink2),
-            config.theme?.markerRing, widthDp)
+            config.theme?.markerRing, widthDp, daySeconds / 3600f)
         val visible = ((heightDp - 100) / 34).toInt().coerceIn(1, 4)
         val homeName = homeCity.name
 
@@ -421,15 +423,13 @@ object WidgetRenderer {
             color(R.id.meet_summary, p.ink); color(R.id.meet_title, p.accent)
             setImageViewBitmap(R.id.meet_bar, bar)
             setContentDescription(R.id.meet_bar, t.get(R.string.widget_meeting_bar_a11y, summary, homeName))
-            // Narrow widgets keep every sixth hour, which still lands on the right cell because
-            // the remaining labels share the width evenly.
+            // Eight evenly spaced elapsed-time marks also fit 23/25-hour civil days.
             val everyThirdHour = widthDp >= 220
-            AxisSlots.forEachIndexed { i, slotIndex ->
-                // Real local hour of each slot, so DST days label correctly.
-                val at = slots.getOrNull(slotIndex)?.instant?.atZone(home)
-                val hour = at?.hour ?: slotIndex
-                // Same compact form as the planner, with the day half taken from the app locale.
-                setTextViewText(Axis[i], compactHour(hour, use24, t.locale))
+            Axis.indices.forEach { i ->
+                val at = dayStart.plusSeconds(daySeconds * i / Axis.size).atZone(home)
+                val label = if (at.minute == 0) compactHour(at.hour, use24, t.locale)
+                    else at.format(DateTimeFormatter.ofPattern(if (use24) "H:mm" else "h:mm a", t.locale))
+                setTextViewText(Axis[i], label)
                 color(Axis[i], p.ink2)
                 setViewVisibility(Axis[i], if (everyThirdHour || i % 2 == 0) View.VISIBLE else View.GONE)
             }
@@ -571,8 +571,8 @@ object WidgetRenderer {
     }
 
     /**
-     * 24 rounded cells whose opacity tracks how many cities work that hour, a sun dot for now,
-     * and a tick every three hours that lines the cells up with the hour marks underneath.
+     * Hourly cells over the actual civil day, a sun dot for now, and eight equally spaced
+     * ticks aligned with the elapsed-time labels underneath.
      */
     /**
      * [boxWidthDp] is the widget width less its 16dp side padding. The bitmap is stretched into a
@@ -580,14 +580,14 @@ object WidgetRenderer {
      * one recurring mark, is drawn as an ellipse. Every vertical constant below scales with it.
      */
     private fun overlapBitmap(values: List<Float>, nowIndex: Int, accent: Int, track: Int, sun: Int, tick: Int,
-        markerRing: Int? = null, boxWidthDp: Float = 268f): Bitmap {
+        markerRing: Int? = null, boxWidthDp: Float = 268f, dayHours: Float = 24f): Bitmap {
         val w = 480
         val h = (w * 20f / (boxWidthDp - 32f).coerceAtLeast(80f)).coerceIn(20f, 160f).toInt()
         val k = h / 40f
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        val cell = w / 24f
+        val cell = w / dayHours
         values.forEachIndexed { i, v ->
             paint.color = if (v <= 0f) track else {
                 val alpha = (255 * (0.3f + 0.7f * v)).toInt().coerceIn(0, 255)
@@ -596,8 +596,9 @@ object WidgetRenderer {
             canvas.drawRoundRect(RectF(i * cell + 2, 2f * k, (i + 1) * cell - 2, h - 10f * k), 6f * k, 6f * k, paint)
         }
         paint.color = (tick and 0x00FFFFFF) or (0x80 shl 24)
-        for (i in 0 until 24 step 3) {
-            canvas.drawRect(RectF(i * cell + 2, h - 7f * k, i * cell + 3.5f, h - 1f * k), paint)
+        for (i in 0 until 8) {
+            val x = i * w / 8f
+            canvas.drawRect(RectF(x + 2, h - 7f * k, x + 3.5f, h - 1f * k), paint)
         }
         if (nowIndex in values.indices) {
             val centre = (h - 8f * k) / 2f

@@ -3,6 +3,7 @@ package io.joao.worldclock
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.*
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.joao.worldclock.data.SettingsRepository
@@ -124,8 +125,12 @@ class AppFlowTest {
         val second = repository.settings.value.cities[1]
         fun cardName(city: io.joao.worldclock.core.SavedCity) =
             city.label.ifBlank { catalog.find(city.zoneId, AppLanguage.EN.locale()).name } + "."
-        val firstCard = compose.onNode(hasContentDescription(cardName(first), substring = true))
-        val secondCard = compose.onNode(hasContentDescription(cardName(second), substring = true))
+        fun cityCard(city: io.joao.worldclock.core.SavedCity) = SemanticsMatcher("City card for ${city.zoneId}") { node ->
+            node.config.getOrNull(androidx.compose.ui.semantics.SemanticsProperties.ContentDescription)
+                ?.any { it.startsWith(cardName(city)) } == true
+        }
+        val firstCard = compose.onNode(cityCard(first))
+        val secondCard = compose.onNode(cityCard(second))
         try {
             val delta = secondCard.fetchSemanticsNode().boundsInRoot.center - firstCard.fetchSemanticsNode().boundsInRoot.center
             firstCard.performTouchInput {

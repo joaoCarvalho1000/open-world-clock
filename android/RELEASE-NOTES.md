@@ -19,3 +19,7 @@ The broader repository change also keeps desktop/web planner hour numbers visibl
 ## 12 October testing update
 
 Removed the Ko-fi donation entry and note from Android. Fixed purchase, restore and expiry refreshes to update all thirteen widget providers, including the ten premium kinds. Added public billing-key and upload-signing preflight checks. Account verification, app registration and the payments profile are complete. The latest debug APK and signed release bundle include the actual app public licensing key. Version 0.1.0 (1) was published to internal testing with owner approval on 12 October 2026; the owner account is configured for internal and license testing. Monthly and yearly subscription base plans are active at exactly US$1.00 and US$5.00, with regional prices and EN/PT-BR/ES-419 metadata. Play Console confirms Available to internal testers. No production release has been published; actual Play checkout remains untested.
+
+## Planner date-boundary repair
+
+The planner and Meeting widget now cover the selected civil day rather than a fixed 24-hour interval. Spring-forward days exclude the next midnight, fall-back days retain the final hour, and half-hour transitions keep the final partial hour within the date. Slider, overview and widget axis bounds follow the actual day. Regression coverage includes New York, Lord Howe, Kathmandu and a skipped Apia date.

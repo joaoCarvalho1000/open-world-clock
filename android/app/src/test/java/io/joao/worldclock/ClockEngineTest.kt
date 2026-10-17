@@ -65,11 +65,28 @@ class ClockEngineTest {
     @Test fun plannerKeepsDistinctInstantsAcrossDst() {
         val city = SavedCity("America/New_York",workDays=(1..7).toSet())
         val slots = ClockEngine.plan(LocalDate.of(2026,11,1),city.zoneId,listOf(city))
-        assertEquals(24,slots.size)
-        assertEquals(24,slots.map { it.instant }.distinct().size)
+        assertEquals(25,slots.size)
+        assertEquals(25,slots.map { it.instant }.distinct().size)
         assertEquals(listOf(0,1,1,2),slots.take(4).map { it.instant.atZone(ZoneId.of(city.zoneId)).hour })
         assertTrue(slots.zipWithNext().all { (a,b) -> ChronoUnit.HOURS.between(a.instant,b.instant) == 1L })
         assertEquals(8,slots.count { it.workingCount == 1 })
+    }
+    @Test fun plannerContainsOnlyTheSelectedCivilDay() {
+        listOf(
+            Triple("America/New_York", LocalDate.of(2026,3,8), 23),
+            Triple("America/New_York", LocalDate.of(2026,11,1), 25),
+            Triple("Australia/Lord_Howe", LocalDate.of(2026,10,4), 24),
+            Triple("Australia/Lord_Howe", LocalDate.of(2026,4,5), 25),
+            Triple("Asia/Kathmandu", LocalDate.of(2026,10,16), 24),
+        ).forEach { (id, date, count) ->
+            val zone = ZoneId.of(id)
+            val slots = ClockEngine.plan(date, id, listOf(SavedCity(id)))
+            assertEquals(id, count, slots.size)
+            assertTrue(slots.all { it.instant.atZone(zone).toLocalDate() == date })
+            val end = date.plusDays(1).atStartOfDay(zone).toInstant()
+            assertTrue(Duration.between(slots.last().instant, end).seconds in 1..3600)
+        }
+        assertTrue(ClockEngine.plan(LocalDate.of(2011,12,30), "Pacific/Apia", emptyList()).isEmpty())
     }
     @Test fun fractionalOffsetAndDateLineFormatting() {
         assertEquals("UTC+5:45",ClockEngine.offsetLabel(345))

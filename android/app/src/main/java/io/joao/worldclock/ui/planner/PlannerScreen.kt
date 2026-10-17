@@ -178,6 +178,10 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
                 }
             }
         }
+        if (slots.isEmpty()) {
+            item { Text(t.get(R.string.plan_none)) }
+            return@LazyColumn
+        }
         item {
             Row(
                 Modifier.horizontalScroll(rememberScrollState()),
@@ -202,7 +206,7 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
                 else -> {
                     val w = windows.first()
                     val from = slots[w.startIndex].instant.atZone(refZone).format(timeFmt)
-                    val to = slots[w.endIndex].instant.plusSeconds(3600).atZone(refZone).format(timeFmt)
+                    val to = minOf(slots[w.endIndex].instant.plusSeconds(3600), date.plusDays(1).atStartOfDay(refZone).toInstant()).atZone(refZone).format(timeFmt)
                     if (w.working == w.total) t.get(R.string.plan_all, from, to)
                     else t.get(R.string.plan_partial, from, to, w.working, w.total)
                 }
@@ -240,9 +244,9 @@ fun PlannerScreen(settings: ClockSettings, onOpenConverter: (String, java.time.I
                 OverviewBar(slots, selectedIndex, nowIndex, t.get(R.string.plan_overlap_bar)) { selected = it }
                 Slider(
                     value = selectedIndex.toFloat(),
-                    onValueChange = { selected = it.roundToInt().coerceIn(0, 23) },
-                    valueRange = 0f..23f,
-                    steps = 22,
+                    onValueChange = { selected = it.roundToInt().coerceIn(0, slots.lastIndex) },
+                    valueRange = 0f..slots.lastIndex.toFloat(),
+                    steps = (slots.size - 2).coerceAtLeast(0),
                     modifier = Modifier.semantics {
                         contentDescription = t.get(R.string.plan_slider, refName)
                         stateDescription = t.get(
@@ -279,11 +283,11 @@ private fun OverviewBar(slots: List<PlanSlot>, selected: Int, nowIndex: Int, des
     val outline = MaterialTheme.colorScheme.onSurface
     Canvas(
         Modifier.fillMaxWidth().height(24.dp)
-            .pointerInput(Unit) { detectTapGestures { onSelect((it.x / size.width * 24).toInt().coerceIn(0, 23)) } }
-            .pointerInput(Unit) { detectHorizontalDragGestures { change, _ -> onSelect((change.position.x / size.width * 24).toInt().coerceIn(0, 23)) } }
+            .pointerInput(slots.size) { detectTapGestures { onSelect((it.x / size.width * slots.size).toInt().coerceIn(0, slots.lastIndex)) } }
+            .pointerInput(slots.size) { detectHorizontalDragGestures { change, _ -> onSelect((change.position.x / size.width * slots.size).toInt().coerceIn(0, slots.lastIndex)) } }
             .semantics { contentDescription = description },
     ) {
-        val cell = size.width / 24f
+        val cell = size.width / slots.size
         slots.forEachIndexed { i, s ->
             val v = if (s.totalCount == 0) 0f else s.workingCount.toFloat() / s.totalCount
             val color = if (v <= 0f) track else accent.copy(alpha = 0.25f + 0.75f * v)
@@ -295,7 +299,7 @@ private fun OverviewBar(slots: List<PlanSlot>, selected: Int, nowIndex: Int, des
 }
 
 /**
- * Every hour of the day, numbered, for every city. The 24 columns never shrink below a legible
+ * Every hour of the day, numbered, for every city. The hourly columns never shrink below a legible
  * width: they fill the screen when there is room and scroll together when there is not, so the
  * numbers stay readable on a phone, on a tablet and at large font scales.
  */
@@ -325,7 +329,7 @@ private fun HourGrid(
     Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.fillMaxWidth()) {
         BoxWithConstraints(Modifier.padding(vertical = 8.dp)) {
             val minCell = ((if (fractional) 52f else 40f) * fontScale).dp
-            val cell = maxOf(minCell, (maxWidth - 24.dp) / 24)
+            val cell = maxOf(minCell, (maxWidth - 24.dp) / slots.size)
             // Wide columns on a tablet should not also become tall rows.
             val cellHeight = (36f * fontScale).dp.coerceIn(36.dp, 56.dp)
             Column {
