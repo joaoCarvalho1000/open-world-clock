@@ -226,6 +226,37 @@ class SkyTest {
     }
 
     /**
+     * The ink a widget draws has to clear AA against the surface it is actually drawn on.
+     *
+     * The widget renderers built the surface from the altitude and the app theme but picked the
+     * ink from [Sun.isDay], the city's own sun. On a dark themed home screen with the city in
+     * daylight that put #1B2233 on #29445D, 1.57:1 against a 3.0 floor. [Sky.inkIsLight] answers
+     * from the same three inputs the surface was built from, so the two cannot disagree.
+     *
+     * The literals are the two ink resources, `wc_day_ink` and `wc_night_ink`, written out because
+     * Android resources do not resolve on the JVM.
+     */
+    @Test fun autoInkClearsAaAgainstTheSurfaceItIsDrawnOn() {
+        val dayInk = 0xFF1B2233.toInt()
+        val nightInk = 0xFFF3F6FB.toInt()
+        var worst = Double.MAX_VALUE
+        var worstName = ""
+        for (altitude in -90..90) for (rising in listOf(true, false)) for (dark in listOf(true, false)) {
+            val degrees = altitude.toDouble()
+            val ink = if (Sky.inkIsLight(degrees, rising, dark)) nightInk else dayInk
+            val (top, bottom) = Sky.gradient(degrees, rising, dark)
+            for ((which, stop) in listOf("top" to top, "bottom" to bottom)) {
+                val ratio = contrast(ink, stop)
+                val label = "alt=$altitude rising=$rising dark=$dark $which ink=${"%06X".format(ink and 0xFFFFFF)} " +
+                    "on ${"%06X".format(stop and 0xFFFFFF)}"
+                if (ratio < worst) { worst = ratio; worstName = label }
+                assertTrue("$label drops to ${"%.2f".format(ratio)}:1", ratio >= 4.5)
+            }
+        }
+        println("worst auto ink contrast: ${"%.2f".format(worst)}:1 at $worstName")
+    }
+
+    /**
      * The whole point of wearing the sky rather than being replaced by it: a paid palette keeps
      * the lightness its own ink was chosen against, so every phase stays readable. This is the
      * test that lets the Supporter Pack follow the sun at all.

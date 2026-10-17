@@ -52,6 +52,22 @@ object Sky {
         Phase.DAWN, Phase.DAY, Phase.GOLDEN -> false
     }
 
+    /**
+     * Whether the text over this surface has to come from the light family, answered from the same
+     * three inputs [gradient] built the surface from.
+     *
+     * The surface follows the app theme *and* the altitude; the city's own sun does not describe
+     * it, which is the whole defect this exists to close. Every dark theme stop sits at L <= 0.42,
+     * DAY included, so a dark theme card wants light ink at noon. In the light theme only the night
+     * family drops into the dark band, and that is precisely what [isNightSurface] already names.
+     *
+     * Phase is sufficient because the anchors in [stops] never blend across the two families, so
+     * every altitude between two anchors carries one family's ink. Nothing may interpolate the ink
+     * itself: the midpoint between `--day-fg` and `--night-fg` fails against both surfaces.
+     */
+    fun inkIsLight(altitude: Double, rising: Boolean, dark: Boolean): Boolean =
+        dark || isNightSurface(phase(altitude, rising))
+
     /** `sky.js` phaseOf and `Sky.swift` phase, unchanged, so all three platforms name one moment alike. */
     fun phase(altitude: Double, rising: Boolean): Phase {
         if (altitude <= HORIZON) {

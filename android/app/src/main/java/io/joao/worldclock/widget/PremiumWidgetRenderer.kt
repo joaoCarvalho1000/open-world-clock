@@ -77,10 +77,16 @@ internal object PremiumWidgetRenderer {
             PremiumWidgetData.nextClockChange(cities, now)?.city ?: first else first
         val zone = ZoneId.of(subject.zoneId)
         val city = catalog.find(subject.zoneId, t.locale)
+        // The one reading of this moment's sky. The surface below is built from these three, so
+        // the ink has to be chosen from them too: asking Sun.isDay instead put dark ink under a
+        // dark theme's daylight stops, and the light theme's night stops under dark ink.
+        val altitude = Sun.altitude(now, city.latitude, city.longitude)
+        val rising = Sky.rising(now, city.latitude, city.longitude, altitude)
+        val appDark = WidgetRenderer.darkTheme(context, settings)
         val dark = when (config.style) {
             WidgetStyle.DARK -> true
             WidgetStyle.LIGHT -> false
-            WidgetStyle.AUTO -> !Sun.isDay(now, city.latitude, city.longitude)
+            WidgetStyle.AUTO -> Sky.inkIsLight(altitude, rising, appDark)
         }
         val p = config.theme?.let { Colors(it.bg, it.ink, it.ink2, it.accent, it.track) }
             ?: if (dark) Colors(0xFF151E33.toInt(), context.getColor(R.color.wc_night_ink),
@@ -105,21 +111,20 @@ internal object PremiumWidgetRenderer {
         val datedTime = DateTimeFormatter.ofPattern(if (settings.use24Hour) "EEE d MMM HH:mm" else "EEE d MMM h:mm a", t.locale)
         fun label(saved: SavedCity) = saved.label.ifBlank { catalog.find(saved.zoneId, t.locale).name }
         fun local(at: Instant) = at.atZone(zone)
-        fun range(window: WorkingWindow): String = local(window.start).format(timeFormat) + " – " +
-            local(window.end).format(if (local(window.start).toLocalDate() == local(window.end).toLocalDate()) timeFormat else datedTime)
+        // "x to y", the app's own range wording, rather than an en dash: AGENTS.md rules the dash
+        // out, and the word is already translated everywhere this ships.
+        fun range(window: WorkingWindow): String = t.get(R.string.hours_range,
+            local(window.start).format(timeFormat),
+            local(window.end).format(if (local(window.start).toLocalDate() == local(window.end).toLocalDate()) timeFormat else datedTime))
         return RemoteViews(context.packageName, layout).apply {
             setInt(R.id.widget_root, "setBackgroundResource", 0)
             setViewVisibility(R.id.widget_bg_layer, View.VISIBLE)
             // A chosen palette, or a fixed LIGHT or DARK style, is a decision to hold still.
             // Otherwise the paid kinds get the same six phase sky the free ones do, keyed to the
             // city their own readings are already written in.
-            val sky = if (config.style != WidgetStyle.AUTO) null else {
-                val altitude = Sun.altitude(now, city.latitude, city.longitude)
-                val rising = Sky.rising(now, city.latitude, city.longitude, altitude)
-                val appDark = WidgetRenderer.darkTheme(context, settings)
+            val sky = if (config.style != WidgetStyle.AUTO) null else
                 config.theme?.let { Sky.dressed(it.bg, Sky.phase(altitude, rising), appDark) }
                     ?: Sky.gradient(altitude, rising, appDark)
-            }
             if (sky != null) {
                 setImageViewBitmap(R.id.widget_bg_layer, SkySurface.bitmap(context, widthDp, heightDp, sky.first, sky.second))
                 // The palette tint would repaint the whole ramp one colour.
@@ -165,9 +170,14 @@ internal object PremiumWidgetRenderer {
                     }
                     val polar = solar.alwaysDay || solar.alwaysNight
                     setViewVisibility(R.id.px_detail, if (polar) View.GONE else View.VISIBLE)
-                    text(R.id.px_summary, if (polar) summary else solar.rise?.let { "↑ " + local(it).format(timeFormat) } ?: "↑ —")
+                    // The em dash placeholder said nothing and AGENTS.md rules it out anyway. The
+                    // arrow already carries which event this is, so the line spells the absence
+                    // with the sentence the content description is built from.
+                    text(R.id.px_summary, if (polar) summary
+                        else "↑ " + (solar.rise?.let { local(it).format(timeFormat) } ?: t.get(R.string.widget_solar_no_rise)))
                     setContentDescription(R.id.px_summary, summary)
-                    text(R.id.px_detail, if (polar) "" else solar.set?.let { "↓ " + local(it).format(timeFormat) } ?: "↓ —", p.secondary)
+                    text(R.id.px_detail, if (polar) ""
+                        else "↓ " + (solar.set?.let { local(it).format(timeFormat) } ?: t.get(R.string.widget_solar_no_set)), p.secondary)
                     // 12dp of padding either side; the arc takes a fixed share of the height so a
                     // taller widget gets a bigger graphic rather than a stretched one.
                     val arcWidth = widthDp - 24f
@@ -233,7 +243,7 @@ internal object PremiumWidgetRenderer {
                     // The image keeps match_parent inside it and follows.
                     sizeGraphic(widthDp - 28f, gridHeight, R.id.px_grid_row)
                     val (gridPxW, gridPxH) = graphicPixels(gridWidth, gridHeight)
-                    image(weekBitmap(week, now, zone, timeFormat, p, gridPxW, gridPxH),
+                    image(weekBitmap(t, week, now, zone, timeFormat, p, gridPxW, gridPxH),
                         week.joinToString("; ") { (date, windows) -> date.format(dateFormat) + ": " +
                             if (windows.isEmpty()) t.get(R.string.widget_week_none) else windows.joinToString { range(it) } })
                 }
@@ -424,7 +434,7 @@ internal object PremiumWidgetRenderer {
      * stretched by whatever shape the widget happened to be. Constants scale off the row height,
      * which the original 50 pixel band defined.
      */
-    private fun weekBitmap(days: List<Pair<java.time.LocalDate, List<WorkingWindow>>>, now: Instant,
+    private fun weekBitmap(t: AppStrings, days: List<Pair<java.time.LocalDate, List<WorkingWindow>>>, now: Instant,
         zone: ZoneId, format: DateTimeFormatter, p: Colors, width: Int, height: Int): Bitmap {
         val rows = days.size.coerceAtLeast(1)
         val w = width.toFloat(); val h = height.toFloat()
@@ -446,12 +456,14 @@ internal object PremiumWidgetRenderer {
                 paint.color = p.accent; canvas.drawRoundRect(RectF(left, barTop, right, barBottom), 4f * k, 4f * k, paint)
             }
             val longest = windows.maxByOrNull { Duration.between(it.start, it.end) }
-            // The range keeps its en dash, which reads as a range in every language this ships in.
-            // The empty day draws nothing at all: with seven rows the old em dash placeholder
-            // stacked up as seven floating marks above seven empty tracks, and an empty track
-            // already says there is no window. Only visible once the grid was drawn at its real
-            // proportions, which is the sort of thing no assertion was ever going to catch.
-            val caption = longest?.let { it.start.atZone(zone).format(format) + " – " + it.end.atZone(zone).format(format) }
+            // The range is spelled "x to y", the app's own wording: AGENTS.md rules out the en
+            // dash this used to draw. The empty day draws nothing at all: with seven rows the old
+            // em dash placeholder stacked up as seven floating marks above seven empty tracks, and
+            // an empty track already says there is no window. Only visible once the grid was drawn
+            // at its real proportions, which is the sort of thing no assertion was going to catch.
+            val caption = longest?.let {
+                t.get(R.string.hours_range, it.start.atZone(zone).format(format), it.end.atZone(zone).format(format))
+            }
             if (caption != null) {
                 paint.color = p.ink; paint.textSize = 30f * k; paint.textAlign = Paint.Align.LEFT
                 canvas.drawText(caption, 2f * k, top + 28f * k, paint)

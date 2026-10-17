@@ -152,6 +152,21 @@ object WidgetRenderer {
         }
     }
 
+    /**
+     * The `autoDay` an AUTO surface asks for, read from the sky [skyFor] actually paints rather
+     * than from the city's sun.
+     *
+     * [skyFor] builds the stops from the altitude *and* [darkTheme]; [palette] used to pick the ink
+     * from [Sun.isDay] alone. The two disagree whenever the app theme and the city's daylight
+     * disagree, and a dark themed card over a city at noon drew #1B2233 on #29445D, 1.57:1. One
+     * answer now serves the text and the day icon's tint, so they cannot drift apart again.
+     */
+    private fun autoDayInk(context: Context, settings: ClockSettings, city: City, now: Instant): Boolean {
+        val altitude = Sun.altitude(now, city.latitude, city.longitude)
+        val rising = Sky.rising(now, city.latitude, city.longitude, altitude)
+        return !Sky.inkIsLight(altitude, rising, darkTheme(context, settings))
+    }
+
     /** Which variant of the sky stops to use: the app's own theme, not the city's sun. */
     internal fun darkTheme(context: Context, settings: ClockSettings): Boolean = when (settings.theme) {
         AppTheme.LIGHT -> false
@@ -211,10 +226,15 @@ object WidgetRenderer {
         setInt(R.id.widget_bg_layer, "setColorFilter", config.theme?.bg ?: android.graphics.Color.WHITE)
     }
 
-    private fun RemoteViews.bindDayIcon(context: Context, id: Int, config: WidgetConfig, isDay: Boolean) {
+    /**
+     * [isDay] picks the glyph, which stays literal: a sun means the city is in daylight. [dayInk]
+     * picks the tint, which belongs to the surface the glyph sits on, so a row on its own opaque
+     * card keeps the default and an icon straight on the sky passes the sky's own answer.
+     */
+    private fun RemoteViews.bindDayIcon(context: Context, id: Int, config: WidgetConfig, isDay: Boolean, dayInk: Boolean = isDay) {
         setImageViewResource(id, dayIcon(config, isDay))
         setInt(id, "setColorFilter", config.theme?.let { if (isDay) it.accent else it.ink2 }
-            ?: context.getColor(if (isDay) R.color.wc_sun else R.color.wc_accent_night))
+            ?: context.getColor(if (dayInk) R.color.wc_sun else R.color.wc_accent_night))
     }
 
     private fun RemoteViews.color(viewId: Int, color: Int?) { if (color != null) setTextColor(viewId, color) }
@@ -272,7 +292,9 @@ object WidgetRenderer {
         val saved = config.cities(WidgetKind.SINGLE, settings).first()
         val city = catalog.find(saved.zoneId, t.locale)
         val isDay = Sun.isDay(now, city.latitude, city.longitude)
-        val p = palette(context, config, isDay)
+        // The clock sits straight on the sky, so its ink comes from the sky, not from isDay.
+        val dayInk = autoDayInk(context, settings, city, now)
+        val p = palette(context, config, dayInk)
         val name = label(saved, catalog, t)
         val reading = ClockEngine.reading(city, saved, now, settings.use24Hour, locale = t.locale)
         val compact = heightDp < 110 || widthDp < 120
@@ -285,7 +307,7 @@ object WidgetRenderer {
             setTextViewText(R.id.single_name, name)
             color(R.id.single_name, p.ink); color(R.id.single_time, p.ink); color(R.id.single_ampm, p.ink2)
             color(R.id.single_date, p.ink2); color(R.id.single_meta, p.ink2)
-            bindDayIcon(context, R.id.single_icon, config, isDay)
+            bindDayIcon(context, R.id.single_icon, config, isDay, dayInk)
             setContentDescription(R.id.single_icon, t.get(if (isDay) R.string.widget_daytime else R.string.widget_night))
             bindClock(R.id.single_time, R.id.single_ampm, saved.zoneId, settings.use24Hour, config.font)
             // The separate period must leave enough room for a two-digit hour at large text.
@@ -318,8 +340,10 @@ object WidgetRenderer {
         val showMeta = worldShowsMeta(heightDp, minOf(visible, cities.size))
         // A Supporter theme is a chosen surface, so like LIGHT and DARK it holds through the day.
         val fixed = config.theme != null || config.style != WidgetStyle.AUTO
-        val base = palette(context, config, if (fixed) true else null)
-        val homeSky = skyFor(context, config, settings, catalog.find(settings.homeZoneId().id, t.locale), now)
+        val homeCity = catalog.find(settings.homeZoneId().id, t.locale)
+        // The frame carries the home sky, so the frame's ink is read from that same sky.
+        val base = palette(context, config, if (fixed) true else autoDayInk(context, settings, homeCity, now))
+        val homeSky = skyFor(context, config, settings, homeCity, now)
         return RemoteViews(context.packageName, R.layout.widget_world).apply {
             bindSurface(context, config, base.bg, homeSky, widthDp, heightDp)
             Rows.forEachIndexed { i, ids ->
@@ -371,7 +395,11 @@ object WidgetRenderer {
             if (best == cities.size) t.get(R.string.widget_meeting_everyone, from, to)
             else t.get(R.string.widget_meeting_partial, best, cities.size, from, to)
         }
-        val p = palette(context, config, if (config.theme == null && config.style == WidgetStyle.AUTO) null else true)
+        val homeCity = catalog.find(home.id, t.locale)
+        // Was null, which fell through to R.color.widget_ink: a colour resolved by the system's
+        // night mode, not by the app theme the home sky behind it was built from.
+        val p = palette(context, config, if (config.theme == null && config.style == WidgetStyle.AUTO)
+            autoDayInk(context, settings, homeCity, now) else true)
         val accent = p.accent ?: context.getColor(R.color.widget_accent)
         val track = when {
             config.theme != null -> config.theme!!.track
@@ -384,10 +412,10 @@ object WidgetRenderer {
             p.marker ?: context.getColor(R.color.wc_sun), p.ink2 ?: context.getColor(R.color.widget_ink2),
             config.theme?.markerRing, widthDp)
         val visible = ((heightDp - 100) / 34).toInt().coerceIn(1, 4)
-        val homeName = catalog.find(home.id, t.locale).name
+        val homeName = homeCity.name
 
         return RemoteViews(context.packageName, R.layout.widget_meeting).apply {
-            bindSurface(context, config, p.bg, skyFor(context, config, settings, catalog.find(home.id, t.locale), now), widthDp, heightDp)
+            bindSurface(context, config, p.bg, skyFor(context, config, settings, homeCity, now), widthDp, heightDp)
             setTextViewText(R.id.meet_title, t.get(R.string.widget_meeting_heading))
             setTextViewText(R.id.meet_summary, summary)
             color(R.id.meet_summary, p.ink); color(R.id.meet_title, p.accent)
@@ -436,11 +464,14 @@ object WidgetRenderer {
         settings: ClockSettings, catalog: CityCatalog, now: Instant, widthDp: Float, heightDp: Float): RemoteViews {
         val cities = config.cities(kind, settings)
         val home = ZoneId.of(cities.first().zoneId)
-        val p = palette(context, config, null)
+        val homeCity = catalog.find(home.id, t.locale)
+        // Same null as the Meeting frame carried, and the same fix: the frame's ink is the frame's
+        // own sky, which the tiles' opaque cards then sit on top of with their own pinned ink.
+        val p = palette(context, config, autoDayInk(context, settings, homeCity, now))
         val dateFormat = DateTimeFormatter.ofPattern(if (widthDp < 340) "d MMM" else
             DateFormat.getBestDateTimePattern(t.locale, "EEEdMMM"), t.locale)
         return RemoteViews(context.packageName, if (kind == WidgetKind.DUO) R.layout.widget_duo else R.layout.widget_board).apply {
-            bindSurface(context, config, p.bg, skyFor(context, config, settings, catalog.find(home.id, t.locale), now), widthDp, heightDp)
+            bindSurface(context, config, p.bg, skyFor(context, config, settings, homeCity, now), widthDp, heightDp)
             Tiles.take(kind.maxCities).forEachIndexed { i, ids ->
                 val saved = cities.getOrNull(i)
                 setViewVisibility(ids.root, if (saved == null) View.INVISIBLE else View.VISIBLE)
@@ -487,7 +518,7 @@ object WidgetRenderer {
         val saved = config.cities(WidgetKind.WORKDAY, settings).first()
         val zone = ZoneId.of(saved.zoneId)
         val city = catalog.find(saved.zoneId, t.locale)
-        val p = palette(context, config, Sun.isDay(now, city.latitude, city.longitude))
+        val p = palette(context, config, autoDayInk(context, settings, city, now))
         val working = ClockEngine.isWorking(now, saved)
         val next = WorkdaySchedule.nextTransition(saved, now)
         val timeline = WorkdaySchedule.timeline(saved, now)

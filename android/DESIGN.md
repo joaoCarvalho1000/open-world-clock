@@ -70,6 +70,20 @@ next to anything else on a home screen. Widgets draw the gradient as a generated
 already how Atlas and the sun arc are drawn, so this introduces no new technique and no new
 `RemoteViews` risk.
 
+### Ink is read from the surface, never from the sun
+
+A widget's AUTO surface is built from three inputs: the solar altitude, whether the sun is rising,
+and the app theme. The ink over it has to be chosen from the same three, and `Sky.inkIsLight` is the
+single place that does it. The city's own daylight is not one of those inputs and never decides the
+ink: every dark theme stop sits at L 0.42 or below, DAY included, so a dark themed card wants light
+ink at noon, and in the light theme it is the night family alone that drops into the dark band,
+which `Sky.isNightSurface` already names. The two used to be picked apart, and a dark theme with the
+city in daylight drew `#1B2233` on `#29445D`, 1.57:1. Phase is enough because the ladder never
+blends across the two families, and the ink itself must never interpolate: the midpoint between
+`--day-fg` and `--night-fg` fails against both surfaces. The day or night icon's tint takes the same
+answer as the text beside it. LIGHT, DARK, a Supporter palette and the opaque row cards are outside
+this rule: each already pins its ink to a surface it chose.
+
 ### A paid look is a sky, not a swatch
 
 `WidgetRenderer.palette` used to return early when a theme was set and never consult the sun, so
