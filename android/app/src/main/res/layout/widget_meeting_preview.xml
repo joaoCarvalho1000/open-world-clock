@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Launcher picker preview for the meeting widget. Same bands, same rhythm and same type scale as
+  widget_meeting.xml, with sample content in place of the renderer's bindings: what the picker
+  shows has to be what gets placed. Keep the two files in step.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/widget_padding"
+    android:paddingTop="@dimen/widget_padding"
+    android:paddingEnd="@dimen/widget_padding"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:id="@+id/meet_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/meet_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:letterSpacing="0.04"
+            android:maxLines="1"
+            android:text="@string/widget_meeting_heading"
+            android:textColor="@color/widget_accent"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/meet_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:autoSizeMaxTextSize="19sp"
+            android:autoSizeMinTextSize="14sp"
+            android:autoSizeStepGranularity="1sp"
+            android:autoSizeTextType="uniform"
+            android:breakStrategy="balanced"
+            android:ellipsize="end"
+            android:fontFeatureSettings="tnum"
+            android:maxLines="2"
+            android:text="Everyone works 14:00 to 17:00"
+            android:textColor="@color/widget_ink"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/meet_bar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/widget_overlap_bar"
+            android:scaleType="fitXY"
+            android:src="@drawable/widget_bar_placeholder" />
+
+        <LinearLayout
+            android:id="@+id/meet_axis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
+            android:importantForAccessibility="noHideDescendants"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/axis0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="00"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="03"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="06"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="09"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="12"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="15"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="18"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/axis7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="1"
+                android:text="21"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mrow0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_plain"
+        android:gravity="center_vertical"
+        android:minHeight="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/mdot0"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/widget_dot_on" />
+
+        <TextView
+            android:id="@+id/mname0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Lisbon"
+            android:textColor="@color/widget_ink"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/mstatus0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:text="Working"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp" />
+
+        <TextClock
+            android:id="@+id/mtime0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:format12Hour="h:mm a"
+            android:format24Hour="HH:mm"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mrow1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_plain"
+        android:gravity="center_vertical"
+        android:minHeight="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/mdot1"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/widget_dot_on" />
+
+        <TextView
+            android:id="@+id/mname1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="New York"
+            android:textColor="@color/widget_ink"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/mstatus1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:text="Working"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp" />
+
+        <TextClock
+            android:id="@+id/mtime1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:format12Hour="h:mm a"
+            android:format24Hour="HH:mm"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mrow2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_plain"
+        android:gravity="center_vertical"
+        android:minHeight="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/mdot2"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/widget_dot_on" />
+
+        <TextView
+            android:id="@+id/mname2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="São Paulo"
+            android:textColor="@color/widget_ink"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/mstatus2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:text="Working"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp" />
+
+        <TextClock
+            android:id="@+id/mtime2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:format12Hour="h:mm a"
+            android:format24Hour="HH:mm"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mrow3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_row_plain"
+        android:gravity="center_vertical"
+        android:minHeight="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/mdot3"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/widget_dot_off" />
+
+        <TextView
+            android:id="@+id/mname3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Tokyo"
+            android:textColor="@color/widget_ink"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/mstatus3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
+            android:text="Off"
+            android:textColor="@color/widget_ink2"
+            android:textSize="10sp" />
+
+        <TextClock
+            android:id="@+id/mtime3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:format12Hour="h:mm a"
+            android:format24Hour="HH:mm"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher picker preview on Android 12 and higher. It mirrors widget_week.xml exactly:
+     same padding, same type sizes, same label column, same axis. The one difference is the grid,
+     which the real widget draws as a bitmap from live data and this file states as a weighted
+     ruler, so the picker shows the composition rather than an empty rectangle. The sample week
+     is honest about what the widget draws: a track per day, the shared window filled in the
+     accent, one day seam hairline, and the now mark on today. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/px_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:letterSpacing="0.06"
+            android:maxLines="1"
+            android:text="Week · Lisbon"
+            android:textColor="@color/widget_accent"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/px_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.05"
+            android:maxLines="2"
+            android:text="Best: Wed 15 Oct"
+            android:textColor="@color/widget_ink"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/px_grid_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/px_name0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Mon"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Tue"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Wed"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Thu"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Fri"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Sat"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="Sun"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <!-- No px_image id here on purpose: in the real layout that id is an ImageView the
+                 renderer fills with a bitmap, and a view of another type carrying it would fail
+                 the moment anything tried to bind this file. -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:importantForAccessibility="noHideDescendants">
+
+                <!-- Seven tracks, one per day. Each row is an exact seventh of the column, so a
+                     track keeps the vertical centre of its own day label. Inside a row the
+                     weights are hours: before the shared window, the window, after it. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="14" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:background="@color/widget_accent" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="8" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="14" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:background="@color/widget_accent" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="7" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="13" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="4"
+                                android:background="@color/widget_accent" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="7" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="14" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="2"
+                                android:background="@color/widget_accent" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="8" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="15" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@color/widget_accent" />
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="8" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Saturday and Sunday have no shared window: an empty track, not a missing
+                         row. The absence is part of the answer. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="9dp"
+                            android:background="@drawable/widget_bar_placeholder"
+                            android:orientation="horizontal" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- The day seam: one hairline through every row at the hour a second city's
+                     local day turns over. It is the same local time each day, so it is one line
+                     and not seven. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8" />
+                    <ImageView
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:alpha="0.45"
+                        android:background="@color/widget_ink" />
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="16" />
+                </LinearLayout>
+
+                <!-- The now mark, on today's row only: a filled dot in the ink over a ring in
+                     the surface, the same mark the overlap bar, the arc and the ruler carry. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="10" />
+                        <FrameLayout
+                            android:layout_width="13dp"
+                            android:layout_height="13dp">
+                            <ImageView
+                                android:layout_width="13dp"
+                                android:layout_height="13dp"
+                                android:src="@drawable/widget_dot_tint"
+                                android:tint="@color/widget_bg" />
+                            <ImageView
+                                android:layout_width="9dp"
+                                android:layout_height="9dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/widget_dot_tint"
+                                android:tint="@color/widget_ink" />
+                        </FrameLayout>
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="14" />
+                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="6" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="2dp"
+            android:baselineAligned="false"
+            android:importantForAccessibility="noHideDescendants"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/px_axis0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="00"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+            <TextView
+                android:id="@+id/px_axis1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="06"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+            <TextView
+                android:id="@+id/px_axis2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="12"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+            <TextView
+                android:id="@+id/px_axis3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="18"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

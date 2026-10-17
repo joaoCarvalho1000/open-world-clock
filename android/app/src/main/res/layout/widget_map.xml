@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- The subject, and the only thing in here that answers the question. The outline is a
+             fixed equirectangular shape (3600 by 1330 in `world-land.json`), so fitXY drew the
+             world at whatever shape the widget happened to be: at the default 4x3 the continents
+             came out close to twice as tall as they are, and every resize changed them again.
+             fitCenter keeps the world's own proportions at every size.
+
+             A 2.7:1 world in a 4x3 box cannot fill it, so there is leftover height by
+             construction. It is deliberately left as widget background, which is the sky the
+             terminator is drawn against, rather than spent on a frame or a caption. The image
+             holds every pixel of that leftover (weight 1); the two text lines below take only
+             what their own glyphs need. -->
+        <ImageView
+            android:id="@+id/px_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/widget_atlas_a11y"
+            android:scaleType="fitCenter" />
+
+        <!-- The legend, not a second clock face: the name that matches a pin, then that city's
+             time. 8dp clears the map's bottom edge in the one case where the fit leaves no space
+             of its own, a wide and short resize where the map is height limited. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/px_name0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_time0"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/px_name1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_time1"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/px_name2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:accessibilityTraversalBefore="@+id/px_time2"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Baseline aligned on purpose. Each column autosizes against its own width, so
+             "12:45 PM" can settle a step smaller than "9:45 AM"; aligning baselines rather than
+             boxes keeps the three readouts sitting on one line when that happens.
+             The cap rises with the widget and the floor stays at 10sp, which is the size that
+             still fits a 12 hour string in a third of the narrowest width at 1.5x font scale. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/px_time0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_name1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="18sp" />
+            <TextClock
+                android:id="@+id/px_time1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="6dp"
+                android:accessibilityTraversalBefore="@+id/px_name2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="18sp" />
+            <TextClock
+                android:id="@+id/px_time2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

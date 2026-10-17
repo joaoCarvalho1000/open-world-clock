@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Workday, 4x2, one city: am I inside my working hours, and what happens next.
+
+  The frame is a sky and the bar is a schedule, which are two statements about the same
+  moment. They are kept apart by direction rather than by colour: the sky ramps vertically
+  across the whole card, the evidence runs horizontally across one band of it, and that band
+  is given air above and below so it reads as an instrument laid on the sky, not as part of it.
+
+  Vertical room is the scarce resource at 4x2, so only the clock has a weight. Under pressure
+  it gives up size and everything else keeps its own: the schedule bar and its hour numbers are
+  the point of this widget and must never be the thing that falls off the bottom.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. It also
+         carries the sun driven sky gradient, so its scaleType must stay fitXY. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <!-- Wide card, so the vertical padding is tighter than the horizontal: the 4x2 has width
+         to spare and none to spare in height. -->
+    <LinearLayout
+        android:id="@+id/wd_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/widget_padding"
+        android:paddingEnd="@dimen/widget_padding"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <!-- Who and what state. The name takes the weight because it is the only text on this
+             line that can lose characters and still be understood, so the state word keeps its
+             full width in every language ("Fuera de horario" never truncates). Baselines are
+             aligned rather than centres, so the two sizes sit on one line of type. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/wd_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- The accent here and the accent in the bar are the same channel saying the same
+                 thing, once in a word and once as evidence. No second colour is introduced. -->
+            <TextView
+                android:id="@+id/wd_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Now. The only weighted row: the clock absorbs whatever height is left over and
+             autosizes down when there is little, so a short launcher cell costs digits rather
+             than costing the timeline. Bottom gravity means the air always opens above the
+             number, never between the number and the bar that explains it. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="40dp"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <!-- Autosized. The renderer must not call setTextViewTextSize on this id. -->
+            <TextClock
+                android:id="@+id/wd_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="14sp"
+                android:autoSizeMaxTextSize="44sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="44sp" />
+
+            <TextView
+                android:id="@+id/wd_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Bar and its hour marks are one unit: the bar means nothing without the numbers,
+             so the renderer hides or shows this container rather than the bar alone. -->
+        <LinearLayout
+            android:id="@+id/wd_timeline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/wd_bar"
+                android:layout_width="match_parent"
+                android:layout_height="18dp"
+                android:contentDescription="@string/widget_workday_timeline_a11y"
+                android:scaleType="fitXY"
+                android:src="@drawable/widget_bar_placeholder" />
+
+            <!-- Five marks at 0, 1/4, 1/2, 3/4 and the end of the same day the bar draws, so the
+                 cells are weighted 1:2:2:2:1 and the inner numbers are centred on the instants
+                 they name. Equal fifths would have put the last number at four fifths of the
+                 bar and made the evidence lie. The ends are flush with the ends of the bar.
+                 Spoken aloud these are five bare numbers, so TalkBack gets the bar's own
+                 description and the status and next lines instead. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:importantForAccessibility="noHideDescendants"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/wd_axis0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/wd_axis1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFeatureSettings="tnum"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/wd_axis2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFeatureSettings="tnum"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/wd_axis3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:fontFeatureSettings="tnum"
+                    android:gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/wd_axis4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:gravity="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Next. Its own zone: the gap above it is wider than the gap inside the timeline, so
+             the card reads as now, then the evidence for now, then what changes. -->
+        <TextView
+            android:id="@+id/wd_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:fontFeatureSettings="tnum"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink2"
+            android:textSize="12sp" />
+    </LinearLayout>
+</FrameLayout>

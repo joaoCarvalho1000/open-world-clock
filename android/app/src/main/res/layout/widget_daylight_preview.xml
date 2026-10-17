@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher picker preview. Structurally identical to widget_daylight.xml so the picture
+     cannot disagree with the widget; only the sample strings are added. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/px_clock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="14sp"
+                android:autoSizeMaxTextSize="28sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:text="14:32"
+                android:textColor="@color/widget_ink"
+                android:textSize="28sp" />
+            <TextView
+                android:id="@+id/px_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="Lisbon"
+                android:textColor="@color/widget_ink2"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- No src: the arc is a bitmap the renderer draws, and the picker never runs it.
+             Marked not important for accessibility so the picker cannot read the unformatted
+             "%1$s" out of the arc's description string. -->
+        <ImageView
+            android:id="@+id/px_image"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/px_summary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="2"
+                android:text="↑ 06:12"
+                android:textColor="@color/widget_ink"
+                android:textSize="11sp" />
+            <TextView
+                android:id="@+id/px_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:gravity="end"
+                android:maxLines="1"
+                android:text="↓ 19:48"
+                android:textColor="@color/widget_ink"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- A fixed graphic height is what makes its aspect knowable, so the leftover height
+             lives here instead. On API 31 and up the renderer sets the real height and this
+             collapses. -->
+        <LinearLayout
+            android:id="@+id/graphic_slack"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" />
+    </LinearLayout>
+</FrameLayout>

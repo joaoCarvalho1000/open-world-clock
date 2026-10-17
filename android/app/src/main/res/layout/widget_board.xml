@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Board: four cities as tiles over one sky. Clock first, so the readout is the only element
+  allowed to grow.
+
+  The composition decision: the tiles sit ON the sky, they do not divide it. The frame carries
+  the first city's real sky through widget_bg_layer, and the four tiles float in it on one
+  rhythm: 8dp outside, 8dp between. Nothing is separated by a rule or a stroke; the sky showing
+  through the gutters is the only divider, which is why the gutter is as wide as the inset and
+  never narrower. The inner radius (16dp) plus the 8dp inset equals the widget radius (24dp), so
+  every tile corner is concentric with the corner of the widget behind it.
+
+  The grid rhythm is identical in all four cells: label row, then the time taking every pixel of
+  leftover height, then status, then date. Because the time is the only weighted child, the four
+  readouts share one bottom edge no matter which size autosizing picks for each, and the status
+  and date lines sit on the same two rows across the whole grid.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The sky, and the catalog surface. A free style keeps the root background and leaves this
+         gone; AUTO shows it and draws the six phase gradient into it; a palette shows it and
+         tints it, covering the root with the same rounded shape. Full bleed and fitXY on
+         purpose: the gradient is generated at the widget's own size. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/board_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- The rows carry ids so the renderer can collapse one when there are two cities or
+             fewer. A hidden row gives its height back to the row that is left, and a hidden tile
+             gives its width back to its neighbour, so a short list reads as a composed layout
+             rather than a grid with holes. -->
+        <LinearLayout
+            android:id="@+id/board_row0"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/tile0"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_plain"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon0"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_daytime"
+                        android:src="@drawable/ic_widget_sun" />
+
+                    <TextView
+                        android:id="@+id/tile_name0"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:textColor="@color/widget_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Autosized so the whole time stays on one line at the declared minimum size.
+                     The renderer must not call setTextViewTextSize here: it is a no-op on an
+                     autosizing TextView, so the size set in XML is the one that applies.
+                     The height is weighted rather than wrap_content for two reasons: autosizing
+                     then fits the time to the height as well as the width, so a tall label at
+                     1.5x font scale shrinks the readout instead of clipping the lines under it,
+                     and the bottom gravity gives all four tiles one common edge for the digits.
+                     The 28sp cap is reached by both the 12 and 24 hour strings at the default
+                     4x3 size, which is what keeps the four tiles the same size as each other. -->
+
+<TextClock
+                    android:id="@+id/tile_time0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="28sp" />
+
+                <!-- Working or Off: the question this widget answers, so it follows the readout
+                     and outranks the date by one step of size. -->
+                <TextView
+                    android:id="@+id/tile_meta0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tile1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_plain"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon1"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_daytime"
+                        android:src="@drawable/ic_widget_sun" />
+
+                    <TextView
+                        android:id="@+id/tile_name1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:textColor="@color/widget_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/board_row1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/tile2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_plain"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon2"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_daytime"
+                        android:src="@drawable/ic_widget_sun" />
+
+                    <TextView
+                        android:id="@+id/tile_name2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:textColor="@color/widget_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tile3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_plain"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon3"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_daytime"
+                        android:src="@drawable/ic_widget_sun" />
+
+                    <TextView
+                        android:id="@+id/tile_name3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:textColor="@color/widget_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Supporter Pack widget. minResize equals the declared minimum on purpose: below it this
+     composition stops being readable, and advertising a size we cannot honour is worse than
+     refusing it. These minima were measured from native captures at 150% text, which is where
+     every one of them first fails, not from the comfortable 100% case.
+     previewLayout carries the picker preview on Android 12 and higher. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="io.joao.worldclock.widget.WidgetConfigureActivity"
+    android:description="@string/widget_workday_description"
+    android:initialLayout="@layout/widget_workday"
+    android:minWidth="240dp"
+    android:minHeight="190dp"
+    android:minResizeWidth="240dp"
+    android:minResizeHeight="190dp"
+    android:maxResizeWidth="600dp"
+    android:maxResizeHeight="600dp"
+    android:previewLayout="@layout/widget_workday_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable|configuration_optional" />

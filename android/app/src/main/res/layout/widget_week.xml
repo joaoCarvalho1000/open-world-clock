@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <!-- Answer first. The eyebrow names the question, the sentence answers it, and the grid
+         below is the evidence for the sentence. The bottom padding is shorter than the top
+         because the hour axis carries its own optical space under the grid. -->
+    <LinearLayout
+        android:id="@+id/px_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/px_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:letterSpacing="0.06"
+            android:maxLines="1"
+            android:textColor="@color/widget_accent"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <!-- The one line a person reads first. Two lines is the ceiling: at 240dp and 1.5x font
+             scale the longest translation ("Sin coincidencia esta semana") needs two and no more,
+             and a third would eat a grid row. -->
+        <TextView
+            android:id="@+id/px_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.05"
+            android:maxLines="2"
+            android:textColor="@color/widget_ink"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/px_grid_row"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <!-- The day axis. Every cell is an exact seventh of the column height, so each label
+                 keeps the vertical centre of its own row in the bitmap beside it. Heights are 0dp
+                 rather than wrap_content on purpose: with wrap_content the seven measured lines
+                 overflow the column at 1.5x font scale and the weights shrink unevenly. The
+                 labels are end aligned so the edge that touches the grid is the one that lines
+                 up, whatever the weekday abbreviation's width. -->
+            <LinearLayout
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/px_name0"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+                <TextView
+                    android:id="@+id/px_name6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end|center_vertical"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <!-- The grid itself. The seven day labels above are its accessible equivalent, one
+                 TalkBack stop per day with that day's windows, so the bitmap is kept out of the
+                 tree rather than repeating the whole week in a second announcement. -->
+            <ImageView
+                android:id="@+id/px_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/widget_week_a11y"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY" />
+        </LinearLayout>
+
+        <!-- Numbers stay numbers: the grid carries its axis. Four start aligned marks every six
+             hours, each sitting on the left edge of its own quarter of the grid, so the bitmap
+             can draw a tick at 0, 25, 50 and 75 percent of its width and meet them. The start
+             margin is the label column plus its gutter, so the axis begins exactly where hour
+             zero begins. The static values are the 24 hour fallback; the renderer rewrites them
+             in the person's hour format. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="2dp"
+            android:baselineAligned="false"
+            android:importantForAccessibility="noHideDescendants"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/px_axis0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="00"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+            <TextView
+                android:id="@+id/px_axis1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="06"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+            <TextView
+                android:id="@+id/px_axis2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="12"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+            <TextView
+                android:id="@+id/px_axis3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="18"
+                android:textColor="@color/widget_ink2"
+                android:textSize="9sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

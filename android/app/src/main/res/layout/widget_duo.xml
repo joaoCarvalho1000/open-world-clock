@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Duo: two cities side by side, clock first.
+
+    Composition. The tiles sit ON the sky, they do not divide it. The frame's gradient follows the
+    first city's sun, so it answers one question for the whole widget, while each tile carries its
+    own city's daylight in its own surface. A sky split between two tiles would have to mean two
+    things at once, which the six phase ladder cannot say.
+
+    So the sky is a mat and the tiles are two cards laid on it. The reveal is 8dp on every side and
+    8dp between the tiles, one continuous gutter, which is also what makes the outer corners
+    concentric: the frame radius is 24dp, the inset is 8dp, and 24 - 8 is the 16dp inner radius the
+    tile backgrounds already use.
+
+    The gutter is the divider. A drawn rule between the tiles would be a second mark doing a job the
+    sky already does, and the sky is the only live thing in the composition, so it earns the job.
+
+    Three bands run across both tiles: label, clock, footer. Label and footer are wrap_content and
+    the clock takes the remaining height as a weighted band, so the two label rows and the two
+    footers are always level even when the autosizer picks a different step for each clock. That is
+    what makes the pair read as a pair rather than as a split.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface, and the sky. A free style keeps the root background and leaves this
+         gone; a palette shows it and tints it; an AUTO widget gets the real sky gradient as a
+         bitmap. Full bleed with fitXY in every case, so the corners are drawn into the source. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/duo_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/tile0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/widget_row_plain"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Label band. Fixed height in both tiles, so a long name next to a short one costs an
+                 ellipsis and nothing else: the name can never reflow the tile or push the clock
+                 down, and the two names stay on one line under two identical icons. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/tile_icon0"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:contentDescription="@string/widget_daytime"
+                    android:src="@drawable/ic_widget_sun" />
+
+                <TextView
+                    android:id="@+id/tile_name0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- The readout, and the reason this widget exists. It takes the height left over from
+                 the two fixed bands, which does three things: the clock is the only element that
+                 grows when the widget does, the autosizer is bounded vertically as well as
+                 horizontally so it can never be clipped at a large font scale, and the footer below
+                 stays pinned level with the other tile's footer.
+
+                 Autosized so the whole time stays on one line at the declared minimum size. The
+                 renderer must not call setTextViewTextSize here: it is a no-op on an autosizing
+                 TextView, so the size set in XML is the one that applies.
+
+                 tnum keeps the digits on fixed advances, so nothing shifts sideways as they tick.
+                 The slight negative tracking is an optical correction for large light numerals and
+                 is applied per glyph, so tabular advances stay equal. -->
+            <TextClock
+                android:id="@+id/tile_time0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                    android:minHeight="22dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeMaxTextSize="40sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="40sp" />
+
+            <!-- Footer band: the date this city is on, then how far it is from the first city. Held
+                 together by a 1dp gap and held off the clock by 4dp, so it reads as one block of
+                 metadata under the readout rather than as two more lines in an even stack. -->
+            <TextView
+                android:id="@+id/tile_date0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tile_meta0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tile1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/widget_row_plain"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/tile_icon1"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:contentDescription="@string/widget_daytime"
+                    android:src="@drawable/ic_widget_sun" />
+
+                <TextView
+                    android:id="@+id/tile_name1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/widget_ink"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Identical band geometry to tile0 on purpose: the two clocks share one horizontal
+                 zone, so the pair stays level whatever the autosizer picks for either side. -->
+            <TextClock
+                android:id="@+id/tile_time1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                    android:minHeight="22dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeMaxTextSize="40sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.01"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/tile_date1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tile_meta1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

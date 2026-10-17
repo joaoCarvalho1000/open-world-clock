@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme-following widget colors (night variants in values-night). -->
+    <color name="widget_bg">#FFF7F9FC</color>
+    <color name="widget_ink">#FF1B2233</color>
+    <color name="widget_ink2">#FF5A6478</color>
+    <color name="widget_accent">#FF1F55C7</color>
+    <color name="widget_track">#1F1B2233</color>
+
+    <!-- Fixed daylight palette, used where a surface follows a city's sun. -->
+    <color name="wc_day_card">#FFFCFDFF</color>
+    <color name="wc_day_ink">#FF1B2233</color>
+    <color name="wc_day_ink2">#FF5A6478</color>
+    <color name="wc_night_card">#FF1C2740</color>
+    <color name="wc_night_deep">#FF111A2E</color>
+    <color name="wc_night_ink">#FFF3F6FB</color>
+    <color name="wc_night_ink2">#FFB9C3D6</color>
+    <color name="wc_accent">#FF2E6BE6</color>
+    <color name="wc_accent_night">#FF8DB1F7</color>
+    <color name="wc_sun">#FFF2C14E</color>
+    <color name="wc_light_bg">#FFF7F9FC</color>
+    <color name="wc_dark_bg">#FF151E33</color>
+    <color name="ic_launcher_background">#FF152D59</color>
+</resources>

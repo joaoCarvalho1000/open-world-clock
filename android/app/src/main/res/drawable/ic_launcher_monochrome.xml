@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed icons are tinted a single colour, so this is the mark reduced to what survives that:
+     the ring, the hands and the centre pin. The full-colour foreground would tint to a solid disc. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="1024" android:viewportHeight="1024">
+    <group android:pivotX="512" android:pivotY="512" android:scaleX="0.749" android:scaleY="0.749">
+        <path android:pathData="M512,107a405,405 0 1,1 0,810a405,405 0 1,1 0,-810z" android:strokeColor="#FF000000" android:strokeWidth="34" />
+        <path android:fillColor="#FF000000" android:pathData="M378.2 418.3L484.1 472.1L525.5 509.2L522.9 519.6L514 525.7L464.9 499.5Z" />
+        <path android:fillColor="#FF000000" android:pathData="M714.3 370.3L574.5 480.7L507.8 522.5L501.1 519.6L500.7 512.4L562.8 463.9Z" />
+        <path android:fillColor="#FF000000" android:pathData="M512,482a30,30 0 1,1 0,60a30,30 0 1,1 0,-60z" />
+    </group>
+</vector>

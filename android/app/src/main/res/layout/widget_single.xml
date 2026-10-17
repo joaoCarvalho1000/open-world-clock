@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The full bleed surface. The renderer draws the city's sky gradient here, and a catalog
+         palette tints it instead; a free style with no sky keeps the root background and leaves
+         this gone. The padding sits on the body below so this layer reaches the widget's own
+         edges, and nothing in the body may rely on a flat fill behind it. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/single_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="@dimen/widget_padding">
+
+        <!-- The city, with its sun held at the far corner rather than in front of the name, so the
+             name, the digits and the metadata all start on one left edge. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/single_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:letterSpacing="0.02"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/single_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/widget_daytime"
+                android:src="@drawable/ic_widget_sun" />
+        </LinearLayout>
+
+        <!-- The readout takes every pixel the labels leave, so it is the largest thing here at any
+             size and it shrinks instead of pushing the date and the metadata off the bottom.
+             wrap_content plus a weight grows into free space and gives space back when there is
+             none; a fixed 0dp share would collapse the digits entirely on a short widget. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextClock
+                android:id="@+id/single_time"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="64sp"
+                android:autoSizeStepGranularity="1sp"
+                android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm"
+                android:format24Hour="HH:mm"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:letterSpacing="-0.02"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="44sp" />
+
+            <!-- Sits on the digits' own baseline, not beside their box. -->
+            <TextClock
+                android:id="@+id/single_ampm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:format12Hour="a"
+                android:format24Hour="a"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="14sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Metadata, not a clock: the renderer writes it in the app language. -->
+        <TextView
+            android:id="@+id/single_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink2"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/single_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:letterSpacing="0.01"
+            android:maxLines="1"
+            android:textColor="@color/widget_ink2"
+            android:textSize="11sp" />
+    </LinearLayout>
+</FrameLayout>

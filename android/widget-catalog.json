@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "freeWidgetCount": 3,
+  "premiumWidgetCount": 10,
+  "paletteCount": 16,
+  "clockFaceCount": 7,
+  "premiumClockFaceCount": 6,
+  "curatedLookCount": 24,
+  "savedLookLimit": 12,
+  "widgets": [
+    {
+      "id": "single",
+      "name": "City clock",
+      "premium": false,
+      "provider": "io.joao.worldclock.widget.SingleClockWidgetProvider",
+      "layout": "widget_single",
+      "targetCells": "2×2",
+      "minimumDp": [
+        110,
+        110
+      ],
+      "maximumCities": 1
+    },
+    {
+      "id": "world",
+      "name": "World clock",
+      "premium": false,
+      "provider": "io.joao.worldclock.widget.WorldClockWidgetProvider",
+      "layout": "widget_world",
+      "targetCells": "4×2",
+      "minimumDp": [
+        250,
+        110
+      ],
+      "maximumCities": 4
+    },
+    {
+      "id": "meeting",
+      "name": "Meeting planner",
+      "premium": false,
+      "provider": "io.joao.worldclock.widget.MeetingWidgetProvider",
+      "layout": "widget_meeting",
+      "targetCells": "4×3",
+      "minimumDp": [
+        250,
+        180
+      ],
+      "maximumCities": 4
+    },
+    {
+      "id": "duo",
+      "name": "Duo",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.DuoWidgetProvider",
+      "layout": "widget_duo",
+      "targetCells": "4×2",
+      "minimumDp": [
+        240,
+        160
+      ],
+      "maximumCities": 2
+    },
+    {
+      "id": "board",
+      "name": "Board",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.WorldBoardWidgetProvider",
+      "layout": "widget_board",
+      "targetCells": "4×3",
+      "minimumDp": [
+        240,
+        260
+      ],
+      "maximumCities": 4
+    },
+    {
+      "id": "workday",
+      "name": "Workday",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.WorkdayWidgetProvider",
+      "layout": "widget_workday",
+      "targetCells": "4×2",
+      "minimumDp": [
+        240,
+        190
+      ],
+      "maximumCities": 1
+    },
+    {
+      "id": "map",
+      "name": "Atlas",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.MapWidgetProvider",
+      "layout": "widget_map",
+      "targetCells": "4×3",
+      "minimumDp": [
+        240,
+        240
+      ],
+      "maximumCities": 3
+    },
+    {
+      "id": "daylight",
+      "name": "Sun arc",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.DaylightWidgetProvider",
+      "layout": "widget_daylight",
+      "targetCells": "4×2",
+      "minimumDp": [
+        240,
+        150
+      ],
+      "maximumCities": 1
+    },
+    {
+      "id": "next",
+      "name": "Next window",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.NextWidgetProvider",
+      "layout": "widget_next",
+      "targetCells": "4×2",
+      "minimumDp": [
+        240,
+        190
+      ],
+      "maximumCities": 4
+    },
+    {
+      "id": "week",
+      "name": "Week",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.WeekWidgetProvider",
+      "layout": "widget_week",
+      "targetCells": "4×3",
+      "minimumDp": [
+        240,
+        250
+      ],
+      "maximumCities": 4
+    },
+    {
+      "id": "ruler",
+      "name": "Hour ruler",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.RulerWidgetProvider",
+      "layout": "widget_ruler",
+      "targetCells": "4×2",
+      "minimumDp": [
+        240,
+        160
+      ],
+      "maximumCities": 3
+    },
+    {
+      "id": "dateline",
+      "name": "Date line",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.DateLineWidgetProvider",
+      "layout": "widget_dateline",
+      "targetCells": "4×3",
+      "minimumDp": [
+        240,
+        220
+      ],
+      "maximumCities": 4
+    },
+    {
+      "id": "change",
+      "name": "Clock change",
+      "premium": true,
+      "provider": "io.joao.worldclock.widget.ChangeWidgetProvider",
+      "layout": "widget_change",
+      "targetCells": "4×2",
+      "minimumDp": [
+        240,
+        150
+      ],
+      "maximumCities": 4
+    }
+  ]
+}

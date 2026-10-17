@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Picker preview for the Board. Same structure as widget_board.xml, with sample content and the
+  day and night tiles the renderer would choose: the preview has no sky bitmap to draw, so it
+  shows the flat frame and lets the four tiles carry the day and night signature. The checkerboard
+  is deliberate, it is what tells someone in the launcher picker that this widget knows which of
+  their cities are in the dark.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/board_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/board_row0"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/tile0"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_day"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon0"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_daytime"
+                        android:src="@drawable/ic_widget_sun"
+                        android:tint="@color/wc_sun" />
+
+                    <TextView
+                        android:id="@+id/tile_name0"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:text="Lisbon"
+                        android:textColor="@color/wc_day_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:text="16:20"
+                    android:textColor="@color/wc_day_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:text="Working"
+                    android:textColor="@color/wc_day_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Sun 11 Oct"
+                    android:textColor="@color/wc_day_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tile1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_night"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon1"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_night"
+                        android:src="@drawable/ic_widget_moon"
+                        android:tint="@color/wc_accent_night" />
+
+                    <TextView
+                        android:id="@+id/tile_name1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:text="Tokyo"
+                        android:textColor="@color/wc_night_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:text="00:20"
+                    android:textColor="@color/wc_night_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:text="Off"
+                    android:textColor="@color/wc_night_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Mon 12 Oct"
+                    android:textColor="@color/wc_night_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/board_row1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/tile2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_day"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon2"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_daytime"
+                        android:src="@drawable/ic_widget_sun"
+                        android:tint="@color/wc_sun" />
+
+                    <TextView
+                        android:id="@+id/tile_name2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:text="New York"
+                        android:textColor="@color/wc_day_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:text="11:20"
+                    android:textColor="@color/wc_day_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:text="Working"
+                    android:textColor="@color/wc_day_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Sun 11 Oct"
+                    android:textColor="@color/wc_day_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tile3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/widget_row_night"
+                android:orientation="vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/tile_icon3"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/widget_night"
+                        android:src="@drawable/ic_widget_moon"
+                        android:tint="@color/wc_accent_night" />
+
+                    <TextView
+                        android:id="@+id/tile_name3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:letterSpacing="0.02"
+                        android:maxLines="1"
+                        android:text="Kathmandu"
+                        android:textColor="@color/wc_night_ink"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+<TextClock
+                    android:id="@+id/tile_time3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minHeight="22dp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeMaxTextSize="28sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:fontFamily="sans-serif-light"
+                    android:fontFeatureSettings="tnum"
+                    android:format12Hour="h:mm a"
+                    android:format24Hour="HH:mm"
+                    android:gravity="center_vertical|start"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="1"
+                    android:text="21:05"
+                    android:textColor="@color/wc_night_ink"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/tile_meta3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.01"
+                    android:maxLines="1"
+                    android:text="Off"
+                    android:textColor="@color/wc_night_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tile_date3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Sun 11 Oct"
+                    android:textColor="@color/wc_night_ink2"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

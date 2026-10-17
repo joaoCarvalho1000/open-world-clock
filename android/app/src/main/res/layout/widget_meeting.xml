@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Meeting planner, 4x3. Answer first: an eyebrow names the question, one sentence answers it, and
+  the overlap bar underneath is the evidence for that sentence, not decoration. The per city rows
+  are the footnotes and are deliberately the quietest band on the widget.
+
+  Vertical rhythm, top to bottom: eyebrow (2dp) answer (10dp) bar (3dp) hour marks (10dp) rows.
+  The small gap ties the hour marks to the bar's own ticks so the two read as one instrument; the
+  large gaps separate the three bands. The body's left and right padding is the only horizontal
+  inset, so the answer, the bar and the row contents all share one left edge and one right edge.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg">
+
+    <!-- The catalog surface. A free style keeps the root background and leaves this gone; a
+         palette shows it and tints it, covering the root with the same rounded shape. The
+         padding sits on the body below so this layer can reach the widget's own edges. -->
+    <ImageView
+        android:id="@+id/widget_bg_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg_tint"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/meet_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/widget_padding"
+        android:paddingTop="@dimen/widget_padding"
+        android:paddingEnd="@dimen/widget_padding"
+        android:paddingBottom="12dp">
+
+        <!-- Answer and evidence. The whole block opens the planner, as it did before. -->
+        <LinearLayout
+            android:id="@+id/meet_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Eyebrow. It names the question so the sentence below can be only the answer.
+                 Autosized and kept to one line because "Melhor horário em comum hoje" would
+                 otherwise wrap and push the rows down. The renderer sets its colour, not its
+                 size: setTextViewTextSize is a no-op on an autosizing TextView. -->
+            <TextView
+                android:id="@+id/meet_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeMaxTextSize="11sp"
+                android:autoSizeMinTextSize="9sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:ellipsize="end"
+                android:letterSpacing="0.04"
+                android:maxLines="1"
+                android:text="@string/widget_meeting_heading"
+                android:textColor="@color/widget_accent"
+                android:textStyle="bold" />
+
+            <!-- The answer. The largest and heaviest text on the widget by a clear margin, so the
+                 hierarchy is readable before any of it is. Tabular figures match every other time
+                 readout in the app. Balanced breaking keeps a two line Portuguese or Spanish
+                 answer from leaving one orphaned word, and autosizing means a long sentence on a
+                 narrow widget gets smaller rather than truncated: the answer is the one string
+                 here that must never be cut off. -->
+            <TextView
+                android:id="@+id/meet_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:autoSizeMaxTextSize="19sp"
+                android:autoSizeMinTextSize="14sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:breakStrategy="balanced"
+                android:ellipsize="end"
+                android:fontFeatureSettings="tnum"
+                android:maxLines="2"
+                android:text="@string/widget_loading"
+                android:textColor="@color/widget_ink"
+                android:textStyle="bold" />
+
+            <!-- Evidence for the sentence above. The bitmap is stretched to this box, so its now
+                 mark is only round when the box matches the bitmap's aspect: see the renderer
+                 note in the report. -->
+            <ImageView
+                android:id="@+id/meet_bar"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/widget_overlap_bar"
+                android:scaleType="fitXY"
+                android:src="@drawable/widget_bar_placeholder" />
+
+            <!-- Numbers stay numbers: the bar never ships without its hours. Each label is start
+                 aligned on its own cell and sits 3dp under the tick the bitmap draws for it. -->
+            <LinearLayout
+                android:id="@+id/meet_axis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
+                android:importantForAccessibility="noHideDescendants"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/axis0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="00"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="03"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="06"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="09"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="12"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="15"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="18"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/axis7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFeatureSettings="tnum"
+                    android:maxLines="1"
+                    android:text="21"
+                    android:textColor="@color/widget_ink2"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Rows. The status dot is deliberately smaller than the bar's now mark: one dot on this
+             widget is the app's recurring present moment mark and the rest are bullets, so they
+             must not read at the same size. minHeight is a collapse floor, not a target height:
+             the comfortable height comes from the weight, and a floor above the text would make a
+             squeezed widget clip its last row instead of tightening all of them. -->
+        <LinearLayout
+            android:id="@+id/mrow0"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/widget_row_plain"
+            android:gravity="center_vertical"
+            android:minHeight="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/mdot0"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/widget_dot_on" />
+
+            <TextView
+                android:id="@+id/mname0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/mstatus0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="10dp"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextClock
+                android:id="@+id/mtime0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mrow1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/widget_row_plain"
+            android:gravity="center_vertical"
+            android:minHeight="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/mdot1"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/widget_dot_on" />
+
+            <TextView
+                android:id="@+id/mname1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/mstatus1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="10dp"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextClock
+                android:id="@+id/mtime1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mrow2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/widget_row_plain"
+            android:gravity="center_vertical"
+            android:minHeight="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/mdot2"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/widget_dot_on" />
+
+            <TextView
+                android:id="@+id/mname2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/mstatus2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="10dp"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextClock
+                android:id="@+id/mtime2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mrow3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/widget_row_plain"
+            android:gravity="center_vertical"
+            android:minHeight="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/mdot3"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/widget_dot_on" />
+
+            <TextView
+                android:id="@+id/mname3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/mstatus3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="10dp"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink2"
+                android:textSize="10sp" />
+
+            <TextClock
+                android:id="@+id/mtime3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:format12Hour="h:mm a"
+                android:format24Hour="HH:mm"
+                android:maxLines="1"
+                android:textColor="@color/widget_ink"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

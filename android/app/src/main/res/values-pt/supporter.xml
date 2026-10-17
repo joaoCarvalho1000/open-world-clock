@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget appearance -->
+    <string name="wc_theme_paper">Papel</string>
+    <string name="wc_theme_forest">Floresta</string>
+    <string name="wc_theme_ink">Tinta</string>
+    <string name="wc_font">Fonte do relógio</string>
+    <string name="wc_font_system">Sistema</string>
+    <string name="wc_font_serif">Serifada</string>
+    <string name="wc_font_mono">Mono</string>
+    <string name="wc_font_condensed">Condensada</string>
+    <string name="wc_preview_only">Apenas prévia</string>
+    <string name="wc_locked_note">%1$s faz parte do Pacote de Apoio.</string>
+    <string name="wc_theme_note_premium">A paleta muda com o céu da hora. Claro ou Escuro a deixa fixa.</string>
+    <string name="wc_locked_save">Seu widget mantém o estilo gratuito.</string>
+    <string name="wc_locked_kind_save">Sem ele, este widget mostra %1$s.</string>
+
+    <!-- Saved looks -->
+    <string name="wc_presets">Estilos salvos</string>
+    <string name="wc_preset_save">Salvar este estilo</string>
+    <string name="wc_preset_name">Nome</string>
+    <string name="wc_preset_hint">O estilo inteiro, incluindo Luz do dia, Claro ou Escuro. Suas cidades ficam como estão.</string>
+    <string name="wc_preset_empty">Salve um estilo para reusar em qualquer widget.</string>
+    <string name="wc_preset_full">Você pode guardar %1$d estilos. Exclua um para salvar outro.</string>
+    <string name="wc_preset_delete">Excluir %1$s</string>
+    <string name="wc_preset_apply_a11y">Aplicar %1$s</string>
+    <string name="wc_presets_locked">Estilos salvos fazem parte do Pacote de Apoio. Os seus ficam guardados aqui.</string>
+
+    <!-- Supporter Pack -->
+    <string name="supporter_title">Pacote de Apoio</string>
+    <string name="supporter_pitch">Mais widgets para a tela de início, com paletas, mostradores e estilos salvos para vesti-los.</string>
+    <string name="supporter_free_note">Relógios, conversão, planejamento, os widgets originais e os três idiomas continuam gratuitos.</string>
+    <string name="supporter_open">Ver o que inclui</string>
+    <string name="supporter_unlock">Desbloquear</string>
+    <string name="supporter_included_presets">Estilos salvos para aplicar em qualquer widget.</string>
+    <string name="supporter_try">Toque em um estilo para ver aqui.</string>
+    <string name="supporter_yearly">%1$s por ano</string>
+    <string name="supporter_yearly_note">Acesso durante a assinatura. Renova todo ano. Cancele quando quiser no Google Play. Requer uma verificação diária pela internet.</string>
+    <string name="supporter_monthly">%1$s por mês</string>
+    <string name="supporter_monthly_note">Acesso durante a assinatura. Renova todo mês. Cancele quando quiser no Google Play. Requer uma verificação diária pela internet.</string>
+    <string name="supporter_restore">Restaurar compras</string>
+    <string name="supporter_manage">Gerenciar assinatura</string>
+    <string name="supporter_active_yearly">Seu apoio anual está ativo. Obrigado.</string>
+    <string name="supporter_active_monthly">Seu apoio mensal está ativo. Obrigado.</string>
+    <string name="supporter_loading">Consultando o Google Play.</string>
+    <string name="supporter_unavailable">As compras não estão disponíveis agora.</string>
+    <string name="supporter_error">Não foi possível concluir a compra.</string>
+    <string name="supporter_pending">O Google Play está confirmando seu pagamento.</string>
+    <string name="supporter_restored">Compras restauradas.</string>
+    <string name="supporter_nothing">Nenhuma compra nesta conta do Google.</string>
+    <string name="supporter_retry">Tentar de novo</string>
+
+    <!-- Catalog palettes -->
+    <string name="wc_theme_linen">Linho</string>
+    <string name="wc_theme_daybreak">Amanhecer</string>
+    <string name="wc_theme_mist">Névoa</string>
+    <string name="wc_theme_sage">Sálvia</string>
+    <string name="wc_theme_blossom">Flor</string>
+    <string name="wc_theme_chalk">Giz</string>
+    <string name="wc_theme_midnight">Meia-noite</string>
+    <string name="wc_theme_espresso">Espresso</string>
+    <string name="wc_theme_plum">Ameixa</string>
+    <string name="wc_theme_slate">Ardósia</string>
+    <string name="wc_theme_ember">Brasa</string>
+    <string name="wc_theme_cobalt">Cobalto</string>
+    <string name="wc_theme_rust">Ferrugem</string>
+
+    <!-- Catalog clock faces -->
+    <string name="wc_font_light">Fina</string>
+    <string name="wc_font_medium">Média</string>
+    <string name="wc_font_black">Preta</string>
+
+    <!-- Catalog shelves -->
+    <string name="wc_group_free">Grátis</string>
+    <string name="wc_group_light">Claros</string>
+    <string name="wc_group_dark">Escuros</string>
+    <string name="wc_group_vivid">Vivos</string>
+
+    <!-- Looks that are not simply their palette -->
+    <string name="wc_look_newsprint">Jornal</string>
+    <string name="wc_look_awning">Toldo</string>
+    <string name="wc_look_station">Estação</string>
+    <string name="wc_look_receipt">Recibo</string>
+    <string name="wc_look_headline">Manchete</string>
+    <string name="wc_look_almanac">Almanaque</string>
+    <string name="wc_look_canopy">Copa</string>
+    <string name="wc_look_terminal">Terminal</string>
+
+    <string name="supporter_included_looks">%1$d estilos e %2$d fontes de relógio.</string>
+
+    <!-- Looks catalog -->
+    <string name="wc_looks">Estilos</string>
+    <string name="wc_looks_browse">Ver estilos</string>
+    <string name="wc_looks_apply">Aplicar %1$s</string>
+    <string name="wc_looks_applied">Aplicado</string>
+    <string name="wc_looks_a11y">Estilo %1$s, %2$s</string>
+    <string name="wc_looks_count">%1$d estilos</string>
+    <string name="wc_looks_free_note">Os três estilos gratuitos. Seu widget mantém estes sempre.</string>
+    <string name="wc_looks_locked_note">Experimente qualquer estilo aqui. Os pagos precisam do Pacote de Apoio.</string>
+    <string name="supporter_included_widgets">%1$d widgets a mais, entre eles um mapa-múndi, uma grade semanal, um quadro da linha de data e um arco de luz do dia.</string>
+    <string name="supporter_try_widget">Toque num widget para vê-lo desenhado com as suas cidades.</string>
+    <string name="supporter_yearly_saving">Economiza %1$d%% em relação a doze pagamentos mensais.</string>
+</resources>

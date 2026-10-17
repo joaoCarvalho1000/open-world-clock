@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Supporter Pack widget themes. Fixed palettes, each checked for 4.5:1 body contrast. -->
+    <color name="wc_paper_bg">#FFF4ECDD</color>
+    <color name="wc_paper_ink">#FF27211A</color>
+    <color name="wc_paper_ink2">#FF6E6153</color>
+    <color name="wc_paper_accent">#FFA35A24</color>
+    <color name="wc_paper_track">#1F27211A</color>
+    <color name="wc_paper_row">#0F27211A</color>
+
+    <color name="wc_forest_bg">#FF12271F</color>
+    <color name="wc_forest_ink">#FFECF3ED</color>
+    <color name="wc_forest_ink2">#FFA8C2B0</color>
+    <color name="wc_forest_accent">#FF79D7A4</color>
+    <color name="wc_forest_track">#24ECF3ED</color>
+    <color name="wc_forest_row">#14ECF3ED</color>
+
+    <color name="wc_ink_bg">#FF15161A</color>
+    <color name="wc_ink_ink">#FFF6F6F4</color>
+    <color name="wc_ink_ink2">#FFAFAFB4</color>
+    <color name="wc_ink_accent">#FFE0A64F</color>
+    <color name="wc_ink_track">#24F6F6F4</color>
+    <color name="wc_ink_row">#14F6F6F4</color>
+
+    <!-- Widget appearance -->
+    <string name="wc_theme_paper">Paper</string>
+    <string name="wc_theme_forest">Forest</string>
+    <string name="wc_theme_ink">Ink</string>
+    <string name="wc_font">Clock face</string>
+    <string name="wc_font_system">System</string>
+    <string name="wc_font_serif">Serif</string>
+    <string name="wc_font_mono">Mono</string>
+    <string name="wc_font_condensed">Condensed</string>
+    <string name="wc_preview_only">Preview only</string>
+    <string name="wc_locked_note">%1$s comes with the Supporter Pack.</string>
+    <string name="wc_theme_note_premium">The palette shifts with the hour\'s sky. Light or Dark holds it still.</string>
+    <string name="wc_locked_save">Your widget keeps its free look.</string>
+    <string name="wc_locked_kind_save">Without it, this widget shows %1$s instead.</string>
+
+    <!-- Saved looks -->
+    <string name="wc_presets">Saved looks</string>
+    <string name="wc_preset_save">Save this look</string>
+    <string name="wc_preset_name">Name</string>
+    <string name="wc_preset_hint">The whole look, including Daylight, Light or Dark. Your cities stay as they are.</string>
+    <string name="wc_preset_empty">Save a look to reuse on any widget.</string>
+    <string name="wc_preset_full">You can keep %1$d saved looks. Delete one to save another.</string>
+    <string name="wc_preset_delete">Delete %1$s</string>
+    <string name="wc_preset_apply_a11y">Apply %1$s</string>
+    <string name="wc_presets_locked">Saved looks come with the Supporter Pack. Yours are kept here.</string>
+
+    <!-- Supporter Pack -->
+    <string name="supporter_title">Supporter Pack</string>
+    <string name="supporter_pitch">More widgets for your home screen, with palettes, clock faces and saved looks to dress them in.</string>
+    <string name="supporter_free_note">Clocks, conversion, planning, the original widgets and all three languages stay free.</string>
+    <string name="supporter_open">See what is included</string>
+    <string name="supporter_unlock">Unlock</string>
+    <string name="supporter_included_presets">Saved looks you can apply to any widget.</string>
+    <string name="supporter_try">Tap a look to try it here.</string>
+    <string name="supporter_yearly">%1$s a year</string>
+    <string name="supporter_yearly_note">Access while subscribed. Renews yearly. Cancel anytime in Google Play. Requires a daily internet check.</string>
+    <string name="supporter_monthly">%1$s a month</string>
+    <string name="supporter_monthly_note">Access while subscribed. Renews monthly. Cancel anytime in Google Play. Requires a daily internet check.</string>
+    <string name="supporter_restore">Restore purchases</string>
+    <string name="supporter_manage">Manage subscription</string>
+    <string name="supporter_active_yearly">Your yearly support is active. Thank you.</string>
+    <string name="supporter_active_monthly">Your monthly support is active. Thank you.</string>
+    <string name="supporter_loading">Checking Google Play.</string>
+    <string name="supporter_unavailable">Purchases are not available right now.</string>
+    <string name="supporter_error">That purchase could not be completed.</string>
+    <string name="supporter_pending">Google Play is confirming your payment.</string>
+    <string name="supporter_restored">Purchases restored.</string>
+    <string name="supporter_nothing">No purchase found on this Google account.</string>
+    <string name="supporter_retry">Try again</string>
+
+    <!-- Catalog palettes -->
+    <string name="wc_theme_linen">Linen</string>
+    <string name="wc_theme_daybreak">Daybreak</string>
+    <string name="wc_theme_mist">Mist</string>
+    <string name="wc_theme_sage">Sage</string>
+    <string name="wc_theme_blossom">Blossom</string>
+    <string name="wc_theme_chalk">Chalk</string>
+    <string name="wc_theme_midnight">Midnight</string>
+    <string name="wc_theme_espresso">Espresso</string>
+    <string name="wc_theme_plum">Plum</string>
+    <string name="wc_theme_slate">Slate</string>
+    <string name="wc_theme_ember">Ember</string>
+    <string name="wc_theme_cobalt">Cobalt</string>
+    <string name="wc_theme_rust">Rust</string>
+
+    <!-- Catalog clock faces -->
+    <string name="wc_font_light">Light</string>
+    <string name="wc_font_medium">Medium</string>
+    <string name="wc_font_black">Black</string>
+
+    <!-- Catalog shelves -->
+    <string name="wc_group_free">Free</string>
+    <string name="wc_group_light">Light</string>
+    <string name="wc_group_dark">Dark</string>
+    <string name="wc_group_vivid">Vivid</string>
+
+    <!-- Looks that are not simply their palette -->
+    <string name="wc_look_newsprint">Newsprint</string>
+    <string name="wc_look_awning">Awning</string>
+    <string name="wc_look_station">Station</string>
+    <string name="wc_look_receipt">Receipt</string>
+    <string name="wc_look_headline">Headline</string>
+    <string name="wc_look_almanac">Almanac</string>
+    <string name="wc_look_canopy">Canopy</string>
+    <string name="wc_look_terminal">Terminal</string>
+
+    <string name="supporter_included_looks">%1$d looks and %2$d clock faces.</string>
+
+    <!-- Looks catalog -->
+    <string name="wc_looks">Looks</string>
+    <string name="wc_looks_browse">Browse looks</string>
+    <string name="wc_looks_apply">Apply %1$s</string>
+    <string name="wc_looks_applied">Applied</string>
+    <string name="wc_looks_a11y">Look %1$s, %2$s</string>
+    <string name="wc_looks_count">%1$d looks</string>
+    <string name="wc_looks_free_note">The three free styles. Your widget keeps these whatever happens.</string>
+    <string name="wc_looks_locked_note">Try any look here. The paid ones need the Supporter Pack.</string>
+    <string name="supporter_included_widgets">%1$d more widgets, including a world map, a week grid, a date line board and a daylight arc.</string>
+    <string name="supporter_try_widget">Tap a widget to see it drawn from your own cities.</string>
+    <string name="supporter_yearly_saving">Saves %1$d%% against twelve monthly payments.</string>
+</resources>
