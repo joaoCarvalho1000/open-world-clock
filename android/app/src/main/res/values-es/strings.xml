@@ -136,9 +136,11 @@
     <string name="wc_style_light">Claro</string>
     <string name="wc_style_dark">Oscuro</string>
     <string name="wc_style_note_fixed">Siempre %1$s, a cualquier hora.</string>
-    <string name="wc_style_note_system">Sigue el tema del teléfono.</string>
+    <string name="wc_style_note_system">El color del cielo sigue a tu ciudad de referencia.</string>
     <string name="wc_style_note_single">El color del cielo y el sol o la luna siguen a esta ciudad.</string>
     <string name="wc_style_note_rows">Cada fila sigue el sol de su propia ciudad.</string>
+    <string name="wc_style_note_first">El color del cielo sigue a la primera ciudad.</string>
+    <string name="wc_style_note_change">El color del cielo sigue a la ciudad del próximo cambio.</string>
     <string name="wc_setup_title">Configurar %1$s</string>
     <string name="wc_save">Guardar widget</string>
 
@@ -220,7 +222,7 @@
     <string name="widget_daylight_blurb">Amanecer, atardecer y dónde está el sol ahora.</string>
     <string name="widget_next_blurb">Cuándo podrán hablar todos.</string>
     <string name="widget_week_blurb">Qué día le sirve a todos.</string>
-    <string name="widget_ruler_blurb">Cada hora, alineada entre las ciudades.</string>
+    <string name="widget_ruler_blurb">Ahora, en tres horas y en seis, en tus ciudades.</string>
     <string name="widget_dateline_blurb">Quién está en qué fecha ahora.</string>
     <string name="widget_change_blurb">El próximo cambio de hora que te afecta.</string>
 
@@ -228,13 +230,13 @@
     <string name="widget_duo_description">Dos ciudades lado a lado. Paquete de Apoyo.</string>
     <string name="widget_board_description">Cuatro relojes con fechas y estado de trabajo. Paquete de Apoyo.</string>
     <string name="widget_workday_description">Un reloj sobre una línea de tiempo numerada. Paquete de Apoyo.</string>
-    <string name="widget_map_description">Un mapa de día y noche sin conexión con tus ciudades. Paquete de Apoyo.</string>
+    <string name="widget_map_description">Un mapa de día y noche sin conexión con hasta tres ciudades. Paquete de Apoyo.</string>
     <string name="widget_daylight_description">Un arco de luz con amanecer y atardecer. Paquete de Apoyo.</string>
     <string name="widget_next_description">Las próximas horas que comparten tus ciudades. Paquete de Apoyo.</string>
     <string name="widget_week_description">Siete días de horas de trabajo en común. Paquete de Apoyo.</string>
-    <string name="widget_ruler_description">Franjas de horas numeradas, alineadas entre ciudades. Paquete de Apoyo.</string>
+    <string name="widget_ruler_description">Los mismos tres momentos (ahora, más tres horas, más seis) en hasta tres ciudades. Paquete de Apoyo.</string>
     <string name="widget_dateline_description">Tus ciudades agrupadas por su fecha local. Paquete de Apoyo.</string>
-    <string name="widget_change_description">El próximo cambio de horario de verano. Paquete de Apoyo.</string>
+    <string name="widget_change_description">El próximo cambio de hora en tus ciudades. Paquete de Apoyo.</string>
 
     <!-- Premium widget content, written by the renderer -->
     <string name="widget_solar_rise">Amanecer %1$s</string>

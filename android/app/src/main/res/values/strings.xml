@@ -143,9 +143,11 @@
     <string name="wc_style_light">Light</string>
     <string name="wc_style_dark">Dark</string>
     <string name="wc_style_note_fixed">Always %1$s, whatever the time.</string>
-    <string name="wc_style_note_system">Follows your phone theme.</string>
+    <string name="wc_style_note_system">The sky colour follows your reference city.</string>
     <string name="wc_style_note_single">The sky colour and the sun or moon follow this city.</string>
     <string name="wc_style_note_rows">Each row follows its own city\'s sun.</string>
+    <string name="wc_style_note_first">The sky colour follows the first city.</string>
+    <string name="wc_style_note_change">The sky colour follows the city that changes next.</string>
     <string name="wc_setup_title">Set up %1$s</string>
     <string name="wc_save">Save widget</string>
 
@@ -231,7 +233,7 @@
     <string name="widget_daylight_blurb">Sunrise, sunset and where the sun is now.</string>
     <string name="widget_next_blurb">When you can all talk next.</string>
     <string name="widget_week_blurb">Which day works for everyone.</string>
-    <string name="widget_ruler_blurb">Every hour, lined up across cities.</string>
+    <string name="widget_ruler_blurb">Now, in three hours and in six, across your cities.</string>
     <string name="widget_dateline_blurb">Who is on which date right now.</string>
     <string name="widget_change_blurb">The next clock change that affects you.</string>
 
@@ -239,13 +241,13 @@
     <string name="widget_duo_description">Two cities side by side. Supporter Pack.</string>
     <string name="widget_board_description">Four city clocks with dates and work status. Supporter Pack.</string>
     <string name="widget_workday_description">One clock above a numbered workday timeline. Supporter Pack.</string>
-    <string name="widget_map_description">An offline day and night map with your cities. Supporter Pack.</string>
+    <string name="widget_map_description">An offline day and night map with up to three cities. Supporter Pack.</string>
     <string name="widget_daylight_description">A daylight arc with sunrise and sunset. Supporter Pack.</string>
     <string name="widget_next_description">The next hours your cities share. Supporter Pack.</string>
     <string name="widget_week_description">Seven days of shared working hours. Supporter Pack.</string>
-    <string name="widget_ruler_description">Numbered hour strips, aligned across cities. Supporter Pack.</string>
+    <string name="widget_ruler_description">The same three moments (now, plus three hours, plus six) in up to three cities. Supporter Pack.</string>
     <string name="widget_dateline_description">Your cities grouped by their local date. Supporter Pack.</string>
-    <string name="widget_change_description">The next daylight saving change for your cities. Supporter Pack.</string>
+    <string name="widget_change_description">The next clock change for your cities. Supporter Pack.</string>
 
     <!-- Premium widget content, written by the renderer -->
     <string name="widget_solar_rise">Sunrise %1$s</string>

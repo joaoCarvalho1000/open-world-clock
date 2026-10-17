@@ -33,14 +33,15 @@
     <string name="wc_font_condensed">Condensed</string>
     <string name="wc_preview_only">Preview only</string>
     <string name="wc_locked_note">%1$s comes with the Supporter Pack.</string>
-    <string name="wc_theme_note_premium">A fixed palette, the same at every hour.</string>
+    <string name="wc_theme_note_premium">The palette shifts with the hour\'s sky. Light or Dark holds it still.</string>
     <string name="wc_locked_save">Your widget keeps its free look.</string>
+    <string name="wc_locked_kind_save">Without it, this widget shows %1$s instead.</string>
 
     <!-- Saved looks -->
     <string name="wc_presets">Saved looks</string>
     <string name="wc_preset_save">Save this look</string>
     <string name="wc_preset_name">Name</string>
-    <string name="wc_preset_hint">Theme and face only. Your cities stay as they are.</string>
+    <string name="wc_preset_hint">The whole look, including Daylight, Light or Dark. Your cities stay as they are.</string>
     <string name="wc_preset_empty">Save a theme and face to reuse on any widget.</string>
     <string name="wc_preset_full">You can keep %1$d saved looks. Delete one to save another.</string>
     <string name="wc_preset_delete">Delete %1$s</string>
@@ -117,7 +118,7 @@
     <string name="wc_looks_a11y">Look %1$s, %2$s</string>
     <string name="wc_looks_count">%1$d looks</string>
     <string name="wc_looks_free_note">The three free styles. Your widget keeps these whatever happens.</string>
-    <string name="wc_looks_locked_note">Try any look here. Applying one needs the Supporter Pack.</string>
+    <string name="wc_looks_locked_note">Try any look here. The paid ones need the Supporter Pack.</string>
     <string name="supporter_included_widgets">%1$d more widgets, including a world map, a week grid, a date line board and a daylight arc.</string>
     <string name="supporter_try_widget">Tap a widget to see it drawn from your own cities.</string>
     <string name="supporter_yearly_saving">Saves %1$d%% against twelve monthly payments.</string>

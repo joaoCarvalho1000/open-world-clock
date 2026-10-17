@@ -119,7 +119,11 @@ class WidgetConfigureActivity : ComponentActivity() {
                                     // failing a tap, and keep the preview above fully browsable.
                                     Text(t.get(R.string.wc_locked_note, t.get(kind.titleRes)),
                                         style = MaterialTheme.typography.bodyMedium)
-                                    Text(t.get(R.string.wc_locked_save), style = MaterialTheme.typography.bodySmall,
+                                    // Not the catalog's free look note: here the whole kind
+                                    // is out of reach, and WidgetRenderer.build substitutes
+                                    // another widget rather than another palette.
+                                    Text(t.get(R.string.wc_locked_kind_save, t.get(kind.forAccess(false).titleRes)),
+                                        style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(bottom = 8.dp))
                                 }

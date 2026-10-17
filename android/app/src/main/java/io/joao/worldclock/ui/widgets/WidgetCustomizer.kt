@@ -171,7 +171,13 @@ fun WidgetCustomizer(kind: WidgetKind, config: WidgetConfig, settings: ClockSett
                     t.get(R.string.wc_style_note_fixed, t.get(freeStyleLabel(config.style)).lowercase(locale))
                 kind == WidgetKind.MEETING -> t.get(R.string.wc_style_note_system)
                 kind == WidgetKind.SINGLE -> t.get(R.string.wc_style_note_single)
-                else -> t.get(R.string.wc_style_note_rows)
+                // Only these three paint a palette per row or per tile. Everything else is drawn
+                // from one subject city, so the per row promise was false for eleven of thirteen.
+                kind == WidgetKind.WORLD || kind == WidgetKind.DUO || kind == WidgetKind.BOARD ->
+                    t.get(R.string.wc_style_note_rows)
+                // Clock change leads with whichever city changes next, not the first in the list.
+                kind == WidgetKind.CHANGE -> t.get(R.string.wc_style_note_change)
+                else -> t.get(R.string.wc_style_note_first)
             },
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

@@ -11,14 +11,15 @@
     <string name="wc_font_condensed">Condensada</string>
     <string name="wc_preview_only">Solo vista previa</string>
     <string name="wc_locked_note">%1$s viene con el Paquete de Apoyo.</string>
-    <string name="wc_theme_note_premium">Una paleta fija, igual a cualquier hora.</string>
+    <string name="wc_theme_note_premium">La paleta cambia con el cielo de la hora. Claro u Oscuro la deja fija.</string>
     <string name="wc_locked_save">Tu widget conserva su estilo gratis.</string>
+    <string name="wc_locked_kind_save">Sin él, este widget muestra %1$s.</string>
 
     <!-- Saved looks -->
     <string name="wc_presets">Estilos guardados</string>
     <string name="wc_preset_save">Guardar este estilo</string>
     <string name="wc_preset_name">Nombre</string>
-    <string name="wc_preset_hint">Solo tema y fuente. Tus ciudades quedan como están.</string>
+    <string name="wc_preset_hint">El estilo completo, incluidos Luz de día, Claro u Oscuro. Tus ciudades quedan como están.</string>
     <string name="wc_preset_empty">Guarda un tema y una fuente para reutilizar en cualquier widget.</string>
     <string name="wc_preset_full">Puedes guardar %1$d estilos. Elimina uno para guardar otro.</string>
     <string name="wc_preset_delete">Eliminar %1$s</string>
@@ -95,7 +96,7 @@
     <string name="wc_looks_a11y">Estilo %1$s, %2$s</string>
     <string name="wc_looks_count">%1$d estilos</string>
     <string name="wc_looks_free_note">Los tres estilos gratis. Tu widget conserva estos siempre.</string>
-    <string name="wc_looks_locked_note">Prueba cualquier estilo aquí. Aplicar uno necesita el Paquete de Apoyo.</string>
+    <string name="wc_looks_locked_note">Prueba cualquier estilo aquí. Los de pago necesitan el Paquete de Apoyo.</string>
     <string name="supporter_included_widgets">%1$d widgets más, entre ellos un mapamundi, una cuadrícula semanal, un tablero de la línea de fecha y un arco de luz del día.</string>
     <string name="supporter_try_widget">Toca un widget para verlo dibujado con tus ciudades.</string>
     <string name="supporter_yearly_saving">Ahorra un %1$d%% frente a doce pagos mensuales.</string>
