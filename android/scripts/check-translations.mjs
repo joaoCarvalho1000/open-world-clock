@@ -1,6 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 
 const res = new URL('../app/src/main/res/', import.meta.url);
+const src = new URL('../app/src/main/', import.meta.url);
 async function catalog(directory) {
   const values = new Map();
   for (const file of await readdir(new URL(`${directory}/`, res))) {
@@ -18,8 +19,26 @@ async function catalog(directory) {
   return values;
 }
 
+async function referenced(directory, found = new Set()) {
+  for (const entry of await readdir(new URL(`${directory}/`, src), { withFileTypes: true })) {
+    const child = `${directory}/${entry.name}`;
+    if (entry.isDirectory()) await referenced(child, found);
+    else if (/\.(kt|xml)$/.test(entry.name) && !/\/res\/values[^/]*\/strings\.xml$/.test(child)) {
+      const text = await readFile(new URL(child, src), 'utf8');
+      for (const m of text.matchAll(/R\.string\.(\w+)/g)) found.add(m[1]);
+      for (const m of text.matchAll(/@string\/(\w+)/g)) found.add(m[1]);
+    }
+  }
+  return found;
+}
+
 const english = await catalog('values');
 let problems = [];
+// A string nothing reads is a translated sentence three people maintain for nobody, and the
+// ones found this way had each outlived the code that showed them. Kotlin and every xml but
+// the catalogs themselves are searched, so a manifest label or a layout counts as a reader.
+const used = await referenced('.');
+for (const name of english.keys()) if (!used.has(name)) problems.push(`values: ${name} is never read`);
 for (const language of ['pt', 'es']) {
   const translated = await catalog(`values-${language}`);
   for (const [name, format] of english) {
@@ -29,4 +48,4 @@ for (const language of ['pt', 'es']) {
   for (const name of translated.keys()) if (!english.has(name)) problems.push(`${language}: unknown ${name}`);
 }
 if (problems.length) throw new Error(problems.join('\n'));
-console.log(`${english.size} Android strings have matching Portuguese and Spanish translations and placeholders.`);
+console.log(`${english.size} Android strings are read somewhere and have matching Portuguese and Spanish translations and placeholders.`);

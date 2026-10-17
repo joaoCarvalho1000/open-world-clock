@@ -99,7 +99,6 @@
     <string name="plan_selected">%1$s en %2$s · %3$d de %4$d trabajando</string>
     <string name="plan_slider">Hora de la reunión en %1$s</string>
     <string name="plan_slider_state">%1$s, %2$d de %3$d trabajando</string>
-    <string name="plan_overlap_bar">Horas en común a lo largo del día</string>
     <string name="plan_row_a11y">%1$s: %2$s, %3$s. Abre el conversor.</string>
 
     <!-- Mapa -->
@@ -199,7 +198,6 @@
     <string name="widget_meeting_partial">%1$d de %2$d trabajan de %3$s a %4$s</string>
     <string name="widget_meeting_none">Hoy no hay horas laborales en común</string>
     <string name="widget_meeting_bar_a11y">%1$s. Horas en el huso de %2$s.</string>
-    <string name="widget_configure_title">Configurar widget</string>
 
 
     <!-- Premium widget names -->
@@ -247,7 +245,6 @@
     <string name="widget_solar_polar_night">Sol bajo el horizonte todo el día</string>
     <string name="widget_sampled">Se actualiza cada 30 min</string>
     <string name="widget_window_now">Trabajando juntos ahora</string>
-    <string name="widget_window_next">Próxima ventana en común</string>
     <string name="widget_window_none">Sin coincidencia en 8 días</string>
     <string name="widget_week_none">Sin coincidencia esta semana</string>
     <string name="widget_week_best">Mejor: %1$s</string>

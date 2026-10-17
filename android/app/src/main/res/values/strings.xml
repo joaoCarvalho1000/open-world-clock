@@ -106,7 +106,6 @@
     <string name="plan_selected">%1$s in %2$s · %3$d of %4$d working</string>
     <string name="plan_slider">Meeting hour in %1$s</string>
     <string name="plan_slider_state">%1$s, %2$d of %3$d working</string>
-    <string name="plan_overlap_bar">Overlap across the day</string>
     <string name="plan_row_a11y">%1$s: %2$s, %3$s. Opens the converter.</string>
 
     <!-- Map -->
@@ -210,7 +209,6 @@
     <string name="widget_meeting_partial">%1$d of %2$d work %3$s to %4$s</string>
     <string name="widget_meeting_none">No shared working hours today</string>
     <string name="widget_meeting_bar_a11y">%1$s. Hours shown in %2$s.</string>
-    <string name="widget_configure_title">Set up widget</string>
 
 
     <!-- Premium widget names -->
@@ -258,7 +256,6 @@
     <string name="widget_solar_polar_night">Sun below the horizon all day</string>
     <string name="widget_sampled">Updates about every 30 min</string>
     <string name="widget_window_now">Working together now</string>
-    <string name="widget_window_next">Next shared window</string>
     <string name="widget_window_none">No overlap in 8 days</string>
     <string name="widget_week_none">No overlap this week</string>
     <string name="widget_week_best">Best: %1$s</string>
